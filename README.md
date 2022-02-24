@@ -7,9 +7,9 @@ standard strategies.
 
 The FLamby package contains:
 
-Data loaders that automatically handle data preprocessing and splitting for distributed datasets.
-Evaluation functions to evaluate trained models on the different tracks as defined in the companion paper. 
-Benchmark code using the utilities below to obtain baseline performances.
+- Data loaders that automatically handle data preprocessing and splitting for distributed datasets.  
+- Evaluation functions to evaluate trained models on the different tracks as defined in the companion paper. 
+- Benchmark code using the utilities below to obtain the performances of baselines using different strategies.
 
 It does not contain datasets that have to be downloaded separately.
 See the section below.
