@@ -1,13 +1,5 @@
-import distutils.cmd
-import distutils.log
-import os
-import shutil
-from subprocess import call, check_call
-
 from setuptools import find_packages, setup
-from version import __version__
 
-print(f'Version {__version__}')
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
