@@ -42,7 +42,8 @@ Then install the FLamby benchmark by executing:
 pip install flamby
 ```
 Then proceed to read and accept the different licenses and download the data from
-the datasets you are interested in.
+all the datasets you are interested in by following the instructions provided in each folder:
+- [Fed-Camelyon16](./flamby/fed_camelyon16/download_instructions.md))
 
 ## Usage
 
