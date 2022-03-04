@@ -2,7 +2,7 @@
 ## Overview
 FLamby is a benchmark for cross-silo Federated Learning with natural partitioning. 
 It spans multiple data modalities and should allow easy interfacing with most 
-Federated-Learning frameworks (FedML, ...). It contains implementations of different
+Federated-Learning frameworks (FedML, Fed-BioMed, ...). It contains implementations of different
 standard strategies.
 
 The FLamby package contains:
