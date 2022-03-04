@@ -1,9 +1,18 @@
 ## Camelyon16
 
+
 Camelyon16 as Camelyon17 are open access (CC0), the original dataset is accessible [here](https://camelyon17.grand-challenge.org/Data/).
 We will use the [Google-Drive-API-v3](https://developers.google.com/drive/api/v3/quickstart/python) in order to fetch
 the slides from the public Google Drive and will then tile the matter using a feature extractor producing a bag of features for each slide.
 
+## Dataset description
+
+|                   | Dataset description 
+| ----------------- | -----------------------------------------------
+| Description       | This is the dataset from Camelyon16
+| Dataset           | 399 slides with labels (170 (Train) + 89 (Test) slides in Center0 (RUMC), 100 (Train)+ 50 (Test) slides in Center1 (UMCU))
+| Centers           | Original Institutions from which WSIs originate RUMC and UMCU (2)
+| Task              | Weakly Supervised Classification
 
 In order to use the Google Drive API we need to have a gmail account and to access the [google developpers console](https://console.cloud.google.com/apis/credentials/consent?authuser=1) in order to get a json containing an OAuth2.0 secret.  
 
@@ -29,7 +38,8 @@ python download.py --output-folder ./camelyon16_slides --path-to-secret /path/to
 This will download all of Camelyon's slides in `./camelyon16_slides.`
 
 
-The next step is to tile the matter on each slide with a feature extractor pretrained on IMAGENET.
+The next step is to tile the matter on each slide with a feature extractor pretrained on IMAGENET.  
+
 We will use histolab to segment the matter on each slide and torchvision to download a pretrained ResNet50.
 
 
