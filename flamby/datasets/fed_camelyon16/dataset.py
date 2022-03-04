@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import torch
+import flamby.datasets.fed_camelyon16
 from  flamby.datasets.fed_camelyon16 import METADATA_DICT
 from torch.utils.data import Dataset
 
@@ -42,9 +43,9 @@ class Camelyon16Raw(Dataset):
         self.tiles_dir = Path(dic["tiles_dir"])
         self.labels = pd.read_csv(dic["labels"], index_col="filenames")
         self.metadata = pd.read_csv(
-            Path(ROOT_PACKAGE_PATH)
+            Path(os.path.dirname(flamby.datasets.fed_camelyon16.__file__))
             / Path("metadata")
-            / Path("data_camelyon16_metadata_camelyon.csv")
+            / Path("metadata.csv")
         )
         self.X_dtype = X_dtype
         self.y_dtype = y_dtype
