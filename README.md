@@ -15,9 +15,9 @@ It does not contain datasets that have to be downloaded separately.
 See the section below.
 
 ## Source datasets
-We do not distribute datasets in this repository. The use of any of the datasets
+We do not distribute datasets in this repository. **The use of any of the datasets
 included in FLamby requires accepting its corresponding license on the original
-website.
+website.**
 We do not own copyrights on any of the datasets.
 
 
@@ -43,7 +43,8 @@ pip install flamby
 ```
 Then proceed to read and accept the different licenses and download the data from
 all the datasets you are interested in by following the instructions provided in each folder:
-- [Fed-Camelyon16](./flamby/fed_camelyon16/download_instructions.md)
+- [Fed-Camelyon16](./flamby/fed_camelyon16/README.md)
+- [Fed-LIDIC-IDRI](./flamby/fed_lidc_idri/README.md)
 
 ## Usage
 
