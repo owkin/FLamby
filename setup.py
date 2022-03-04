@@ -28,6 +28,13 @@ setup(
         "tqdm",
         "pydrive",
         "openslide-python",
+        "pydicom",
+        "dask",
+        "requests",
+        "google-api-python-client",
+        "google-auth-httplib2",
+        "google-auth-oauthlib",
+
     ],
     extras_require={},
     description="FLamby: A cross-silo Federated Learning Benchmark.",
