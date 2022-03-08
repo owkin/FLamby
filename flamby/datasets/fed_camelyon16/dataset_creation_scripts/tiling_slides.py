@@ -59,12 +59,14 @@ def main(slides_dir, features_dir, batch_size):
         suffix=".png",
         )
     net = models.resnet50(pretrained=True)
+    # Probably unnecessary still it feels safer
     for param in net.parameters():
         param.requires_grad = False
     net = net.eval()
     if torch.cuda.is_available():
         net = net.cuda()
     net.fc = Identity()
+    # IMAGENET preprocessing of images scaled between 0. and 1. with ToTensor
     transform = Compose([ToTensor(), Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
     # Tiling all downloaded slides with provided model
     for sp in tqdm(slides_paths):
@@ -81,6 +83,8 @@ def main(slides_dir, features_dir, batch_size):
             with torch.inference_mode():
                 features = np.zeros((len(images_list), 2048)).astype("float32")
                 for i, batch in enumerate(iter(dataloader)):
+                    if torch.cuda.is_available():
+                        batch = batch.cuda()
                     features[(i*batch_size):((i+1)*batch_size)] = net(batch).detach().cpu().numpy()
         np.save(path_to_features, features)
                 
