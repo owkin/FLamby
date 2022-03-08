@@ -52,7 +52,8 @@ Look at our tutorials and get started sections.
 
 ## Contributing
 
-After installing the package, you should also initialize ``pre-commit``:
+After installing the package in dev mode (``pip install -e .`)
+You should also initialize ``pre-commit``:
 ```
 pre-commit install
 ```
