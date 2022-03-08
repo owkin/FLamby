@@ -49,3 +49,13 @@ all the datasets you are interested in by following the instructions provided in
 ## Usage
 
 Look at our tutorials and get started sections.
+
+## Contributing
+
+After installing the package, you should also initialize ``pre-commit``:
+```
+pre-commit install
+```
+
+The ``pre-commit`` tool will automatically run [black](https://github.com/psf/black) and 
+[isort](https://github.com/PyCQA/isort) and check [flake8](https://flake8.pycqa.org/en/latest/) compatibility.
