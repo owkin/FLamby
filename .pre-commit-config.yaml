@@ -12,6 +12,7 @@ repos:
       args: # arguments to configure flake8
        - "--max-line-length=89"
 -   repo: https://github.com/pre-commit/mirrors-isort
-    rev: v4.3.4
+    rev: v5.10.1
     hooks:
-    -   id: isort
+    - id: isort
+      args : ["--profile", "black"]
