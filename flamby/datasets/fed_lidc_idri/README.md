@@ -33,6 +33,6 @@ To download the data we will use the [official TCIA python client](https://githu
 
 Make sure you have enough space (?G) and run:
 ```
-pythoon download_ct_scans.py
+python download_ct_scans.py
 ```
 
