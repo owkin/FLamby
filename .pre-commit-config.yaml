@@ -3,10 +3,14 @@ repos:
     rev: stable
     hooks:
     - id: black
+    args:
+    - --line_length=89
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v1.2.3
     hooks:
     - id: flake8
+    args: 
+    - "--max_line_length=89"
 -   repo: https://github.com/pre-commit/mirrors-isort
     rev: v4.3.4
     hooks:
