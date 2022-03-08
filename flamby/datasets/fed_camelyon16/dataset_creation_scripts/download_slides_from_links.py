@@ -2,23 +2,26 @@ import argparse
 import io
 import os
 import re
+from pathlib import Path
 
 import pandas as pd
 from google import create_service
 from googleapiclient.http import MediaIoBaseDownload
 from tqdm import tqdm
+
 import flamby.datasets.fed_camelyon16.dataset_creation_scripts as dl_module
-from pathlib import Path
 
 SLIDES_LINKS_FOLDER = os.path.dirname(dl_module.__file__)
-def main(
-    path_to_secret,
-    output_folder,
-    port=6006,
-):
 
-    train_df = pd.read_csv(str(Path(SLIDES_LINKS_FOLDER) / Path("training_slides_links_drive.csv")))
-    test_df = pd.read_csv(str(Path(SLIDES_LINKS_FOLDER) / Path("test_slides_links_drive.csv")))
+
+def main(path_to_secret, output_folder, port=6006):
+
+    train_df = pd.read_csv(
+        str(Path(SLIDES_LINKS_FOLDER) / Path("training_slides_links_drive.csv"))
+    )
+    test_df = pd.read_csv(
+        str(Path(SLIDES_LINKS_FOLDER) / Path("test_slides_links_drive.csv"))
+    )
     os.makedirs(output_folder, exist_ok=True)
     drive_service = create_service(
         path_to_secret,
@@ -28,7 +31,7 @@ def main(
         port=port,
     )
     regex = "(?<=https://drive.google.com/file/d/)[a-zA-Z0-9]+"
-    # Resourcekey is now mandatory as well, thanks Kris from: https://stackoverflow.com/questions/71343002/downloading-files-from-public-google-drive-in-python-scoping-issues
+    # Resourcekey is now mandatory as well, code from https://stackoverflow.com/questions/71343002/downloading-files-from-public-google-drive-in-python-scoping-issues
     regex_rkey = "(?<=resourcekey=)[a-zA-Z0-9-]+"
     for current_df in [train_df, test_df]:
         for i in tqdm(range(len(current_df.index))):
@@ -52,13 +55,14 @@ def main(
                 print("Download %d%%." % int(status.progress() * 100))
 
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--path-to-secret",
         type=str,
-        help="The path where to find the secret obtained from the OAuth2 of the Google service account",
+        help="The path where to find the secret obtained from the OAuth2 of the"
+        """
+        Google service account""",
         required=True,
     )
     parser.add_argument(
@@ -72,8 +76,4 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    main(
-        args.path_to_secret,
-        args.output_folder,
-        args.port,
-    )
+    main(args.path_to_secret, args.output_folder, args.port)
