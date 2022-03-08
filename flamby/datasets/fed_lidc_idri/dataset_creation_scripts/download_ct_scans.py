@@ -1,4 +1,6 @@
+import argparse
 import glob
+import itertools
 import multiprocessing
 import os
 import re
@@ -31,11 +33,10 @@ ANNOTATION_URL = (
     "LIDC-XML-only.zip?version=1&modificationDate=1530215018015&api=v2"
 )
 SERVER_URL = BASEURL + "/query/getImage?SeriesInstanceUID="
-DOWNLOAD_DIR = os.path.expanduser("~/Desktop/LIDC-dataset")
 client = TCIAClient(BASEURL, RESSOURCE)
 
 
-def download_dicom_series(uid):
+def download_dicom_series(uid, output_folder):
     """Use the TCIA client to retrieve a zip of DICOMS associated with a uid
     Parameters
     ----------
@@ -46,11 +47,11 @@ def download_dicom_series(uid):
     str
         The filename minus the zip extension
     """
-    filename_zipped = os.path.join(DOWNLOAD_DIR, uid + ".zip")
+    filename_zipped = os.path.join(output_folder, uid + ".zip")
     filename = re.sub(".zip", "", filename_zipped)
     if not (os.path.exists(filename_zipped) or os.path.isdir(filename)):
         client.get_image(
-            seriesInstanceUid=uid, downloadPath=DOWNLOAD_DIR, zipFileName=uid + ".zip"
+            seriesInstanceUid=uid, downloadPath=output_folder, zipFileName=uid + ".zip"
         )
     return filename
 
@@ -104,8 +105,8 @@ def get_SeriesUID_from_xml(path):
         return "notfound"
 
 
-def download_LIDC():
-    """Download the LIDC dataset in the DOWNLOAD_DIR folder
+def download_LIDC(output_folder, debug=False):
+    """Download the LIDC dataset in the output_folder folder
     and link downloaded DICOMs with annotation files.
     Returns
     -------
@@ -125,18 +126,25 @@ def download_LIDC():
     # Join both of them
     patientXseries = patientXstudy.merge(series).iloc[:]
 
+    if debug:
+        patientXseries = patientXseries[:10]
+
     # Download associated DICOMs
     pool = multiprocessing.Pool(processes=n_cpus)
-    downloaded_paths = pool.map(
-        download_dicom_series, patientXseries.SeriesInstanceUID.tolist()
+    # downloaded_paths = pool.map(
+    #    download_dicom_series, patientXseries.SeriesInstanceUID.tolist()
+    # )
+    downloaded_paths = pool.starmap(
+        download_dicom_series,
+        zip(patientXseries.SeriesInstanceUID.tolist(), itertools.repeat(output_folder)),
     )
 
     # Download XML annotations
-    annotations_path = download_zip_from_url(ANNOTATION_URL, DOWNLOAD_DIR)
+    annotations_path = download_zip_from_url(ANNOTATION_URL, output_folder)
 
     # Unzip everything and remove archives
     zipped_folders = [
-        str(p) for p in Path(DOWNLOAD_DIR).glob("./*/") if str(p).endswith(".zip")
+        str(p) for p in Path(output_folder).glob("./*/") if str(p).endswith(".zip")
     ]
 
     for zipped_f in zipped_folders:
@@ -207,9 +215,22 @@ def LIDC_to_niftis(extraction_results_dataframe, spacing=[1.0, 1.0, 1.0]):
     return extraction_results_dataframe
 
 
-def main():
-    download_LIDC()
+def main(output_folder, debug=False):
+    download_LIDC(output_folder, debug)
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-o",
+        "--output_folder",
+        type=str,
+        help="Where to store the downloaded CT scans.",
+        default=os.path.expanduser("~/Desktop/LIDC-dataset"),
+    )
+    parser.add_argument(
+        "--debug", action="store_true", help="Download first 10 images only."
+    )
+
+    args = parser.parse_args()
+    main(args.output_folder, args.debug)
