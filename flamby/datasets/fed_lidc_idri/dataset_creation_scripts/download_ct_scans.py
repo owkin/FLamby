@@ -205,3 +205,11 @@ def LIDC_to_niftis(extraction_results_dataframe, spacing=[1.0, 1.0, 1.0]):
     print(f"{final_shape}/{initial_shape} DICOMs folders successfully converted.")
 
     return extraction_results_dataframe
+
+
+def main():
+    download_LIDC()
+
+
+if __name__ == "__main__":
+    main()
