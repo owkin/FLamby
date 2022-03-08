@@ -31,10 +31,10 @@ Similarly one can add the results of a new strategy/training algorithm.
 
 We recommend using anaconda and pip.
 
-First setup a virtual environment (optional) with Python>=3.7.
+First setup a virtual environment (optional) with Python>=3.8.
 
 ```
-conda create -n flamby_env python=3.7
+conda create -n flamby_env python=3.8
 conda activate flamby_env
 ```
 Then install the FLamby benchmark by executing:
