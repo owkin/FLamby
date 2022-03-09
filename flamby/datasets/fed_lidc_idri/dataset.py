@@ -1,7 +1,7 @@
 from torch.utils.data import Dataset
 
 
-class LIDC_IDRIRaw(Dataset):
+class LidcIdriRaw(Dataset):
     """
     Pytorch dataset containing all the features, labels and
     metadata for LIDC-IDRI without any discrimination.
@@ -20,7 +20,7 @@ class LIDC_IDRIRaw(Dataset):
         pass
 
 
-class FedLIDC_IDRI(LIDC_IDRIRaw):
+class FedLidcIdri(LidcIdriRaw):
     """
     Pytorch dataset containing for each center the features and associated labels
     for LIDC-IDRI federated classification.
