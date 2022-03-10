@@ -1,7 +1,9 @@
 import os
 from pathlib import Path
 
+import nibabel as nib
 import pandas as pd
+import torch
 from torch.utils.data import Dataset
 
 import flamby.datasets.fed_lidc_idri
@@ -19,7 +21,7 @@ class LidcIdriRaw(Dataset):
     ----------
     """
 
-    def __init__(self, ctscans_dir="."):
+    def __init__(self, ctscans_dir=".", X_dtype=torch.float32, y_dtype=torch.float32):
         """
         Parameters
         ----------
@@ -32,6 +34,8 @@ class LidcIdriRaw(Dataset):
             / Path("metadata")
             / Path("metadata.csv")
         )
+        self.X_dtype = X_dtype
+        self.y_dtype = y_dtype
         self.features_paths = []
         self.masks_paths = []
         self.features_centers = []
@@ -39,7 +43,7 @@ class LidcIdriRaw(Dataset):
 
         for ctscan in self.ctscans_dir.rglob("*patient.nii.gz"):
             ctscan_name = os.path.basename(os.path.dirname(ctscan))
-            mask_path = os.path.join(os.path.dirname(ctscan), "mask.nii.gz")
+            mask_path = os.path.join(os.path.dirname(ctscan), "mask_consensus.nii.gz")
 
             center_from_metadata = self.metadata[
                 self.metadata.SeriesInstanceUID == ctscan_name
@@ -60,8 +64,11 @@ class LidcIdriRaw(Dataset):
         return len(self.features_paths)
 
     def __getitem__(self, idx):
-        # get feature + label/mask
-        pass
+        X = nib.load(self.features_paths[idx])
+        X = torch.from_numpy(X.get_fdata()).to(self.X_dtype)
+        y = nib.load(self.masks_paths[idx])
+        y = torch.from_numpy(y.get_fdata()).to(self.y_dtype)
+        return X, y
 
 
 class FedLidcIdri(LidcIdriRaw):
