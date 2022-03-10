@@ -111,7 +111,7 @@ def download_LIDC(output_folder, debug=False):
     Returns
     -------
     pd.DataFrame
-        A dataframe with all informations regarding the raw data.
+        A dataframe with all the information regarding the raw data.
     """
     # Get patient X study
     patientXstudy = pd.read_json(
@@ -131,9 +131,6 @@ def download_LIDC(output_folder, debug=False):
 
     # Download associated DICOMs
     pool = multiprocessing.Pool(processes=n_cpus)
-    # downloaded_paths = pool.map(
-    #    download_dicom_series, patientXseries.SeriesInstanceUID.tolist()
-    # )
     downloaded_paths = pool.starmap(
         download_dicom_series,
         zip(patientXseries.SeriesInstanceUID.tolist(), itertools.repeat(output_folder)),
@@ -216,7 +213,8 @@ def LIDC_to_niftis(extraction_results_dataframe, spacing=[1.0, 1.0, 1.0]):
 
 
 def main(output_folder, debug=False):
-    download_LIDC(output_folder, debug)
+    patientXseries = download_LIDC(output_folder, debug)
+    LIDC_to_niftis(patientXseries)
 
 
 if __name__ == "__main__":
