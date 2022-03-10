@@ -41,6 +41,10 @@ class LidcIdriRaw(Dataset):
         self.features_centers = []
         self.features_sets = []
 
+        # TODO : in the Luna16 challenge, slides that are too thick were excluded
+        # (~130 slides)
+        # Should we do the same?
+
         for ctscan in self.ctscans_dir.rglob("*patient.nii.gz"):
             ctscan_name = os.path.basename(os.path.dirname(ctscan))
             mask_path = os.path.join(os.path.dirname(ctscan), "mask_consensus.nii.gz")
@@ -77,6 +81,41 @@ class FedLidcIdri(LidcIdriRaw):
     for LIDC-IDRI federated classification.
     """
 
-    def __init__(self, center=0, train=True, pooled=False):
-        super().__init__()
-        pass
+    def __init__(
+        self,
+        ctscans_dir=".",
+        X_dtype=torch.float32,
+        y_dtype=torch.int64,
+        center=0,
+        train=True,
+        pooled=False,
+    ):
+
+        super().__init__(ctscans_dir=ctscans_dir, X_dtype=X_dtype, y_dtype=y_dtype)
+
+        assert center in [0, 1, 2, 3]
+        self.centers = [center]
+        if pooled:
+            self.centers = [0, 1, 2, 3]
+        if train:
+            self.sets = ["train"]
+        else:
+            self.sets = ["test"]
+
+        to_select = [
+            (self.features_sets[idx] in self.sets)
+            and (self.features_centers[idx] in self.centers)
+            for idx, _ in enumerate(self.features_centers)
+        ]
+        self.features_paths = [
+            fp for idx, fp in enumerate(self.features_paths) if to_select[idx]
+        ]
+        self.features_sets = [
+            fp for idx, fp in enumerate(self.features_sets) if to_select[idx]
+        ]
+        self.masks_paths = [
+            fp for idx, fp in enumerate(self.masks_paths) if to_select[idx]
+        ]
+        self.features_centers = [
+            fp for idx, fp in enumerate(self.features_centers) if to_select[idx]
+        ]
