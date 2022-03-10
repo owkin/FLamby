@@ -19,14 +19,29 @@ class LidcIdriRaw(Dataset):
 
     Attributes
     ----------
+    ctscans_dir : str, The directory where ctscans are located.
+    metadata: pd.DataFrame, The ground truth dataframe for metadata such as centers
+    features_paths: list[str], The list with the paths towards all features.
+    masks_paths: list[int], The list with the paths towards segmentation masks
+    features_centers: list[int], The list for all centers for all features
+    features_sets: list[str], The list for all sets (train/test) for all features
+    X_dtype: torch.dtype, The dtype of the X features output
+    y_dtype: torch.dtype, The dtype of the y label output
     """
 
     def __init__(self, ctscans_dir=".", X_dtype=torch.float32, y_dtype=torch.float32):
         """
+        See description above
         Parameters
         ----------
+        ctscans_dir : str, optional
+          The directory where all ctscans are located. Defaults to '.'.
+        X_dtype : torch.dtype, optional
+          Dtype for inputs `X`. Defaults to `torch.float32`.
+        y_dtype : torch.dtype, optional
+          Dtype for labels `y`. Defaults to `torch.int64`.
         """
-        # Add ctscans_dir as an argument
+        # Added ctscans_dir as an argument
         # TODO : check with Jean if this is ok
         self.ctscans_dir = Path(ctscans_dir)
         self.metadata = pd.read_csv(
@@ -79,6 +94,7 @@ class FedLidcIdri(LidcIdriRaw):
     """
     Pytorch dataset containing for each center the features and associated labels
     for LIDC-IDRI federated classification.
+    TODO : train/test splits
     """
 
     def __init__(
@@ -90,6 +106,24 @@ class FedLidcIdri(LidcIdriRaw):
         train=True,
         pooled=False,
     ):
+        """
+        Instantiate the dataset
+        Parameters
+        ----------
+        ctscans_dir : str, optional
+            The directory where all ctscans are located. Defaults to '.'.
+        X_dtype : torch.dtype, optional
+            Dtype for inputs `X`. Defaults to `torch.float32`.
+        y_dtype : torch.dtype, optional
+            Dtype for labels `y`. Defaults to `torch.int64`.
+        center : int, optional
+            Id of the center from which to gather data. Defaults to 0.
+        train : bool, optional
+            Whether to take the train or test split. Defaults to True (train).
+        pooled : bool, optional
+            Whether to take all data from the 2 centers into one dataset.
+            If True, supersedes center argument. Defaults to False.
+        """
 
         super().__init__(ctscans_dir=ctscans_dir, X_dtype=X_dtype, y_dtype=y_dtype)
 
