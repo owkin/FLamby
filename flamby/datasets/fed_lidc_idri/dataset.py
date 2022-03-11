@@ -29,7 +29,7 @@ class LidcIdriRaw(Dataset):
     y_dtype: torch.dtype, The dtype of the y label output
     """
 
-    def __init__(self, ctscans_dir=".", X_dtype=torch.float32, y_dtype=torch.float32):
+    def __init__(self, ctscans_dir=".", X_dtype=torch.float32, y_dtype=torch.int64):
         """
         See description above
         Parameters
@@ -41,8 +41,6 @@ class LidcIdriRaw(Dataset):
         y_dtype : torch.dtype, optional
           Dtype for labels `y`. Defaults to `torch.int64`.
         """
-        # Added ctscans_dir as an argument
-        # TODO : check with Jean if this is ok
         self.ctscans_dir = Path(ctscans_dir)
         self.metadata = pd.read_csv(
             Path(os.path.dirname(flamby.datasets.fed_lidc_idri.__file__))
@@ -55,10 +53,6 @@ class LidcIdriRaw(Dataset):
         self.masks_paths = []
         self.features_centers = []
         self.features_sets = []
-
-        # TODO : in the Luna16 challenge, slides that are too thick were excluded
-        # (~130 slides)
-        # Should we do the same?
 
         for ctscan in self.ctscans_dir.rglob("*patient.nii.gz"):
             ctscan_name = os.path.basename(os.path.dirname(ctscan))
@@ -73,7 +67,6 @@ class LidcIdriRaw(Dataset):
             ].Split.item()
 
             self.features_paths.append(ctscan)
-            # TODO: do we need both mask and mask_consensus?
             self.masks_paths.append(mask_path)
             self.features_centers.append(center_from_metadata)
             self.features_sets.append(split_from_metadata)
@@ -93,7 +86,6 @@ class FedLidcIdri(LidcIdriRaw):
     """
     Pytorch dataset containing for each center the features and associated labels
     for LIDC-IDRI federated classification.
-    TODO : train/test splits
     """
 
     def __init__(

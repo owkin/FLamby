@@ -13,7 +13,7 @@ import pandas as pd
 import requests
 import tqdm
 from joblib import Parallel, delayed
-from process_raw import convert_to_niftis
+from process_raw import clean_up_dicoms, convert_to_niftis
 
 # from sklearn.model_selection import train_test_split
 from tciaclient import TCIAClient
@@ -212,9 +212,15 @@ def LIDC_to_niftis(extraction_results_dataframe, spacing=[1.0, 1.0, 1.0]):
     return extraction_results_dataframe
 
 
-def main(output_folder, debug=False):
+def main(output_folder, debug=False, keep_dicoms=False):
     patientXseries = download_LIDC(output_folder, debug)
     LIDC_to_niftis(patientXseries)
+
+    if not keep_dicoms:
+        # Clean up DICOMS
+        print("Cleaning up DICOM files...")
+        clean_up_dicoms(output_folder)
+        print("Done")
 
 
 if __name__ == "__main__":
@@ -230,5 +236,12 @@ if __name__ == "__main__":
         "--debug", action="store_true", help="Download first 10 images only."
     )
 
+    parser.add_argument(
+        "--keep_dicoms",
+        action="store_true",
+        help="Keep DICOM files even after conversion to nifti. "
+        "By default, DICOM files will be removed.",
+    )
+
     args = parser.parse_args()
-    main(args.output_folder, args.debug)
+    main(args.output_folder, args.debug, args.keep_dicoms)
