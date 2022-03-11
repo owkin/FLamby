@@ -68,16 +68,15 @@ class LidcIdriRaw(Dataset):
                 self.metadata.SeriesInstanceUID == ctscan_name
             ].Manufacturer.item()
 
-            # TODO: replace with true train/test split
-            if True:
-                self.features_sets.append("train")
-            else:
-                self.features_sets.append("test")
+            split_from_metadata = self.metadata[
+                self.metadata.SeriesInstanceUID == ctscan_name
+            ].Split.item()
 
             self.features_paths.append(ctscan)
             # TODO: do we need both mask and mask_consensus?
             self.masks_paths.append(mask_path)
             self.features_centers.append(center_from_metadata)
+            self.features_sets.append(split_from_metadata)
 
     def __len__(self):
         return len(self.features_paths)
