@@ -483,8 +483,10 @@ rsconnect/
 .DS_Store
 __MACOSX
 
-datasets/fed_isic2019/ISIC_2019_Training_Input
-datasets/fed_isic2019/ISIC_2019_Training_Input_preprocessed
-datasets/fed_isic2019/*.csv
-datasets/fed_isic2019/*.zip
+flamby/datasets/fed_isic2019/ISIC_2019_Training_Input
+flamby/datasets/fed_isic2019/ISIC_2019_Training_Input_preprocessed
+flamby/datasets/fed_isic2019/*.csv
+flamby/datasets/fed_isic2019/*.zip
 venv
+.vscode
+flamby/datasets/fed_isic2019/melonama/
