@@ -1,16 +1,17 @@
-from skimage.draw import polygon
-import xml.etree.ElementTree as ET
-from skimage.transform import resize as sk_resize
 import glob
-import numpy as np
-import nibabel as nib
-import pydicom
-import dicom_numpy
-from scipy.spatial import cKDTree
-import networkx as nx
 import os
-from skimage.measure import label, regionprops
+import xml.etree.ElementTree as ET
+from pathlib import Path
 
+import dicom_numpy
+import networkx as nx
+import nibabel as nib
+import numpy as np
+import pydicom
+from scipy.spatial import cKDTree
+from skimage.draw import polygon
+from skimage.measure import label, regionprops
+from skimage.transform import resize as sk_resize
 
 
 def render_nodule_3D(nodule, shape):
@@ -35,15 +36,14 @@ def render_nodule_3D(nodule, shape):
         maxx, maxy = roi[:2].max(axis=1)
         xs, ys = roi[:2]
 
-        xs, ys = polygon(xs - minx, ys - miny,
-                         shape=(maxx - minx, maxy - miny))
+        xs, ys = polygon(xs - minx, ys - miny, shape=(maxx - minx, maxy - miny))
         region = tuple([xs + minx, ys + miny])
         mask[..., z][region] = 1
 
     return mask
 
 
-def saferesize(arr, affine, spacing=[1., 1., 1.], dicomdir=None):
+def saferesize(arr, affine, spacing=[1.0, 1.0, 1.0], dicomdir=None):
     """
     Resize an array along with its affine. Takes care of integer-valued arrays
     and interpolation artifacts.
@@ -65,28 +65,37 @@ def saferesize(arr, affine, spacing=[1., 1., 1.], dicomdir=None):
     spacing = np.array(spacing)
     old_spacing = np.abs(affine.diagonal()[:-1])
 
-    new_shape = np.round(np.array(arr.shape) *
-                         old_spacing / spacing).astype(int)
+    new_shape = np.round(np.array(arr.shape) * old_spacing / spacing).astype(int)
 
     if arr.dtype != np.uint8:
-        new_arr = sk_resize(arr, new_shape, preserve_range=True,
-                            anti_aliasing=False, mode='constant')
+        new_arr = sk_resize(
+            arr, new_shape, preserve_range=True, anti_aliasing=False, mode="constant"
+        )
     else:
-        new_arr = sk_resize((arr == 1).astype(np.float32), new_shape, preserve_range=True,
-                            anti_aliasing=False, mode='constant')
+        new_arr = sk_resize(
+            (arr == 1).astype(np.float32),
+            new_shape,
+            preserve_range=True,
+            anti_aliasing=False,
+            mode="constant",
+        )
 
         new_arr = new_arr.round().astype(np.uint8)
 
-        twos = np.stack(np.where(arr == 2), 0) * (new_shape /
-                                                  np.array(arr.shape))[..., np.newaxis]
-        threes = np.stack(np.where(arr == 3), 0) * (new_shape /
-                                                    np.array(arr.shape))[..., np.newaxis]
+        twos = (
+            np.stack(np.where(arr == 2), 0)
+            * (new_shape / np.array(arr.shape))[..., np.newaxis]
+        )
+        threes = (
+            np.stack(np.where(arr == 3), 0)
+            * (new_shape / np.array(arr.shape))[..., np.newaxis]
+        )
 
         new_arr[tuple(twos.round().astype(int))] = 2
         new_arr[tuple(threes.round().astype(int))] = 3
 
     new_affine = affine.copy()
-    new_affine[:3, -1] *= (new_affine.diagonal()[:-1] / spacing)
+    new_affine[:3, -1] *= new_affine.diagonal()[:-1] / spacing
     new_affine[:3, :3] = np.diag(spacing)
 
     return new_arr, new_affine
@@ -108,30 +117,36 @@ def convert_to_niftis(dicomdir, xml_path, spacing=None, force=False):
     force
     """
 
-    if force or not os.path.exists(dicomdir + '/patient.nii.gz') or not os.path.exists(dicomdir + '/mask.nii.gz') or not os.path.exists(dicomdir + '/mask_consensus.nii.gz'):
+    if (
+        force
+        or not os.path.exists(dicomdir + "/patient.nii.gz")
+        or not os.path.exists(dicomdir + "/mask.nii.gz")
+        or not os.path.exists(dicomdir + "/mask_consensus.nii.gz")
+    ):
         ct, masks, affine = build_volumes(dicomdir, xml_path)
 
         if affine is not None and ct is not None and masks:
             if spacing is not None:
-                masks = [saferesize(mask, affine, dicomdir=dicomdir)[0]
-                         for mask in masks]
+                masks = [
+                    saferesize(mask, affine, dicomdir=dicomdir)[0] for mask in masks
+                ]
                 ct, affine = saferesize(ct, affine)
 
             CT = nib.Nifti1Image(ct.astype(np.float32), affine)
-            nib.save(CT, dicomdir + '/patient.nii.gz')
+            nib.save(CT, dicomdir + "/patient.nii.gz")
 
             masks = np.stack(masks, -1)
 
             mask_consensus = build_consensus(masks)
             MASK_CONSENSUS = nib.Nifti1Image(mask_consensus, affine)
-            nib.save(MASK_CONSENSUS, dicomdir + '/mask_consensus.nii.gz')
+            nib.save(MASK_CONSENSUS, dicomdir + "/mask_consensus.nii.gz")
 
             MASK = nib.Nifti1Image(masks, affine)
-            nib.save(MASK, dicomdir + '/mask.nii.gz')
+            nib.save(MASK, dicomdir + "/mask.nii.gz")
 
             return True
         else:
-            print('Issue at dicomdir %s, xml %s' % (dicomdir, xml_path))
+            print("Issue at dicomdir %s, xml %s" % (dicomdir, xml_path))
             return False
     else:
         return True
@@ -154,7 +169,7 @@ def build_consensus(masks):
     if masks.size == 0:
         mask = np.empty((0, 0, 0), np.uint8)
     else:
-        mask = ((masks == 1).sum(-1) > 0.).astype(np.uint8)
+        mask = ((masks == 1).sum(-1) > 0.0).astype(np.uint8)
 
     # Then cluster nodules and non nodules
     nodules = np.stack(np.where((mask == 2).sum(-1) > 0), 0).T
@@ -207,14 +222,14 @@ def fuse_points(nonNodules, radius=15):
 
 
 def correct_ct_intensity(data):
-    if data.min() < -1.:  # -1 just for safety but should be 0
-        data = np.clip(data, -1024., None)
-    if data.min() > -1.:
-        data += -1024.
+    if data.min() < -1.0:  # -1 just for safety but should be 0
+        data = np.clip(data, -1024.0, None)
+    if data.min() > -1.0:
+        data += -1024.0
 
-    if data.mean() > - 50.:
-        data -= 1024.
-        data = np.clip(data, a_min=-1024., a_max=None)
+    if data.mean() > -50.0:
+        data -= 1024.0
+        data = np.clip(data, a_min=-1024.0, a_max=None)
     return data
 
 
@@ -235,7 +250,7 @@ def build_volumes(dicomdir, xml_path):
     list
         list of ndarray (for each radiologist)
     """
-    dcms = glob.glob(dicomdir + '/*.dcm')
+    dcms = glob.glob(dicomdir + "/*.dcm")
     dicoms = [pydicom.read_file(dcm, stop_before_pixels=False) for dcm in dcms]
     dicoms = sorted(dicoms, key=lambda x: float(x.ImagePositionPatient[-1]))
 
@@ -247,16 +262,23 @@ def build_volumes(dicomdir, xml_path):
         _, _, offset_z = ijk_to_xyz[:3, -1]
 
         def opNN(nonNodule):
-            z = float(nonNodule.findtext('{http://www.nih.gov}imageZposition'))
+            z = float(nonNodule.findtext("{http://www.nih.gov}imageZposition"))
 
             # pylidc trick !
-            locz = np.abs([z - float(dicom.ImagePositionPatient[-1])
-                           for dicom in dicoms]).argmin()
+            locz = np.abs(
+                [z - float(dicom.ImagePositionPatient[-1]) for dicom in dicoms]
+            ).argmin()
 
-            locx = int(nonNodule.findtext(
-                '{http://www.nih.gov}locus/{http://www.nih.gov}xCoord'))
-            locy = int(nonNodule.findtext(
-                '{http://www.nih.gov}locus/{http://www.nih.gov}yCoord'))
+            locx = int(
+                nonNodule.findtext(
+                    "{http://www.nih.gov}locus/{http://www.nih.gov}xCoord"
+                )
+            )
+            locy = int(
+                nonNodule.findtext(
+                    "{http://www.nih.gov}locus/{http://www.nih.gov}yCoord"
+                )
+            )
 
             out = np.array([locy, locx, locz]).reshape(-1, 1)
 
@@ -265,16 +287,21 @@ def build_volumes(dicomdir, xml_path):
         def opN(Nodule):
             xyzs = []
 
-            for roi in Nodule.iter('{http://www.nih.gov}roi'):
-                z = float(roi.findtext('{http://www.nih.gov}imageZposition'))
-                locz = np.abs([z - float(dicom.ImagePositionPatient[-1])
-                               for dicom in dicoms]).argmin()
+            for roi in Nodule.iter("{http://www.nih.gov}roi"):
+                z = float(roi.findtext("{http://www.nih.gov}imageZposition"))
+                locz = np.abs(
+                    [z - float(dicom.ImagePositionPatient[-1]) for dicom in dicoms]
+                ).argmin()
 
                 xs = roi.findall(
-                    '{http://www.nih.gov}edgeMap/{http://www.nih.gov}xCoord')
+                    "{http://www.nih.gov}edgeMap/{http://www.nih.gov}xCoord"
+                )
                 ys = roi.findall(
-                    '{http://www.nih.gov}edgeMap/{http://www.nih.gov}yCoord')
-                zs = [locz, ] * len(xs)
+                    "{http://www.nih.gov}edgeMap/{http://www.nih.gov}yCoord"
+                )
+                zs = [
+                    locz,
+                ] * len(xs)
 
                 xs = np.array([int(x.text) for x in xs])
                 ys = np.array([int(y.text) for y in ys])
@@ -290,11 +317,14 @@ def build_volumes(dicomdir, xml_path):
 
         masks = []
 
-        for i, rs in enumerate(root.iter('{http://www.nih.gov}readingSession')):
-            this_session_nodules = [opN(nodule) for nodule in rs.iter(
-                '{http://www.nih.gov}unblindedReadNodule')]
+        for i, rs in enumerate(root.iter("{http://www.nih.gov}readingSession")):
+            this_session_nodules = [
+                opN(nodule)
+                for nodule in rs.iter("{http://www.nih.gov}unblindedReadNodule")
+            ]
             this_session_nonnodules = [
-                opNN(nonnodule) for nonnodule in rs.iter('{http://www.nih.gov}nonNodule')]
+                opNN(nonnodule) for nonnodule in rs.iter("{http://www.nih.gov}nonNodule")
+            ]
 
             mask = np.zeros(voxel_ndarray.shape, np.uint8)
 
@@ -307,15 +337,15 @@ def build_volumes(dicomdir, xml_path):
 
                 for nonnodule in this_session_nonnodules:
                     mask[tuple(nonnodule)] = 3
-            except IndexError as e:
-                print('Indexing issue at file %s, session %i' % (xml_path, i))
+            except IndexError:
+                print("Indexing issue at file %s, session %i" % (xml_path, i))
                 pass
             masks.append(mask)
 
         return voxel_ndarray, masks, ijk_to_xyz
     except FileNotFoundError:
         raise
-    except dicom_numpy.DicomImportException as e:
+    except dicom_numpy.DicomImportException:
         return None, None, None
 
 
@@ -333,4 +363,20 @@ def process_labels_to_bounding_boxes(x, to_float=False):
     # bboxes[:, :3] -= 10
     # bboxes[:, 3:] += 10
 
-    return bboxes.round().astype(np.int64) if not to_float else bboxes / np.array(x.shape + x.shape)[np.newaxis, ...]
+    return (
+        bboxes.round().astype(np.int64)
+        if not to_float
+        else bboxes / np.array(x.shape + x.shape)[np.newaxis, ...]
+    )
+
+
+def clean_up_dicoms(dicomdir):
+    """
+    Recursively remove all DICOM files from a folder and its subfolders.
+    Parameters
+    ----------
+    dicomdir : path
+        path to directory containing dicoms.
+    """
+    for dicom in Path(dicomdir).rglob("*.dcm"):
+        os.remove(dicom)
