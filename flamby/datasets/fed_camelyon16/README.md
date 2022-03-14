@@ -40,7 +40,11 @@ This will download all of Camelyon's slides in `./camelyon16_slides.`
 
 The next step is to tile the matter on each slide with a feature extractor pretrained on IMAGENET.  
 
-We will use histolab to segment the matter on each slide and torchvision to download a pretrained ResNet50.
+We will use the [histolab package](https://github.com/histolab/histolab) to segment the matter on each slide and torchvision to download a pretrained ResNet50 that will be applied on each tile to convert each slide to a numpy feature.
+
+```
+python tiling_sides.py --output-folder ./camelyon16-dataset --batch-size 64 --slides-dir ./camelyon16_slides
+```
 
 
 
