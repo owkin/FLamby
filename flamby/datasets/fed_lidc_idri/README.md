@@ -47,7 +47,7 @@ Make sure you have enough space (150G) and run:
 python download_ct_scans.py -o MyDirectory
 ```
 
-This may take some time.
+This may take a few hours, depending on your download bandwidth and your machine.
 
 The ``download_ct_scans.py`` script will download DICCOM files corresponding to the CT-scans as well as XML files 
 containing annotations and segmentations from radiologists.
@@ -88,3 +88,10 @@ MyDirectory
   - ``patient.nii.gz``: nifti file containing the ct scan.
   - ``mask.nii.gz``: nifti file containing all annotations from radiologists.
   - ``mask_consensus.nii.gz``: nifti file containing the average annotation for radiologists. Used as ground truth for segmentation.
+
+
+### Troubleshooting
+
+While running ``download_ct_scans.py``, it may happen that the TCIA client stalls and that files stop being downloaded. 
+In that case, you should kill the python process and run ``download_ct_scans.py`` again, with the same arguments.
+Files that were correctly downloaded will not be downloaded again.
