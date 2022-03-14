@@ -19,20 +19,72 @@ Additionally here we preprocess the dataset to create nifti files and retrieve t
 
 ## Dataset description
 
-|                   | Dataset description 
-| ----------------- | -----------------------------------------------
-| Description       | This is the dataset from LIDC-IDRI study
-| Dataset           | **1018 CT-scans** with masks (GE MEDICAL SYSTEMS 670, SIEMENS 205, TOSHIBA 69, Philips 74)
-| Centers           | Manufacturer of the CT-scans (GE MEDICAL SYSTEMS, SIEMENS, TOSHIBA, Philips)
-| Permission        | Public
-| Task              | Segmentation
-| Format            | CT-scans and masks in the `nifti` format
+|                   | Dataset description |
+| ----------------- | -----------------------------------------------|
+| Description       | This is the dataset from LIDC-IDRI study |
+| Dataset           | 1018 CT-scans with masks (GE MEDICAL SYSTEMS 670, SIEMENS 205, TOSHIBA 69, Philips 74) |
+| Centers           | Manufacturer of the CT-scans (GE MEDICAL SYSTEMS, SIEMENS, TOSHIBA, Philips) |
+| Permission        | Public |
+| Task              | Segmentation |
+| Format            | CT-scans and masks in the `nifti` format |
 
+This dataset was used in the [Luna16 challenge](https://luna16.grand-challenge.org/Home/).
+Note that contrary to the challenge, in which slides with thickness larger than 3 mm were removed, 
+the present dataset contains all 1018 slides from [LIDC-IDRI](https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI).
+
+The data is split in a training and testing sets containing 80% and 20% of the available scans respectively.
+This split is stratified according to the centers (the manufacturers of the CT-scan apparatus),
+in order to preserve the distribution of centers of origin within each split. 
+
+
+### Downloading and preprocessing
 
 To download the data we will use the [official TCIA python client](https://github.com/nadirsaghar/TCIA-REST-API-Client/blob/master/tcia-rest-client-python/src/tciaclient.py).
 
-Make sure you have enough space (?G) and run:
+Create a directory for the dataset(``MyDirectory``). 
+Make sure you have enough space (150G) and run:
 ```
-python download_ct_scans.py
+python download_ct_scans.py -o MyDirectory
 ```
 
+This may take some time.
+
+The ``download_ct_scans.py`` script will download DICCOM files corresponding to the CT-scans as well as XML files 
+containing annotations and segmentations from radiologists.
+
+DICOM files will then be converted to the ``nifti`` format. Each ``nifti`` file contains a 400 x 400 x 362 3D image.  
+
+Nifti (.nii.gz) files can be conveniently handled using the [nibabel](https://nipy.org/nibabel/) package.
+
+### Folder arborescence
+
+The data is stored in the following way: 
+
+```
+MyDirectory   
+│
+└───LIDC-XML-only
+│   │  
+│   └───tcia-lidc-xml
+│       │  
+│       └─── ...
+│       │     │ 158.xml
+│       │     │ ...  
+│       │       
+│       └─── ...
+│   
+└───1.1.3.6.1.4.1.14519.5.2.1.6279.6001.[SeriesInstanceUID]
+│   │   mask_consensus.nii.gz
+│   │   mask.nii.gz
+│   │   patient.nii.gz
+│
+│
+└───...
+
+```
+
+- ``LIDC-XML-only``: folder with xml files containing radiologist annotations/segmentations.
+- ``1.1.3.6.1.4.1.14519.5.2.1.6279.6001.[SeriesInstanceUID]``: one folder per ct scan. Contains:
+  - ``patient.nii.gz``: nifti file containing the ct scan.
+  - ``mask.nii.gz``: nifti file containing all annotations from radiologists.
+  - ``mask_consensus.nii.gz``: nifti file containing the average annotation for radiologists. Used as ground truth for segmentation.
