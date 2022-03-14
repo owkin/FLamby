@@ -144,6 +144,17 @@ def download_LIDC(output_folder, debug=False):
         str(p) for p in Path(output_folder).glob("./*/") if str(p).endswith(".zip")
     ]
 
+    # Check zip integrity, and download corrupted files again
+    for zipped_f in zipped_folders:
+        try:
+            while zipfile.ZipFile(zipped_f).testzip() is not None:
+                os.remove(zipped_f)
+                download_dicom_series(os.path.splitext(zipped_f)[0], output_folder)
+        except zipfile.BadZipFile:
+            os.remove(zipped_f)
+            download_dicom_series(os.path.splitext(zipped_f)[0], output_folder)
+            print(f"Bad zip file: {zipped_f}")
+
     for zipped_f in zipped_folders:
         with zipfile.ZipFile(zipped_f, "r") as zip_ref:
             try:
