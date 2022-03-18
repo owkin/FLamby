@@ -1,14 +1,18 @@
-import torch
-from torch.utils.data import DataLoader as dl
+import os
+from pathlib import Path
+
 import numpy as np
-import copy
+import torch
+import yaml
 from tqdm import tqdm
+
 torch.manual_seed(42)
 torch.use_deterministic_algorithms(True)
 
+
 def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
-    """This function takes a pytorch model and evaluate it on a list of dataloaders using the
-    provided metric function.
+    """This function takes a pytorch model and evaluate it on a list of\
+    dataloaders using the provided metric function.
     Parameters
     ----------
     model: torch.nn.Module,
@@ -16,13 +20,17 @@ def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
     test_dataloaders: List[torch.utils.data.DataLoader]
         A list of torch dataloaders
     metric: callable,
-        A function with the following signature (y_true: np.ndarray, y_pred: np.ndarray) -> scalar
+        A function with the following signature:\
+            (y_true: np.ndarray, y_pred: np.ndarray) -> scalar
     use_gpu: bool, optional,
-        Whether or not to perform computations on GPU if available. Defaults to True.
+        Whether or not to perform computations on GPU if available. \
+        Defaults to True.
     Returns
     -------
     dict
-        A dictionnary with keys client_test_{0} to client_test_{len(test_dataloaders) - 1} and associated scalar metrics as leaves.
+        A dictionnary with keys client_test_{0} to \
+        client_test_{len(test_dataloaders) - 1} and associated scalar metrics \
+        as leaves.
     """
     results_dict = {}
     with torch.inference_mode():
@@ -43,3 +51,110 @@ def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
             y_pred_final = np.vstack(y_pred_final)
             results_dict[f"client_test_{i}"] = metric(y_true_final, y_pred_final)
     return results_dict
+
+
+def read_config(config_file):
+    """Read a config file in YAML.
+
+    Parameters
+    ----------
+    config_file : str
+        Path towards the con fig file in YAML.
+
+    Returns
+    -------
+    dict
+        The parsed config
+    """
+    with open(config_file, "r") as file:
+        dict = yaml.load(file, Loader=yaml.FullLoader)
+    return dict
+
+
+def get_config_file_path(debug):
+    """Get the config_file path in real or debug mode.
+
+    Parameters
+    ----------
+    debug : bool
+       The mode in which we download the dataset.
+
+    Returns
+    -------
+    str
+        The path towards the config file.
+    """
+    config_file_name = (
+        "dataset_location_debug.yaml" if debug else "dataset_location.yaml"
+    )
+    path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
+    config_file = os.path.join(path_to_config_file, config_file_name)
+    return config_file
+
+
+def create_config(output_folder, debug):
+    """Create or modify config file by writing the absolute path of \
+        output_folder in its dataset_path key.
+
+    Parameters
+    ----------
+    output_folder : str
+        The folder where the dataset will be downloaded.
+    debug : bool
+        Whether or not we are in debug mode.
+
+    Returns
+    -------
+    Tuple(dict, str)
+        The parsed config and the path to the file written on disk.
+    Raises
+    ------
+    ValueError
+        If output_folder is not a directory.
+    """
+    if not (os.path.isdir(output_folder)):
+        raise ValueError(f"{output_folder} is not recognized as a folder")
+
+    config_file = get_config_file_path(debug)
+
+    if not (os.path.exists(config_file)):
+        dataset_path = os.path.realpath(output_folder)
+        dict = {
+            "dataset_path": dataset_path,
+            "download_complete": False,
+            "preprocessing_complete": False,
+        }
+
+        with open(config_file, "w") as file:
+            yaml.dump(dict, file)
+    else:
+        dict = read_config(config_file)
+
+    return dict, config_file
+
+
+def write_value_in_config(config_file, key, value):
+    """Update config_file by modifying one of its key with its new value.
+
+    Parameters
+    ----------
+    config_file : str
+        Path towards a config file
+    key : str
+        A key belonging to download_complete, preprocessing_complete, dataset_path
+    value : Union[bool, str]
+        The value to write for the key field.
+    Raises
+    ------
+    ValueError
+        If the config file does not exist.
+    """
+    if not (os.path.exists(config_file)):
+        raise ValueError(
+            "The config file doesn't exist. \
+            Please create the config file before updating it."
+        )
+    dict = read_config(config_file)
+    dict[key] = value
+    with open(config_file, "w") as file:
+        yaml.dump(dict, file)

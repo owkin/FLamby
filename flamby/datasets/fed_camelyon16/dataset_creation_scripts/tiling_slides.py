@@ -8,7 +8,6 @@ from pathlib import Path
 import numpy as np
 import torch
 import torchvision.models as models
-import yaml
 from histolab.slide import Slide
 from histolab.tiler import GridTiler
 from skimage import io
@@ -16,6 +15,8 @@ from torch.nn import Identity
 from torch.utils.data import DataLoader, Dataset
 from torchvision.transforms import Compose, Normalize, ToTensor
 from tqdm import tqdm
+
+from flamby.utils import read_config, write_value_in_config
 
 
 class ImageDataset(Dataset):
@@ -76,8 +77,7 @@ def main(batch_size, num_workers_torch, remove_big_tiff):
     if debug:
         print("WARNING ONLY DEBUG VERSION OF DATASET FOUND !")
 
-    with open(config_file, "r") as file:
-        dict = yaml.load(file, Loader=yaml.FullLoader)
+    dict = read_config(config_file)
 
     if not (dict["download_complete"]):
         raise ValueError(
@@ -149,9 +149,8 @@ def main(batch_size, num_workers_torch, remove_big_tiff):
                     features[start_idx:end_idx] = net(batch).detach().cpu().numpy()
         np.save(path_to_features, features)
 
-    dict["preprocessing_complete"] = True
-    with open(config_file, "w") as file:
-        yaml.dump(dict, file)
+    write_value_in_config(config_file, "preprocessing_complete", True)
+
     if args.remove_big_tiff:
         print("Removing all slides")
         for slide in slides_paths:

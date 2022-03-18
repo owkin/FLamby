@@ -6,12 +6,12 @@ import sys
 from pathlib import Path
 
 import pandas as pd
-import yaml
 from google_client import create_service
 from googleapiclient.http import MediaIoBaseDownload
 from tqdm import tqdm
 
 import flamby.datasets.fed_camelyon16.dataset_creation_scripts as dl_module
+from flamby.utils import create_config, write_value_in_config
 
 SLIDES_LINKS_FOLDER = os.path.dirname(dl_module.__file__)
 
@@ -73,29 +73,11 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
         downloaded_images_status_file = pd.read_csv(downloaded_images_status_file_path)
 
     # Creating config file with path to dataset
-    config_file_name = (
-        "dataset_location_debug.yaml" if debug else "dataset_location.yaml"
-    )
-    path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
-    config_file = os.path.join(path_to_config_file, config_file_name)
-
-    if not (os.path.exists(config_file)):
-        dataset_path = os.path.realpath(output_folder)
-        dict = {
-            "dataset_path": dataset_path,
-            "download_complete": False,
-            "preprocessing_complete": False,
-        }
-
-        with open(config_file, "w") as file:
-            yaml.dump(dict, file)
-    else:
-        with open(config_file, "r") as file:
-            dict = yaml.load(file, Loader=yaml.FullLoader)
-        if dict["download_complete"]:
-            print("You have already downloaded the slides, aborting.")
-            sys.exit()
-        dataset_path = dict["dataset_path"]
+    dict, config_file = create_config(output_folder, debug)
+    if dict["download_complete"]:
+        print("You have already downloaded the slides, aborting.")
+        sys.exit()
+    dataset_path = dict["dataset_path"]
 
     drive_service = create_service(
         path_to_secret,
@@ -150,11 +132,7 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
 
     # We assert we have everything and write it
     if all((downloaded_images_status_file["Status"] == "Downloaded").tolist()):
-        with open(config_file, "r") as file:
-            dict = yaml.load(file, Loader=yaml.FullLoader)
-        dict["download_complete"] = True
-        with open(config_file, "w") as file:
-            yaml.dump(dict, file)
+        write_value_in_config(config_file, "download_complete", True)
 
 
 if __name__ == "__main__":
