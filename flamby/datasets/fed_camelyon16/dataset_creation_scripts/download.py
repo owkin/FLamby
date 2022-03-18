@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pandas as pd
 import yaml
-from google import create_service
+from google_client import create_service
 from googleapiclient.http import MediaIoBaseDownload
 from tqdm import tqdm
 
@@ -97,7 +97,7 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
             sys.exit()
         dataset_path = dict["dataset_path"]
 
-    drive_service = Create_Service(
+    drive_service = create_service(
         path_to_secret,
         "drive",
         "v3",
