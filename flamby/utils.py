@@ -177,7 +177,10 @@ def check_dataset_from_config(debug):
     ----------
     debug : bool
         Whether to use the debug dataset or not.
-
+    Returns
+    -------
+    dict
+        The parsed config.
     Raises
     ------
     ValueError

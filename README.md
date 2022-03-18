@@ -1,4 +1,12 @@
 # FLamby
+- [Overview](#overview)
+- [Source datasets](#source-datasets)
+- [Extending FLamby](#extending-flamby)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+
+
 ## Overview
 FLamby is a benchmark for cross-silo Federated Learning with natural partitioning. 
 It spans multiple data modalities and should allow easy interfacing with most 
@@ -43,8 +51,8 @@ pip install flamby
 ```
 Then proceed to read and accept the different licenses and download the data from
 all the datasets you are interested in by following the instructions provided in each folder:
-- [Fed-Camelyon16](./flamby/fed_camelyon16/README.md)
-- [Fed-LIDIC-IDRI](./flamby/fed_lidc_idri/README.md)
+- [Fed-Camelyon16](./flamby/datasets/fed_camelyon16/README.md)
+- [Fed-LIDIC-IDRI](./flamby/datasets/fed_lidc_idri/README.md)
 
 ## Usage
 
