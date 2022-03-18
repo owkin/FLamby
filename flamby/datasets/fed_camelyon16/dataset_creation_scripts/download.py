@@ -11,7 +11,7 @@ from googleapiclient.http import MediaIoBaseDownload
 from tqdm import tqdm
 
 import flamby.datasets.fed_camelyon16.dataset_creation_scripts as dl_module
-from Google import Create_Service
+from google import Create_Service
 
 SLIDES_LINKS_FOLDER = os.path.dirname(dl_module.__file__)
 
