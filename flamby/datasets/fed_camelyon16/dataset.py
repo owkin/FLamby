@@ -8,6 +8,7 @@ from torch.utils.data import Dataset
 
 import flamby.datasets.fed_camelyon16
 from flamby.datasets.fed_camelyon16 import METADATA_DICT
+from flamby.utils import check_dataset_from_config
 
 dic = METADATA_DICT
 
@@ -29,7 +30,7 @@ class Camelyon16Raw(Dataset):
     """
 
     def __init__(
-        self, X_dtype=torch.float32, y_dtype=torch.int64, remove_spatial_info=True
+        self, X_dtype=torch.float32, y_dtype=torch.int64, debug=False,
     ):
         """See description above
         Parameters
@@ -38,11 +39,15 @@ class Camelyon16Raw(Dataset):
             Dtype for inputs `X`. Defaults to `torch.float32`.
         y_dtype : torch.dtype, optional
             Dtype for labels `y`. Defaults to `torch.int64`.
-        remove_spatial_info : bool, optional
-            Whether to remove spatial information or not. Defaults to True.
+        debug : bool, optional,
+            Whether or not to use only the part of the dataset downloaded in
+            debug mode.
         """
-        self.tiles_dir = Path(dic["tiles_dir"])
-        self.labels = pd.read_csv(dic["labels"], index_col="filenames")
+        dict = check_dataset_from_config(debug)
+
+        self.tiles_dir = dict["dataset_path"]
+        path_to_labels_file = str(Path(os.path.dirname(flamby.datasets.fed_camelyon16.__file__) / Path("labels.csv")))
+        self.labels = pd.read_csv(path_to_labels_file, index_col="filenames")
         self.metadata = pd.read_csv(
             Path(os.path.dirname(flamby.datasets.fed_camelyon16.__file__))
             / Path("metadata")
@@ -50,7 +55,6 @@ class Camelyon16Raw(Dataset):
         )
         self.X_dtype = X_dtype
         self.y_dtype = y_dtype
-        self.remove_spatial_info = True
         self.features_paths = []
         self.features_labels = []
         self.features_centers = []
@@ -111,7 +115,7 @@ class Camelyon16Raw(Dataset):
         return len(self.features_paths)
 
     def __getitem__(self, idx):
-        start = 3 if self.remove_spatial_info else 0
+        start = 0
         X = np.load(self.features_paths[idx])[:, start:]
         X = torch.from_numpy(X).to(self.X_dtype)
         y = torch.from_numpy(np.asarray(self.features_labels[idx])).to(self.y_dtype)
@@ -134,7 +138,6 @@ class FedCamelyon16(Camelyon16Raw):
         pooled=False,
         X_dtype=torch.float32,
         y_dtype=torch.int64,
-        remove_spatial_info=True,
     ):
         """Instantiate the dataset
         Parameters
@@ -145,11 +148,9 @@ class FedCamelyon16(Camelyon16Raw):
             Dtype for inputs `X`. Defaults to `torch.float32`.
         y_dtype : torch.dtype, optional
             Dtype for labels `y`. Defaults to `torch.int64`.
-        remove_spatial_info : bool, optional
-            Whether to remove spatial information or not. Defaults to True.
         """
         super().__init__(
-            X_dtype=X_dtype, y_dtype=y_dtype, remove_spatial_info=remove_spatial_info
+            X_dtype=X_dtype, y_dtype=y_dtype
         )
         assert center in [0, 1]
         self.centers = [center]

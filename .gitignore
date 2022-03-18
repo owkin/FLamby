@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# config files ignored
+*.yaml
+# no binaries
+*.pickle

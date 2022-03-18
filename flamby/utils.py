@@ -65,7 +65,13 @@ def read_config(config_file):
     -------
     dict
         The parsed config
+    Raises
+    ------
+    FileNotFoundError
+        If the config file does not exist
     """
+    if not(os.path.exists(config_file)):
+        raise FileNotFoundError("Could not find the config to read.")
     with open(config_file, "r") as file:
         dict = yaml.load(file, Loader=yaml.FullLoader)
     return dict
@@ -158,3 +164,31 @@ def write_value_in_config(config_file, key, value):
     dict[key] = value
     with open(config_file, "w") as file:
         yaml.dump(dict, file)
+
+def check_dataset_from_config(debug):
+    try:
+        dict = read_config(get_config_file_path(debug))
+    except FileNotFoundError:
+        if debug:
+            raise ValueError("The dataset was not downloaded, config file \
+                not found for either normal or debug mode. Please refer to \
+                the download instructions inside \
+                FLamby/flamby/datasets/fed_camelyon16\README.md")
+        else:
+            debug = True
+            print("WARNING USING DEBUG MODE DATASET EVEN THOUGH DEBUG WAS \
+                SET TO FALSE, COULD NOT FIND NON DEBUG DATASET CONFIG FILE")
+            try:
+                dict = read_config(get_config_file_path(debug))
+            except FileNotFoundError:
+                raise ValueError("The dataset was not downloaded, config file\
+                not found for either normal or debug mode. Please refer to \
+                the download instructions inside \
+                FLamby/flamby/datasets/fed_camelyon16\README.md")
+    if not(dict["download_complete"]):
+        raise ValueError("It seems the dataset was only partially downloaded, \
+            restart the download script to finish the download.")
+    if not(dict["preprocessing_complete"]):
+        raise ValueError("It seems the preprocessing for this dataset is not \
+             yet finished please run the appropriate preprocessing scripts before use")
+    return dict
