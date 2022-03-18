@@ -1,15 +1,16 @@
-
 import os
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import torch
-import flamby.datasets.fed_camelyon16
-from  flamby.datasets.fed_camelyon16 import METADATA_DICT
 from torch.utils.data import Dataset
 
+import flamby.datasets.fed_camelyon16
+from flamby.datasets.fed_camelyon16 import METADATA_DICT
+
 dic = METADATA_DICT
+
 
 class Camelyon16Raw(Dataset):
     """Pytorch dataset containing all the features, labels and
@@ -192,7 +193,8 @@ def collate_fn(dataset_elements_list, max_tiles=10000):
     Returns
     -------
     Tuple(torch.Tensor, torch.Tensor)
-        X, y two torch tensors of size (len(dataset_elements_list), max_tiles, 2048) and (len(dataset_elements_list),)
+        X, y two torch tensors of size (len(dataset_elements_list), max_tiles, 2048) and
+        (len(dataset_elements_list),)
     """
     n = len(dataset_elements_list)
     X0, y0 = dataset_elements_list[0]
