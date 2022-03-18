@@ -38,6 +38,26 @@ class ImageDataset(Dataset):
 
 
 def main(batch_size, num_workers_torch, remove_big_tiff):
+    """Function tiling slides that have been downloaded using download.py.
+
+    Parameters
+    ----------
+    batch_size : int
+        The number of images to use for batched inference in pytorch.
+    num_workers_torch : int
+        The number of workers to use for parallel data loading to prefetch the
+        next batches.
+    remove_big_tiff : bool
+        Whether or not to get rid of all original slides after tiling.
+
+    Raises
+    ------
+    ValueError
+        If the dataset was not downloaded no tiling is possible.
+    ValueError
+        If the dataset is partially downloaded we don't allow tiling. This
+        constraint might be alleviated in the future.
+    """
     path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
 
     config_file = os.path.join(path_to_config_file, "dataset_location.yaml")
