@@ -42,6 +42,8 @@ def download_dicom_series(uid, output_folder):
     ----------
     uid : str
         The uid of a series
+    output_folder : str
+        The folder where the DICOMs will be downloaded
     Returns
     -------
     str
@@ -108,6 +110,12 @@ def get_SeriesUID_from_xml(path):
 def download_LIDC(output_folder, debug=False):
     """Download the LIDC dataset in the output_folder folder
     and link downloaded DICOMs with annotation files.
+    Parameters
+    ----------
+    output_folder : str
+        The folder where the DICOMs will be downloaded
+    debug : bool, optional
+        If true, download only the first 10 ct scans. Defaults to False.
     Returns
     -------
     pd.DataFrame
