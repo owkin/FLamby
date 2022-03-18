@@ -56,7 +56,6 @@ class LidcIdriRaw(Dataset):
         self.features_sets = []
         self.debug = debug
 
-        config_file = get_config_file_path(self.debug)
         config_dict = check_dataset_from_config(debug)
         self.ctscans_dir = Path(config_dict["dataset_path"])
 
