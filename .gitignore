@@ -132,3 +132,4 @@ dmypy.json
 *.yaml
 # no binaries
 *.pickle
+*.pkl
