@@ -36,6 +36,7 @@ Then run:
 ```
 python download.py --output-folder ./camelyon16_dataset --path-to-secret /path/towards/client_secrets.json --port 6006
 ```
+The first time this scripts is launched the user will be asked to explicitly allow the app to operate by loging into his/her Google account.
 This will download all of Camelyon's slides in `./camelyon16_dataset`. As there are multiple
 slides that are quite big, this script can take a few hours to complete. It can be stopped and
 resumed anytime however if you are ssh into a server better use detached mode (screenrc/tmux/etc.).

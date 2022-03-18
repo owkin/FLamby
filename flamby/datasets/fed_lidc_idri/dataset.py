@@ -8,7 +8,7 @@ from torch.utils.data import Dataset
 
 import flamby.datasets.fed_lidc_idri
 from flamby.datasets.fed_lidc_idri import METADATA_DICT
-from flamby.utils import get_config_file_path, read_config
+from flamby.utils import check_dataset_from_config
 
 dic = METADATA_DICT
 
@@ -56,16 +56,7 @@ class LidcIdriRaw(Dataset):
         self.features_sets = []
         self.debug = debug
 
-        config_file = get_config_file_path(self.debug)
-        config_dict = read_config(config_file)
-
-        assert config_dict[
-            "download_complete"
-        ], "The dataset was not completely downloaded."
-        assert config_dict[
-            "preprocessing_complete"
-        ], "The preprocessing is not complete."
-
+        config_dict = check_dataset_from_config(debug)
         self.ctscans_dir = Path(config_dict["dataset_path"])
 
         for ctscan in self.ctscans_dir.rglob("*patient.nii.gz"):
