@@ -1,12 +1,12 @@
 import argparse
 
-from flamby.utils import get_config_file_path, write_config
+from flamby.utils import get_config_file_path, write_value_in_config
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--new-path",
-        type=int,
+        type=str,
         help="The new path where the dataset has been oved to.",
         required=True,
     )
@@ -17,4 +17,4 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     path_to_config_file = get_config_file_path(args.debug)
-    write_config(path_to_config_file, "dataset_path", args.new_path)
+    write_value_in_config(path_to_config_file, "dataset_path", args.new_path)

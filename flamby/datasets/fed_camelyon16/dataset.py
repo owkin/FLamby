@@ -7,10 +7,8 @@ import torch
 from torch.utils.data import Dataset
 
 import flamby.datasets.fed_camelyon16
-from flamby.datasets.fed_camelyon16 import METADATA_DICT
 from flamby.utils import check_dataset_from_config
 
-dic = METADATA_DICT
 
 
 class Camelyon16Raw(Dataset):

@@ -5,6 +5,7 @@ import numpy as np
 import torch
 import yaml
 from tqdm import tqdm
+import flamby.datasets as datasets
 
 torch.manual_seed(42)
 torch.use_deterministic_algorithms(True)
@@ -77,13 +78,15 @@ def read_config(config_file):
     return dict
 
 
-def get_config_file_path(debug):
+def get_config_file_path(debug, dataset_name = "fed_camelyon16"):
     """Get the config_file path in real or debug mode.
 
     Parameters
     ----------
     debug : bool
        The mode in which we download the dataset.
+    dataset_name: str
+        The name of the dataset to get the config from.
 
     Returns
     -------
@@ -93,8 +96,9 @@ def get_config_file_path(debug):
     config_file_name = (
         "dataset_location_debug.yaml" if debug else "dataset_location.yaml"
     )
-    path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
-    config_file = os.path.join(path_to_config_file, config_file_name)
+    datasets_dir = str(Path(os.path.realpath(datasets.__file__)).parent.resolve())
+    path_to_config_file_folder = os.path.join(datasets_dir, dataset_name, "dataset_creation_scripts")
+    config_file = os.path.join(path_to_config_file_folder, config_file_name)
     return config_file
 
 
@@ -156,6 +160,7 @@ def write_value_in_config(config_file, key, value):
         If the config file does not exist.
     """
     if not (os.path.exists(config_file)):
+        breakpoint()
         raise ValueError(
             "The config file doesn't exist. \
             Please create the config file before updating it."
