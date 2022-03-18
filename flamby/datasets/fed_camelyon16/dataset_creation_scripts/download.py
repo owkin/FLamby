@@ -2,6 +2,7 @@ import argparse
 import io
 import os
 import re
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -31,7 +32,10 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
         Whether or not to download only a few images to check feasibility,
         by default False
     """
-
+    if debug:
+        print(
+            "WARNING YOU ARE DOWNLOADING ONLY PART OF THE DATASET YOU ARE IN DEBUG MODE !"
+        )
     train_df = pd.read_csv(
         str(Path(SLIDES_LINKS_FOLDER) / Path("training_slides_links_drive.csv"))
     )
@@ -61,7 +65,7 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
         downloaded_images_status_file.Slide.iloc[: len(train_df.index)] = train_df[
             "name"
         ]
-        downloaded_images_status_file.Slide.iloc[len(train_df.index):] = test_df["name"]
+        downloaded_images_status_file.Slide.iloc[len(train_df.index) :] = test_df["name"]
         downloaded_images_status_file.to_csv(
             downloaded_images_status_file_path, index=False
         )
@@ -69,21 +73,29 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
         downloaded_images_status_file = pd.read_csv(downloaded_images_status_file_path)
 
     # Creating config file with path to dataset
-    path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
-    dataset_path = os.path.realpath(output_folder)
-
-    dict = {
-        "dataset_path": dataset_path,
-        "download_complete": False,
-        "preprocessing_complete": False,
-    }
     config_file_name = (
         "dataset_location_debug.yaml" if debug else "dataset_location.yaml"
     )
+    path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
     config_file = os.path.join(path_to_config_file, config_file_name)
 
-    with open(config_file, "w") as file:
-        yaml.dump(dict, file)
+    if not (os.path.exists(config_file)):
+        dataset_path = os.path.realpath(output_folder)
+        dict = {
+            "dataset_path": dataset_path,
+            "download_complete": False,
+            "preprocessing_complete": False,
+        }
+
+        with open(config_file, "w") as file:
+            yaml.dump(dict, file)
+    else:
+        with open(config_file, "r") as file:
+            dict = yaml.load(file, Loader=yaml.FullLoader)
+        if dict["download_complete"]:
+            print("You have already downloaded the slides, aborting.")
+            sys.exit()
+        dataset_path = dict["dataset_path"]
 
     drive_service = Create_Service(
         path_to_secret,
