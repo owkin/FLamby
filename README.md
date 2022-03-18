@@ -1,4 +1,7 @@
 # FLamby
+ PLACEHOLDER LOGO
+
+## Table of Contents
 - [Overview](#overview)
 - [Source datasets](#source-datasets)
 - [Extending FLamby](#extending-flamby)
@@ -45,7 +48,7 @@ First setup a virtual environment (optional) with Python>=3.8.
 conda create -n flamby_env python=3.8
 conda activate flamby_env
 ```
-Then install the FLamby benchmark by executing:
+The next step is to git clone the repository and to cd inside the FLamby directory then the FLamby benchmark can be installed by executing:
 ```
 pip install flamby
 ```
@@ -57,14 +60,31 @@ all the datasets you are interested in by following the instructions provided in
 ## Usage
 
 Look at our tutorials and get started sections.
+#TODO write tutorials and get started sections
 
 ## Contributing
 
 After installing the package in dev mode (``pip install -e .``)
-You should also initialize ``pre-commit``:
+You should also initialize ``pre-commit`` by running:
 ```
 pre-commit install
 ```
 
 The ``pre-commit`` tool will automatically run [black](https://github.com/psf/black) and 
 [isort](https://github.com/PyCQA/isort) and check [flake8](https://flake8.pycqa.org/en/latest/) compatibility.
+Which will format the code automatically making the code more homogeneous and helping catching typos and errors.
+
+Looking and or commenting the open issues is a good way to start. Once you have found a way to contribute the next steps are:
+- Following the installation instructions but using the -e option when pip installing
+- Installing pre-commit
+- Creating a new branch following the convention name_contributor/short_explicit_name-wpi: `git checkout -b name_contributor/short_explicit_name-wpi`
+- Potentially pushing the branch to origin with : `git push origin name_contributor/short_explicit_name-wpi`
+- Working on the branch locally by making commits frequently: `git commit -m explicit description of the commit's content`
+- Once the branch is ready or after considering you have made significant progresses opening a Pull Request using Github interface, selecting your branch as a source and the target to be the main branch and creating the PR **in DRAFT MODE**  after having made **an explicit description of the content of the PR** and potentially linking to related issues.
+Rebasing the branch onto main by doing `git fetch origin` and  `git rebase origin/main`.
+- Waiting for reviews then commiting and pushing changes to comply with the reviewer's requests
+- Once the PR is approved click on the arrow on the right of the merge button to select rebase and click on it
+
+
+
+
