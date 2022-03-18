@@ -8,6 +8,7 @@ from torch.utils.data import Dataset
 
 import flamby.datasets.fed_lidc_idri
 from flamby.datasets.fed_lidc_idri import METADATA_DICT
+from flamby.utils import get_config_file_path, read_config
 
 dic = METADATA_DICT
 
@@ -27,21 +28,21 @@ class LidcIdriRaw(Dataset):
     features_sets: list[str], The list for all sets (train/test) for all features
     X_dtype: torch.dtype, The dtype of the X features output
     y_dtype: torch.dtype, The dtype of the y label output
+    debug : bool, whether the dataset was processed in debug mode (first 10 files)
     """
 
-    def __init__(self, ctscans_dir=".", X_dtype=torch.float32, y_dtype=torch.int64):
+    def __init__(self, X_dtype=torch.float32, y_dtype=torch.int64, debug=False):
         """
         See description above
         Parameters
         ----------
-        ctscans_dir : str, optional
-          The directory where all ctscans are located. Defaults to '.'.
         X_dtype : torch.dtype, optional
           Dtype for inputs `X`. Defaults to `torch.float32`.
         y_dtype : torch.dtype, optional
           Dtype for labels `y`. Defaults to `torch.int64`.
+        debug : bool, optional
+            Whether the dataset was downloaded in debug mode. Defaults to false.
         """
-        self.ctscans_dir = Path(ctscans_dir)
         self.metadata = pd.read_csv(
             Path(os.path.dirname(flamby.datasets.fed_lidc_idri.__file__))
             / Path("metadata")
@@ -53,6 +54,19 @@ class LidcIdriRaw(Dataset):
         self.masks_paths = []
         self.features_centers = []
         self.features_sets = []
+        self.debug = debug
+
+        config_file = get_config_file_path(self.debug)
+        config_dict = read_config(config_file)
+
+        assert config_dict[
+            "download_complete"
+        ], "The dataset was not completely downloaded."
+        assert config_dict[
+            "preprocessing_complete"
+        ], "The preprocessing is not complete."
+
+        self.ctscans_dir = Path(config_dict["dataset_path"])
 
         for ctscan in self.ctscans_dir.rglob("*patient.nii.gz"):
             ctscan_name = os.path.basename(os.path.dirname(ctscan))
@@ -90,19 +104,17 @@ class FedLidcIdri(LidcIdriRaw):
 
     def __init__(
         self,
-        ctscans_dir=".",
         X_dtype=torch.float32,
         y_dtype=torch.int64,
         center=0,
         train=True,
         pooled=False,
+        debug=False,
     ):
         """
         Instantiate the dataset
         Parameters
         ----------
-        ctscans_dir : str, optional
-            The directory where all ctscans are located. Defaults to '.'.
         X_dtype : torch.dtype, optional
             Dtype for inputs `X`. Defaults to `torch.float32`.
         y_dtype : torch.dtype, optional
@@ -114,9 +126,11 @@ class FedLidcIdri(LidcIdriRaw):
         pooled : bool, optional
             Whether to take all data from the 2 centers into one dataset.
             If True, supersedes center argument. Defaults to False.
+        debug : bool, optional
+            Whether the dataset was downloaded in debug mode. Defaults to false.
         """
 
-        super().__init__(ctscans_dir=ctscans_dir, X_dtype=X_dtype, y_dtype=y_dtype)
+        super().__init__(X_dtype=X_dtype, y_dtype=y_dtype, debug=debug)
 
         assert center in [0, 1, 2, 3]
         self.centers = [center]

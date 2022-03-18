@@ -18,6 +18,8 @@ from process_raw import clean_up_dicoms, convert_to_niftis
 # from sklearn.model_selection import train_test_split
 from tciaclient import TCIAClient
 
+from flamby.utils import create_config, get_config_file_path, write_value_in_config
+
 try:
     n_cpus = multiprocessing.cpu_count()
 except NotImplementedError:
@@ -121,6 +123,10 @@ def download_LIDC(output_folder, debug=False):
     pd.DataFrame
         A dataframe with all the information regarding the raw data.
     """
+
+    # Creating config file with path to dataset
+    dict, config_file = create_config(output_folder, debug)
+
     # Get patient X study
     patientXstudy = pd.read_json(
         client.get_patient_study(collection="LIDC-IDRI").read().decode("utf-8")
@@ -187,14 +193,13 @@ def download_LIDC(output_folder, debug=False):
     df = df[df.SeriesInstanceUID != "not found"]
     patientXseries = df.merge(patientXseries, on="SeriesInstanceUID")
 
-    # # We add the path towards the global annotation file as the last patient
-    # patientXseries = patientXseries.append({'PatientID': 'annotations',
-    # 'extraction_location': re.sub(".zip", "", annotations_path)}, ignore_index=True)
+    # Update yaml file
+    write_value_in_config(config_file, "download_complete", True)
 
     return patientXseries
 
 
-def LIDC_to_niftis(extraction_results_dataframe, spacing=[1.0, 1.0, 1.0]):
+def LIDC_to_niftis(extraction_results_dataframe, spacing=[1.0, 1.0, 1.0], debug=False):
     """Turns the raw dataset to nifti formats
     Parameters
     ----------
@@ -202,6 +207,8 @@ def LIDC_to_niftis(extraction_results_dataframe, spacing=[1.0, 1.0, 1.0]):
         Dataframe
     spacing : list, optional
         The spacing to use for the nifti conversion
+    debug : bool, optional
+        In debug mode, only the first 10 files are preprocessed. Defaults to False.
     Returns
     -------
     pd.DataFrame
@@ -228,12 +235,16 @@ def LIDC_to_niftis(extraction_results_dataframe, spacing=[1.0, 1.0, 1.0]):
     final_shape = extraction_results_dataframe.shape[0]
     print(f"{final_shape}/{initial_shape} DICOMs folders successfully converted.")
 
+    # Update config file
+    config_file = get_config_file_path(debug)
+    write_value_in_config(config_file, "preprocessing_complete", True)
+
     return extraction_results_dataframe
 
 
 def main(output_folder, debug=False, keep_dicoms=False):
     patientXseries = download_LIDC(output_folder, debug)
-    LIDC_to_niftis(patientXseries)
+    LIDC_to_niftis(patientXseries, debug=debug)
 
     if not keep_dicoms:
         # Clean up DICOMS
