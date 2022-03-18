@@ -160,8 +160,7 @@ def write_value_in_config(config_file, key, value):
         If the config file does not exist.
     """
     if not (os.path.exists(config_file)):
-        breakpoint()
-        raise ValueError(
+        raise FileNotFoundError(
             "The config file doesn't exist. \
             Please create the config file before updating it."
         )
@@ -171,6 +170,19 @@ def write_value_in_config(config_file, key, value):
         yaml.dump(dict, file)
 
 def check_dataset_from_config(debug):
+    """Verify that the dataset is ready to be used by reading info from the config
+    files.
+
+    Parameters
+    ----------
+    debug : bool
+        Whether to use the debug dataset or not.
+
+    Raises
+    ------
+    ValueError
+        The dataset download or preprocessing did not finish.
+    """
     try:
         dict = read_config(get_config_file_path(debug))
     except FileNotFoundError:
