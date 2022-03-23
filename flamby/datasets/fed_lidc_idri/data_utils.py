@@ -3,6 +3,50 @@ import torch
 import torch.nn.functional as F
 
 
+class Sampler(object):
+    """
+    Attributes
+    ----------
+    patch_shape : int Tuple
+        Desired patch shape
+    n_samples : int
+        Number of patches to sample per input
+    algo : str
+        Sampling algorithm. Default = 'random'.
+    """
+
+    def __init__(self, patch_shape=(48, 48, 48), n_samples=2, algo="random"):
+        """
+        Parameters
+        ----------
+        patch_shape : int Tuple
+            Desired patch shape
+        n_samples : int
+            Number of patches to sample per input
+        algo : str
+            Sampling algorithm. Default = 'random'.
+        """
+        self.patch_shape = patch_shape
+        self.n_samples = n_samples
+        assert algo in ["random"], "Unsupported sampling algorithm."
+        self.algo = algo
+
+    def __call__(self, X, y):
+        """
+        Sample patches from image X and label (mask) y.
+        Parameters
+        ----------
+        X : torch.Tensor
+        y : torch.Tensor
+        Returns
+        -------
+        image_patches : torch.Tensor
+        label_patches : torch.Tensor
+        """
+        if self.algo == "random":
+            return random_sampler(X, y, self.patch_shape, self.n_samples)
+
+
 def resize_by_crop_or_pad(X, output_shape=(384, 384, 384)):
     """
     Resizes by padding or cropping centered on the image.
