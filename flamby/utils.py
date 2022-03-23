@@ -206,11 +206,10 @@ def check_dataset_from_config(dataset_name, debug):
         dict = read_config(get_config_file_path(dataset_name, debug))
     except FileNotFoundError:
         if debug:
-            raise ValueError(
-                f"The dataset was not downloaded, config file "
-                "not found for debug mode. Please refer to "
-                "the download instructions inside "
-                f"FLamby/flamby/datasets/{dataset_name}/README.md"
+            raise ValueError("The dataset was not downloaded, config file \
+                not found for debug mode. Please refer to \
+                the download instructions inside \
+                FLamby/flamby/datasets/fed_camelyon16/README.md"
             )
         else:
             debug = True
