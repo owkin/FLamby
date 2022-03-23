@@ -28,7 +28,7 @@ class Camelyon16Raw(Dataset):
     """
 
     def __init__(
-        self, X_dtype=torch.float32, y_dtype=torch.int64, debug=False,
+        self, X_dtype=torch.float32, y_dtype=torch.float32, debug=False,
     ):
         """See description above
         Parameters
@@ -142,7 +142,7 @@ class FedCamelyon16(Camelyon16Raw):
         train=True,
         pooled=False,
         X_dtype=torch.float32,
-        y_dtype=torch.int64,
+        y_dtype=torch.float32,
         debug=False,
     ):
         """Instantiate the dataset
