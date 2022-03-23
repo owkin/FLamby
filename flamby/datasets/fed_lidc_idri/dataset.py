@@ -8,7 +8,7 @@ from torch.utils.data import Dataset
 
 import flamby.datasets.fed_lidc_idri
 from flamby.datasets.fed_lidc_idri import METADATA_DICT
-from flamby.datasets.fed_lidc_idri.data_utils import resize_by_crop_or_pad
+from flamby.datasets.fed_lidc_idri.data_utils import Sampler, resize_by_crop_or_pad
 from flamby.utils import check_dataset_from_config
 
 dic = METADATA_DICT
@@ -32,14 +32,16 @@ class LidcIdriRaw(Dataset):
     debug : bool, whether the dataset was processed in debug mode (first 10 files)
     transform : torch.torchvision.Transform or None, Transformation to perform on data
     out_shape : Tuple or None, The desired output shape (If None, no reshaping)
+    sampler: Sampler object, algorithm to sample patches
     """
 
     def __init__(
         self,
         X_dtype=torch.float32,
         y_dtype=torch.int64,
-        transform=None,
         out_shape=(384, 384, 384),
+        sampler=Sampler(),
+        transform=None,
         debug=False,
     ):
         """
@@ -47,9 +49,11 @@ class LidcIdriRaw(Dataset):
         Parameters
         ----------
         X_dtype : torch.dtype, optional
-          Dtype for inputs `X`. Defaults to `torch.float32`.
+            Dtype for inputs `X`. Defaults to `torch.float32`.
         y_dtype : torch.dtype, optional
-          Dtype for labels `y`. Defaults to `torch.int64`.
+            Dtype for labels `y`. Defaults to `torch.int64`.
+        sampler : flamby.datasets.fed_lidc_idri.data_utils.Sampler
+            Patch sampling method.
         transform : torch.torchvision.Transform or None, optional.
             Transformation to perform on each data point.
         out_shape : Tuple or None, optional
@@ -72,6 +76,7 @@ class LidcIdriRaw(Dataset):
         self.features_centers = []
         self.features_sets = []
         self.debug = debug
+        self.sampler = sampler
 
         config_dict = check_dataset_from_config(debug, dataset_name="fed_lidc_idri")
         self.ctscans_dir = Path(config_dict["dataset_path"])
@@ -105,7 +110,7 @@ class LidcIdriRaw(Dataset):
         y = nib.load(self.masks_paths[idx])
         y = torch.from_numpy(y.get_fdata()).to(self.y_dtype)
         y = resize_by_crop_or_pad(y, self.out_shape)
-        return X, y
+        return self.sampler(X, y)
 
 
 class FedLidcIdri(LidcIdriRaw):
@@ -119,6 +124,7 @@ class FedLidcIdri(LidcIdriRaw):
         X_dtype=torch.float32,
         y_dtype=torch.int64,
         out_shape=(384, 384, 384),
+        sampler=Sampler(),
         transform=None,
         center=0,
         train=True,
@@ -136,6 +142,8 @@ class FedLidcIdri(LidcIdriRaw):
         out_shape : Tuple or None, optional
             The desired output shape. If None, no padding or cropping is performed.
             Default is (384, 384, 384).
+        sampler : flamby.datasets.fed_lidc_idri.data_utils.Sampler
+            Patch sampling method.
         transform : torch.torchvision.Transform or None, optional.
             Transformation to perform on each data point.
         center : int, optional
@@ -153,6 +161,7 @@ class FedLidcIdri(LidcIdriRaw):
             X_dtype=X_dtype,
             y_dtype=y_dtype,
             out_shape=out_shape,
+            sampler=sampler,
             transform=transform,
             debug=debug,
         )
