@@ -39,14 +39,9 @@ class Camelyon16Raw(Dataset):
             Whether or not to use only the part of the dataset downloaded in
             debug mode. Defaults to False.
         """
-        dict = check_dataset_from_config("fed_camelyon16", debug)
+        dict = check_dataset_from_config(debug)
         self.tiles_dir = Path(dict["dataset_path"])
-        path_to_labels_file = str(
-            Path(
-                os.path.dirname(flamby.datasets.fed_camelyon16.__file__)
-                / Path("labels.csv")
-            )
-        )
+        path_to_labels_file = str(Path(os.path.dirname(flamby.datasets.fed_camelyon16.__file__) / Path("labels.csv")))
         self.labels = pd.read_csv(path_to_labels_file, index_col="filenames")
         self.metadata = pd.read_csv(
             Path(os.path.dirname(flamby.datasets.fed_camelyon16.__file__))
@@ -109,19 +104,12 @@ class Camelyon16Raw(Dataset):
             self.features_labels.append(label_from_data)
             self.features_centers.append(center_from_metadata)
         if len(self.features_paths) < len(self.labels.index):
-            if not (self.debug):
-                raise ValueError(
-                    f"You have {len(self.features_paths)} features found in \
-                    {str(self.tiles_dir)} instead of {len(self.labels.index)} \
-                (full Camelyon16 dataset), please go back to the installation \
-                        instructions."
-                )
+            if not(self.debug):
+                raise ValueError(f"You have {len(self.features_paths)} features found in {str(self.tiles_dir)} \
+                    instead of {len(self.labels.index)} (full Camelyon16 dataset), please go back to the installation \
+                        instructions.")
             else:
-                print(
-                    f"Warning you are operating on a reduced dataset in \
-                    DEBUG mode with in total \
-                {len(self.features_paths)}/{len(self.labels.index)} features."
-                )
+                print(f"Warning you are operating on a reduced dataset in DEBUG mode with in total {len(self.features_paths)}/{len(self.labels.index)} features.")
 
     def __len__(self):
         return len(self.features_paths)
@@ -149,7 +137,7 @@ class FedCamelyon16(Camelyon16Raw):
         train=True,
         pooled=False,
         X_dtype=torch.float32,
-        y_dtype=torch.float32,
+        y_dtype=torch.int64,
         debug=False,
     ):
         """Instantiate the dataset
@@ -165,7 +153,9 @@ class FedCamelyon16(Camelyon16Raw):
             Whether or not to use only the part of the dataset downloaded in
             debug mode. Defaults to False.
         """
-        super().__init__(X_dtype=X_dtype, y_dtype=y_dtype, debug=debug)
+        super().__init__(
+            X_dtype=X_dtype, y_dtype=y_dtype, debug=debug,
+        )
         assert center in [0, 1]
         self.centers = [center]
         if pooled:

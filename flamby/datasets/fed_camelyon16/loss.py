@@ -8,4 +8,6 @@ class BaselineLoss(_Loss):
         self.bce = torch.nn.BCEWithLogitsLoss()
 
     def forward(self, input: torch.Tensor, target: torch.Tensor):
-        return self.bce(input, target)
+        y_pred = input
+        bce = torch.nn.BCEWithLogitsLoss()
+        return bce(y_pred, target)
