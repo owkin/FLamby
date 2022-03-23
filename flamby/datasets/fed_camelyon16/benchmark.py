@@ -75,7 +75,7 @@ results = np.array(results)
 if LOG:
     writer = SummaryWriter(log_dir=f"./runs/tests")
     for i in range(results.shape[0]):
-        writer.add_scalar(f"AUC/client_test", results[i], 0)
+        writer.add_scalar(f"AUC/client_test_{i}", results[i], 0)
 
 
 print("Benchmark Results on Camelyon16 pooled:")
