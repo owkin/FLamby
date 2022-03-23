@@ -39,11 +39,10 @@ class Camelyon16Raw(Dataset):
             Dtype for labels `y`. Defaults to `torch.int64`.
         debug : bool, optional,
             Whether or not to use only the part of the dataset downloaded in
-            debug mode.
+            debug mode. Defaults to False.
         """
         dict = check_dataset_from_config(debug)
-
-        self.tiles_dir = dict["dataset_path"]
+        self.tiles_dir = Path(dict["dataset_path"])
         path_to_labels_file = str(Path(os.path.dirname(flamby.datasets.fed_camelyon16.__file__) / Path("labels.csv")))
         self.labels = pd.read_csv(path_to_labels_file, index_col="filenames")
         self.metadata = pd.read_csv(
@@ -53,6 +52,7 @@ class Camelyon16Raw(Dataset):
         )
         self.X_dtype = X_dtype
         self.y_dtype = y_dtype
+        self.debug = debug
         self.features_paths = []
         self.features_labels = []
         self.features_centers = []
@@ -108,6 +108,13 @@ class Camelyon16Raw(Dataset):
             self.features_paths.append(slide)
             self.features_labels.append(label_from_data)
             self.features_centers.append(center_from_metadata)
+        if len(self.features_paths) < len(self.labels.index):
+            if not(self.debug):
+                raise ValueError(f"You have {len(self.features_paths)} features found in {str(self.tiles_dir)} \
+                    instead of {len(self.labels.index)} (full Camelyon16 dataset), please go back to the installation \
+                        instructions.")
+            else:
+                print(f"Warning you are operating on a reduced dataset in DEBUG mode with in total {len(self.features_paths)}/{len(self.labels.index)} features.")
 
     def __len__(self):
         return len(self.features_paths)
@@ -136,6 +143,7 @@ class FedCamelyon16(Camelyon16Raw):
         pooled=False,
         X_dtype=torch.float32,
         y_dtype=torch.int64,
+        debug=False,
     ):
         """Instantiate the dataset
         Parameters
@@ -146,9 +154,12 @@ class FedCamelyon16(Camelyon16Raw):
             Dtype for inputs `X`. Defaults to `torch.float32`.
         y_dtype : torch.dtype, optional
             Dtype for labels `y`. Defaults to `torch.int64`.
+        debug : bool, optional,
+            Whether or not to use only the part of the dataset downloaded in
+            debug mode. Defaults to False.
         """
         super().__init__(
-            X_dtype=X_dtype, y_dtype=y_dtype
+            X_dtype=X_dtype, y_dtype=y_dtype, debug=debug,
         )
         assert center in [0, 1]
         self.centers = [center]
@@ -200,7 +211,7 @@ def collate_fn(dataset_elements_list, max_tiles=10000):
     X_dtype = X0.dtype
     y_dtype = y0.dtype
     X = torch.zeros((n, max_tiles, 2048), dtype=X_dtype)
-    y = torch.empty((n,), dtype=y_dtype)
+    y = torch.empty((n, 1), dtype=y_dtype)
 
     for i in range(n):
         X_current, y_current = dataset_elements_list[i]
