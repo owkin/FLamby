@@ -8,6 +8,7 @@ from torch.utils.data import Dataset
 
 import flamby.datasets.fed_lidc_idri
 from flamby.datasets.fed_lidc_idri import METADATA_DICT
+from flamby.datasets.fed_lidc_idri.data_utils import resize_by_crop_or_pad
 from flamby.utils import check_dataset_from_config
 
 dic = METADATA_DICT
@@ -29,9 +30,18 @@ class LidcIdriRaw(Dataset):
     X_dtype: torch.dtype, The dtype of the X features output
     y_dtype: torch.dtype, The dtype of the y label output
     debug : bool, whether the dataset was processed in debug mode (first 10 files)
+    transform : torch.torchvision.Transform or None, Transformation to perform on data
+    out_shape : Tuple or None, The desired output shape (If None, no reshaping)
     """
 
-    def __init__(self, X_dtype=torch.float32, y_dtype=torch.int64, debug=False):
+    def __init__(
+        self,
+        X_dtype=torch.float32,
+        y_dtype=torch.int64,
+        transform=None,
+        out_shape=(384, 384, 384),
+        debug=False,
+    ):
         """
         See description above
         Parameters
@@ -40,6 +50,11 @@ class LidcIdriRaw(Dataset):
           Dtype for inputs `X`. Defaults to `torch.float32`.
         y_dtype : torch.dtype, optional
           Dtype for labels `y`. Defaults to `torch.int64`.
+        transform : torch.torchvision.Transform or None, optional.
+            Transformation to perform on each data point.
+        out_shape : Tuple or None, optional
+            The desired output shape. If None, no padding or cropping is performed.
+            Default is (384, 384, 384).
         debug : bool, optional
             Whether the dataset was downloaded in debug mode. Defaults to false.
         """
@@ -50,6 +65,8 @@ class LidcIdriRaw(Dataset):
         )
         self.X_dtype = X_dtype
         self.y_dtype = y_dtype
+        self.out_shape = out_shape
+        self.transform = transform
         self.features_paths = []
         self.masks_paths = []
         self.features_centers = []
@@ -84,8 +101,12 @@ class LidcIdriRaw(Dataset):
     def __getitem__(self, idx):
         X = nib.load(self.features_paths[idx])
         X = torch.from_numpy(X.get_fdata()).to(self.X_dtype)
+        X = resize_by_crop_or_pad(X, self.out_shape)
+        if self.transform is not None:
+            X = self.transform(X)
         y = nib.load(self.masks_paths[idx])
         y = torch.from_numpy(y.get_fdata()).to(self.y_dtype)
+        y = resize_by_crop_or_pad(y, self.out_shape)
         return X, y
 
 
@@ -99,6 +120,8 @@ class FedLidcIdri(LidcIdriRaw):
         self,
         X_dtype=torch.float32,
         y_dtype=torch.int64,
+        out_shape=(384, 384, 384),
+        transform=None,
         center=0,
         train=True,
         pooled=False,
@@ -112,6 +135,11 @@ class FedLidcIdri(LidcIdriRaw):
             Dtype for inputs `X`. Defaults to `torch.float32`.
         y_dtype : torch.dtype, optional
             Dtype for labels `y`. Defaults to `torch.int64`.
+        out_shape : Tuple or None, optional
+            The desired output shape. If None, no padding or cropping is performed.
+            Default is (384, 384, 384).
+        transform : torch.torchvision.Transform or None, optional.
+            Transformation to perform on each data point.
         center : int, optional
             Id of the center from which to gather data. Defaults to 0.
         train : bool, optional
@@ -123,7 +151,13 @@ class FedLidcIdri(LidcIdriRaw):
             Whether the dataset was downloaded in debug mode. Defaults to false.
         """
 
-        super().__init__(X_dtype=X_dtype, y_dtype=y_dtype, debug=debug)
+        super().__init__(
+            X_dtype=X_dtype,
+            y_dtype=y_dtype,
+            out_shape=out_shape,
+            transform=transform,
+            debug=debug,
+        )
 
         assert center in [0, 1, 2, 3]
         self.centers = [center]
