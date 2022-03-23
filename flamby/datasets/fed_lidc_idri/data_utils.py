@@ -1,4 +1,3 @@
-import numpy as np
 import torch
 import torch.nn.functional as F
 
@@ -70,18 +69,18 @@ def resize_by_crop_or_pad(X, output_shape=(384, 384, 384)):
     if output_shape is None:
         return X
 
-    output_shape = torch.Size(output_shape)
-    input_shape = X.shape
+    output_shape = torch.tensor(output_shape)
+    input_shape = torch.tensor(X.shape)
 
     # Pad missing dimensions
-    missing = np.maximum(np.subtract(output_shape, input_shape), 0)
+    missing = torch.clamp(output_shape - input_shape, min=0)
     pad_begin = missing // 2
-    pad_last = np.maximum(output_shape, input_shape) - pad_begin - input_shape
-    padding = np.stack([pad_begin, pad_last], axis=-1).flatten()
-    X = F.pad(X, tuple(padding[::-1]))
+    pad_last = torch.maximum(output_shape, input_shape) - pad_begin - input_shape
+    padding = torch.stack([pad_begin, pad_last], dim=-1).flatten()
+    X = F.pad(X, tuple(padding)[::-1])
 
     # Crop extra
-    extra = np.maximum(np.subtract(X.shape, output_shape), 0) // 2
+    extra = torch.clamp(torch.tensor(X.shape) - output_shape, min=0) // 2
     # Is there a way to vectorize this?
     for d, start in enumerate(extra):
         X = X.narrow(d, start, output_shape[d])
@@ -110,11 +109,11 @@ def random_sampler(image, label, patch_shape=(48, 48, 48), n_samples=2):
         random label patches (at same positions as images)
     """
     # Assumes one channel for the image
-    maxvals = np.maximum(np.subtract(image.shape, patch_shape), 1)
+    maxvals = torch.clamp(torch.tensor(image.shape) - torch.tensor(patch_shape), min=1)
 
-    begins = (torch.rand((n_samples, image.dim())) * np.max(maxvals)).long() % maxvals[
-        None, ...
-    ]
+    begins = (
+        torch.rand((n_samples, image.dim())) * torch.max(maxvals)
+    ).long() % maxvals[None, ...]
 
     begins = begins[:, None, None, None, :]
 
