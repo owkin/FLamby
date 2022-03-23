@@ -3,11 +3,12 @@ from torch.utils.data import DataLoader as dl
 import torch.optim as optim
 from flamby.utils import evaluate_model_on_tests
 import torch
+from tqdm import tqdm
 
 
 BATCH_SIZE = 64
 NUM_WORKERS_TORCH = 10
-NUM_EPOCHS = 0
+NUM_EPOCHS = 30
 DEBUG = False
 
 training_dl = dl(FedCamelyon16(train=True, pooled=True, debug=DEBUG), num_workers=NUM_WORKERS_TORCH, batch_size=BATCH_SIZE, collate_fn=collate_fn, shuffle=True)
@@ -17,7 +18,7 @@ m = Baseline()
 loss = BaselineLoss()
 optimizer = optim.SGD(m.parameters(), lr=0.001, momentum=0.9)
 
-for e in range(NUM_EPOCHS):
+for e in tqdm(range(NUM_EPOCHS)):
     for X, y in training_dl:
         if torch.cuda.is_available():
             X = X.cuda()
@@ -25,10 +26,9 @@ for e in range(NUM_EPOCHS):
         
         optimizer.zero_grad()
         y_pred = m(X)
-        breakpoint()
         l = loss(y_pred, y)
         l.backward()
-        otimizer.step()
+        optimizer.step()
 
 print(evaluate_model_on_tests(m, [test_dl], metric))
 
