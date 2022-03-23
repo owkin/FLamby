@@ -1,4 +1,4 @@
-from flamby.datasets.fed_camelyon16 import FedCamelyon16, Baseline, BaselineLoss, metric, collate_fn
+from flamby.datasets.fed_camelyon16 import FedCamelyon16, Baseline, BaselineLoss, metric, collate_fn, BATCH_SIZE, NUM_EPOCHS_POOLED, LR
 from torch.utils.data import DataLoader as dl
 import torch.optim as optim
 from flamby.utils import evaluate_model_on_tests
@@ -10,13 +10,11 @@ from torch.utils.tensorboard import SummaryWriter
 torch.use_deterministic_algorithms(True)
 
 
-BATCH_SIZE = 32
 NUM_WORKERS_TORCH = 20
-NUM_EPOCHS = 40
 DEBUG = False
 LOG = True
 LOG_PERIOD = 10 
-LR = 0.001
+
 
 metrics_dict = {"AUC": metric}
 training_dl = dl(FedCamelyon16(train=True, pooled=True, debug=DEBUG), num_workers=NUM_WORKERS_TORCH, batch_size=BATCH_SIZE, collate_fn=collate_fn, shuffle=True)
@@ -44,7 +42,7 @@ for seed in range(42, 47):
         # We create one summarywriter for each seed in order to overlay the plots
         writer = SummaryWriter(log_dir=f"./runs/seed{seed}")
 
-    for e in tqdm(range(NUM_EPOCHS)):
+    for e in tqdm(range(NUM_EPOCHS_POOLED)):
         if LOG:
             # At each epoch we look at the histograms of all the network's parameters
             for name, p in m.named_parameters():
