@@ -5,6 +5,7 @@ import numpy as np
 import torch
 import yaml
 from tqdm import tqdm
+
 import flamby.datasets as datasets
 
 torch.manual_seed(42)
@@ -34,6 +35,8 @@ def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
         as leaves.
     """
     results_dict = {}
+    if torch.cuda.is_available() and use_gpu:
+        model = model.cuda()
     with torch.inference_mode():
         for i in tqdm(range(len(test_dataloaders))):
             test_dataloader_iterator = iter(test_dataloaders[i])
@@ -43,7 +46,6 @@ def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
                 if torch.cuda.is_available() and use_gpu:
                     X = X.cuda()
                     y = y.cuda()
-                    model = model.cuda()
                 y_pred = model(X).detach().cpu()
                 y = y.detach().cpu()
                 y_pred_final.append(y_pred.numpy())
@@ -71,14 +73,14 @@ def read_config(config_file):
     FileNotFoundError
         If the config file does not exist
     """
-    if not(os.path.exists(config_file)):
+    if not (os.path.exists(config_file)):
         raise FileNotFoundError("Could not find the config to read.")
     with open(config_file, "r") as file:
         dict = yaml.load(file, Loader=yaml.FullLoader)
     return dict
 
 
-def get_config_file_path(debug, dataset_name = "fed_camelyon16"):
+def get_config_file_path(debug, dataset_name="fed_camelyon16"):
     """Get the config_file path in real or debug mode.
 
     Parameters
@@ -93,11 +95,18 @@ def get_config_file_path(debug, dataset_name = "fed_camelyon16"):
     str
         The path towards the config file.
     """
+    assert dataset_name in [
+        "fed_camelyon16",
+        "fed_isic2019",
+        "fed_lidc_idri",
+    ], f"Dataset name {dataset_name} not valid."
     config_file_name = (
         "dataset_location_debug.yaml" if debug else "dataset_location.yaml"
     )
     datasets_dir = str(Path(os.path.realpath(datasets.__file__)).parent.resolve())
-    path_to_config_file_folder = os.path.join(datasets_dir, dataset_name, "dataset_creation_scripts")
+    path_to_config_file_folder = os.path.join(
+        datasets_dir, dataset_name, "dataset_creation_scripts"
+    )
     config_file = os.path.join(path_to_config_file_folder, config_file_name)
     return config_file
 
@@ -169,12 +178,15 @@ def write_value_in_config(config_file, key, value):
     with open(config_file, "w") as file:
         yaml.dump(dict, file)
 
-def check_dataset_from_config(debug):
+
+def check_dataset_from_config(dataset_name, debug):
     """Verify that the dataset is ready to be used by reading info from the config
     files.
 
     Parameters
     ----------
+    dataset_name: str
+        The name of the dataset to check
     debug : bool
         Whether to use the debug dataset or not.
     Returns
@@ -187,28 +199,38 @@ def check_dataset_from_config(debug):
         The dataset download or preprocessing did not finish.
     """
     try:
-        dict = read_config(get_config_file_path(debug))
+        dict = read_config(get_config_file_path(debug, dataset_name))
     except FileNotFoundError:
         if debug:
-            raise ValueError("The dataset was not downloaded, config file \
+            raise ValueError(
+                f"The dataset was not downloaded, config file \
                 not found for debug mode. Please refer to \
                 the download instructions inside \
-                FLamby/flamby/datasets/fed_camelyon16/README.md")
+                FLamby/flamby/datasets/{dataset_name}/README.md"
+            )
         else:
             debug = True
-            print("WARNING USING DEBUG MODE DATASET EVEN THOUGH DEBUG WAS \
-                SET TO FALSE, COULD NOT FIND NON DEBUG DATASET CONFIG FILE")
+            print(
+                "WARNING USING DEBUG MODE DATASET EVEN THOUGH DEBUG WAS \
+                SET TO FALSE, COULD NOT FIND NON DEBUG DATASET CONFIG FILE"
+            )
             try:
                 dict = read_config(get_config_file_path(debug))
             except FileNotFoundError:
-                raise ValueError("The dataset was not downloaded, config file\
+                raise ValueError(
+                    f"The dataset was not downloaded, config file\
                 not found for either normal or debug mode. Please refer to \
                 the download instructions inside \
-                FLamby/flamby/datasets/fed_camelyon16\README.md")
-    if not(dict["download_complete"]):
-        raise ValueError("It seems the dataset was only partially downloaded, \
-            restart the download script to finish the download.")
-    if not(dict["preprocessing_complete"]):
-        raise ValueError("It seems the preprocessing for this dataset is not \
-             yet finished please run the appropriate preprocessing scripts before use")
+                FLamby/flamby/datasets/{dataset_name}/README.md"
+                )
+    if not (dict["download_complete"]):
+        raise ValueError(
+            "It seems the dataset was only partially downloaded, \
+            restart the download script to finish the download."
+        )
+    if not (dict["preprocessing_complete"]):
+        raise ValueError(
+            "It seems the preprocessing for this dataset is not \
+             yet finished please run the appropriate preprocessing scripts before use"
+        )
     return dict

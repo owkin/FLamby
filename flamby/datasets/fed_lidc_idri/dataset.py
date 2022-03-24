@@ -56,7 +56,7 @@ class LidcIdriRaw(Dataset):
         self.features_sets = []
         self.debug = debug
 
-        config_dict = check_dataset_from_config(debug)
+        config_dict = check_dataset_from_config(debug, dataset_name="fed_lidc_idri")
         self.ctscans_dir = Path(config_dict["dataset_path"])
 
         for ctscan in self.ctscans_dir.rglob("*patient.nii.gz"):
