@@ -35,6 +35,8 @@ def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
         as leaves.
     """
     results_dict = {}
+    if torch.cuda.is_available() and use_gpu:
+        model = model.cuda()
     with torch.inference_mode():
         for i in tqdm(range(len(test_dataloaders))):
             test_dataloader_iterator = iter(test_dataloaders[i])
@@ -44,7 +46,6 @@ def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
                 if torch.cuda.is_available() and use_gpu:
                     X = X.cuda()
                     y = y.cuda()
-                    model = model.cuda()
                 y_pred = model(X).detach().cpu()
                 y = y.detach().cpu()
                 y_pred_final.append(y_pred.numpy())
@@ -94,6 +95,11 @@ def get_config_file_path(debug, dataset_name="fed_camelyon16"):
     str
         The path towards the config file.
     """
+    assert dataset_name in [
+        "fed_camelyon16",
+        "fed_isic2019",
+        "fed_lidc_idri",
+    ], f"Dataset name {dataset_name} not valid."
     config_file_name = (
         "dataset_location_debug.yaml" if debug else "dataset_location.yaml"
     )
@@ -173,12 +179,14 @@ def write_value_in_config(config_file, key, value):
         yaml.dump(dict, file)
 
 
-def check_dataset_from_config(debug, dataset_name="fed_camelyon16"):
+def check_dataset_from_config(dataset_name, debug):
     """Verify that the dataset is ready to be used by reading info from the config
     files.
 
     Parameters
     ----------
+    dataset_name: str
+        The name of the dataset to check
     debug : bool
         Whether to use the debug dataset or not.
     Returns
@@ -194,10 +202,12 @@ def check_dataset_from_config(debug, dataset_name="fed_camelyon16"):
         dict = read_config(get_config_file_path(debug, dataset_name))
     except FileNotFoundError:
         if debug:
-            raise ValueError("The dataset was not downloaded, config file \
+            raise ValueError(
+                f"The dataset was not downloaded, config file \
                 not found for debug mode. Please refer to \
                 the download instructions inside \
-                FLamby/flamby/datasets/fed_camelyon16/README.md")
+                FLamby/flamby/datasets/{dataset_name}/README.md"
+            )
         else:
             debug = True
             print(
@@ -208,10 +218,10 @@ def check_dataset_from_config(debug, dataset_name="fed_camelyon16"):
                 dict = read_config(get_config_file_path(debug, dataset_name))
             except FileNotFoundError:
                 raise ValueError(
-                    "The dataset was not downloaded, config file\
+                    f"The dataset was not downloaded, config file\
                 not found for either normal or debug mode. Please refer to \
                 the download instructions inside \
-                FLamby/flamby/datasets/fed_camelyon16/README.md"
+                FLamby/flamby/datasets/{dataset_name}/README.md"
                 )
     if not (dict["download_complete"]):
         raise ValueError(

@@ -15,7 +15,7 @@ class Camelyon16Raw(Dataset):
     metadata for Camelyon16 WS without any discrimination.
     Attributes
     ----------
-    tiles_dir : str, Where all features are located extracted from hogrc
+    tiles_dir : str, Where all features are located
     labels: pd.DataFrame, The ground truth DataFrame for labels
     metadata: pd.DataFrame, The ground truth dataframe for metadata such as centers
     features_paths: list[str], The list with the path towards all features.
@@ -24,6 +24,7 @@ class Camelyon16Raw(Dataset):
     features_sets: list[str], The list for all sets (train/test) for all features
     X_dtype: torch.dtype, The dtype of the X features output
     y_dtype: torch.dtype, The dtype of the y label output
+    debug: bool, Whether or not we use the dataset with only part of the features
     """
 
     def __init__(self, X_dtype=torch.float32, y_dtype=torch.float32, debug=False):
@@ -38,7 +39,7 @@ class Camelyon16Raw(Dataset):
             Whether or not to use only the part of the dataset downloaded in
             debug mode. Defaults to False.
         """
-        dict = check_dataset_from_config(debug)
+        dict = check_dataset_from_config(debug, dataset_name="fed_camelyon16")
         self.tiles_dir = Path(dict["dataset_path"])
         path_to_labels_file = str(
             Path(
