@@ -206,10 +206,12 @@ def check_dataset_from_config(dataset_name, debug):
         dict = read_config(get_config_file_path(dataset_name, debug))
     except FileNotFoundError:
         if debug:
-            raise ValueError("The dataset was not downloaded, config file \
+            raise ValueError(
+                f"The dataset was not downloaded, config file \
                 not found for debug mode. Please refer to \
                 the download instructions inside \
-                FLamby/flamby/datasets/fed_camelyon16/README.md")
+                FLamby/flamby/datasets/{dataset_name}/README.md"
+            )
         else:
             debug = True
             print(
@@ -220,10 +222,10 @@ def check_dataset_from_config(dataset_name, debug):
                 dict = read_config(get_config_file_path(dataset_name, debug))
             except FileNotFoundError:
                 raise ValueError(
-                    f"It seems the dataset {dataset_name} was not downloaded as "
-                    "the config file is not found for either normal or debug "
-                    "mode. Please refer to the download instructions inside "
-                    f"FLamby/flamby/datasets/{dataset_name}/README.md"
+                    f"The dataset was not downloaded, config file\
+                not found for either normal or debug mode. Please refer to \
+                the download instructions inside \
+                FLamby/flamby/datasets/{dataset_name}/README.md"
                 )
     if not (dict["download_complete"]):
         raise ValueError(
