@@ -1,18 +1,63 @@
 import os
-import pandas as pd 
-from sklearn import model_selection
+
 import numpy as np
+import pandas as pd
+from sklearn import model_selection
 
+dic = {
+    "labels": "ISIC_2019_Training_GroundTruth.csv",
+    "metadata_path": "ISIC_2019_Training_Metadata_FL.csv",
+}
 
-if __name__ == '__main__':
-    input_path=os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
-    kf = model_selection.StratifiedKFold(n_splits=5)
-    df = pd.read_csv(os.path.join(input_path, 'ISIC_2019_Training_GroundTruth.csv'))
-    onehot = df[['MEL', 'NV', 'BCC', 'AK', 'BKL', 'DF', 'VASC', 'SCC', 'UNK']].values
-    df['target'] = [np.where(r==1)[0][0] for r in onehot]
-    df['kfold'] = -1
+if __name__ == "__main__":
+
+    input_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    df = pd.read_csv(os.path.join(input_path, dic["labels"]))
+    onehot = df[["MEL", "NV", "BCC", "AK", "BKL", "DF", "VASC", "SCC", "UNK"]].values
+    df["target"] = [np.where(r == 1)[0][0] for r in onehot]
+    df2 = pd.read_csv(os.path.join(input_path, dic["metadata_path"]))
+    df["center"] = df2["dataset"]
+
     df = df.sample(frac=1).reset_index(drop=True)
-    targets = df.target.values
-    for fold, (train_index, test_index) in enumerate(kf.split(X=df[['image']], y=targets)):
-        df.loc[test_index, 'kfold'] = fold
-    df.to_csv(os.path.join(input_path, "train_folds.csv"), index=False)
+    df = df.replace(
+        [
+            "BCN_nan",
+            "HAM_vidir_molemax",
+            "HAM_vidir_modern",
+            "HAM_rosendahl",
+            "MSK4nan",
+            "HAM_vienna_dias",
+        ],
+        ["0", "1", "2", "3", "4", "5"],
+    )
+
+    X = df.image.values
+
+    X_train, X_test = model_selection.train_test_split(X, test_size=0.2, random_state=13)
+    for train_index in X_train:
+        df.loc[df.image == train_index, "fold"] = "train"
+    for test_index in X_test:
+        df.loc[df.image == test_index, "fold"] = "test"
+
+    centers = df.center.values
+
+    X_train_2, X_test_2 = model_selection.train_test_split(
+        X, test_size=0.2, stratify=centers, random_state=13
+    )
+    for train_index in X_train_2:
+        df.loc[df.image == train_index, "fold2"] = (
+            "train" + "_" + df.loc[df.image == train_index, "center"]
+        )
+    for test_index in X_test_2:
+        df.loc[df.image == test_index, "fold2"] = (
+            "test" + "_" + df.loc[df.image == test_index, "center"]
+        )
+
+    df.to_csv(os.path.join(input_path, "train_test_folds.csv"), index=False)
+
+    print(df.shape[0])
+    print(df["target"].value_counts())
+    print(df.groupby(["center", "target"]).size().unstack(fill_value=0))
+    print(df["center"].value_counts())
+    print(df["fold"].value_counts())
+    print(df["fold2"].value_counts())
