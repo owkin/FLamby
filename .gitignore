@@ -490,3 +490,4 @@ flamby/datasets/fed_isic2019/*.zip
 venv
 .vscode
 flamby/datasets/fed_isic2019/melonama/
+flamby/datasets/fed_isic2019/saved_model_state_dict
