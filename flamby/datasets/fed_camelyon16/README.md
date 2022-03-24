@@ -14,7 +14,7 @@ We will use the [Google-Drive-API-v3](https://developers.google.com/drive/api/v3
 | Task              | Weakly Supervised Classification
 
 
-## Download instructions
+## Download and preprocessing instructions
 
 In order to use the Google Drive API we need to have a gmail account and to access the [google developpers console](https://console.cloud.google.com/apis/credentials/consent?authuser=1) in order to get a json containing an OAuth2.0 secret.  
 
@@ -79,7 +79,18 @@ center1 = FedCamelyon16(center=0, train=True)
 center1 = FedCamelyon16(center=1, train=True)
 ```
 
-# TODO benchmarking the baselines WP2
+## Benchmarking the baseline on a pooled setting
+
+In order to benchmark the baseline on the pooled dataset one need to download and preprocess the dataset and launch the following script:
+```
+python benchmark.py --log --num-workers-torch 10 
+```
+This will launch 5 runs and store log results for training in ./runs/seed42-47 and testing in ./runs/tests-seed42-47.
+The command:
+```
+tensorboard --logdir=./runs
+````
+Can then be used to visualize results (use [port forwarding if necessary](https://stackoverflow.com/questions/37987839/how-can-i-run-tensorboard-on-a-remote-server)).
 
 
 
