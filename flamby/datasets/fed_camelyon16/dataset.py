@@ -39,7 +39,7 @@ class Camelyon16Raw(Dataset):
             Whether or not to use only the part of the dataset downloaded in
             debug mode. Defaults to False.
         """
-        dict = check_dataset_from_config(debug)
+        dict = check_dataset_from_config(debug, dataset_name="fed_camelyon16")
         self.tiles_dir = Path(dict["dataset_path"])
         path_to_labels_file = str(Path(os.path.dirname(flamby.datasets.fed_camelyon16.__file__) / Path("labels.csv")))
         self.labels = pd.read_csv(path_to_labels_file, index_col="filenames")

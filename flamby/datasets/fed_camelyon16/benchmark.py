@@ -65,8 +65,7 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
         )
 
     results = []
-    seeds = np.arange(42, 47).tolist()
-    for seed in seeds:
+    for seed in range(42, 47):
         # At each new seed we re-initialize the model
         # and training_dl is shuffled as well
         torch.manual_seed(seed)
@@ -123,9 +122,9 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
     results = np.array(results)
 
     if log:
+        writer = SummaryWriter(log_dir="./runs/tests")
         for i in range(results.shape[0]):
-            writer = SummaryWriter(log_dir=f"./runs/tests_seed{seeds[i]}")
-            writer.add_scalar("AUC-test", results[i], 0)
+            writer.add_scalar("AUC/client_test_{i}", results[i], 0)
 
     print("Benchmark Results on Camelyon16 pooled:")
     print(f"mAUC on 5 runs: {results.mean(): .2%} \\pm {results.std(): .2%}")
@@ -141,7 +140,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--log",
-        action="store_true",
+        action="store_false",
         help="Whether to activate tensorboard logging or not default to no logging",
     )
     parser.add_argument(
