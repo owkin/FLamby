@@ -1,4 +1,4 @@
-# Adapted from the ooriginal DeepMIL implementation from https://github.com/AMLab-Amsterdam/AttentionDeepMIL/blob/master/model.py
+# Adapted from the original DeepMIL implementation from https://github.com/AMLab-Amsterdam/AttentionDeepMIL/blob/master/model.py
 
 import torch
 import torch.nn as nn
