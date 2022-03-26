@@ -150,7 +150,7 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
     if not(os.path.exists(path_to_coords_file)):
         df_predecessor = {"slide_name": [], "coords_x": [], "coords_y": []}
     else:
-        df_predecessor = pd.read_csv(path_to_coords_file).to_dict()
+        df_predecessor = pd.read_csv(path_to_coords_file).to_dict("list")
     # Tiling all downloaded slides with provided model
     for sp in tqdm(slides_paths):
         slide_name = os.path.basename(sp)
