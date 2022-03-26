@@ -111,7 +111,7 @@ def get_config_file_path(debug, dataset_name="fed_camelyon16"):
     return config_file
 
 
-def create_config(output_folder, debug):
+def create_config(output_folder, debug, dataset_name="fed_camelyon16"):
     """Create or modify config file by writing the absolute path of \
         output_folder in its dataset_path key.
 
@@ -121,6 +121,8 @@ def create_config(output_folder, debug):
         The folder where the dataset will be downloaded.
     debug : bool
         Whether or not we are in debug mode.
+    dataset_name: str
+        The name of the dataset to get the config from.
 
     Returns
     -------
@@ -134,7 +136,7 @@ def create_config(output_folder, debug):
     if not (os.path.isdir(output_folder)):
         raise ValueError(f"{output_folder} is not recognized as a folder")
 
-    config_file = get_config_file_path(debug)
+    config_file = get_config_file_path(debug, dataset_name)
 
     if not (os.path.exists(config_file)):
         dataset_path = os.path.realpath(output_folder)
