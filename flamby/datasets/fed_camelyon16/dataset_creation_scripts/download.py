@@ -73,7 +73,7 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
         downloaded_images_status_file = pd.read_csv(downloaded_images_status_file_path)
 
     # Creating config file with path to dataset
-    dict, config_file = create_config(output_folder, debug)
+    dict, config_file = create_config(output_folder, debug, "fed_camelyon16")
     if dict["download_complete"]:
         print("You have already downloaded the slides, aborting.")
         sys.exit()
