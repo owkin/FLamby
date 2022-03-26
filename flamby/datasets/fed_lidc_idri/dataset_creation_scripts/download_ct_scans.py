@@ -125,7 +125,7 @@ def download_LIDC(output_folder, debug=False):
     """
 
     # Creating config file with path to dataset
-    dict, config_file = create_config(output_folder, debug)
+    dict, config_file = create_config(output_folder, debug, "fed_lidc_idri")
 
     # Get patient X study
     patientXstudy = pd.read_json(
