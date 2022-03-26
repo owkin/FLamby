@@ -4,7 +4,7 @@ import sys
 import tempfile
 from glob import glob
 from pathlib import Path
-
+import itertools
 import numpy as np
 import torch
 import torchvision.models as models
@@ -12,42 +12,36 @@ from histolab.slide import Slide
 from histolab.tiler import GridTiler
 from skimage import io
 from torch.nn import Identity
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader, IterableDataset
 from torchvision.transforms import Compose, Normalize, ToTensor
 from tqdm import tqdm
 
 from flamby.utils import read_config, write_value_in_config
 
 
-class ImageDataset(Dataset):
-    def __init__(self, images_paths, transform=None):
-        self.images_paths = images_paths
+class SlideDataset(IterableDataset):
+    def __init__(self, grid_tiles_extractor, slide, transform=None):
         self.transform = transform
-
-    def __len__(self):
-        return len(self.images_paths)
-
-    def __getitem__(self, idx):
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
-        img_name = self.images_paths[idx]
-        # histolab pngs have a transparency channel
-        sample = io.imread(img_name)[:, :, :3]
-        if self.transform:
-            sample = self.transform(sample)
-        return sample
+        self.it = grid_tiles_extractor._tiles_generator(slide)
+    def __iter__(self):
+        for tile in self.it:
+            im = self.transform(tile[0].image.convert("RGB"))
+            coords = tile[1]._asdict()
+            coords_list = []
+            for k, v in coords.items():
+                coords_list.append(v)
+            coords = torch.Tensor(coords_list)
+            yield im, coords
 
 
-def main(batch_size, num_workers_torch, remove_big_tiff):
+def main(batch_size, remove_big_tiff):
     """Function tiling slides that have been downloaded using download.py.
 
     Parameters
     ----------
     batch_size : int
         The number of images to use for batched inference in pytorch.
-    num_workers_torch : int
-        The number of workers to use for parallel data loading to prefetch the
-        next batches.
+
     remove_big_tiff : bool
         Whether or not to get rid of all original slides after tiling.
 
@@ -88,11 +82,10 @@ def main(batch_size, num_workers_torch, remove_big_tiff):
         print("You have already run the preprocessing, aborting.")
         sys.exit()
 
-    slides_dir = dict["dataset_path"]
     slides_paths = glob(os.path.join(slides_dir, "*.tif"))
     grid_tiles_extractor = GridTiler(
-        tile_size=(256, 256),
-        level=0,
+        tile_size=(224, 224),
+        level=1,
         pixel_overlap=0,
         prefix="grid/",
         check_tissue=True,
@@ -121,32 +114,29 @@ def main(batch_size, num_workers_torch, remove_big_tiff):
     # Tiling all downloaded slides with provided model
     for sp in tqdm(slides_paths):
         slide_name = os.path.basename(sp)
+
         path_to_features = os.path.join(slides_dir, slide_name + ".npy")
-        if os.path.exists(path_to_features):
+        if not(os.path.exists(path_to_features)):
             continue
         print(f"Tiling slide {sp}")
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            print(f"Extracting matter tiles images in temporary directory {tmpdirname}")
-            slide = Slide(sp, tmpdirname, use_largeimage=True)
-            grid_tiles_extractor.extract(slide)
-            print("Images extracted")
-            images_list = glob(os.path.join(tmpdirname, "**", "*.png"))
-            dataset_from_slide = ImageDataset(images_list, transform=transform)
-            dataloader = DataLoader(
-                dataset_from_slide,
-                batch_size=batch_size,
-                pin_memory=torch.cuda.is_available(),
-                num_workers=num_workers_torch,
-            )
-            print(f"Forwarding extracted tiles with ResNet50 by batch of {batch_size}")
-            with torch.inference_mode():
-                features = np.zeros((len(images_list), 2048)).astype("float32")
-                for i, batch in enumerate(iter(dataloader)):
-                    if torch.cuda.is_available():
-                        batch = batch.cuda()
-                    start_idx = i * batch_size
-                    end_idx = (i + 1) * batch_size
-                    features[start_idx:end_idx] = net(batch).detach().cpu().numpy()
+        slide = Slide(sp, "./tmp", use_largeimage=True)
+        # We use the matter detection from histolab to tile the dataset
+        dataset_from_slide = SlideDataset(grid_tiles_extractor, slide, transform=transform)
+        dataloader = DataLoader(
+            dataset_from_slide,
+            batch_size=batch_size,
+            pin_memory=torch.cuda.is_available(),
+            num_workers=0,
+            drop_last=False,
+        )
+        print(f"Extracting tiles and forwarding them with ResNet50 by batch of {batch_size}")
+        with torch.inference_mode():
+            features = np.zeros((0, 2048)).astype("float32")
+            for i, (batch_images, batch_coords) in enumerate(iter(dataloader)):
+                if torch.cuda.is_available():
+                    batch_images = batch_images.cuda()
+                features = np.concatenate((features, net(batch_images).detach().cpu().numpy()), axis=0)
+
         np.save(path_to_features, features)
 
     write_value_in_config(config_file, "preprocessing_complete", True)
@@ -166,12 +156,6 @@ if __name__ == "__main__":
         default=64,
     )
     parser.add_argument(
-        "--num-workers-torch",
-        type=int,
-        help="How many workers to use for efficient data handling.",
-        default=10,
-    )
-    parser.add_argument(
         "--remove-big-tiff",
         action="store_true",
         help="Whether or not to remove the original slides images that take \
@@ -179,4 +163,4 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    main(args.batch_size, args.num_workers_torch, args.remove_big_tiff)
+    main(args.batch_size, args.remove_big_tiff)
