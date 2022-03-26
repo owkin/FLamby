@@ -116,7 +116,7 @@ def main(batch_size, remove_big_tiff):
         slide_name = os.path.basename(sp)
 
         path_to_features = os.path.join(slides_dir, slide_name + ".npy")
-        if not(os.path.exists(path_to_features)):
+        if os.path.exists(path_to_features):
             continue
         print(f"Tiling slide {sp}")
         slide = Slide(sp, "./tmp", use_largeimage=True)
