@@ -207,8 +207,6 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
         # Saving features on dict
         np.save(path_to_features, features)
 
-    save_dict_to_csv(df_predecessor, path_to_coords_file)
-
     write_value_in_config(config_file, "preprocessing_complete", True)
 
     if args.remove_big_tiff:
