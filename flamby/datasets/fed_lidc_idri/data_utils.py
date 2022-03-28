@@ -9,26 +9,50 @@ class Sampler(object):
     ----------
     patch_shape : int Tuple
         Desired patch shape
-    n_samples : int
+    n_patches : int
         Number of patches to sample per input
+    ratio : float, optional
+        Ratio of patches with lesions versus patches without.
+    center : boolean, optional
+        If False, add some noise to the coordinates of the centroids.
     algo : str
-        Sampling algorithm. Default = 'random'.
+        Sampling algorithm. Default = 'fast'.
     """
 
-    def __init__(self, patch_shape=(48, 48, 48), n_samples=2, algo="random"):
+    def __init__(
+        self,
+        patch_shape=(48, 48, 48),
+        n_patches=4,
+        ratio=0.8,
+        center=False,
+        algo="fast",
+    ):
         """
         Parameters
         ----------
         patch_shape : int Tuple
             Desired patch shape
-        n_samples : int
+        n_patches : int
             Number of patches to sample per input
+        ratio : float, optional
+            Ratio of patches with lesions versus patches without.
+            Useful to balance the dataset. Only for fast sampler.
+        center : boolean, optional
+            If False, add some noise to the coordinates of the centroids.
+            Only for fast sampler.
         algo : str
             Sampling algorithm. Default = 'random'.
         """
         self.patch_shape = patch_shape
-        self.n_samples = n_samples
-        assert algo in ["random", "all"], "Unsupported sampling algorithm."
+        self.n_patches = n_patches
+        self.ratio = ratio
+        self.center = center
+        assert algo in [
+            "fast",
+            "random",
+            "all",
+            "none",
+        ], "Unsupported sampling algorithm."
         self.algo = algo
 
     def __call__(self, X, y):
@@ -40,13 +64,19 @@ class Sampler(object):
         y : torch.Tensor
         Returns
         -------
-        image_patches : torch.Tensor
-        label_patches : torch.Tensor
+        Two torch.Tensor
+            of shape (n_patches, *desired_shape, n_channels)
         """
-        if self.algo == "random":
-            return random_sampler(X, y, self.patch_shape, self.n_samples)
-        if self.algo == "all":
+        if self.algo == "fast":
+            return fast_sampler(
+                X, y, self.patch_shape, self.n_patches, self.ratio, self.center
+            )
+        elif self.algo == "random":
+            return random_sampler(X, y, self.patch_shape, self.n_patches)
+        elif self.algo == "all":
             return all_sampler(X, y, patch_shape=(48, 48, 48), overlap=0.0)
+        elif self.algo == "none":
+            return X, y
 
 
 def resize_by_crop_or_pad(X, output_shape=(384, 384, 384)):
@@ -129,8 +159,7 @@ def random_sampler(image, label, patch_shape=(48, 48, 48), n_samples=2):
         begins + torch.stack(torch.meshgrid(*ranges, indexing="ij"), dim=-1)[None, ...]
     )
 
-    # Dirty hack to mimic tf.gather_nd
-    indices_list = [indices[..., i] for i in range(indices.shape[-1])]
+    indices_list = build_indices_list(indices)
     image_patches = image[indices_list]
     label_patches = label[indices_list]
 
@@ -198,10 +227,112 @@ def all_sampler(
 
     indices += patch_shape
     # Dirty hack to mimic tf.gather_nd
-    indices_list = [indices[..., i] for i in range(indices.shape[-1])]
+    indices_list = build_indices_list()
 
     image_patches = X[indices_list]
     label_patches = X[indices_list]
+    return image_patches, label_patches
+
+
+def fast_sampler(
+    X,
+    y,
+    patch_shape=(48, 48, 48),
+    n_patches=4,
+    ratio=0.8,
+    center=False,
+):
+    """
+    Parameters
+    ----------
+    image : tf.tensor
+        Input voxel image
+    label : tf.tensor
+        Label mask
+    patch_shape : tuple, optional
+        Desired shape for extracted patches
+    n_patches : int, optional
+        Number of patches to extract
+    ratio : float, optional
+        Ratio of patches with lesions versus patches without.
+        Useful to balance the dataset.
+    center : boolean, optional
+        If False, add some noise to the coordinates of the centroids.
+    Returns
+    -------
+    Two torch.Tensor
+        of shape (n_patches, *desired_shape, n_channels)
+    """
+
+    native_shape = patch_shape
+    patch_shape = torch.tensor(patch_shape, dtype=torch.int)
+
+    centroids_1 = torch.stack(torch.where(y), dim=-1)
+
+    # If the input contains no positive voxels, return random patches:
+    if len(centroids_1) == 0:
+        return random_sampler(X, y, patch_shape, n_patches)
+
+    n_patches_with = np.floor(n_patches * ratio).astype(int)
+
+    # Add noise to centroids so that the nodules are not always centered in
+    # the patch:
+    if not center:
+        noise = (torch.rand(centroids_1.shape[0], 3) * torch.max(patch_shape)).long() % (
+            patch_shape.div(2, rounding_mode="floor")[None, ...]
+        )
+        centroids_1 += noise - patch_shape.div(4, rounding_mode="floor")
+
+    means = torch.tensor(X.shape).div(2, rounding_mode="floor").float()
+    sigmas = torch.tensor(X.shape).div(2, rounding_mode="floor").float() / (3 * 2)
+
+    # Sample centroids at random
+    centroids_0 = torch.randn((n_patches - n_patches_with, X.ndim)) * sigmas + means
+
+    # Could this be vectorized?
+    for i in range(1, centroids_0.ndim):
+        centroids_0[:, i] = torch.clamp(centroids_0[:, i], 0, X.shape[i])
+
+    centroids_0 = centroids_0.long()
+
+    # Subsample centroids with positive labels
+    selection_1 = (torch.rand(n_patches_with) * centroids_1.shape[0]).long()
+
+    centroids_1 = centroids_1[selection_1]
+
+    centroids = torch.cat([centroids_0, centroids_1])
+    centroids = torch.maximum(centroids, patch_shape[None, ...])
+    centroids = torch.minimum(
+        centroids,
+        (torch.tensor(X.shape) - patch_shape.div(2, rounding_mode="floor"))[None, ...],
+    )
+
+    centroids = centroids.reshape(centroids.shape[0], 1, 1, 1, centroids.shape[-1])
+
+    ranges = [
+        torch.arange(
+            -patch_shape[i].div(2, rounding_mode="floor"),
+            patch_shape[i].div(2, rounding_mode="floor"),
+        )
+        for i in torch.arange(len(native_shape))
+    ]
+
+    indices = (
+        centroids
+        + torch.stack(torch.meshgrid(*ranges, indexing="ij"), dim=-1)[None, ...]
+    )
+
+    paddings = patch_shape.long()
+
+    X = F.pad(X, tuple(torch.stack([paddings, paddings], dim=-1).flatten()))
+    y = F.pad(y, tuple(torch.stack([paddings, paddings], dim=-1).flatten()))
+    indices += patch_shape
+
+    indices_list = build_indices_list(indices)
+
+    image_patches = X[indices_list]
+    label_patches = y[indices_list]
+
     return image_patches, label_patches
 
 
@@ -242,3 +373,7 @@ def get_all_centroids(image_shape, patch_shape, overlap):
     centroids = torch.reshape(centroids, (-1, len(patch_shape)))
 
     return centroids
+
+
+def build_indices_list(indices):
+    return [indices[..., i] for i in range(indices.shape[-1])]
