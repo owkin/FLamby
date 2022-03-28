@@ -227,7 +227,7 @@ def all_sampler(
 
     indices += patch_shape
     # Dirty hack to mimic tf.gather_nd
-    indices_list = build_indices_list()
+    indices_list = build_indices_list(indices)
 
     image_patches = X[indices_list]
     label_patches = X[indices_list]
