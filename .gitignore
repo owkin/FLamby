@@ -475,3 +475,16 @@ rsconnect/
 # Support for Project snippet scope
 
 # End of https://www.toptal.com/developers/gitignore/api/django,python,pycharm,jupyternotebooks,visualstudiocode,r,macos
+# config files ignored
+*.yaml
+# no binaries
+*.pickle
+*.pkl
+.DS_Store
+__MACOSX
+
+datasets/fed_isic2019/ISIC_2019_Training_Input
+datasets/fed_isic2019/ISIC_2019_Training_Input_preprocessed
+datasets/fed_isic2019/*.csv
+datasets/fed_isic2019/*.zip
+venv
