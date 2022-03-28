@@ -194,3 +194,25 @@ class FedLidcIdri(LidcIdriRaw):
         self.features_centers = [
             fp for idx, fp in enumerate(self.features_centers) if to_select[idx]
         ]
+
+
+def collate_fn(dataset_elements_list):
+    """Helper function to correctly batch samples from
+    a LidcIdriDataset, taking patch sampling into account.
+    Parameters
+    ----------
+    dataset_elements_list : List[(torch.Tensor, torch.Tensor)]
+        List of batches of samples from ct scans and masks.
+        The list has length B, tensors have shape (S, D, W, H).
+    Returns
+    -------
+    Tuple(torch.Tensor, torch.Tensor)
+        X, y two torch tensors of size (B * S, 1, D, W, H)
+    """
+    X, y = zip(*dataset_elements_list)
+    X, y = torch.cat(X), torch.cat(y)
+    # Check that images and mask have a channel dimension
+    if X.ndim == 5:
+        return X, y
+    else:
+        return X.unsqueeze(1), y.unsqueeze(1)
