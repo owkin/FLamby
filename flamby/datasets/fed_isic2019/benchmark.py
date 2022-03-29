@@ -16,8 +16,13 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--loss", default="weighted_focal_loss")
-    # 'crossentropy'
+    parser.add_argument(
+        "--loss",
+        default="weighted_focal_loss",
+        help="Loss function " "used for training",
+        choices=["weighted_focal_loss", "crossentropy"],
+    )
+
     args = parser.parse_args()
 
     sz = 168
