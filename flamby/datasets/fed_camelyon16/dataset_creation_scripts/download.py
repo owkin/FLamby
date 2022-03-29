@@ -43,8 +43,8 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
         str(Path(SLIDES_LINKS_FOLDER) / Path("test_slides_links_drive.csv"))
     )
     if debug:
-        train_df = train_df.iloc[:2]
-        test_df = test_df.iloc[:2]
+        train_df = train_df.iloc[:5]
+        test_df = test_df.iloc[:5]
     os.makedirs(output_folder, exist_ok=True)
 
     # This file asserts that all files were indeed properly downloaded without corruption
