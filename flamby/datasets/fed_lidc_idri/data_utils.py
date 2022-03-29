@@ -5,6 +5,7 @@ import torch.nn.functional as F
 
 class Sampler(object):
     """
+    TODO : add seeding for random and fast samplers
     Attributes
     ----------
     patch_shape : int Tuple
@@ -373,6 +374,30 @@ def get_all_centroids(image_shape, patch_shape, overlap):
     centroids = torch.reshape(centroids, (-1, len(patch_shape)))
 
     return centroids
+
+
+class ClipNorm(object):
+    """
+    Clip then normalize transformation.
+    Clip to [minval, maxval] then map linearly to [0, 1].
+    Attributes
+    ----------
+    minval : float
+        lower bound
+    maxval : float
+        upper bound
+    """
+
+    def __init__(self, minval=-1024, maxval=400):
+        assert maxval > minval
+        self.minval = minval
+        self.maxval = maxval
+
+    def __call__(self, image):
+        x = torch.clamp(image, self.minval, self.maxval)
+        x -= self.minval
+        x /= self.maxval - self.minval
+        return x
 
 
 def build_indices_list(indices):
