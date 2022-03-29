@@ -11,10 +11,9 @@ from loss import WeightedFocalLoss
 
 
 class EfficientNetBx(nn.Module):
-    def __init__(self, pretrained=True, arch_name="efficientnet-b0", ce=True):
+    def __init__(self, pretrained=True, arch_name="efficientnet-b0"):
         super(EfficientNetBx, self).__init__()
         self.pretrained = pretrained
-        self.ce = ce
         self.base_model = (
             EfficientNet.from_pretrained(arch_name)
             if pretrained
@@ -23,7 +22,7 @@ class EfficientNetBx(nn.Module):
         # self.base_model=torchvision.models.efficientnet_v2_s(pretrained=pretrained)
         nftrs = self.base_model._fc.in_features
         print("Number of features output by EfficientNet", nftrs)
-        self.base_model._fc = nn.Linear(nftrs, 1) if not ce else nn.Linear(nftrs, 8)
+        self.base_model._fc = nn.Linear(nftrs, 8)
 
     def forward(self, image, target, weights=None, args=None):
         out = self.base_model(image)

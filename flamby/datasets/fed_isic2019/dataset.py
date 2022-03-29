@@ -43,7 +43,6 @@ class ISIC2019DatasetRaw(torch.utils.data.Dataset):
         image_path = self.image_paths[idx]
         image = np.array(PIL.Image.open(image_path))
         target = self.targets[idx]
-        # center = self.centers[idx]
 
         # Image augmentations
         if (self.augmentations is not None) and (self.train_test == "train"):
@@ -55,7 +54,6 @@ class ISIC2019DatasetRaw(torch.utils.data.Dataset):
         return {
             "image": torch.tensor(image, dtype=self.X_dtype),
             "target": torch.tensor(target, dtype=self.y_dtype),
-            # "center": center
         }
 
 

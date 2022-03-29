@@ -41,4 +41,4 @@ This will resize all images squares of size 224px by 224px. Color constancy is a
 
 4)
 To train and evaluate a classification model for the pooled dataset, run:
-python train2.py
+python benchmark.py
