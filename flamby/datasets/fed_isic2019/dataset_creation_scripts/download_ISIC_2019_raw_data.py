@@ -67,8 +67,9 @@ print("Number of lines in GroundTruth", ISIC_2019_Training_GroundTruth.shape[0])
 print("Number of lines in MetadataFL", result.shape[0])
 DIR = os.path.join(data_directory, "ISIC_2019_Training_Input")
 print(
-    "Number of images + 2 ",
-    len([name for name in os.listdir(DIR) if os.path.isfile(os.path.join(DIR, name))]),
+    "Number of images",
+    len([name for name in os.listdir(DIR) if os.path.isfile(os.path.join(DIR, name))])
+    - 2,
 )
 result.to_csv(dest_file_4, index=False)
 ISIC_2019_Training_Metadata.to_csv(dest_file_2, index=False)
