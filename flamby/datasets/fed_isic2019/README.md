@@ -18,7 +18,7 @@ To import the ISIC 2019 training data and back out the datacenter attribution of
 python download_ISIC_2019_raw_data.py
 
 2)
-To perform the train/test split (both stratified by center and pooled)), run:
+To perform the train/test split (stratified by center), run:
 python folds.py
 This step displays basic statistics about the dataset.
 

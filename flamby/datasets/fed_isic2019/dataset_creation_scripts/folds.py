@@ -32,32 +32,30 @@ if __name__ == "__main__":
     )
 
     X = df.image.values
-
-    X_train, X_test = model_selection.train_test_split(X, test_size=0.2, random_state=13)
-    for train_index in X_train:
-        df.loc[df.image == train_index, "fold"] = "train"
-    for test_index in X_test:
-        df.loc[df.image == test_index, "fold"] = "test"
-
     centers = df.center.values
 
     X_train_2, X_test_2 = model_selection.train_test_split(
         X, test_size=0.2, stratify=centers, random_state=13
     )
     for train_index in X_train_2:
+        df.loc[df.image == train_index, "fold"] = "train"
         df.loc[df.image == train_index, "fold2"] = (
             "train" + "_" + df.loc[df.image == train_index, "center"]
         )
     for test_index in X_test_2:
+        df.loc[df.image == test_index, "fold"] = "test"
         df.loc[df.image == test_index, "fold2"] = (
             "test" + "_" + df.loc[df.image == test_index, "center"]
         )
 
     df.to_csv(os.path.join(input_path, "train_test_folds.csv"), index=False)
 
-    print(df.shape[0])
-    print(df["target"].value_counts())
-    print(df.groupby(["center", "target"]).size().unstack(fill_value=0))
-    print(df["center"].value_counts())
-    print(df["fold"].value_counts())
-    print(df["fold2"].value_counts())
+    print("Number of images", df.shape[0])
+    print("Class counts", df["target"].value_counts())
+    print(
+        "(Center, class) counts",
+        df.groupby(["center", "target"]).size().unstack(fill_value=0),
+    )
+    print("Center counts", df["center"].value_counts())
+    print("Pooled train/test split", df["fold"].value_counts())
+    print("Stratified train/test split", df["fold2"].value_counts())
