@@ -54,6 +54,8 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
         collate_fn=collate_fn,
         shuffle=False,
     )
+    print(f"The training set pooled contains {len(training_dl.dataset)} slides")
+    print(f"The test set pooled contains {len(test_dl.dataset)} slides")
 
     if log:
         # We compute the number of batches per epoch
