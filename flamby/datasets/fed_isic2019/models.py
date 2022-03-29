@@ -68,7 +68,7 @@ if __name__ == "__main__":
         "train_test_folds": "./train_test_folds.csv",
     }
 
-    mydataset = dataset.FedISIC2019Dataset(
+    mydataset = dataset.FedISIC2019(
         0, True, dic["train_test_folds"], "train", augmentations=train_aug
     )
 
