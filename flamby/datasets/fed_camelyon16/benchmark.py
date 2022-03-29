@@ -139,7 +139,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--log",
-        action="store_false",
+        action="store_true",
         help="Whether to activate tensorboard logging or not default to no logging",
     )
     parser.add_argument(
@@ -152,7 +152,6 @@ if __name__ == "__main__":
         "--debug",
         action="store_true",
         help="Whether to use the dataset obtained in debug mode.",
-        required=True,
     )
     parser.add_argument(
         "--cpu-only",

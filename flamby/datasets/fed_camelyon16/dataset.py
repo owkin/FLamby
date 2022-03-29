@@ -39,7 +39,7 @@ class Camelyon16Raw(Dataset):
             Whether or not to use only the part of the dataset downloaded in
             debug mode. Defaults to False.
         """
-        dict = check_dataset_from_config(debug, dataset_name="fed_camelyon16")
+        dict = check_dataset_from_config("fed_camelyon16", debug)
         self.tiles_dir = Path(dict["dataset_path"])
         path_to_labels_file = str(
             Path(
@@ -63,29 +63,26 @@ class Camelyon16Raw(Dataset):
         for slide in self.tiles_dir.glob("*.npy"):
             slide_name = os.path.basename(slide).split(".")[0]
             slide_id = int(slide_name.split("_")[1])
-
-            label_from_metadata = int(
-                self.metadata.loc[
-                    [
-                        os.path.basename(e).split(".")[0] == slide_name
-                        for e in self.metadata["path2slide"].tolist()
-                    ],
-                    "label",
-                ].item()
-            )
+            label_from_metadata = int(self.metadata.loc[
+                [
+                    e.split(".")[0] == slide_name
+                    for e in self.metadata["slide_name"].tolist()
+                ],
+                "label",
+            ].item())
             center_from_metadata = int(
                 self.metadata.loc[
                     [
-                        os.path.basename(e).split(".")[0] == slide_name
-                        for e in self.metadata["path2slide"].tolist()
+                        e.split(".")[0] == slide_name
+                        for e in self.metadata["slide_name"].tolist()
                     ],
                     "hospital_corrected",
                 ].item()
             )
             label_from_data = int(self.labels.loc[slide.name].tumor)
 
-            if "Test" not in str(slide):
-                if slide_name.startswith("Normal"):
+            if "test" not in str(slide):
+                if slide_name.startswith("normal"):
                     # Normal slide
                     if slide_id > 100:
                         center_label = 1
@@ -93,7 +90,7 @@ class Camelyon16Raw(Dataset):
                     else:
                         center_label = 0
                     label_from_slide_name = 0  # Normal slide
-                elif slide_name.startswith("tumor") or slide_name.startswith("Tumor"):
+                elif slide_name.startswith("tumor"):
                     # Tumor slide
                     if slide_id > 70:
                         center_label = 1
