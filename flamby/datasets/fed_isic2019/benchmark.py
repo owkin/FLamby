@@ -50,13 +50,13 @@ if __name__ == "__main__":
         "model_dest": "./saved_model_state_dict",
     }
 
-    train_dataset = dataset.FedISIC2019Dataset(
+    train_dataset = dataset.FedISIC2019(
         0, True, dic["train_test_folds"], "train", augmentations=train_aug
     )
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset, batch_size=64, shuffle=True, num_workers=4
     )
-    test_dataset = dataset.FedISIC2019Dataset(0, True, dic["train_test_folds"], "test")
+    test_dataset = dataset.FedISIC2019(0, True, dic["train_test_folds"], "test")
     test_dataloader = torch.utils.data.DataLoader(
         test_dataset, batch_size=64, shuffle=False, num_workers=4
     )
