@@ -146,7 +146,7 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
     transform = Compose(
         [ToTensor(), Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]
     )
-    path_to_coords_file = "tiling_coords.csv"
+    path_to_coords_file = os.path.join(__file__, "tiling_coordinates_camelyon16.csv")
     if not(os.path.exists(path_to_coords_file)):
         df_predecessor = {"slide_name": [], "coords_x": [], "coords_y": []}
     else:
@@ -196,7 +196,11 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
                 features = np.concatenate((features, net(batch_images).detach().cpu().numpy()), axis=0)
                 coords = np.concatenate((coords, batch_coords.numpy()))
         t2 = time.time()
-        print(f"Slide {slide_name} extraction lasted {t2-t1}s with has_coords={has_coords} (num_workers {num_workers_torch})")
+        num_workers_displayed = num_workers_torch if (has_coords and not(tile_from_scratch)) else 0
+        print(f"Slide {slide_name} extraction lasted {t2-t1}s with has_coords={has_coords} (num_workers {num_workers_displayed})")
+
+        #
+
         if not(has_coords):
             # We store the coordinates information to speed up the extraction process via multiprocessing
             num_tiles_on_slide = coords.shape[0]
@@ -208,7 +212,7 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
         np.save(path_to_features, features)
 
     write_value_in_config(config_file, "preprocessing_complete", True)
-
+    
     if args.remove_big_tiff:
         print("Removing all slides")
         for slide in slides_paths:
