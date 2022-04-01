@@ -88,16 +88,16 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--pad_resize",
-        default=False,
+        default=True,
         type=bool,
         help="Whether to pad and resize images.",
     )
     parser.add_argument(
-        "--sz", default=256, type=int, help="Whether to pad and resize images."
+        "--sz", default=224, type=int, help="Whether to pad and resize images."
     )
     parser.add_argument(
         "--cc",
-        default=False,
+        default=True,
         action="store_true",
         help="Whether to do color constancy to the images.",
     )

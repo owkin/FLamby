@@ -39,21 +39,21 @@ Please first accept the licences on the HAM10000 and ISIC2019 dataset pages and 
 
 ## Data
 To download the ISIC 2019 training data and extract the original datacenter information for each image, run:
-python download_ISIC_2019_raw_data.py
+```python download_ISIC_2019_raw_data.py```
 
 ## Training folds
 To perform the train/test split (stratified by center), run:
-python folds.py
+```python folds.py```
 This step displays basic statistics about the dataset.
 
 ## Image preprocessing
 To preprocess and resize images, create a directory for the preprocessed images:
-mkdir ../ISIC_2019_Training_Input_preprocessed
+```mkdir ../ISIC_2019_Training_Input_preprocessed```
 and run:
-python resize_images.py --input_folder ../ISIC_2019_Training_Input --output_folder ../ISIC_2019_Training_Input_preprocessed --sz 224 --cc --pad_resize True
+```python resize_images.py --input_folder ../ISIC_2019_Training_Input --output_folder ../ISIC_2019_Training_Input_preprocessed```
 
 This will resize all images squares of size 224px by 224px. Color constancy is added in the preprocessing.
 
 ## Baseline training and evaluation in a pooled setting
 To train and evaluate a classification model for the pooled dataset, run:
-python benchmark.py --loss baseline --GPU 0
+```python benchmark.py --loss baseline --GPU 0```
