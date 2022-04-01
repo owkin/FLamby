@@ -13,7 +13,7 @@ dic = {
 }
 
 
-class ISIC2019Raw(torch.utils.data.Dataset):
+class Isic2019Raw(torch.utils.data.Dataset):
     def __init__(
         self,
         train_test_folds_csv_path,
@@ -57,7 +57,7 @@ class ISIC2019Raw(torch.utils.data.Dataset):
         }
 
 
-class FedISIC2019(ISIC2019Raw):
+class FedIsic2019(Isic2019Raw):
     def __init__(
         self,
         center,
@@ -114,11 +114,11 @@ if __name__ == "__main__":
         ]
     )
 
-    mydataset = FedISIC2019(
+    mydataset = FedIsic2019(
         0, True, dic["train_test_folds"], "train", augmentations=train_aug
     )
-    print(mydataset[0])
-    print(len(mydataset))
+    print("Example of dataset record: ", mydataset[0])
+    print(f"The dataset has {len(mydataset)} elements")
     for i in range(50):
-        print(mydataset[i]["image"].shape)
-        print(mydataset[i]["target"])
+        print(f"Size of image {i} ", mydataset[i]["image"].shape)
+        print(f"Target {i} ", mydataset[i]["target"])

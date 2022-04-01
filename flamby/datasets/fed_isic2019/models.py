@@ -1,3 +1,8 @@
+# We use EfficientNet + a linear layer as a baseline model
+# Thank you to [Luke Melas-Kyriazi](https://github.com/lukemelas) for his
+# [pytorch reimplementation of EfficientNets]
+# (https://github.com/lukemelas/EfficientNet-PyTorch)
+
 import argparse
 import random
 
@@ -7,12 +12,12 @@ import torch
 import torch.nn as nn
 import torchvision
 from efficientnet_pytorch import EfficientNet
-from loss import WeightedFocalLoss
+from loss import BaselineLoss
 
 
-class EfficientNetBx(nn.Module):
+class Baseline(nn.Module):
     def __init__(self, pretrained=True, arch_name="efficientnet-b0"):
-        super(EfficientNetBx, self).__init__()
+        super(Baseline, self).__init__()
         self.pretrained = pretrained
         self.base_model = (
             EfficientNet.from_pretrained(arch_name)
@@ -26,8 +31,8 @@ class EfficientNetBx(nn.Module):
 
     def forward(self, image, target, weights=None, args=None):
         out = self.base_model(image)
-        if args.loss == "weighted_focal_loss":
-            loss = WeightedFocalLoss(alpha=weights)(out, target.view(-1, 1).type_as(out))
+        if args.loss == "baseline":
+            loss = BaselineLoss(alpha=weights)(out, target.view(-1, 1).type_as(out))
         elif args.loss == "crossentropy":
             loss = nn.CrossEntropyLoss(weight=weights)(out, target)
         else:
@@ -37,8 +42,8 @@ class EfficientNetBx(nn.Module):
 
 if __name__ == "__main__":
 
-    print(torch.__version__)
-    print(torchvision.__version__)
+    print("Torch version ", torch.__version__)
+    print("Torchvision version ", torchvision.__version__)
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--loss", default="crossentropy")
@@ -68,11 +73,11 @@ if __name__ == "__main__":
         "train_test_folds": "./train_test_folds.csv",
     }
 
-    mydataset = dataset.FedISIC2019(
+    mydataset = dataset.FedIsic2019(
         0, True, dic["train_test_folds"], "train", augmentations=train_aug
     )
 
-    model = EfficientNetBx()
+    model = Baseline()
 
     for i in range(50):
         X = torch.unsqueeze(mydataset[i]["image"], 0)
