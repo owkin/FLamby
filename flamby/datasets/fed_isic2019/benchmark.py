@@ -10,9 +10,6 @@ import models
 import torch
 from sklearn import metrics
 
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
@@ -31,8 +28,6 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-
-    print(str(args.GPU))
 
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
