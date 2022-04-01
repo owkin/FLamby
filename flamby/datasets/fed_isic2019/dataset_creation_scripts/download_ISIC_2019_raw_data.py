@@ -26,8 +26,8 @@ dest_file_4 = os.path.join(data_directory, "ISIC_2019_Training_Metadata_FL.csv")
 
 file1 = os.path.join(parent_script_directory, "HAM10000_metadata")
 
-os.system(f"wget {url_1} --no-check-certificate -O {dest_file_1}")
-os.system(f"unzip {dest_file_1} -d {data_directory}")
+# os.system(f"wget {url_1} --no-check-certificate -O {dest_file_1}")
+# os.system(f"unzip {dest_file_1} -d {data_directory}")
 os.system(f"wget {url_2} --no-check-certificate -O {dest_file_2}")
 os.system(f"wget {url_3} --no-check-certificate -O {dest_file_3}")
 

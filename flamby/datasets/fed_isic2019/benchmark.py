@@ -18,12 +18,24 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--loss",
-        default="weighted_focal_loss",
+        default="baseline",
         help="Loss function " "used for training",
-        choices=["weighted_focal_loss", "crossentropy"],
+        choices=["baseline", "crossentropy"],
+    )
+
+    parser.add_argument(
+        "--GPU",
+        type=int,
+        default=0,
+        help="GPU to run the training on (if available)",
     )
 
     args = parser.parse_args()
+
+    print(str(args.GPU))
+
+    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
 
     sz = 168
     train_aug = albumentations.Compose(
@@ -50,13 +62,13 @@ if __name__ == "__main__":
         "model_dest": "./saved_model_state_dict",
     }
 
-    train_dataset = dataset.FedISIC2019(
+    train_dataset = dataset.FedIsic2019(
         0, True, dic["train_test_folds"], "train", augmentations=train_aug
     )
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset, batch_size=64, shuffle=True, num_workers=4
     )
-    test_dataset = dataset.FedISIC2019(0, True, dic["train_test_folds"], "test")
+    test_dataset = dataset.FedIsic2019(0, True, dic["train_test_folds"], "test")
     test_dataloader = torch.utils.data.DataLoader(
         test_dataset, batch_size=64, shuffle=False, num_workers=4
     )
@@ -77,16 +89,18 @@ if __name__ == "__main__":
         class_weights,
     )
 
-    model = models.EfficientNetBx()
+    model = models.Baseline()
     model = model.to(device)
 
-    # optimize the final layer only
-    # for param in model.base_model.parameters():
-    #    param.requires_grad = False
-    # for param in model.base_model._fc.parameters():
-    #    param.requires_grad = True
-    # optimizer = torch.optim.Adam(model.base_model._fc.parameters(), lr=5e-4)
-    optimizer = torch.optim.Adam(model.base_model.parameters(), lr=5e-4)
+    optimize_final_layer_only = False
+    if optimize_final_layer_only:
+        for param in model.base_model.parameters():
+            param.requires_grad = False
+        for param in model.base_model._fc.parameters():
+            param.requires_grad = True
+        optimizer = torch.optim.Adam(model.base_model._fc.parameters(), lr=5e-4)
+    else:
+        optimizer = torch.optim.Adam(model.base_model.parameters(), lr=5e-4)
 
     scheduler = torch.optim.lr_scheduler.MultiStepLR(
         optimizer, milestones=[3, 5, 7, 9, 11, 13, 15], gamma=0.5
