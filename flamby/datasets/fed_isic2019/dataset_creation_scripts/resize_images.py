@@ -5,15 +5,37 @@
 import argparse
 import glob
 import os
-
 import albumentations
 import numpy as np
+import sys
 from color_constancy import color_constancy
 from fastai.vision.all import PILImage, Resize, ResizeMethod
 from joblib import Parallel, delayed
 from PIL import Image
 from tqdm import tqdm
+from flamby.utils import read_config, write_value_in_config
+from pathlib import Path
 
+path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
+config_file = os.path.join(path_to_config_file, "dataset_location.yaml")
+dict = read_config(config_file)
+if not (dict["download_complete"]):
+    raise ValueError(
+        "Download incomplete. Please relaunch the download script"
+    )
+if dict["preprocessing_complete"]:
+        print("You have already run the preprocessing, aborting.")
+        sys.exit()
+input_path = dict["dataset_path"]
+
+
+dic = {
+    "inputs": "ISIC_2019_Training_Input",
+    "inputs_preprocessed": "ISIC_2019_Training_Input_preprocessed",
+}
+input_folder = os.path.join(input_path, dic["inputs"])
+output_folder = os.path.join(input_path, dic["inputs_preprocessed"])
+os.makedirs(output_folder, exist_ok=True)
 
 def pad_and_resize(path, output_path, sz: tuple):
     fn = os.path.basename(path)
@@ -67,20 +89,6 @@ def resize_min_wh(path, output_path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--input_folder",
-        default=None,
-        type=str,
-        required=True,
-        help="Input folder where images exist.",
-    )
-    parser.add_argument(
-        "--output_folder",
-        default=None,
-        type=str,
-        required=True,
-        help="Output folder for images.",
-    )
-    parser.add_argument(
         "--mantain_aspect_ratio",
         action="store_true",
         default=False,
@@ -103,43 +111,44 @@ if __name__ == "__main__":
     )
     parser.add_argument("--resize_and_save", default=False, action="store_true")
     parser.add_argument("--centercrop", default=False, action="store_true")
-
     args = parser.parse_args()
 
     if args.sz:
         print("Images will be resized to {}".format(args.sz))
         args.sz = int(args.sz)
 
-    images = glob.glob(os.path.join(args.input_folder, "*.jpg"))
+    images = glob.glob(os.path.join(input_folder, "*.jpg"))
     if (not args.mantain_aspect_ratio) and args.pad_resize:
         print(
             "Adding padding to images if needed and resizing images to square"
             " of side {}px.".format(args.sz)
         )
         Parallel(n_jobs=16)(
-            delayed(pad_and_resize)(i, args.output_folder, (args.sz, args.sz))
+            delayed(pad_and_resize)(i, output_folder, (args.sz, args.sz))
             for i in tqdm(images)
         )
     elif args.resize_and_save:
         print("Resizing and saving images to size {}".format(args.sz))
         Parallel(n_jobs=32)(
-            delayed(resize_and_save)(i, args.output_folder, (args.sz, args.sz), args.cc)
+            delayed(resize_and_save)(i, output_folder, (args.sz, args.sz), args.cc)
             for i in tqdm(images)
         )
     elif args.centercrop:
         print("Will crop min(h,w) center and resize.")
         Parallel(n_jobs=32)(
-            delayed(resize_min_wh)(i, args.output_folder) for i in tqdm(images)
+            delayed(resize_min_wh)(i, output_folder) for i in tqdm(images)
         )
     else:
         print(
             "Resizing images to mantain aspect ratio in a way that the shorter side"
             " is {}px but images are rectangular.".format(args.sz)
         )
-        if not os.path.exists(args.output_folder):
-            os.makedirs(args.output_folder)
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
         print(args)
         Parallel(n_jobs=32)(
-            delayed(resize_and_maintain)(i, args.output_folder, (args.sz, args.sz), args)
+            delayed(resize_and_maintain)(i, output_folder, (args.sz, args.sz), args)
             for i in tqdm(images)
         )
+
+    write_value_in_config(config_file, "preprocessing_complete", True)

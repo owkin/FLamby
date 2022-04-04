@@ -1,6 +1,9 @@
 import os
-
 import pandas as pd
+import sys
+import argparse
+from flamby.utils import create_config, write_value_in_config
+
 
 url_1 = (
     "https://isic-challenge-data.s3.amazonaws.com/2019/" "ISIC_2019_Training_Input.zip"
@@ -16,21 +19,38 @@ url_3 = (
     "ISIC_2019_Training_GroundTruth.csv"
 )
 
-parent_script_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-data_directory = parent_script_directory
+parser = argparse.ArgumentParser()
+parser.add_argument(
+        "--output-folder",
+        type=str,
+        help="Where to store raw images, preprocessed images, ground truth, metadata, model",
+        required=True,
+    )
+args = parser.parse_args()
+
+# Creating config file with path to dataset from arguments
+dict, config_file = create_config(output_folder=args.output_folder, debug=False, dataset_name="fed_isic2019")
+if dict["download_complete"]:
+    print("You have already downloaded the slides, aborting.")
+    sys.exit()
+data_directory = dict["dataset_path"]
+
 
 dest_file_1 = os.path.join(data_directory, "ISIC_2019_Training_Input.zip")
 dest_file_2 = os.path.join(data_directory, "ISIC_2019_Training_Metadata.csv")
 dest_file_3 = os.path.join(data_directory, "ISIC_2019_Training_GroundTruth.csv")
 dest_file_4 = os.path.join(data_directory, "ISIC_2019_Training_Metadata_FL.csv")
-
+parent_script_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 file1 = os.path.join(parent_script_directory, "HAM10000_metadata")
 
-# os.system(f"wget {url_1} --no-check-certificate -O {dest_file_1}")
-# os.system(f"unzip {dest_file_1} -d {data_directory}")
+#download and unzip data
+os.system(f"wget {url_1} --no-check-certificate -O {dest_file_1}")
+os.system(f"unzip {dest_file_1} -d {data_directory}")
 os.system(f"wget {url_2} --no-check-certificate -O {dest_file_2}")
 os.system(f"wget {url_3} --no-check-certificate -O {dest_file_3}")
+write_value_in_config(config_file, "download_complete", True)
 
+#create pandas dataframes
 ISIC_2019_Training_Metadata = pd.read_csv(dest_file_2)
 ISIC_2019_Training_GroundTruth = pd.read_csv(dest_file_3)
 # keeping only image and dataset columns in the HAM10000 metadata
@@ -59,7 +79,7 @@ result = pd.merge(ISIC_2019_Training_Metadata, HAM10000_metadata, how="left", on
 result["dataset"] = result["dataset_x"] + result["dataset_y"].astype(str)
 result.drop(["dataset_x", "dataset_y", "lesion_id"], axis=1, inplace=True)
 
-# checking numbers and saving to csv files
+# checking sizes and saving to csv files
 print("Datacenters")
 print(result["dataset"].value_counts())
 print("Number of lines in Metadata", ISIC_2019_Training_Metadata.shape[0])

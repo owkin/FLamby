@@ -1,22 +1,36 @@
 import os
 import random
-
 import albumentations
 import numpy as np
 import pandas as pd
-import PIL
+from PIL import Image
 import torch
+from flamby.utils import read_config
+from pathlib import Path
+
+
+path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
+config_file = os.path.join(path_to_config_file, "dataset_creation_scripts/dataset_location.yaml")
+dict = read_config(config_file)
+if not (dict["download_complete"]):
+    raise ValueError(
+        "Download incomplete. Please relaunch the download script."
+    )
+if not (dict["preprocessing_complete"]):
+    raise ValueError(
+        "Preprocessing incomplete. Please relaunch the resize_images script."
+    )
+input_path = dict["dataset_path"]
 
 dic = {
-    "input_preprocessed": "./ISIC_2019_Training_Input_preprocessed",
-    "train_test_folds": "./train_test_folds.csv",
+    "input_preprocessed": os.path.join(input_path, "ISIC_2019_Training_Input_preprocessed"),
+    "train_test_folds": os.path.join(path_to_config_file, "dataset_creation_scripts/train_test_folds")
 }
 
 
 class Isic2019Raw(torch.utils.data.Dataset):
     def __init__(
         self,
-        train_test_folds_csv_path,
         train_test,
         X_dtype=torch.float32,
         y_dtype=torch.int64,
@@ -25,7 +39,7 @@ class Isic2019Raw(torch.utils.data.Dataset):
         self.X_dtype = X_dtype
         self.y_dtype = y_dtype
         self.train_test = train_test
-        df = pd.read_csv(train_test_folds_csv_path)
+        df = pd.read_csv(dic["train_test_folds"])
         df2 = df.query("fold == '" + self.train_test + "' ").reset_index(drop=True)
         images = df2.image.tolist()
         self.image_paths = [
@@ -41,7 +55,7 @@ class Isic2019Raw(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         image_path = self.image_paths[idx]
-        image = np.array(PIL.Image.open(image_path))
+        image = np.array(Image.open(image_path))
         target = self.targets[idx]
 
         # Image augmentations
@@ -62,7 +76,6 @@ class FedIsic2019(Isic2019Raw):
         self,
         center,
         pooled,
-        train_test_folds_csv_path,
         train_test,
         X_dtype=torch.float32,
         y_dtype=torch.int64,
@@ -70,7 +83,6 @@ class FedIsic2019(Isic2019Raw):
     ):
 
         super().__init__(
-            train_test_folds_csv_path,
             train_test,
             X_dtype=torch.float32,
             y_dtype=torch.int64,
@@ -82,7 +94,7 @@ class FedIsic2019(Isic2019Raw):
         key = self.train_test + "_" + str(self.center)
         if not self.pooled:
             assert center in range(6)
-            df = pd.read_csv(train_test_folds_csv_path)
+            df = pd.read_csv(dic["train_test_folds"])
             df2 = df.query("fold2 == '" + key + "' ").reset_index(drop=True)
             images = df2.image.tolist()
             self.image_paths = [
@@ -102,7 +114,7 @@ if __name__ == "__main__":
             albumentations.Rotate(50),
             albumentations.RandomBrightnessContrast(0.15, 0.1),
             albumentations.Flip(p=0.5),
-            albumentations.IAAAffine(shear=0.1),
+            albumentations.Affine(shear=0.1),
             albumentations.RandomCrop(sz, sz) if sz else albumentations.NoOp(),
             albumentations.OneOf(
                 [
@@ -114,9 +126,8 @@ if __name__ == "__main__":
         ]
     )
 
-    mydataset = FedIsic2019(
-        0, True, dic["train_test_folds"], "train", augmentations=train_aug
-    )
+    mydataset = FedIsic2019(5, True, "train",augmentations=train_aug)
+
     print("Example of dataset record: ", mydataset[0])
     print(f"The dataset has {len(mydataset)} elements")
     for i in range(50):
