@@ -1,4 +1,4 @@
-name: flamby-env
+name: flamby
 channels:
   - conda
   - conda-forge

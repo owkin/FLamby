@@ -47,7 +47,7 @@ create and launch the environment using:
 git clone https://github.com/owkin/FLamby.git
 cd FLamby
 make install
-conda conda activate flamby-env
+conda conda activate flamby
 ```
 
 ### Update environment
@@ -62,7 +62,7 @@ You can install the environment by running:
 git clone https://github.com/owkin/FLamby.git
 cd FLamby
 conda env create -f environment.yml
-conda conda activate flamby-env
+conda conda activate flamby
 ```
 
 ### Accepting data licensing
