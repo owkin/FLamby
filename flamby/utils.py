@@ -80,7 +80,7 @@ def read_config(config_file):
     return dict
 
 
-def get_config_file_path(debug, dataset_name="fed_camelyon16"):
+def get_config_file_path(debug, dataset_name):
     """Get the config_file path in real or debug mode.
 
     Parameters
