@@ -3,12 +3,13 @@ import copy
 import os
 import random
 import time
-
 import albumentations
 import dataset
 import models
 import torch
 from sklearn import metrics
+from pathlib import Path
+from flamby.utils import read_config
 
 if __name__ == "__main__":
 
@@ -19,18 +20,17 @@ if __name__ == "__main__":
         help="Loss function " "used for training",
         choices=["baseline", "crossentropy"],
     )
-
     parser.add_argument(
         "--GPU",
         type=int,
         default=0,
         help="GPU to run the training on (if available)",
     )
-
     args = parser.parse_args()
 
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
+    torch.use_deterministic_algorithms(False)
 
     sz = 168
     train_aug = albumentations.Compose(
@@ -39,7 +39,7 @@ if __name__ == "__main__":
             albumentations.Rotate(50),
             albumentations.RandomBrightnessContrast(0.15, 0.1),
             albumentations.Flip(p=0.5),
-            albumentations.IAAAffine(shear=0.1),
+            albumentations.Affine(shear=0.1),
             albumentations.RandomCrop(sz, sz) if sz else albumentations.NoOp(),
             albumentations.OneOf(
                 [
@@ -51,24 +51,23 @@ if __name__ == "__main__":
         ]
     )
 
+    path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
+    config_file = os.path.join(path_to_config_file, "dataset_creation_scripts/dataset_location.yaml")
+    dict = read_config(config_file)
+    input_path = dict["dataset_path"]
     dic = {
-        "input_preprocessed": "./ISIC_2019_Training_Input_preprocessed",
-        "train_test_folds": "./train_test_folds.csv",
-        "model_dest": "./saved_model_state_dict",
+        "model_dest": os.path.join(input_path, "saved_model_state_dict")
     }
 
-    train_dataset = dataset.FedIsic2019(
-        0, True, dic["train_test_folds"], "train", augmentations=train_aug
-    )
+    train_dataset = dataset.FedIsic2019(0, True, "train", augmentations=train_aug)
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset, batch_size=64, shuffle=True, num_workers=4
     )
-    test_dataset = dataset.FedIsic2019(0, True, dic["train_test_folds"], "test")
+    test_dataset = dataset.FedIsic2019(0, True, "test")
     test_dataloader = torch.utils.data.DataLoader(
         test_dataset, batch_size=64, shuffle=False, num_workers=4
     )
     dataloaders = {"train": train_dataloader, "test": test_dataloader}
-
     dataset_sizes = {"train": len(train_dataset), "test": len(test_dataset)}
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
