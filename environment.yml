@@ -1,0 +1,9 @@
+name: flamby-env
+channels:
+  - conda
+  - conda-forge
+dependencies:
+  - python=3.8
+  - pip
+  - pip:
+      - -e .
