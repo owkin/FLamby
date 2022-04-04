@@ -1,8 +1,20 @@
 import os
-
 import numpy as np
 import pandas as pd
 from sklearn import model_selection
+from pathlib import Path
+from flamby.utils import read_config
+
+
+path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
+config_file = os.path.join(path_to_config_file, "dataset_location.yaml")
+dict = read_config(config_file)
+if not (dict["download_complete"]):
+    raise ValueError(
+        "Download incomplete. Please relaunch the download script"
+    )
+input_path = dict["dataset_path"]
+
 
 dic = {
     "labels": "ISIC_2019_Training_GroundTruth.csv",
@@ -11,7 +23,6 @@ dic = {
 
 if __name__ == "__main__":
 
-    input_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     df = pd.read_csv(os.path.join(input_path, dic["labels"]))
     onehot = df[["MEL", "NV", "BCC", "AK", "BKL", "DF", "VASC", "SCC", "UNK"]].values
     df["target"] = [np.where(r == 1)[0][0] for r in onehot]
@@ -48,7 +59,7 @@ if __name__ == "__main__":
             "test" + "_" + df.loc[df.image == test_index, "center"]
         )
 
-    df.to_csv(os.path.join(input_path, "train_test_folds.csv"), index=False)
+    df.to_csv(os.path.join(path_to_config_file, "train_test_folds"), index=False)
 
     print("Number of images", df.shape[0])
     print("Class counts", df["target"].value_counts())

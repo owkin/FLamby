@@ -31,29 +31,29 @@ In order to extract the origins of the images in the HAM10000 Dataset (cited abo
 Find attached the link to the [full licence and dataset terms](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T&version=3.0&selectTab=termsTab)
 
 
-Thank you to [Aman Arora](https://github.com/amaarora)for his [implementation](https://github.com/amaarora/melonama)
-and (blog)[https://amaarora.github.io/2020/08/23/siimisic.html] that we used as a base for our own code.
+Thank you to [Aman Arora](https://github.com/amaarora) for his [implementation](https://github.com/amaarora/melonama) and [blog](https://amaarora.github.io/2020/08/23/siimisic.html) that we used as a base for our own code.
 
 
 Please first accept the licences on the HAM10000 and ISIC2019 dataset pages and run the following steps.
 
 ## Data
 To download the ISIC 2019 training data and extract the original datacenter information for each image, run:
-```python download_ISIC_2019_raw_data.py```
+```
+python download_isic.py --output-folder /hdd1/rloeb/data
+```
+The file train_test_folds contains the train/test split of the images (stratified by center).
 
-## Training folds
-To perform the train/test split (stratified by center), run:
-```python folds.py```
-This step displays basic statistics about the dataset.
+(Optional: in order to recalculate the train/test split stratified by center, run: ```python folds.py```. This step displays basic statistics about the dataset as well.)
 
 ## Image preprocessing
-To preprocess and resize images, create a directory for the preprocessed images:
-```mkdir ../ISIC_2019_Training_Input_preprocessed```
-and run:
-```python resize_images.py --input_folder ../ISIC_2019_Training_Input --output_folder ../ISIC_2019_Training_Input_preprocessed```
-
-This will resize all images squares of size 224px by 224px. Color constancy is added in the preprocessing.
+To preprocess and resize images, run:
+```
+python resize_images.py
+```
+This will resize all images to squares of size 224px by 224px. Color constancy is added in the preprocessing.
 
 ## Baseline training and evaluation in a pooled setting
 To train and evaluate a classification model for the pooled dataset, run:
-```python benchmark.py --loss baseline --GPU 0```
+```
+python benchmark.py --loss baseline --GPU 0
+```

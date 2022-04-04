@@ -5,7 +5,7 @@
 
 import argparse
 import random
-
+import os
 import albumentations
 import dataset
 import torch
@@ -13,7 +13,8 @@ import torch.nn as nn
 import torchvision
 from efficientnet_pytorch import EfficientNet
 from loss import BaselineLoss
-
+from pathlib import Path
+from flamby.utils import read_config
 
 class Baseline(nn.Module):
     def __init__(self, pretrained=True, arch_name="efficientnet-b0"):
@@ -56,7 +57,7 @@ if __name__ == "__main__":
             albumentations.Rotate(50),
             albumentations.RandomBrightnessContrast(0.15, 0.1),
             albumentations.Flip(p=0.5),
-            albumentations.IAAAffine(shear=0.1),
+            albumentations.Affine(shear=0.1),
             albumentations.RandomCrop(sz, sz) if sz else albumentations.NoOp(),
             albumentations.OneOf(
                 [
@@ -68,14 +69,7 @@ if __name__ == "__main__":
         ]
     )
 
-    dic = {
-        "input_preprocessed": "./ISIC_2019_Training_Input_preprocessed",
-        "train_test_folds": "./train_test_folds.csv",
-    }
-
-    mydataset = dataset.FedIsic2019(
-        0, True, dic["train_test_folds"], "train", augmentations=train_aug
-    )
+    mydataset = dataset.FedIsic2019(0, True, "train", augmentations=train_aug)
 
     model = Baseline()
 
