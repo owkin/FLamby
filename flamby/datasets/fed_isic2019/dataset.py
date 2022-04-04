@@ -1,21 +1,22 @@
 import os
 import random
+from pathlib import Path
+
 import albumentations
 import numpy as np
 import pandas as pd
-from PIL import Image
 import torch
-from flamby.utils import read_config
-from pathlib import Path
+from PIL import Image
 
+from flamby.utils import read_config
 
 path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
-config_file = os.path.join(path_to_config_file, "dataset_creation_scripts/dataset_location.yaml")
+config_file = os.path.join(
+    path_to_config_file, "dataset_creation_scripts/dataset_location.yaml"
+)
 dict = read_config(config_file)
 if not (dict["download_complete"]):
-    raise ValueError(
-        "Download incomplete. Please relaunch the download script."
-    )
+    raise ValueError("Download incomplete. Please relaunch the download script.")
 if not (dict["preprocessing_complete"]):
     raise ValueError(
         "Preprocessing incomplete. Please relaunch the resize_images script."
@@ -23,12 +24,31 @@ if not (dict["preprocessing_complete"]):
 input_path = dict["dataset_path"]
 
 dic = {
-    "input_preprocessed": os.path.join(input_path, "ISIC_2019_Training_Input_preprocessed"),
-    "train_test_folds": os.path.join(path_to_config_file, "dataset_creation_scripts/train_test_folds")
+    "input_preprocessed": os.path.join(
+        input_path, "ISIC_2019_Training_Input_preprocessed"
+    ),
+    "train_test_folds": os.path.join(
+        path_to_config_file, "dataset_creation_scripts/train_test_folds"
+    ),
 }
 
 
 class Isic2019Raw(torch.utils.data.Dataset):
+    """Pytorch dataset containing all the features, labels and datacenter
+    information for Isic2019.
+    Attributes
+    ----------
+    image_paths: list[str], the list with the path towards all features
+    targets: list[int], the list with all classification labels for all features
+    centers: list[int], the list for all datacenters for all features
+    X_dtype: torch.dtype, the dtype of the X features output
+    y_dtype: torch.dtype, the dtype of the y label output
+    train_test: str, characterizes if the dataset is used for training or for
+    testing, equals "train" or "test"
+    augmentations: image transform operations from the albumentations library,
+    used for data augmentation
+    """
+
     def __init__(
         self,
         train_test,
@@ -72,6 +92,18 @@ class Isic2019Raw(torch.utils.data.Dataset):
 
 
 class FedIsic2019(Isic2019Raw):
+    """
+    Pytorch dataset containing for each center the features and associated labels
+    for the Isic2019 federated classification.
+    One can instantiate this dataset with train or test data coming from either of
+    the 6 centers it was created from or all data pooled.
+    The train/test split is fixed and given in the train_test_folds file.
+    Attributes
+    ----------
+    pooled: boolean, characterizes if the dataset is pooled or not
+    center: int, between 0 and 5, designates the datacenter in the case of pooled==False
+    """
+
     def __init__(
         self,
         center,
@@ -126,7 +158,7 @@ if __name__ == "__main__":
         ]
     )
 
-    mydataset = FedIsic2019(5, True, "train",augmentations=train_aug)
+    mydataset = FedIsic2019(5, True, "train", augmentations=train_aug)
 
     print("Example of dataset record: ", mydataset[0])
     print(f"The dataset has {len(mydataset)} elements")

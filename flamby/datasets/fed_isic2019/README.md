@@ -39,7 +39,7 @@ Please first accept the licences on the HAM10000 and ISIC2019 dataset pages and 
 ## Data
 To download the ISIC 2019 training data and extract the original datacenter information for each image, run:
 ```
-python download_isic.py --output-folder /hdd1/rloeb/data
+python download_isic.py --output-folder
 ```
 The file train_test_folds contains the train/test split of the images (stratified by center).
 
