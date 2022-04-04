@@ -55,6 +55,8 @@ setup(
         "argparse",
         "histolab",
         "matplotlib",
+        "dicom-numpy",
+        "nibabel",
         "numpy",
         "pandas",
         "pre-commit",
