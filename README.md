@@ -40,18 +40,32 @@ Similarly one can add the results of a new strategy/training algorithm.
 
 ## Installation
 
-We recommend using anaconda and pip.
+We recommend using anaconda and pip. You may need `make` for simplification.
+create and launch the environment using:
 
-First setup a virtual environment (optional) with Python>=3.8.
+```bash
+git clone https://github.com/owkin/FLamby.git
+cd FLamby
+make install
+conda conda activate flamby-env
+```
 
+### Update environment
+Use the following command if new dependencies have been added, and you want to update the environment:
+```bash
+make update
 ```
-conda create -n flamby_env python=3.8
-conda activate flamby_env
+
+### In case you don't have the `make` command (e.g. Windows users)
+You can install the environment by running:
+```bash
+git clone https://github.com/owkin/FLamby.git
+cd FLamby
+conda env create -f environment.yml
+conda conda activate flamby-env
 ```
-The next step is to git clone the repository and to cd inside the FLamby directory then the FLamby benchmark can be installed by executing:
-```
-pip install flamby
-```
+
+### Accepting data licensing
 Then proceed to read and accept the different licenses and download the data from
 all the datasets you are interested in by following the instructions provided in each folder:
 - [Fed-Camelyon16](./flamby/datasets/fed_camelyon16/README.md)
@@ -85,6 +99,16 @@ Rebasing the branch onto main by doing `git fetch origin` and  `git rebase origi
 then continuing with `git rebase --continue` until the rebase is complete. Then pushing the branch to origin with `git push origin --force-with-lease`.
 - Waiting for reviews then commiting and pushing changes to comply with the reviewer's requests
 - Once the PR is approved click on the arrow on the right of the merge button to select rebase and click on it
+
+
+# FAQ
+### How can I do a clean slate?
+To clean the environment you must execute (after being inside the FLamby folder `cd FLamby/`):
+```bash
+conda deactivate
+make clean
+```
+
 
 
 
