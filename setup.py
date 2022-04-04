@@ -57,6 +57,8 @@ setup(
         "efficientnet-pytorch",
         "histolab",
         "matplotlib",
+        "dicom-numpy",
+        "nibabel",
         "numpy",
         "pandas",
         "pre-commit",
