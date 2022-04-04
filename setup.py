@@ -68,6 +68,8 @@ setup(
         "pydrive",
         "openslide-python",
         "pydicom",
+        "dicom-numpy",
+        "nibabel",
         "dask",
         "requests",
         "google-api-python-client",
