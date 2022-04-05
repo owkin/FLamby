@@ -186,9 +186,7 @@ class IXIDataset(Dataset):
         # 1. Create folder if it does not exist
         # 2. Download
 
-        url_xls = self.MIRRORS[0] + self.DEMOGRAPHICS_FILENAME  # URL EXCEL
-
-        parent_dir = "downloads"
+        parent_dir = "IXI-Dataset"
         if os.path.isdir(parent_dir) == False:
             os.makedirs(parent_dir)
 
