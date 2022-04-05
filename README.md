@@ -47,7 +47,7 @@ create and launch the environment using:
 git clone https://github.com/owkin/FLamby.git
 cd FLamby
 make install
-conda conda activate flamby
+conda activate flamby
 ```
 
 ### Update environment
