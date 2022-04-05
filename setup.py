@@ -57,6 +57,7 @@ setup(
         "matplotlib",
         "numpy",
         "pandas",
+        "xlrd",
         "pre-commit",
         "scikit-learn",
         "scipy",
