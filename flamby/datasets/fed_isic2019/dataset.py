@@ -8,29 +8,7 @@ import pandas as pd
 import torch
 from PIL import Image
 
-from flamby.utils import read_config
-
-path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
-config_file = os.path.join(
-    path_to_config_file, "dataset_creation_scripts/dataset_location.yaml"
-)
-dict = read_config(config_file)
-if not (dict["download_complete"]):
-    raise ValueError("Download incomplete. Please relaunch the download script.")
-if not (dict["preprocessing_complete"]):
-    raise ValueError(
-        "Preprocessing incomplete. Please relaunch the resize_images script."
-    )
-input_path = dict["dataset_path"]
-
-dic = {
-    "input_preprocessed": os.path.join(
-        input_path, "ISIC_2019_Training_Input_preprocessed"
-    ),
-    "train_test_folds": os.path.join(
-        path_to_config_file, "dataset_creation_scripts/train_test_folds"
-    ),
-}
+from flamby.utils import check_dataset_from_config
 
 
 class Isic2019Raw(torch.utils.data.Dataset):
@@ -47,6 +25,8 @@ class Isic2019Raw(torch.utils.data.Dataset):
     testing, equals "train" or "test"
     augmentations: image transform operations from the albumentations library,
     used for data augmentation
+    dic: dictionary containing the paths to the input images and the
+    train_test_folds file
     """
 
     def __init__(
@@ -56,14 +36,25 @@ class Isic2019Raw(torch.utils.data.Dataset):
         y_dtype=torch.int64,
         augmentations=None,
     ):
+        dict = check_dataset_from_config(dataset_name="fed_isic2019", debug=False)
+        input_path = dict["dataset_path"]
+        path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
+        self.dic = {
+            "input_preprocessed": os.path.join(
+                input_path, "ISIC_2019_Training_Input_preprocessed"
+            ),
+            "train_test_folds": os.path.join(
+                path_to_config_file, "dataset_creation_scripts/train_test_folds"
+            ),
+        }
         self.X_dtype = X_dtype
         self.y_dtype = y_dtype
         self.train_test = train_test
-        df = pd.read_csv(dic["train_test_folds"])
+        df = pd.read_csv(self.dic["train_test_folds"])
         df2 = df.query("fold == '" + self.train_test + "' ").reset_index(drop=True)
         images = df2.image.tolist()
         self.image_paths = [
-            os.path.join(dic["input_preprocessed"], image_name + ".jpg")
+            os.path.join(self.dic["input_preprocessed"], image_name + ".jpg")
             for image_name in images
         ]
         self.targets = df2.target
@@ -79,7 +70,7 @@ class Isic2019Raw(torch.utils.data.Dataset):
         target = self.targets[idx]
 
         # Image augmentations
-        if (self.augmentations is not None) and (self.train_test == "train"):
+        if self.augmentations is not None:
             augmented = self.augmentations(image=image)
             image = augmented["image"]
 
@@ -116,9 +107,9 @@ class FedIsic2019(Isic2019Raw):
 
         super().__init__(
             train_test,
-            X_dtype=torch.float32,
-            y_dtype=torch.int64,
-            augmentations=None,
+            X_dtype=X_dtype,
+            y_dtype=y_dtype,
+            augmentations=augmentations,
         )
 
         self.center = center
@@ -126,11 +117,11 @@ class FedIsic2019(Isic2019Raw):
         key = self.train_test + "_" + str(self.center)
         if not self.pooled:
             assert center in range(6)
-            df = pd.read_csv(dic["train_test_folds"])
+            df = pd.read_csv(self.dic["train_test_folds"])
             df2 = df.query("fold2 == '" + key + "' ").reset_index(drop=True)
             images = df2.image.tolist()
             self.image_paths = [
-                os.path.join(dic["input_preprocessed"], image_name + ".jpg")
+                os.path.join(self.dic["input_preprocessed"], image_name + ".jpg")
                 for image_name in images
             ]
             self.targets = df2.target
@@ -139,7 +130,7 @@ class FedIsic2019(Isic2019Raw):
 
 if __name__ == "__main__":
 
-    sz = 384
+    sz = 200
     train_aug = albumentations.Compose(
         [
             albumentations.RandomScale(0.07),
@@ -148,17 +139,18 @@ if __name__ == "__main__":
             albumentations.Flip(p=0.5),
             albumentations.Affine(shear=0.1),
             albumentations.RandomCrop(sz, sz) if sz else albumentations.NoOp(),
-            albumentations.OneOf(
-                [
-                    albumentations.Cutout(random.randint(1, 8), 16, 16),
-                    albumentations.CoarseDropout(random.randint(1, 8), 16, 16),
-                ]
-            ),
+            albumentations.CoarseDropout(random.randint(1, 8), 16, 16),
+            albumentations.Normalize(always_apply=True),
+        ]
+    )
+    test_aug = albumentations.Compose(
+        [
+            albumentations.CenterCrop(sz, sz),
             albumentations.Normalize(always_apply=True),
         ]
     )
 
-    mydataset = FedIsic2019(5, True, "train", augmentations=train_aug)
+    mydataset = FedIsic2019(5, True, "test", augmentations=test_aug)
 
     print("Example of dataset record: ", mydataset[0])
     print(f"The dataset has {len(mydataset)} elements")
