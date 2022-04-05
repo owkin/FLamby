@@ -69,6 +69,7 @@ setup(
         "pydicom",
         "dicom-numpy",
         "nibabel",
+        "monai",
         "dask",
         "requests",
         "google-api-python-client",

@@ -2,10 +2,13 @@ import os
 from os import PathLike
 from pathlib import Path
 from tarfile import TarFile
-from typing import Union, Iterable, List
+from typing import Union, Iterable, List, Tuple, Dict
 
+import numpy
 from torch import Tensor
 from torch.utils.data import Dataset
+
+from monai.transforms import Resize, Compose, ToTensor
 
 import re
 import nibabel as nib
@@ -94,13 +97,37 @@ def _find_file_in_tar(tar_file: TarFile, patient_id: int, modality) -> str:
     raise FileNotFoundError(f'File following the pattern {regex} could not be found.')
 
 
-def _load_nifti_image_by_id(tar_file: TarFile, patient_id: int, modality) -> Tensor:
+def _extract_center_name_from_filename(filename: str):
+    """
+    Extracts center name from file dataset.
+
+    Unfortunately, IXI has the center encoded in the namefile rather than in the demographics information.
+
+    Parameters
+    ----------
+    filename: str
+        Basename of NIFTI file (e.g. `IXI652-Guys-1116-MRA.nii.gz`)
+
+    Returns
+    -------
+    str
+        Name of the center where the data comes from (e.g. Guys for the previous example)
+
+    """
+    # We decided to wrap a function for this for clarity and easier modularity for future expansion
+    return filename.split('-')[1]
+
+
+def _load_nifti_image_by_id(tar_file: TarFile, patient_id: int, modality) -> Tuple[
+    nib.Nifti1Header, numpy.ndarray, str]:
     filename = _find_file_in_tar(tar_file, patient_id, modality)
     with tempfile.TemporaryDirectory() as td:
         full_path = os.path.join(td, filename)
         tar_file.extract(filename, td)
         nii_img = nib.load(full_path)
-    return nii_img
+        img = nii_img.get_fdata()
+        header = nii_img.get_header()
+    return header, img, _extract_center_name_from_filename(filename)
 
 
 class IXIDataset(Dataset):
@@ -120,6 +147,7 @@ class IXIDataset(Dataset):
     image_urls = []
 
     ALLOWED_MODALITIES = ['T1', 'T2', 'PD', 'MRA', 'DTI']
+    CENTER_LABELS = {'HH': 1, 'Guys': 2, 'IOP': 3}
 
     def __init__(
             self,
@@ -130,7 +158,8 @@ class IXIDataset(Dataset):
         self.transform = transform
 
         self.demographics = self._load_demographics()
-        self.modality = 'T1'
+        self.modality = 'T1'  # T1 modality by default
+        self.common_shape = (-1, 150)  # Common shape (some images need resizing on the z-axis
 
         # Validation routines for dataset robustness
         self._validate_modality()
@@ -146,7 +175,14 @@ class IXIDataset(Dataset):
         tf = self.root_folder.joinpath(f'IXI-{self.modality.upper()}.tar')
         return TarFile(tf)
 
-    def download(self) -> None:
+    def download(self, x) -> None:
+        # 1. Create folder if it does not exist
+        # 2. Download
+        url_xls = self.MIRRORS[0] + self.DEMOGRAPHICS_FILENAME  # URL EXCEL
+
+        for img_url in self.image_urls:
+            # download
+            pass
         pass
 
     def _load_demographics(self) -> pd.DataFrame:
@@ -182,29 +218,72 @@ class IXIDataset(Dataset):
                                                                  f'is not compatible with this dataset. ' \
                                                                  f'Existing modalities are {self.ALLOWED_MODALITIES} '
 
-    def __getitem__(self, item) -> Iterable:
+    def simple_visualization(self):
+        try:
+            import matplotlib.pyplot as plt
+            img = self[0][0]
+            middle_slice = img.shape[2] // 2
+            plt.imshow(img[..., middle_slice], cmap='gray')
+            plt.title('Modality: ' + self.modality)
+            plt.show()
+        except ImportError:
+            import warnings
+            warnings.warn('To visualize it is necessary to have matplotlib. '
+                          'Try using `pip install matplotlib and then '
+                          'launching the command again`')
+
+    def __getitem__(self, item) -> Tuple[Tensor, Dict]:
         patient_id = self.subject_ids[item]
-        nii_img = _load_nifti_image_by_id(tar_file=self.tar_file, patient_id=patient_id, modality=self.modality)
-        return nii_img
+        headers, img, center_name = _load_nifti_image_by_id(tar_file=self.tar_file,
+                                                            patient_id=patient_id,
+                                                            modality=self.modality)
+
+        # A default transform is required due to inhomogeneities in shape
+        default_transform = Compose([
+            ToTensor(),
+            Resize(self.common_shape),
+        ])
+        img = default_transform(img)
+
+        # Build a dictionary with the required labels: metadata
+        # Keys:
+        #  - 'center':
+        #    - 1: Hammersmith Hospital using a Philips 3T system
+        #    - 2: Guy’s Hospital using a Philips 1.5T system
+        #    - 3: Institute of Psychiatry using a GE 1.5T system
+        metadata = {'IXI_ID': patient_id, 'center': center_name, 'center_label': self.CENTER_LABELS[center_name]}
+
+        # Make values compatible with PyTorch
+        if self.transform:
+            img = self.transform(img)
+        return img, metadata
 
     def __len__(self) -> int:
         return len(self.tar_file.getnames())
 
 
 class T1ImagesIXIDataset(IXIDataset):
-    pass
+    def __init__(self, root, transform=None):
+        super(T1ImagesIXIDataset, self).__init__(root, transform=transform)
+        self.modality = 'T1'
 
 
 class T2ImagesIXIDataset(IXIDataset):
-    pass
+    def __init__(self, root, transform=None):
+        super(T2ImagesIXIDataset, self).__init__(root, transform=transform)
+        self.modality = 'T2'
 
 
 class PDImagesIXIDataset(IXIDataset):
-    pass
+    def __init__(self, root, transform=None):
+        super(PDImagesIXIDataset, self).__init__(root, transform=transform)
+        self.modality = 'PD'
 
 
 class MRAImagesIXIDataset(IXIDataset):
-    pass
+    def __init__(self, root, transform=None):
+        super(MRAImagesIXIDataset, self).__init__(root, transform=transform)
+        self.modality = 'MRA'
 
 
 class DTIImagesIXIDataset(IXIDataset):
