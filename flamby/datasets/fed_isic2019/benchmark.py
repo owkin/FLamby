@@ -3,15 +3,17 @@ import copy
 import os
 import random
 import time
+
 import albumentations
 import dataset
-import models
 import torch
 from sklearn import metrics
-from pathlib import Path
-from flamby.utils import read_config
 
-if __name__ == "__main__":
+from flamby.datasets.fed_isic2019.models import Baseline
+from flamby.utils import check_dataset_from_config
+
+
+def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -26,13 +28,25 @@ if __name__ == "__main__":
         default=0,
         help="GPU to run the training on (if available)",
     )
+    parser.add_argument(
+        "--batch",
+        type=int,
+        default=64,
+        help="Batch size for training and testing",
+    )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=4,
+        help="Numbers of workers for the dataloader",
+    )
     args = parser.parse_args()
 
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
     torch.use_deterministic_algorithms(False)
 
-    sz = 168
+    sz = 200
     train_aug = albumentations.Compose(
         [
             albumentations.RandomScale(0.07),
@@ -40,32 +54,29 @@ if __name__ == "__main__":
             albumentations.RandomBrightnessContrast(0.15, 0.1),
             albumentations.Flip(p=0.5),
             albumentations.Affine(shear=0.1),
-            albumentations.RandomCrop(sz, sz) if sz else albumentations.NoOp(),
-            albumentations.OneOf(
-                [
-                    albumentations.Cutout(random.randint(1, 8), 16, 16),
-                    albumentations.CoarseDropout(random.randint(1, 8), 16, 16),
-                ]
-            ),
+            albumentations.RandomCrop(sz, sz),
+            albumentations.CoarseDropout(random.randint(1, 8), 16, 16),
+            albumentations.Normalize(always_apply=True),
+        ]
+    )
+    test_aug = albumentations.Compose(
+        [
+            albumentations.CenterCrop(sz, sz),
             albumentations.Normalize(always_apply=True),
         ]
     )
 
-    path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
-    config_file = os.path.join(path_to_config_file, "dataset_creation_scripts/dataset_location.yaml")
-    dict = read_config(config_file)
+    dict = check_dataset_from_config(dataset_name="fed_isic2019", debug=False)
     input_path = dict["dataset_path"]
-    dic = {
-        "model_dest": os.path.join(input_path, "saved_model_state_dict")
-    }
+    dic = {"model_dest": os.path.join(input_path, "saved_model_state_dict")}
 
     train_dataset = dataset.FedIsic2019(0, True, "train", augmentations=train_aug)
     train_dataloader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=64, shuffle=True, num_workers=4
+        train_dataset, batch_size=args.batch, shuffle=True, num_workers=args.workers
     )
-    test_dataset = dataset.FedIsic2019(0, True, "test")
+    test_dataset = dataset.FedIsic2019(0, True, "test", augmentations=test_aug)
     test_dataloader = torch.utils.data.DataLoader(
-        test_dataset, batch_size=64, shuffle=False, num_workers=4
+        test_dataset, batch_size=args.batch, shuffle=False, num_workers=args.workers
     )
     dataloaders = {"train": train_dataloader, "test": test_dataloader}
     dataset_sizes = {"train": len(train_dataset), "test": len(test_dataset)}
@@ -83,7 +94,7 @@ if __name__ == "__main__":
         class_weights,
     )
 
-    model = models.Baseline()
+    model = Baseline()
     model = model.to(device)
 
     optimize_final_layer_only = False
@@ -183,8 +194,12 @@ if __name__ == "__main__":
         model.load_state_dict(best_model_wts)
         return model
 
-    model = train_model(model, optimizer, scheduler, num_epochs=10)
+    model = train_model(model, optimizer, scheduler, num_epochs=20)
 
     script_directory = os.path.abspath(os.path.dirname(__file__))
     dest_file = os.path.join(script_directory, dic["model_dest"])
     torch.save(model.state_dict(), dest_file)
+
+
+if __name__ == "__main__":
+    main()
