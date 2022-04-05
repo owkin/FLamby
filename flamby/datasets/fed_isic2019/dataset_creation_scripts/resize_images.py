@@ -5,27 +5,27 @@
 import argparse
 import glob
 import os
+import sys
+from pathlib import Path
+
 import albumentations
 import numpy as np
-import sys
 from color_constancy import color_constancy
 from fastai.vision.all import PILImage, Resize, ResizeMethod
 from joblib import Parallel, delayed
 from PIL import Image
 from tqdm import tqdm
+
 from flamby.utils import read_config, write_value_in_config
-from pathlib import Path
 
 path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
 config_file = os.path.join(path_to_config_file, "dataset_location.yaml")
 dict = read_config(config_file)
 if not (dict["download_complete"]):
-    raise ValueError(
-        "Download incomplete. Please relaunch the download script"
-    )
+    raise ValueError("Download incomplete. Please relaunch the download script")
 if dict["preprocessing_complete"]:
-        print("You have already run the preprocessing, aborting.")
-        sys.exit()
+    print("You have already ran the preprocessing, aborting.")
+    sys.exit()
 input_path = dict["dataset_path"]
 
 
@@ -36,6 +36,7 @@ dic = {
 input_folder = os.path.join(input_path, dic["inputs"])
 output_folder = os.path.join(input_path, dic["inputs_preprocessed"])
 os.makedirs(output_folder, exist_ok=True)
+
 
 def pad_and_resize(path, output_path, sz: tuple):
     fn = os.path.basename(path)
@@ -91,12 +92,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--mantain_aspect_ratio",
         action="store_true",
-        default=False,
+        default=True,
         help="Whether to mantain aspect ratio of images.",
     )
     parser.add_argument(
         "--pad_resize",
-        default=True,
+        default=False,
         type=bool,
         help="Whether to pad and resize images.",
     )

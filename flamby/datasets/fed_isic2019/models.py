@@ -5,16 +5,14 @@
 
 import argparse
 import random
-import os
+
 import albumentations
 import dataset
 import torch
 import torch.nn as nn
-import torchvision
 from efficientnet_pytorch import EfficientNet
 from loss import BaselineLoss
-from pathlib import Path
-from flamby.utils import read_config
+
 
 class Baseline(nn.Module):
     def __init__(self, pretrained=True, arch_name="efficientnet-b0"):
@@ -44,13 +42,12 @@ class Baseline(nn.Module):
 if __name__ == "__main__":
 
     print("Torch version ", torch.__version__)
-    print("Torchvision version ", torchvision.__version__)
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--loss", default="crossentropy")
     args = parser.parse_args()
 
-    sz = 100
+    sz = 200
     train_aug = albumentations.Compose(
         [
             albumentations.RandomScale(0.07),
@@ -58,13 +55,8 @@ if __name__ == "__main__":
             albumentations.RandomBrightnessContrast(0.15, 0.1),
             albumentations.Flip(p=0.5),
             albumentations.Affine(shear=0.1),
-            albumentations.RandomCrop(sz, sz) if sz else albumentations.NoOp(),
-            albumentations.OneOf(
-                [
-                    albumentations.Cutout(random.randint(1, 8), 16, 16),
-                    albumentations.CoarseDropout(random.randint(1, 8), 16, 16),
-                ]
-            ),
+            albumentations.RandomCrop(sz, sz),
+            albumentations.CoarseDropout(random.randint(1, 8), 16, 16),
             albumentations.Normalize(always_apply=True),
         ]
     )

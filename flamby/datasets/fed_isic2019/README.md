@@ -55,5 +55,5 @@ This will resize all images to squares of size 224px by 224px. Color constancy i
 ## Baseline training and evaluation in a pooled setting
 To train and evaluate a classification model for the pooled dataset, run:
 ```
-python benchmark.py --loss baseline --GPU 0
+python benchmark.py --loss baseline --GPU 0 --batch 64 --workers 4
 ```

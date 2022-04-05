@@ -52,7 +52,10 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     install_requires=[
+        "albumentations",
         "argparse",
+        "efficientnet-pytorch",
+        "fastai",
         "histolab",
         "matplotlib",
         "numpy",
