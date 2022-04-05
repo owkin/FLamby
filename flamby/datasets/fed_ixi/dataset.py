@@ -8,7 +8,7 @@ import numpy
 from torch import Tensor
 from torch.utils.data import Dataset
 
-from monai.transforms import Resize, Compose, ToTensor
+from monai.transforms import Resize, Compose, ToTensor, AddChannel
 
 import re
 import nibabel as nib
@@ -159,7 +159,7 @@ class IXIDataset(Dataset):
 
         self.demographics = self._load_demographics()
         self.modality = 'T1'  # T1 modality by default
-        self.common_shape = (-1, 150)  # Common shape (some images need resizing on the z-axis
+        self.common_shape = (-1, -1, 150)  # Common shape (some images need resizing on the z-axis
 
         # Validation routines for dataset robustness
         self._validate_modality()
@@ -221,7 +221,7 @@ class IXIDataset(Dataset):
     def simple_visualization(self):
         try:
             import matplotlib.pyplot as plt
-            img = self[0][0]
+            img = self[0][0][0]  # [observation index][image tensor][color channel]
             middle_slice = img.shape[2] // 2
             plt.imshow(img[..., middle_slice], cmap='gray')
             plt.title('Modality: ' + self.modality)
@@ -241,6 +241,7 @@ class IXIDataset(Dataset):
         # A default transform is required due to inhomogeneities in shape
         default_transform = Compose([
             ToTensor(),
+            AddChannel(),
             Resize(self.common_shape),
         ])
         img = default_transform(img)
@@ -278,16 +279,21 @@ class PDImagesIXIDataset(IXIDataset):
     def __init__(self, root, transform=None):
         super(PDImagesIXIDataset, self).__init__(root, transform=transform)
         self.modality = 'PD'
+        self.common_shape = (-1, -1, 125)
 
 
 class MRAImagesIXIDataset(IXIDataset):
     def __init__(self, root, transform=None):
         super(MRAImagesIXIDataset, self).__init__(root, transform=transform)
         self.modality = 'MRA'
+        self.common_shape = (512, 512, 100)
 
 
 class DTIImagesIXIDataset(IXIDataset):
-    pass
+    def __init__(self, root, transform=None):
+        super(DTIImagesIXIDataset, self).__init__(root, transform=transform)
+        self.modality = 'DTI'
+        # self.common_shape = (512, 512, 100)
 
 
 class MultiModalIXIDataset(IXIDataset):

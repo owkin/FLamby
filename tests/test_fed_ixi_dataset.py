@@ -59,3 +59,11 @@ def test_mra_images_ixi_dataset():
     dataset = MRAImagesIXIDataset(root='~/Downloads/')
     assert dataset.modality == 'MRA'
     dataset_test_routine(dataset)
+
+
+def test_dti_images_ixi_dataset():
+    # %%
+    from flamby.datasets.fed_ixi import DTIImagesIXIDataset
+    dataset = DTIImagesIXIDataset(root='~/Downloads/')
+    assert dataset.modality == 'DTI'
+    dataset_test_routine(dataset)
