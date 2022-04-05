@@ -14,6 +14,7 @@ import re
 import nibabel as nib
 import pandas as pd
 import tempfile
+import requests
 
 
 def _get_id_from_filename(x, verify_single_matches=True) -> Union[List[int], int]:
@@ -144,7 +145,13 @@ class IXIDataset(Dataset):
 
     MIRRORS = ['https://biomedic.doc.ic.ac.uk/brain-development/downloads/IXI/']
     DEMOGRAPHICS_FILENAME = 'IXI.xls'
-    image_urls = []
+    image_urls = [
+        "http://biomedic.doc.ic.ac.uk/brain-development/downloads/IXI/IXI-T1.tar",
+        "http://biomedic.doc.ic.ac.uk/brain-development/downloads/IXI/IXI-T2.tar",
+        "http://biomedic.doc.ic.ac.uk/brain-development/downloads/IXI/IXI-PD.tar",
+        "http://biomedic.doc.ic.ac.uk/brain-development/downloads/IXI/IXI-MRA.tar",
+        "http://biomedic.doc.ic.ac.uk/brain-development/downloads/IXI/IXI-DTI.tar"
+    ]
 
     ALLOWED_MODALITIES = ['T1', 'T2', 'PD', 'MRA', 'DTI']
     CENTER_LABELS = {'HH': 1, 'Guys': 2, 'IOP': 3}
@@ -178,12 +185,31 @@ class IXIDataset(Dataset):
     def download(self, x) -> None:
         # 1. Create folder if it does not exist
         # 2. Download
+
         url_xls = self.MIRRORS[0] + self.DEMOGRAPHICS_FILENAME  # URL EXCEL
 
+        parent_dir = "downloads"
+        if os.path.isdir(parent_dir) == False:
+            os.makedirs(parent_dir)
+
+        url_xls = self.MIRRORS[0] + self.DEMOGRAPHICS_FILENAME  # URL EXCEL
+        demographics_path = f'./{parent_dir}/{self.DEMOGRAPHICS_FILENAME}'
+        
+        if not os.path.isfile(demographics_path):
+            response = requests.get(url_xls, stream=True)
+            if response.status_code == 200:
+                with open(demographics_path, 'wb') as f:
+                    f.write(response.raw.read())
+        
         for img_url in self.image_urls:
-            # download
-            pass
-        pass
+            img_archive_name = img_url.split('/')[-1]
+            img_archive_path = f'./{parent_dir}/{img_archive_name}'
+            if os.path.isfile(img_archive_path):
+                continue
+            response = requests.get(img_url, stream=True)
+            if response.status_code == 200:
+                with open(img_archive_path, 'wb') as f:
+                    f.write(response.raw.read())
 
     def _load_demographics(self) -> pd.DataFrame:
         demographics_file = self.root_folder.joinpath(self.DEMOGRAPHICS_FILENAME)
