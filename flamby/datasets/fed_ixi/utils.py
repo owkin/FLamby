@@ -153,8 +153,4 @@ def _load_nifti_image_by_id(
         img = nii_img.get_fdata()
         header = nii_img.get_header()
 
-    # # Reorient
-    # if 'T1' in modality.upper():
-    #     img = np.moveaxis(img, -1, 0)
-    #     img = np.flip(img, 2)
     return header, img, _extract_center_name_from_filename(filename)
