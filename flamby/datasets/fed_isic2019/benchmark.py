@@ -9,38 +9,92 @@ import dataset
 import torch
 from sklearn import metrics
 
+from flamby.datasets.fed_isic2019.loss import BaselineLoss
 from flamby.datasets.fed_isic2019.models import Baseline
 from flamby.utils import check_dataset_from_config
 
 
-def main():
+def train_model(
+    model, optimizer, scheduler, dataloaders, dataset_sizes, device, lossfunc, num_epochs
+):
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--loss",
-        default="baseline",
-        help="Loss function " "used for training",
-        choices=["baseline", "crossentropy"],
+    since = time.time()
+
+    best_model_wts = copy.deepcopy(model.state_dict())
+    best_acc = 0.0
+
+    for epoch in range(num_epochs):
+        print("Epoch {}/{}".format(epoch, num_epochs - 1))
+        print("-" * 10)
+
+        # Each epoch has a training and validation phase
+        for phase in ["train", "test"]:
+            if phase == "train":
+                model.train()  # Set model to training mode
+            else:
+                model.eval()  # Set model to evaluate mode
+
+            running_loss = 0.0
+            running_corrects = 0
+            y_true = []
+            y_pred = []
+
+            # Iterate over data.
+            for sample in dataloaders[phase]:
+                inputs = sample["image"].to(device)
+                labels = sample["target"].to(device)
+                y_true.append(sample["target"])
+
+                optimizer.zero_grad()
+                with torch.set_grad_enabled(phase == "train"):
+                    outputs = model(inputs)
+                    loss = lossfunc(outputs, labels)
+                    _, preds = torch.max(outputs, 1)
+                    y_pred.append(preds)
+                    # backward + optimize only if in training phase
+                    if phase == "train":
+                        loss.backward()
+                        optimizer.step()
+
+                # statistics
+                running_loss += loss.item() * inputs.size(0)
+                running_corrects += torch.sum(preds == labels.data)
+            if phase == "train":
+                scheduler.step()
+
+            epoch_loss = running_loss / dataset_sizes[phase]
+            epoch_acc = running_corrects.double() / dataset_sizes[phase]
+            y = torch.cat(y_true)
+            y_hat = torch.cat(y_pred)
+            epoch_balanced_acc = metrics.balanced_accuracy_score(y.cpu(), y_hat.cpu())
+
+            print(
+                "{} Loss: {:.4f} Acc: {:.4f} Balanced acc: {:.4f}".format(
+                    phase, epoch_loss, epoch_acc, epoch_balanced_acc
+                )
+            )
+
+            # deep copy the model
+            if phase == "test" and epoch_balanced_acc > best_acc:
+                best_acc = epoch_balanced_acc
+                best_model_wts = copy.deepcopy(model.state_dict())
+
+        print()
+
+    time_elapsed = time.time() - since
+    print(
+        "Training complete in {:.0f}m {:.0f}s".format(
+            time_elapsed // 60, time_elapsed % 60
+        )
     )
-    parser.add_argument(
-        "--GPU",
-        type=int,
-        default=0,
-        help="GPU to run the training on (if available)",
-    )
-    parser.add_argument(
-        "--batch",
-        type=int,
-        default=64,
-        help="Batch size for training and testing",
-    )
-    parser.add_argument(
-        "--workers",
-        type=int,
-        default=4,
-        help="Numbers of workers for the dataloader",
-    )
-    args = parser.parse_args()
+    print("Best test Balanced acc: {:4f}".format(best_acc))
+
+    # load best model weights
+    model.load_state_dict(best_model_wts)
+    return model
+
+
+def main(args):
 
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
@@ -96,6 +150,7 @@ def main():
 
     model = Baseline()
     model = model.to(device)
+    lossfunc = BaselineLoss(alpha=class_weights)
 
     optimize_final_layer_only = False
     if optimize_final_layer_only:
@@ -108,93 +163,21 @@ def main():
         optimizer = torch.optim.Adam(model.base_model.parameters(), lr=5e-4)
 
     scheduler = torch.optim.lr_scheduler.MultiStepLR(
-        optimizer, milestones=[3, 5, 7, 9, 11, 13, 15], gamma=0.5
+        optimizer, milestones=[3, 5, 7, 9, 11, 13, 15, 17], gamma=0.5
     )
 
-    def train_model(model, optimizer, scheduler, num_epochs=25):
-        since = time.time()
+    num_epochs = 20
 
-        best_model_wts = copy.deepcopy(model.state_dict())
-        best_acc = 0.0
-
-        for epoch in range(num_epochs):
-            print("Epoch {}/{}".format(epoch, num_epochs - 1))
-            print("-" * 10)
-
-            # Each epoch has a training and validation phase
-            for phase in ["train", "test"]:
-                if phase == "train":
-                    model.train()  # Set model to training mode
-                else:
-                    model.eval()  # Set model to evaluate mode
-
-                running_loss = 0.0
-                running_corrects = 0
-                y_true = []
-                y_pred = []
-
-                # Iterate over data.
-                for sample in dataloaders[phase]:
-                    inputs = sample["image"].to(device)
-                    labels = sample["target"].to(device)
-                    y_true.append(sample["target"])
-
-                    # zero the parameter gradients
-                    optimizer.zero_grad()
-
-                    # forward
-                    # track history if only in train
-                    with torch.set_grad_enabled(phase == "train"):
-                        outputs, loss = model(
-                            inputs, labels, weights=class_weights, args=args
-                        )
-                        _, preds = torch.max(outputs, 1)
-                        y_pred.append(preds)
-                        # backward + optimize only if in training phase
-                        if phase == "train":
-                            loss.backward()
-                            optimizer.step()
-
-                    # statistics
-                    running_loss += loss.item() * inputs.size(0)
-                    running_corrects += torch.sum(preds == labels.data)
-                if phase == "train":
-                    scheduler.step()
-
-                epoch_loss = running_loss / dataset_sizes[phase]
-                epoch_acc = running_corrects.double() / dataset_sizes[phase]
-                y = torch.cat(y_true)
-                y_hat = torch.cat(y_pred)
-                epoch_balanced_acc = metrics.balanced_accuracy_score(
-                    y.cpu(), y_hat.cpu()
-                )
-
-                print(
-                    "{} Loss: {:.4f} Acc: {:.4f} Balanced acc: {:.4f}".format(
-                        phase, epoch_loss, epoch_acc, epoch_balanced_acc
-                    )
-                )
-
-                # deep copy the model
-                if phase == "test" and epoch_balanced_acc > best_acc:
-                    best_acc = epoch_balanced_acc
-                    best_model_wts = copy.deepcopy(model.state_dict())
-
-            print()
-
-        time_elapsed = time.time() - since
-        print(
-            "Training complete in {:.0f}m {:.0f}s".format(
-                time_elapsed // 60, time_elapsed % 60
-            )
-        )
-        print("Best test Balanced acc: {:4f}".format(best_acc))
-
-        # load best model weights
-        model.load_state_dict(best_model_wts)
-        return model
-
-    model = train_model(model, optimizer, scheduler, num_epochs=20)
+    model = train_model(
+        model,
+        optimizer,
+        scheduler,
+        dataloaders,
+        dataset_sizes,
+        device,
+        lossfunc,
+        num_epochs,
+    )
 
     script_directory = os.path.abspath(os.path.dirname(__file__))
     dest_file = os.path.join(script_directory, dic["model_dest"])
@@ -202,4 +185,26 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--GPU",
+        type=int,
+        default=0,
+        help="GPU to run the training on (if available)",
+    )
+    parser.add_argument(
+        "--batch",
+        type=int,
+        default=64,
+        help="Batch size for training and testing",
+    )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=4,
+        help="Numbers of workers for the dataloader",
+    )
+    args = parser.parse_args()
+
+    main(args)

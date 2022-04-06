@@ -3,7 +3,7 @@ repos:
     rev: 22.3.0
     hooks:
     - id: black
-      args: # arguments to configure black 
+      args: # arguments to configure black
        - --line-length=89
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v1.2.3

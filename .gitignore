@@ -491,3 +491,4 @@ venv
 .vscode
 flamby/datasets/fed_isic2019/melonama/
 flamby/datasets/fed_isic2019/saved_model_state_dict
+flamby/datasets/fed_isic2019/dataset_creation_scripts/folds.py
