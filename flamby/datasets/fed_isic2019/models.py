@@ -3,7 +3,6 @@
 # [pytorch reimplementation of EfficientNets]
 # (https://github.com/lukemelas/EfficientNet-PyTorch)
 
-import argparse
 import random
 
 import albumentations
@@ -11,7 +10,6 @@ import dataset
 import torch
 import torch.nn as nn
 from efficientnet_pytorch import EfficientNet
-from loss import BaselineLoss
 
 
 class Baseline(nn.Module):
@@ -28,24 +26,12 @@ class Baseline(nn.Module):
         print("Number of features output by EfficientNet", nftrs)
         self.base_model._fc = nn.Linear(nftrs, 8)
 
-    def forward(self, image, target, weights=None, args=None):
+    def forward(self, image):
         out = self.base_model(image)
-        if args.loss == "baseline":
-            loss = BaselineLoss(alpha=weights)(out, target.view(-1, 1).type_as(out))
-        elif args.loss == "crossentropy":
-            loss = nn.CrossEntropyLoss(weight=weights)(out, target)
-        else:
-            raise ValueError("loss function not found.")
-        return out, loss
+        return out
 
 
 if __name__ == "__main__":
-
-    print("Torch version ", torch.__version__)
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--loss", default="crossentropy")
-    args = parser.parse_args()
 
     sz = 200
     train_aug = albumentations.Compose(
@@ -70,4 +56,4 @@ if __name__ == "__main__":
         y = torch.unsqueeze(mydataset[i]["target"], 0)
         print(X.shape)
         print(y.shape)
-        print(model(X, y, args=args))
+        print(model(X))

@@ -30,6 +30,8 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
+os.makedirs(args.output_folder, exist_ok=True)
+
 # Creating config file with path to dataset from arguments
 dict, config_file = create_config(
     output_folder=args.output_folder, debug=False, dataset_name="fed_isic2019"
@@ -50,7 +52,7 @@ file1 = os.path.join(parent_script_directory, "HAM10000_metadata")
 # download and unzip data
 os.system(f"wget {url_1} --no-check-certificate -O {dest_file_1}")
 if zipfile.is_zipfile(dest_file_1):
-    print("Zip file dowloaded correctly")
+    print("Zip file downloaded correctly")
 else:
     sys.exit("Zip file corrupted")
 os.system(f"unzip {dest_file_1} -d {data_directory}")

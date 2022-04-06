@@ -55,7 +55,6 @@ setup(
         "albumentations",
         "argparse",
         "efficientnet-pytorch",
-        "fastai",
         "histolab",
         "matplotlib",
         "numpy",
