@@ -2,7 +2,9 @@ from pathlib import Path
 from tarfile import TarFile
 from typing import Union, Tuple, Dict
 
+import numpy as np
 import pandas as pd
+import scipy.ndimage
 from monai.transforms import Resize, Compose, ToTensor, AddChannel
 from torch import Tensor
 from torch.utils.data import Dataset
@@ -102,9 +104,15 @@ class IXIDataset(Dataset):
         try:
             import matplotlib.pyplot as plt
             img = self[0][0][0]  # [observation index][image tensor][color channel]
-            middle_slice = img.shape[2] // 2
-            plt.imshow(img[..., middle_slice], cmap='gray')
-            plt.title('Modality: ' + self.modality)
+            fig, axs = plt.subplots(ncols=3)
+            sx, sy, sz = scipy.ndimage.center_of_mass(np.where(img, 1, 0))
+            sx, sy, sz = int(sx), int(sy), int(sz)
+
+            axs[0].imshow(img[sx, ...], cmap='gray')
+            axs[1].imshow(img[:, sy, :], cmap='gray')
+            axs[2].imshow(img[..., sz], cmap='gray')
+
+            plt.suptitle('Modality: ' + self.modality)
             plt.show()
         except ImportError:
             import warnings

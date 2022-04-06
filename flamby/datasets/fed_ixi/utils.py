@@ -15,6 +15,8 @@ import tempfile
 from typing import Union, List, Tuple
 
 import nibabel as nib
+import nibabel.processing as processing
+import numpy as np
 from nibabel import Nifti1Header
 from numpy import ndarray
 
@@ -146,6 +148,13 @@ def _load_nifti_image_by_id(
         full_path = os.path.join(td, filename)
         tar_file.extract(filename, td)
         nii_img = nib.load(full_path)
+        # nii_img = nib.as_closest_canonical(nii_img)
+        # nii_img = processing.conform(nii_img) #, out_shape=nii_img.shape)
         img = nii_img.get_fdata()
         header = nii_img.get_header()
+
+    # # Reorient
+    # if 'T1' in modality.upper():
+    #     img = np.moveaxis(img, -1, 0)
+    #     img = np.flip(img, 2)
     return header, img, _extract_center_name_from_filename(filename)
