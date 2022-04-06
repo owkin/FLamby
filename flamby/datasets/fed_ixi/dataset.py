@@ -182,7 +182,15 @@ class IXIDataset(Dataset):
         tf = self.root_folder.joinpath(f'IXI-{self.modality.upper()}.tar')
         return TarFile(tf)
 
-    def download(self, x) -> None:
+    def download(self, debug) -> None:
+        """
+        Downloads demographics information and image archives and stores them in a folder.
+
+        Parameters
+            ----------
+            debug: bool
+                Enables a light version download. hosting synthetic data ? TBD
+        """
         # 1. Create folder if it does not exist
         # 2. Download
 
