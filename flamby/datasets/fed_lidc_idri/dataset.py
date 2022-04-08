@@ -7,11 +7,12 @@ import torch
 from torch.utils.data import Dataset
 
 import flamby.datasets.fed_lidc_idri
-from flamby.datasets.fed_lidc_idri import METADATA_DICT
-from flamby.datasets.fed_lidc_idri.data_utils import Sampler, resize_by_crop_or_pad
+from flamby.datasets.fed_lidc_idri.data_utils import (
+    ClipNorm,
+    Sampler,
+    resize_by_crop_or_pad,
+)
 from flamby.utils import check_dataset_from_config
-
-dic = METADATA_DICT
 
 
 class LidcIdriRaw(Dataset):
@@ -30,7 +31,7 @@ class LidcIdriRaw(Dataset):
     X_dtype: torch.dtype, The dtype of the X features output
     y_dtype: torch.dtype, The dtype of the y label output
     debug : bool, whether the dataset was processed in debug mode (first 10 files)
-    transform : torch.torchvision.Transform or None, Transformation to perform on data
+    transform : torch.torchvision.Transform or None, Transformation to perform on data.
     out_shape : Tuple or None, The desired output shape (If None, no reshaping)
     sampler: Sampler object, algorithm to sample patches
     """
@@ -41,7 +42,7 @@ class LidcIdriRaw(Dataset):
         y_dtype=torch.int64,
         out_shape=(384, 384, 384),
         sampler=Sampler(),
-        transform=None,
+        transform=ClipNorm(),
         debug=False,
     ):
         """
@@ -55,7 +56,7 @@ class LidcIdriRaw(Dataset):
         sampler : flamby.datasets.fed_lidc_idri.data_utils.Sampler
             Patch sampling method.
         transform : torch.torchvision.Transform or None, optional.
-            Transformation to perform on each data point.
+            Transformation to perform on each data point. Default: ClipNorm.
         out_shape : Tuple or None, optional
             The desired output shape. If None, no padding or cropping is performed.
             Default is (384, 384, 384).
@@ -125,7 +126,7 @@ class FedLidcIdri(LidcIdriRaw):
         y_dtype=torch.int64,
         out_shape=(384, 384, 384),
         sampler=Sampler(),
-        transform=None,
+        transform=ClipNorm(),
         center=0,
         train=True,
         pooled=False,
@@ -192,6 +193,9 @@ class FedLidcIdri(LidcIdriRaw):
         self.features_centers = [
             fp for idx, fp in enumerate(self.features_centers) if to_select[idx]
         ]
+
+        if not train:
+            self.sampler = Sampler(algo="all")
 
 
 def collate_fn(dataset_elements_list):
