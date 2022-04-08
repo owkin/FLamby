@@ -3,9 +3,33 @@ import torch.nn.functional as F
 from torch.nn.modules.loss import _Loss
 
 
+class BaselineLoss(_Loss):
+    """
+    Dice loss for segmentation.
+    If alpha and beta are not equal to 0.5, implements the Tversky loss.
+    Input should have shape (B, C, ...): batch size x channels x any number of dimensions
+    Attributes
+    ----------
+    alpha: float, default=.5
+        first coefficient of Tversky loss
+    beta: float, default=.5
+        second coefficient of Tversky loss
+    squared: bool, default=False
+        Whether to square the summands in the denominator. Supersedes alpha and beta.
+    """
+
+    def __init__(self, alpha=0.5, beta=0.5, reduction="mean", squared=False):
+        super(BaselineLoss, self).__init__(reduction=reduction)
+        self.alpha = alpha
+        self.beta = beta
+        self.squared = squared
+
+    def forward(self, input: torch.Tensor, target: torch.Tensor):
+        return 1 - dice_coeff(input, target, self.alpha, self.beta, self.squared)
+
+
 class FocalLoss(_Loss):
     """
-    TODO: doc
     Focal loss for dense detection: https://arxiv.org/abs/1708.02002.
     """
 
@@ -18,26 +42,10 @@ class FocalLoss(_Loss):
         return _focal_loss(input, target, self.alpha, self.gamma, self.reduction)
 
 
-class DiceLoss(_Loss):
-    """
-    Dice loss for segmentation.
-    TODO: doc
-    WARNING: the first dimension of inputs is batch size and is mandatory.
-    """
-
-    def __init__(self, alpha=0.5, beta=0.5, reduction="mean"):
-        super(DiceLoss, self).__init__(reduction=reduction)
-        self.alpha = alpha
-        self.beta = beta
-
-    def forward(self, input: torch.Tensor, target: torch.Tensor):
-        return 1 - dice_coeff(input, target, self.alpha, self.beta)
-
-
 class CrossEntDiceLoss(_Loss):
     """
     Weighted cross entropy + dice
-    WARNING: the first dimension of inputs is batch size and is mandatory.
+    Input should have shape (B, C, ...): batch size x channels x any number of dimensions
     Attributes
     ----------
     xent_weight : float, optional
@@ -61,10 +69,10 @@ class CrossEntDiceLoss(_Loss):
         ) + self.xent_weight * balanced_xent(y_true, y_pred)
 
 
-def dice_coeff(y_pred, y_true, alpha=0.5, beta=0.5):
+def dice_coeff(y_pred, y_true, alpha=0.5, beta=0.5, squared=False):
     """
     Return the dice coefficient.
-    WARNING: the first dimension of inputs is batch size and is mandatory.
+    Input should have shape (B, C, ...): batch size x channels x any number of dimensions
     Parameters
     ----------
     y_pred : torch.Tensor
@@ -78,10 +86,18 @@ def dice_coeff(y_pred, y_true, alpha=0.5, beta=0.5):
     """
     intersection = torch.sum(y_pred * y_true, dim=tuple(range(1, y_true.ndim)))
 
-    union = torch.sum(
-        y_pred * y_true + alpha * y_pred * (1 - y_true) + beta * (1 - y_pred) * y_true,
-        dim=tuple(range(1, y_true.ndim)),
-    )
+    if squared:
+        union = 0.5 * torch.sum(
+            y_pred * y_pred + y_true * y_true,
+            dim=tuple(range(1, y_true.ndim)),
+        )
+    else:
+        union = torch.sum(
+            y_pred * y_true
+            + alpha * y_pred * (1 - y_true)
+            + beta * (1 - y_pred) * y_true,
+            dim=tuple(range(1, y_true.ndim)),
+        )
 
     dice = intersection / torch.clamp(union, min=1.0e-7)
 
