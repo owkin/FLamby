@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 class Sampler(object):
     """
-    TODO : add seeding for random and fast samplers
+    3D image patch sampler.
     Attributes
     ----------
     patch_shape : int Tuple
@@ -22,9 +22,9 @@ class Sampler(object):
 
     def __init__(
         self,
-        patch_shape=(48, 48, 48),
-        n_patches=4,
-        ratio=0.8,
+        patch_shape=(128, 128, 128),
+        n_patches=3,
+        ratio=1.0,
         center=False,
         algo="fast",
     ):
@@ -66,7 +66,7 @@ class Sampler(object):
         Returns
         -------
         Two torch.Tensor
-            of shape (n_patches, *desired_shape, n_channels)
+            of shape (n_patches, n_channels, *desired_shape)
         """
         if self.algo == "fast":
             return fast_sampler(
@@ -75,9 +75,33 @@ class Sampler(object):
         elif self.algo == "random":
             return random_sampler(X, y, self.patch_shape, self.n_patches)
         elif self.algo == "all":
-            return all_sampler(X, y, patch_shape=(48, 48, 48), overlap=0.0)
+            return all_sampler(X, y, patch_shape=(128, 128, 128), overlap=0.0)
         elif self.algo == "none":
             return X, y
+
+
+class ClipNorm(object):
+    """
+    Clip then normalize transformation.
+    Clip to [minval, maxval] then map linearly to [0, 1].
+    Attributes
+    ----------
+    minval : float
+        lower bound
+    maxval : float
+        upper bound
+    """
+
+    def __init__(self, minval=-1024, maxval=600):
+        assert maxval > minval
+        self.minval = minval
+        self.maxval = maxval
+
+    def __call__(self, image):
+        x = torch.clamp(image, self.minval, self.maxval)
+        x -= self.minval
+        x /= self.maxval - self.minval
+        return x
 
 
 def resize_by_crop_or_pad(X, output_shape=(384, 384, 384)):
@@ -88,7 +112,7 @@ def resize_by_crop_or_pad(X, output_shape=(384, 384, 384)):
     ----------
     X : torch.Tensor
         Tensor to reshape.
-    output_shape : Tuplet or None
+    output_shape : Tuple or None
         Desired shape. If None, returns tensor as is.
     Returns
     -------
@@ -124,7 +148,7 @@ def resize_by_crop_or_pad(X, output_shape=(384, 384, 384)):
     return X
 
 
-def random_sampler(image, label, patch_shape=(48, 48, 48), n_samples=2):
+def random_sampler(image, label, patch_shape=(128, 128, 128), n_samples=2):
     """
     Sample random patches from input of any dimension
     Parameters
@@ -170,7 +194,7 @@ def random_sampler(image, label, patch_shape=(48, 48, 48), n_samples=2):
 def all_sampler(
     X,
     y,
-    patch_shape=(48, 48, 48),
+    patch_shape=(128, 128, 128),
     overlap=0.0,
 ):
     """
@@ -231,15 +255,15 @@ def all_sampler(
     indices_list = build_indices_list(indices)
 
     image_patches = X[indices_list]
-    label_patches = X[indices_list]
+    label_patches = y[indices_list]
     return image_patches, label_patches
 
 
 def fast_sampler(
     X,
     y,
-    patch_shape=(48, 48, 48),
-    n_patches=4,
+    patch_shape=(128, 128, 128),
+    n_patches=8,
     ratio=0.8,
     center=False,
 ):
@@ -262,17 +286,17 @@ def fast_sampler(
     Returns
     -------
     Two torch.Tensor
-        of shape (n_patches, *desired_shape, n_channels)
+        of shape (n_patches, n_channels, *desired_shape)
     """
-
-    native_shape = patch_shape
-    patch_shape = torch.tensor(patch_shape, dtype=torch.int)
 
     centroids_1 = torch.stack(torch.where(y), dim=-1)
 
     # If the input contains no positive voxels, return random patches:
     if len(centroids_1) == 0:
         return random_sampler(X, y, patch_shape, n_patches)
+
+    native_shape = patch_shape
+    patch_shape = torch.tensor(patch_shape, dtype=torch.int)
 
     n_patches_with = np.floor(n_patches * ratio).astype(int)
 
@@ -374,30 +398,6 @@ def get_all_centroids(image_shape, patch_shape, overlap):
     centroids = torch.reshape(centroids, (-1, len(patch_shape)))
 
     return centroids
-
-
-class ClipNorm(object):
-    """
-    Clip then normalize transformation.
-    Clip to [minval, maxval] then map linearly to [0, 1].
-    Attributes
-    ----------
-    minval : float
-        lower bound
-    maxval : float
-        upper bound
-    """
-
-    def __init__(self, minval=-1024, maxval=400):
-        assert maxval > minval
-        self.minval = minval
-        self.maxval = maxval
-
-    def __call__(self, image):
-        x = torch.clamp(image, self.minval, self.maxval)
-        x -= self.minval
-        x /= self.maxval - self.minval
-        return x
 
 
 def build_indices_list(indices):
