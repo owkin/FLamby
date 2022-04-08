@@ -62,7 +62,7 @@ class IXIDataset(Dataset):
         tf = self.root_folder.joinpath(f'IXI-{self.modality.upper()}.tar')
         return TarFile(tf)
 
-    def download(self, debug) -> None:
+    def download(self, debug=False) -> None:
         """
         Downloads demographics information and image archives and stores them in a folder.
 
@@ -86,16 +86,17 @@ class IXIDataset(Dataset):
             if response.status_code == 200:
                 with open(demographics_path, 'wb') as f:
                     f.write(response.raw.read())
-        
-        for img_url in self.image_urls:
-            img_archive_name = img_url.split('/')[-1]
-            img_archive_path = f'./{parent_dir}/{img_archive_name}'
-            if os.path.isfile(img_archive_path):
-                continue
-            response = requests.get(img_url, stream=True)
-            if response.status_code == 200:
-                with open(img_archive_path, 'wb') as f:
-                    f.write(response.raw.read())
+                    
+        if not debug:
+            for img_url in self.image_urls:
+                img_archive_name = img_url.split('/')[-1]
+                img_archive_path = f'./{parent_dir}/{img_archive_name}'
+                if os.path.isfile(img_archive_path):
+                    continue
+                response = requests.get(img_url, stream=True)
+                if response.status_code == 200:
+                    with open(img_archive_path, 'wb') as f:
+                        f.write(response.raw.read())
 
     def _load_demographics(self) -> pd.DataFrame:
         demographics_file = self.root_folder.joinpath(self.DEMOGRAPHICS_FILENAME)
