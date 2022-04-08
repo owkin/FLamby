@@ -34,9 +34,9 @@ We do not own copyrights on any of the datasets.
 
 ## Extending FLamby
 
-If you would like to add another cross-silo dataset please fork the repository
-and do a Pull-Request.
-Similarly one can add the results of a new strategy/training algorithm.
+If you would like to add another cross-silo dataset **with natural splits** please fork the repository
+and do a Pull-Request following the Contributing guidelines described below.
+Similarly one can add the results of a new strategy or training algorithm.
 
 ## Installation
 
