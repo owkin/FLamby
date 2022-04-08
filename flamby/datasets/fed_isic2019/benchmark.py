@@ -18,6 +18,21 @@ from flamby.utils import check_dataset_from_config, evaluate_model_on_tests
 def train_model(
     model, optimizer, scheduler, dataloaders, dataset_sizes, device, lossfunc, num_epochs
 ):
+    """Training function
+    Parameters
+    ----------
+    model : torch model to be trained
+    optimizer : torch optimizer used for training
+    scheduler : torch scheduler used for training
+    dataloaders : dictionary {"train": train_dataloader, "test": test_dataloader}
+    dataset_sizes : dictionary {"train": len(train_dataset), "test": len(test_dataset)}
+    device : device where model parameters are stored
+    lossfunc : function, loss function
+    num_epochs : int, numuber of epochs for training
+    Returns
+    -------
+    model : torch model that scored the best test accuracy
+    """
 
     since = time.time()
 
