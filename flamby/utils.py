@@ -37,6 +37,7 @@ def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
     results_dict = {}
     if torch.cuda.is_available() and use_gpu:
         model = model.cuda()
+    model.eval()
     with torch.inference_mode():
         for i in tqdm(range(len(test_dataloaders))):
             test_dataloader_iterator = iter(test_dataloaders[i])
