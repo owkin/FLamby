@@ -1,3 +1,6 @@
+import pytest
+
+
 def dataset_test_routine(dataset):
     # Validate subject id verification
     dataset._validate_subject_id('002')
@@ -67,3 +70,7 @@ def test_dti_images_ixi_dataset():
     dataset = DTIImagesIXIDataset(root='~/Downloads/')
     assert dataset.modality == 'DTI'
     dataset_test_routine(dataset)
+
+
+def test_dataset_download():
+    assert False
