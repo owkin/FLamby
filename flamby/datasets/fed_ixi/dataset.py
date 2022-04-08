@@ -1,135 +1,15 @@
-import os
-from os import PathLike
 from pathlib import Path
 from tarfile import TarFile
-from typing import Union, Iterable, List, Tuple, Dict
+from typing import Union, Tuple, Dict
 
-import numpy
+import numpy as np
+import pandas as pd
+import scipy.ndimage
+from monai.transforms import Resize, Compose, ToTensor, AddChannel
 from torch import Tensor
 from torch.utils.data import Dataset
 
-from monai.transforms import Resize, Compose, ToTensor
-
-import re
-import nibabel as nib
-import pandas as pd
-import tempfile
-import requests
-
-
-def _get_id_from_filename(x, verify_single_matches=True) -> Union[List[int], int]:
-    """
-    Extract ID from NIFTI filename for cross-reference
-
-    Parameters
-    ----------
-    x : str
-        Basename of NIFTI file (e.g. `IXI652-Guys-1116-MRA.nii.gz`)
-
-    verify_single_matches: bool
-        Asserts the existance of a single match.
-        Used to verify that there exist only one image per subject and modality.
-
-    Returns
-    -------
-    list
-        A list containing the matched IDs found (each id has an integer type).
-    """
-    matches = re.findall(r'IXI\d{3}', x)
-    matches = [int(match[-3:]) for match in matches]
-
-    if verify_single_matches:
-        assert len(matches) == 1, 'One or more subjects are repeated into the ' \
-                                  'dataset. This is not expected behaviour.' \
-                                  'Please verify that there is only one image ' \
-                                  'per subject and modality.'
-        return matches[0]
-    return matches
-
-
-def _assembly_nifti_filename_regex(patient_id: int, modality: str) -> Union[str, PathLike, Path]:
-    """
-    Assembles NIFTI filename regular expression using the standard in the IXI dataset based on id and modality.
-
-    Parameters
-    ----------
-    patient_id: int
-        Patient's identifier.
-
-    modality: str
-        Image modality (e.g. `'T1'`).
-
-    Returns
-    -------
-
-    """
-    nii_filename = f'IXI{patient_id:03d}-[A-Za-z]+-[0-9]+-{modality.upper()}.nii.gz'
-    return nii_filename
-
-
-def _find_file_in_tar(tar_file: TarFile, patient_id: int, modality) -> str:
-    """
-    Searches the file in a TAR file that corresponds to a particular regular expression.
-
-    Parameters
-    ----------
-    patient_id: int
-        Patient's ID
-
-    Returns
-    -------
-    str
-        Filename corresponding to the particular subject's ID
-
-    Raises
-    -------
-    FileNotFoundError
-        If file was not found in TAR.
-    """
-    regex = _assembly_nifti_filename_regex(patient_id, modality)
-    filenames = tar_file.getnames()
-
-    for filename in filenames:
-        try:
-            return re.match(regex, filename).group()
-        except AttributeError:
-            continue
-
-    raise FileNotFoundError(f'File following the pattern {regex} could not be found.')
-
-
-def _extract_center_name_from_filename(filename: str):
-    """
-    Extracts center name from file dataset.
-
-    Unfortunately, IXI has the center encoded in the namefile rather than in the demographics information.
-
-    Parameters
-    ----------
-    filename: str
-        Basename of NIFTI file (e.g. `IXI652-Guys-1116-MRA.nii.gz`)
-
-    Returns
-    -------
-    str
-        Name of the center where the data comes from (e.g. Guys for the previous example)
-
-    """
-    # We decided to wrap a function for this for clarity and easier modularity for future expansion
-    return filename.split('-')[1]
-
-
-def _load_nifti_image_by_id(tar_file: TarFile, patient_id: int, modality) -> Tuple[
-    nib.Nifti1Header, numpy.ndarray, str]:
-    filename = _find_file_in_tar(tar_file, patient_id, modality)
-    with tempfile.TemporaryDirectory() as td:
-        full_path = os.path.join(td, filename)
-        tar_file.extract(filename, td)
-        nii_img = nib.load(full_path)
-        img = nii_img.get_fdata()
-        header = nii_img.get_header()
-    return header, img, _extract_center_name_from_filename(filename)
-
+from .utils import _get_id_from_filename, _load_nifti_image_by_id
 
 class IXIDataset(Dataset):
     """
@@ -166,7 +46,7 @@ class IXIDataset(Dataset):
 
         self.demographics = self._load_demographics()
         self.modality = 'T1'  # T1 modality by default
-        self.common_shape = (-1, 150)  # Common shape (some images need resizing on the z-axis
+        self.common_shape = (-1, -1, 150)  # Common shape (some images need resizing on the z-axis
 
         # Validation routines for dataset robustness
         self._validate_modality()
@@ -253,10 +133,16 @@ class IXIDataset(Dataset):
     def simple_visualization(self):
         try:
             import matplotlib.pyplot as plt
-            img = self[0][0]
-            middle_slice = img.shape[2] // 2
-            plt.imshow(img[..., middle_slice], cmap='gray')
-            plt.title('Modality: ' + self.modality)
+            img = self[0][0][0]  # [observation index][image tensor][color channel]
+            fig, axs = plt.subplots(ncols=3)
+            sx, sy, sz = scipy.ndimage.center_of_mass(np.where(img, 1, 0))
+            sx, sy, sz = int(sx), int(sy), int(sz)
+
+            axs[0].imshow(img[sx, ...], cmap='gray')
+            axs[1].imshow(img[:, sy, :], cmap='gray')
+            axs[2].imshow(img[..., sz], cmap='gray')
+
+            plt.suptitle('Modality: ' + self.modality)
             plt.show()
         except ImportError:
             import warnings
@@ -273,6 +159,7 @@ class IXIDataset(Dataset):
         # A default transform is required due to inhomogeneities in shape
         default_transform = Compose([
             ToTensor(),
+            AddChannel(),
             Resize(self.common_shape),
         ])
         img = default_transform(img)
@@ -310,16 +197,21 @@ class PDImagesIXIDataset(IXIDataset):
     def __init__(self, root, transform=None):
         super(PDImagesIXIDataset, self).__init__(root, transform=transform)
         self.modality = 'PD'
+        self.common_shape = (-1, -1, 125)
 
 
 class MRAImagesIXIDataset(IXIDataset):
     def __init__(self, root, transform=None):
         super(MRAImagesIXIDataset, self).__init__(root, transform=transform)
         self.modality = 'MRA'
+        self.common_shape = (512, 512, 100)
 
 
 class DTIImagesIXIDataset(IXIDataset):
-    pass
+    def __init__(self, root, transform=None):
+        super(DTIImagesIXIDataset, self).__init__(root, transform=transform)
+        self.modality = 'DTI'
+        # self.common_shape = (512, 512, 100)
 
 
 class MultiModalIXIDataset(IXIDataset):
