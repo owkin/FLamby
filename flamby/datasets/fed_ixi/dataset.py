@@ -1,10 +1,12 @@
 from pathlib import Path
 from tarfile import TarFile
 from typing import Union, Tuple, Dict
+from tqdm import tqdm
 
 import numpy as np
 import pandas as pd
 import scipy.ndimage
+import shutil
 from monai.transforms import Resize, Compose, ToTensor, AddChannel
 from torch import Tensor
 from torch.utils.data import Dataset
@@ -86,7 +88,7 @@ class IXIDataset(Dataset):
             if response.status_code == 200:
                 with open(demographics_path, 'wb') as f:
                     f.write(response.raw.read())
-                    
+
         if not debug:
             for img_url in self.image_urls:
                 img_archive_name = img_url.split('/')[-1]
@@ -95,8 +97,11 @@ class IXIDataset(Dataset):
                     continue
                 response = requests.get(img_url, stream=True)
                 if response.status_code == 200:
-                    with open(img_archive_path, 'wb') as f:
-                        f.write(response.raw.read())
+                    file_size = int(response.headers.get('Content-Length', 0))
+                    desc = "(Unknown total file size)" if file_size == 0 else ""
+                    with tqdm.wrapattr(response.raw, "read", total=file_size, desc=desc) as r_raw:
+                        with open(img_archive_path, 'wb') as f:
+                            shutil.copyfileobj(r_raw, f)
 
     def _load_demographics(self) -> pd.DataFrame:
         demographics_file = self.root_folder.joinpath(self.DEMOGRAPHICS_FILENAME)
