@@ -26,7 +26,7 @@ class Isic2019Raw(torch.utils.data.Dataset):
     augmentations: image transform operations from the albumentations library,
     used for data augmentation
     dic: dictionary containing the paths to the input images and the
-    train_test_folds file
+    train_test_split file
     """
 
     def __init__(
@@ -38,19 +38,19 @@ class Isic2019Raw(torch.utils.data.Dataset):
     ):
         dict = check_dataset_from_config(dataset_name="fed_isic2019", debug=False)
         input_path = dict["dataset_path"]
-        path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
+        dir = str(Path(os.path.realpath(__file__)).parent.resolve())
         self.dic = {
             "input_preprocessed": os.path.join(
                 input_path, "ISIC_2019_Training_Input_preprocessed"
             ),
-            "train_test_folds": os.path.join(
-                path_to_config_file, "dataset_creation_scripts/train_test_folds"
+            "train_test_split": os.path.join(
+                dir, "dataset_creation_scripts/train_test_split"
             ),
         }
         self.X_dtype = X_dtype
         self.y_dtype = y_dtype
         self.train_test = train_test
-        df = pd.read_csv(self.dic["train_test_folds"])
+        df = pd.read_csv(self.dic["train_test_split"])
         df2 = df.query("fold == '" + self.train_test + "' ").reset_index(drop=True)
         images = df2.image.tolist()
         self.image_paths = [
@@ -88,7 +88,7 @@ class FedIsic2019(Isic2019Raw):
     for the Isic2019 federated classification.
     One can instantiate this dataset with train or test data coming from either of
     the 6 centers it was created from or all data pooled.
-    The train/test split is fixed and given in the train_test_folds file.
+    The train/test split is fixed and given in the train_test_split file.
     Attributes
     ----------
     pooled: boolean, characterizes if the dataset is pooled or not
@@ -117,7 +117,7 @@ class FedIsic2019(Isic2019Raw):
         key = self.train_test + "_" + str(self.center)
         if not self.pooled:
             assert center in range(6)
-            df = pd.read_csv(self.dic["train_test_folds"])
+            df = pd.read_csv(self.dic["train_test_split"])
             df2 = df.query("fold2 == '" + key + "' ").reset_index(drop=True)
             images = df2.image.tolist()
             self.image_paths = [

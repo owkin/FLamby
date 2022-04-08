@@ -41,7 +41,7 @@ To download the ISIC 2019 training data and extract the original datacenter info
 ```
 python download_isic.py --output-folder /path/to/user/folder
 ```
-The file train_test_folds contains the train/test split of the images (stratified by center).
+The file train_test_split contains the train/test split of the images (stratified by center).
 
 ## Image preprocessing
 To preprocess and resize images, run:
