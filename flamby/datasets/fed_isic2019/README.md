@@ -48,7 +48,8 @@ To preprocess and resize images, run:
 ```
 python resize_images.py
 ```
-This will resize all images to squares of size 224px by 224px. Color constancy is added in the preprocessing.
+This script will resize all images so that the shorter edge of the resized image is 224px and the aspect ratio of the inpit image is maintained.
+[Color constancy](https://en.wikipedia.org/wiki/Color_constancy) is added in the preprocessing.
 
 ## Baseline training and evaluation in a pooled setting
 To train and evaluate a classification model for the pooled dataset, run:

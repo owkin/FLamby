@@ -17,13 +17,29 @@ from flamby.datasets.fed_isic2019.models import Baseline
 
 
 class BaselineLoss(nn.Module):
+    """Weighted focal loss
+    See this [link](https://amaarora.github.io/2020/06/29/FocalLoss.html) for
+    a good explanation
+    Attributes
+    ----------
+    alpha: torch.tensor of size 8, class weights
+    gamma: torch.tensor of size 1, positive float, for gamma = 0 focal loss is
+    the same as CE loss, increases gamma reduces the loss for the "hard to classify
+    examples"
+    """
+
     def __init__(self, alpha=torch.tensor([1, 1, 1, 1, 1, 1, 1, 1]), gamma=2):
         super(BaselineLoss, self).__init__()
         self.alpha = alpha
         self.gamma = gamma
 
     def forward(self, inputs, targets):
-
+        """Weighted focal loss function
+        Parameters
+        ----------
+        inputs : torch.tensor of size 8, logits output by the model (pre-softmax)
+        targets : torch.tensor of size 1, int between 0 and 7, groundtruth class
+        """
         targets = targets.view(-1, 1).type_as(inputs)
         logpt = F.log_softmax(inputs, dim=1)
         logpt = logpt.gather(1, targets.long())
@@ -57,13 +73,13 @@ if __name__ == "__main__":
     loss = BaselineLoss(alpha=torch.tensor([1, 2, 1, 1, 5, 1, 1, 1]))
     model = Baseline()
 
-    for i in range(50):
-        X = torch.unsqueeze(mydataset[i]["image"], 0)
-        y = torch.unsqueeze(mydataset[i]["target"], 0)
+    for i in range(10):
+        X = torch.unsqueeze(mydataset[i][0], 0)
+        y = torch.unsqueeze(mydataset[i][1], 0)
 
         y_hat = model(X)
-        print(X.shape)
-        print(y.shape)
-        print(y_hat.shape)
+        print(X.shape, type(X))
+        print(y_hat.shape, type(y_hat))
+        print(y.shape, type(y))
 
         print(loss(y_hat, y))
