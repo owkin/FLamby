@@ -6,16 +6,16 @@ Based on https://github.com/black0017/MedicalZooPytorch
 """
 
 
-class VNet(nn.Module):
+class Baseline(nn.Module):
     """
     Implementation based on the VNet paper: https://arxiv.org/abs/1606.04797
     """
 
     def __init__(self, in_channels=1, dropout=True):
-        super(VNet, self).__init__()
+        super(Baseline, self).__init__()
         self.in_channels = in_channels
 
-        self.in_tr = InputTransition(in_channels)
+        self.in_tr = InputTransition(in_channels, 16)
         self.down_tr32 = DownTransition(16, 1)
         self.down_tr64 = DownTransition(32, 2)
         self.down_tr128 = DownTransition(64, 3, dropout=dropout)
@@ -34,37 +34,6 @@ class VNet(nn.Module):
         out256 = self.down_tr256(out128)
         out = self.up_tr256(out256, out128)
         out = self.up_tr128(out, out64)
-        out = self.up_tr64(out, out32)
-        out = self.up_tr32(out, out16)
-        out = self.out_tr(out)
-        return out
-
-
-class VNetLight(nn.Module):
-    """
-    A lighter version of Vnet that skips down_tr256 and up_tr256
-    in order to reduce time and space complexity
-    """
-
-    def __init__(self, in_channels=1, dropout=True):
-        super(VNetLight, self).__init__()
-        self.in_channels = in_channels
-
-        self.in_tr = InputTransition(in_channels)
-        self.down_tr32 = DownTransition(16, 1)
-        self.down_tr64 = DownTransition(32, 2)
-        self.down_tr128 = DownTransition(64, 3, dropout=dropout)
-        self.up_tr128 = UpTransition(128, 128, 2, dropout=dropout)
-        self.up_tr64 = UpTransition(128, 64, 1)
-        self.up_tr32 = UpTransition(64, 32, 1)
-        self.out_tr = OutputTransition(32)
-
-    def forward(self, x):
-        out16 = self.in_tr(x)
-        out32 = self.down_tr32(out16)
-        out64 = self.down_tr64(out32)
-        out128 = self.down_tr128(out64)
-        out = self.up_tr128(out128, out64)
         out = self.up_tr64(out, out32)
         out = self.up_tr32(out, out16)
         out = self.out_tr(out)
@@ -106,7 +75,6 @@ class InputTransition(nn.Module):
         )
 
         self.bn1 = torch.nn.BatchNorm3d(self.num_features)
-
         self.relu1 = nn.ELU(inplace=True)
 
     def forward(self, x):
@@ -128,7 +96,7 @@ class DownTransition(nn.Module):
         self.relu1 = nn.ELU(inplace=True)
         self.relu2 = nn.ELU(inplace=True)
         if dropout:
-            self.do1 = nn.Dropout3d()
+            self.do1 = nn.Dropout3d(p=0.25)
         self.ops = _make_nConv(outChans, nConvs)
 
     def forward(self, x):
@@ -148,11 +116,11 @@ class UpTransition(nn.Module):
 
         self.bn1 = torch.nn.BatchNorm3d(outChans // 2)
         self.do1 = passthrough
-        self.do2 = nn.Dropout3d()
+        self.do2 = nn.Dropout3d(0.25)
         self.relu1 = nn.ELU(inplace=True)
         self.relu2 = nn.ELU(inplace=True)
         if dropout:
-            self.do1 = nn.Dropout3d()
+            self.do1 = nn.Dropout3d(p=0.25)
         self.ops = _make_nConv(outChans, nConvs)
 
     def forward(self, x, skipx):
