@@ -1,8 +1,3 @@
-# We use EfficientNet + a linear layer as a baseline model
-# Thank you to [Luke Melas-Kyriazi](https://github.com/lukemelas) for his
-# [pytorch reimplementation of EfficientNets]
-# (https://github.com/lukemelas/EfficientNet-PyTorch)
-
 import random
 
 import albumentations
@@ -13,6 +8,15 @@ from efficientnet_pytorch import EfficientNet
 
 
 class Baseline(nn.Module):
+    """Baseline model
+    We use the EfficientNets architecture that many participants in the ISIC
+    competition have identified to work best.
+    See here the [reference paper](https://arxiv.org/abs/1905.11946)
+    Thank you to [Luke Melas-Kyriazi](https://github.com/lukemelas) for his
+    [pytorch reimplementation of EfficientNets]
+    (https://github.com/lukemelas/EfficientNet-PyTorch).
+    """
+
     def __init__(self, pretrained=True, arch_name="efficientnet-b0"):
         super(Baseline, self).__init__()
         self.pretrained = pretrained
@@ -52,8 +56,8 @@ if __name__ == "__main__":
     model = Baseline()
 
     for i in range(50):
-        X = torch.unsqueeze(mydataset[i]["image"], 0)
-        y = torch.unsqueeze(mydataset[i]["target"], 0)
+        X = torch.unsqueeze(mydataset[i][0], 0)
+        y = torch.unsqueeze(mydataset[i][1], 0)
         print(X.shape)
         print(y.shape)
         print(model(X))

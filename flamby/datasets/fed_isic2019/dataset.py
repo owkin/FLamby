@@ -76,10 +76,10 @@ class Isic2019Raw(torch.utils.data.Dataset):
 
         image = np.transpose(image, (2, 0, 1)).astype(np.float32)
 
-        return {
-            "image": torch.tensor(image, dtype=self.X_dtype),
-            "target": torch.tensor(target, dtype=self.y_dtype),
-        }
+        return (
+            torch.tensor(image, dtype=self.X_dtype),
+            torch.tensor(target, dtype=self.y_dtype),
+        )
 
 
 class FedIsic2019(Isic2019Raw):
@@ -155,5 +155,5 @@ if __name__ == "__main__":
     print("Example of dataset record: ", mydataset[0])
     print(f"The dataset has {len(mydataset)} elements")
     for i in range(50):
-        print(f"Size of image {i} ", mydataset[i]["image"].shape)
-        print(f"Target {i} ", mydataset[i]["target"])
+        print(f"Size of image {i} ", mydataset[i][0].shape)
+        print(f"Target {i} ", mydataset[i][1])

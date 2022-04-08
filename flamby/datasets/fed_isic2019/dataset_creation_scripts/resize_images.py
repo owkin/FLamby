@@ -1,7 +1,3 @@
-# Thank you to [Aman Arora](https://github.com/amaarora) for his
-# [implementation](https://github.com/amaarora/melonama)
-# We reused his whole preprocessing pipeline.
-
 import glob
 import os
 import sys
@@ -36,11 +32,17 @@ os.makedirs(output_folder, exist_ok=True)
 
 
 def resize_and_maintain(path, output_path, sz: tuple, cc):
-    # mantain aspect ratio and shorter edge of resized image is 600px
-    # from research paper `https://isic-challenge-stade.s3.amazonaws.com/'
-    # '9e2e7c9c-480c-48dc-a452-c1dd577cc2b2/ISIC2019-paper-0816.pdf'
-    # '?AWSAccessKeyId=AKIA2FPBP3II4S6KTWEU&Signature=nQCPd%2F88z0rftMkXdxYG97'
-    # 'Nau4Y%3D&Expires=1592222403`
+    """Preprocessing of images
+    Mantains aspect ratio fo input image. Possibility to add color constancy.
+    Thank you to [Aman Arora](https://github.com/amaarora) for this
+    [implementation](https://github.com/amaarora/melonama)
+    Parameters
+    ----------
+    path : path to input image
+    output_path : path to output image
+    sz : tuple, shorter edge of resized image is sz[0]
+    cc : color constancy is added if True
+    """
     fn = os.path.basename(path)
     img = Image.open(path)
     size = sz[0]

@@ -10,8 +10,9 @@ import torch
 from sklearn import metrics
 
 from flamby.datasets.fed_isic2019.loss import BaselineLoss
+from flamby.datasets.fed_isic2019.metric import metric
 from flamby.datasets.fed_isic2019.models import Baseline
-from flamby.utils import check_dataset_from_config
+from flamby.utils import check_dataset_from_config, evaluate_model_on_tests
 
 
 def train_model(
@@ -41,9 +42,9 @@ def train_model(
 
             # Iterate over data.
             for sample in dataloaders[phase]:
-                inputs = sample["image"].to(device)
-                labels = sample["target"].to(device)
-                y_true.append(sample["target"])
+                inputs = sample[0].to(device)
+                labels = sample[1].to(device)
+                y_true.append(sample[1])
 
                 optimizer.zero_grad()
                 with torch.set_grad_enabled(phase == "train"):
@@ -59,6 +60,7 @@ def train_model(
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
                 running_corrects += torch.sum(preds == labels.data)
+
             if phase == "train":
                 scheduler.step()
 
@@ -66,6 +68,7 @@ def train_model(
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
             y = torch.cat(y_true)
             y_hat = torch.cat(y_pred)
+
             epoch_balanced_acc = metrics.balanced_accuracy_score(y.cpu(), y_hat.cpu())
 
             print(
@@ -130,8 +133,13 @@ def main(args):
     )
     test_dataset = dataset.FedIsic2019(0, True, "test", augmentations=test_aug)
     test_dataloader = torch.utils.data.DataLoader(
-        test_dataset, batch_size=args.batch, shuffle=False, num_workers=args.workers
+        test_dataset,
+        batch_size=args.batch,
+        shuffle=False,
+        num_workers=args.workers,
+        drop_last=True,
     )
+
     dataloaders = {"train": train_dataloader, "test": test_dataloader}
     dataset_sizes = {"train": len(train_dataset), "test": len(test_dataset)}
 
@@ -140,7 +148,8 @@ def main(args):
 
     weights = [0] * 8
     for x in train_dataset:
-        weights[int(x["target"])] += 1
+        weights[int(x[1])] += 1
+
     N = len(train_dataset)
     class_weights = torch.FloatTensor([N / weights[i] for i in range(8)]).to(device)
     print(
@@ -208,3 +217,31 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     main(args)
+
+    # loading the saved model and running evaluate_model_on_tests
+
+    sz = 200
+    test_aug = albumentations.Compose(
+        [
+            albumentations.CenterCrop(sz, sz),
+            albumentations.Normalize(always_apply=True),
+        ]
+    )
+    test_dataset = dataset.FedIsic2019(0, True, "test", augmentations=test_aug)
+    test_dataloader = torch.utils.data.DataLoader(
+        test_dataset,
+        batch_size=args.batch,
+        shuffle=False,
+        num_workers=args.workers,
+        drop_last=True,
+    )
+
+    model = Baseline()
+    dict = check_dataset_from_config(dataset_name="fed_isic2019", debug=False)
+    input_path = dict["dataset_path"]
+    dic = {"model_dest": os.path.join(input_path, "saved_model_state_dict")}
+    model.load_state_dict(torch.load(dic["model_dest"]))
+    model.eval()
+
+    torch.use_deterministic_algorithms(False)
+    print(evaluate_model_on_tests(model, [test_dataloader], metric, use_gpu=True))
