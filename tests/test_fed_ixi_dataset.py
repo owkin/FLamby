@@ -72,6 +72,6 @@ def test_dti_images_ixi_dataset():
     dataset_test_routine(dataset)
 
 
-@pytest.mark.skip(reason="Dataset is too large. Meat to be runed when necessary.")
+@pytest.mark.skip(reason="Dataset is too large. Meat to be run when necessary.")
 def test_dataset_download():
     assert False
