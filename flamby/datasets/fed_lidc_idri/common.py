@@ -1,5 +1,5 @@
-import pandas as pd
-
-METADATA_DICT = {"ctscans_dir": "", "labels": pd.DataFrame()}
 NUM_CLIENTS = 4
-NB_MAX_ROUNDS = 20
+NUM_EPOCHS_POOLED = 100
+BATCH_SIZE = 1
+LR = 1e-2
+SEEDS = [42]
