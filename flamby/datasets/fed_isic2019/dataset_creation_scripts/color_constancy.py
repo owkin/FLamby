@@ -1,7 +1,3 @@
-# Thank you to [Aman Arora](https://github.com/amaarora) for his
-# [implementation](https://github.com/amaarora/melonama)
-# We reused his whole preprocessing pipeline.
-
 from __future__ import division
 
 import cv2
@@ -10,14 +6,16 @@ import numpy
 
 def color_constancy(img, power=6, gamma=None):
     """
+    Preprocessing step to make sure that the images appear with similar brightness
+    and contrast.
+    See this [link}(https://en.wikipedia.org/wiki/Color_constancy) for an explanation.
+    Thank you to [Aman Arora](https://github.com/amaarora) for this
+    [implementation](https://github.com/amaarora/melonama)
     Parameters
     ----------
-    img: 3D numpy array
-        The original image with format of (h, w, c)
-    power: int
-        The degree of norm, 6 is used in reference paper
-    gamma: float
-        The value of gamma correction, 2.2 is used in reference paper
+    img: 3D numpy array, the original image
+    power: int, degree of norm
+    gamma: float, value of gamma correction
     """
     img_dtype = img.dtype
 

@@ -1,8 +1,9 @@
 repos:
 -   repo: https://github.com/ambv/black
-    rev: 22.3.0
+    rev: 22.1.0
     hooks:
     - id: black
+      additional_dependencies: ['click==8.0.4']
       args: # arguments to configure black
        - --line-length=89
 -   repo: https://github.com/pre-commit/pre-commit-hooks
