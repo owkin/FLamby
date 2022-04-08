@@ -11,8 +11,8 @@ from tqdm import tqdm
 
 from flamby.utils import read_config, write_value_in_config
 
-path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
-config_file = os.path.join(path_to_config_file, "dataset_location.yaml")
+dir = str(Path(os.path.realpath(__file__)).parent.resolve())
+config_file = os.path.join(dir, "dataset_location.yaml")
 dict = read_config(config_file)
 if not (dict["download_complete"]):
     raise ValueError("Download incomplete. Please relaunch the download script")
