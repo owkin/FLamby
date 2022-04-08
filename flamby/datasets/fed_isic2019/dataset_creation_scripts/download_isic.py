@@ -53,12 +53,12 @@ file1 = os.path.join(parent_script_directory, "HAM10000_metadata")
 os.system(f"wget {url_1} --no-check-certificate -O {dest_file_1}")
 if zipfile.is_zipfile(dest_file_1):
     print("Zip file downloaded correctly")
+    os.system(f"unzip {dest_file_1} -d {data_directory}")
+    os.system(f"rm {dest_file_1}")
 else:
     sys.exit("Zip file corrupted")
-os.system(f"unzip {dest_file_1} -d {data_directory}")
 os.system(f"wget {url_2} --no-check-certificate -O {dest_file_2}")
 os.system(f"wget {url_3} --no-check-certificate -O {dest_file_3}")
-write_value_in_config(config_file, "download_complete", True)
 
 # create pandas dataframes
 ISIC_2019_Training_Metadata = pd.read_csv(dest_file_2)
@@ -96,11 +96,17 @@ print("Number of lines in Metadata", ISIC_2019_Training_Metadata.shape[0])
 print("Number of lines in GroundTruth", ISIC_2019_Training_GroundTruth.shape[0])
 print("Number of lines in MetadataFL", result.shape[0])
 DIR = os.path.join(data_directory, "ISIC_2019_Training_Input")
-print(
-    "Number of images",
+N = (
     len([name for name in os.listdir(DIR) if os.path.isfile(os.path.join(DIR, name))])
-    - 2,
+    - 2
 )
+print("Number of images", N)
 result.to_csv(dest_file_4, index=False)
 ISIC_2019_Training_Metadata.to_csv(dest_file_2, index=False)
 ISIC_2019_Training_GroundTruth.to_csv(dest_file_3, index=False)
+
+if N == 23247:
+    print("Download OK")
+    write_value_in_config(config_file, "download_complete", True)
+else:
+    print("Something wrong happened during the download.")
