@@ -1,16 +1,20 @@
 from pathlib import Path
 from tarfile import TarFile
 from typing import Union, Tuple, Dict
+from tqdm import tqdm
 
 import numpy as np
 import pandas as pd
 import scipy.ndimage
+import requests
+import shutil
+import os
+
 from monai.transforms import Resize, Compose, ToTensor, AddChannel
 from torch import Tensor
 from torch.utils.data import Dataset
 
 from .utils import _get_id_from_filename, _load_nifti_image_by_id
-
 
 class IXIDataset(Dataset):
     """
@@ -26,7 +30,13 @@ class IXIDataset(Dataset):
 
     MIRRORS = ['https://biomedic.doc.ic.ac.uk/brain-development/downloads/IXI/']
     DEMOGRAPHICS_FILENAME = 'IXI.xls'
-    image_urls = []
+    image_urls = [
+        "http://biomedic.doc.ic.ac.uk/brain-development/downloads/IXI/IXI-T1.tar",
+        "http://biomedic.doc.ic.ac.uk/brain-development/downloads/IXI/IXI-T2.tar",
+        "http://biomedic.doc.ic.ac.uk/brain-development/downloads/IXI/IXI-PD.tar",
+        "http://biomedic.doc.ic.ac.uk/brain-development/downloads/IXI/IXI-MRA.tar",
+        "http://biomedic.doc.ic.ac.uk/brain-development/downloads/IXI/IXI-DTI.tar"
+    ]
 
     ALLOWED_MODALITIES = ['T1', 'T2', 'PD', 'MRA', 'DTI']
     CENTER_LABELS = {'HH': 1, 'Guys': 2, 'IOP': 3}
@@ -57,15 +67,44 @@ class IXIDataset(Dataset):
         tf = self.root_folder.joinpath(f'IXI-{self.modality.upper()}.tar')
         return TarFile(tf)
 
-    def download(self, x) -> None:
+    def download(self, debug=False) -> None:
+        """
+        Downloads demographics information and image archives and stores them in a folder.
+
+        Parameters
+            ----------
+            debug: bool
+                Enables a light version download. hosting synthetic data ? TBD
+        """
         # 1. Create folder if it does not exist
         # 2. Download
-        url_xls = self.MIRRORS[0] + self.DEMOGRAPHICS_FILENAME  # URL EXCEL
 
-        for img_url in self.image_urls:
-            # download
-            pass
-        pass
+        parent_dir = "IXI-Dataset"
+        if os.path.isdir(parent_dir) == False:
+            os.makedirs(parent_dir)
+
+        url_xls = self.MIRRORS[0] + self.DEMOGRAPHICS_FILENAME  # URL EXCEL
+        demographics_path = f'./{parent_dir}/{self.DEMOGRAPHICS_FILENAME}'
+        
+        if not os.path.isfile(demographics_path):
+            response = requests.get(url_xls, stream=True)
+            if response.status_code == 200:
+                with open(demographics_path, 'wb') as f:
+                    f.write(response.raw.read())
+
+        if not debug:
+            for img_url in self.image_urls:
+                img_archive_name = img_url.split('/')[-1]
+                img_archive_path = f'./{parent_dir}/{img_archive_name}'
+                if os.path.isfile(img_archive_path):
+                    continue
+                response = requests.get(img_url, stream=True)
+                if response.status_code == 200:
+                    file_size = int(response.headers.get('Content-Length', 0))
+                    desc = "(Unknown total file size)" if file_size == 0 else ""
+                    with tqdm.wrapattr(response.raw, "read", total=file_size, desc=desc) as r_raw:
+                        with open(img_archive_path, 'wb') as f:
+                            shutil.copyfileobj(r_raw, f)
 
     def _load_demographics(self) -> pd.DataFrame:
         demographics_file = self.root_folder.joinpath(self.DEMOGRAPHICS_FILENAME)
