@@ -53,6 +53,7 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False, debug=False):
     )
 
     test_dl = dl(
+        # FedLidcIdri(train=True, pooled=True, debug=debug, sampler=Sampler(algo="all")),
         FedLidcIdri(train=False, pooled=True, debug=debug),
         num_workers=num_workers_torch,
         batch_size=1,  # Do not change this as it would mess up DICE evaluation
@@ -141,7 +142,18 @@ if __name__ == "__main__":
         "--num-workers-torch",
         type=int,
         help="How many workers to use for the batching.",
-        default=10,
+        default=20,
+    )
+    parser.add_argument(
+        "--gpu-id",
+        type=int,
+        default=0,
+        help="PCI Bus id of the GPU to use.",
+    )
+    parser.add_argument(
+        "--cpu-only",
+        action="store_true",
+        help="Deactivate the GPU to perform all computations on CPU only.",
     )
     parser.add_argument(
         "--log",
@@ -152,18 +164,6 @@ if __name__ == "__main__":
         "--debug",
         action="store_true",
         help="Whether to use the dataset obtained in debug mode.",
-    )
-    parser.add_argument(
-        "--cpu-only",
-        action="store_true",
-        help="Deactivate the GPU to perform all computations on CPU only.",
-    )
-
-    parser.add_argument(
-        "--gpu-id",
-        type=int,
-        default=0,
-        help="PCI Bus id of the GPU to use.",
     )
 
     args = parser.parse_args()
