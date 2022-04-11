@@ -42,7 +42,7 @@ class Sampler(object):
             If False, add some noise to the coordinates of the centroids.
             Only for fast sampler.
         algo : str
-            Sampling algorithm. Default = 'random'.
+            Sampling algorithm. Default = 'fast'.
         """
         self.patch_shape = patch_shape
         self.n_patches = n_patches
