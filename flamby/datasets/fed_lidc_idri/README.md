@@ -42,7 +42,7 @@ in order to preserve the distribution of centers of origin within each split.
 To download the data we will use the [official TCIA python client](https://github.com/nadirsaghar/TCIA-REST-API-Client/blob/master/tcia-rest-client-python/src/tciaclient.py).
 
 Create a directory for the dataset(``MyDirectory``). 
-Make sure you have enough space (150G) and run:
+Make sure you have enough space (150G), ``cd`` to ``dataset_creation_scipts`` and run:
 ```
 python download_ct_scans.py -o MyDirectory
 ```
