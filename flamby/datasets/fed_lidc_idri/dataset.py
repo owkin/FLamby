@@ -79,7 +79,9 @@ class LidcIdriRaw(Dataset):
         self.debug = debug
         self.sampler = sampler
 
-        config_dict = check_dataset_from_config(debug, dataset_name="fed_lidc_idri")
+        config_dict = check_dataset_from_config(
+            dataset_name="fed_lidc_idri", debug=self.debug
+        )
         self.ctscans_dir = Path(config_dict["dataset_path"])
 
         for ctscan in self.ctscans_dir.rglob("*patient.nii.gz"):
