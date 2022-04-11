@@ -24,7 +24,7 @@ class Sampler(object):
         self,
         patch_shape=(128, 128, 64),
         n_patches=2,
-        ratio=1.0,
+        ratio=0.8,
         center=False,
         algo="fast",
     ):
@@ -175,8 +175,8 @@ def random_sampler(image, label, patch_shape=(128, 128, 64), n_samples=2):
     for i in range(1, centroids.ndim):
         centroids[:, i] = torch.clamp(
             centroids[:, i],
-            patch_shape[i].div(2, rounding_mode="floor"),
-            image.shape[i] - patch_shape[i].div(2, rounding_mode="floor") - 1,
+            min=patch_shape[i].div(2, rounding_mode="floor") + 1,
+            max=image.shape[i] - patch_shape[i].div(2, rounding_mode="floor") - 1,
         )
 
     image_patches = extract_patches(image, centroids, patch_shape)
