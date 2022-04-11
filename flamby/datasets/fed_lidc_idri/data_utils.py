@@ -223,8 +223,8 @@ def fast_sampler(
     X,
     y,
     patch_shape=(128, 128, 64),
-    n_patches=8,
-    ratio=0.8,
+    n_patches=2,
+    ratio=1.0,
     center=False,
 ):
     """
@@ -299,45 +299,6 @@ def fast_sampler(
     label_patches = extract_patches(y, centroids + patch_shape, patch_shape)
 
     return image_patches, label_patches
-
-
-def get_all_centroids(image_shape, patch_shape, overlap):
-    """
-    Compute coordinates of patch centers.
-    Parameters
-    ----------
-    image_shape : Tuple of ints
-        Shape of original image
-    patch_shape : Tuple of ints
-        Desired patch shape
-    overlap : float
-        Fraction of overlap between two patches.
-    Returns
-    -------
-    torch.Tensor
-        of patch centers
-    """
-
-    offset = (np.floor(overlap / 2) * torch.tensor(patch_shape)).long()
-
-    centroids = torch.stack(
-        torch.meshgrid(
-            *[
-                torch.arange(
-                    patch_shape[i] // 2 - offset[i],
-                    image_shape[i] + patch_shape[i] // 2,
-                    int((1 - overlap) * patch_shape[i]),
-                    dtype=torch.long,
-                )
-                for i in range(len(patch_shape))
-            ],
-            indexing="ij"
-        ),
-        dim=-1,
-    )
-    centroids = torch.reshape(centroids, (-1, len(patch_shape)))
-
-    return centroids
 
 
 def extract_patches(image, centroids, patch_shape):
