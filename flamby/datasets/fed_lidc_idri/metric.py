@@ -53,7 +53,6 @@ def evaluate_dice_on_tests_by_chunks(model, test_dataloaders, use_gpu=True, nchu
                 X = torch.chunk(X, nchunks)
                 y = torch.chunk(y, nchunks)
                 for ii, X_ in enumerate(X):
-                    # X_ = X[ii]
                     y_ = y[ii]
                     if torch.cuda.is_available() and use_gpu:
                         X_ = X_.cuda()
