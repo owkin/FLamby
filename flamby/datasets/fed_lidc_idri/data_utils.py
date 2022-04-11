@@ -172,15 +172,21 @@ def random_sampler(image, label, patch_shape=(128, 128, 64), n_samples=2):
     patch_shape = torch.tensor(patch_shape).long()
     centroids = sample_centroids(image, n_samples)
 
-    for i in range(1, centroids.ndim):
-        centroids[:, i] = torch.clamp(
-            centroids[:, i],
-            min=patch_shape[i].div(2, rounding_mode="floor") + 1,
-            max=image.shape[i] - patch_shape[i].div(2, rounding_mode="floor") - 1,
-        )
+    paddings = patch_shape.long()
 
-    image_patches = extract_patches(image, centroids, patch_shape)
-    label_patches = extract_patches(label, centroids, patch_shape)
+    image = F.pad(
+        image[None, None, :, :, :],
+        tuple(torch.stack([paddings, paddings], dim=-1).flatten())[::-1],
+        mode="reflect",
+    ).squeeze()
+    label = F.pad(
+        label,
+        tuple(torch.stack([paddings, paddings], dim=-1).flatten())[::-1],
+        mode="constant",
+    )
+
+    image_patches = extract_patches(image, centroids + patch_shape, patch_shape)
+    label_patches = extract_patches(label, centroids + patch_shape, patch_shape)
 
     return image_patches, label_patches
 
