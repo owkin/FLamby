@@ -95,3 +95,11 @@ MyDirectory
 While running ``download_ct_scans.py``, it may happen that the TCIA client stalls and that files stop being downloaded. 
 In that case, you should kill the python process and run ``download_ct_scans.py`` again, with the same arguments.
 Files that were correctly downloaded will not be downloaded again.
+
+## Baseline model
+
+The baseline model is a V-Net (see [V-Net: Fully Convolutional Neural Networks for Volumetric Medical Image Segmentation
+](https://arxiv.org/abs/1606.04797)). It is trained by minimizing the DICE loss. Since lung scans are too large to fit in memory,
+patches containing positive voxels are randomly sampled and fed to the network during training. At test time, however, the whole 
+image is processed. The current implementation assumes access to a GPU able to process 4 (128 x 128 x 64) patches at a time.
+The code was tested on a Titan X (Pascal) GPU.
