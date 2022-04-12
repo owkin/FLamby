@@ -1,10 +1,10 @@
 import random
 
 import albumentations
-import dataset
 import torch
 import torch.nn as nn
 from efficientnet_pytorch import EfficientNet
+from flamby.datasets.fed_isic2019 import FedIsic2019
 
 
 class Baseline(nn.Module):
@@ -51,7 +51,7 @@ if __name__ == "__main__":
         ]
     )
 
-    mydataset = dataset.FedIsic2019(0, True, "train", augmentations=train_aug)
+    mydataset = FedIsic2019(0, True, "train", augmentations=train_aug)
 
     model = Baseline()
 
