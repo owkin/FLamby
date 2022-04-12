@@ -21,8 +21,8 @@ class Isic2019Raw(torch.utils.data.Dataset):
     centers: list[int], the list for all datacenters for all features
     X_dtype: torch.dtype, the dtype of the X features output
     y_dtype: torch.dtype, the dtype of the y label output
-    train_test: str, characterizes if the dataset is used for training or for
-    testing, equals "train" or "test"
+    train: bool, characterizes if the dataset is used for training or for
+    testing, default True
     augmentations: image transform operations from the albumentations library,
     used for data augmentation
     dic: dictionary containing the paths to the input images and the
@@ -31,7 +31,7 @@ class Isic2019Raw(torch.utils.data.Dataset):
 
     def __init__(
         self,
-        train_test,
+        train=True,
         X_dtype=torch.float32,
         y_dtype=torch.int64,
         augmentations=None,
@@ -49,7 +49,7 @@ class Isic2019Raw(torch.utils.data.Dataset):
         }
         self.X_dtype = X_dtype
         self.y_dtype = y_dtype
-        self.train_test = train_test
+        self.train_test = "train" if train else "test"
         df = pd.read_csv(self.dic["train_test_split"])
         df2 = df.query("fold == '" + self.train_test + "' ").reset_index(drop=True)
         images = df2.image.tolist()
@@ -97,16 +97,17 @@ class FedIsic2019(Isic2019Raw):
 
     def __init__(
         self,
-        center,
-        pooled,
-        train_test,
+        center=0,
+        train=True,
+        pooled=False,
+        debug=False,
         X_dtype=torch.float32,
         y_dtype=torch.int64,
         augmentations=None,
     ):
 
         super().__init__(
-            train_test,
+            train,
             X_dtype=X_dtype,
             y_dtype=y_dtype,
             augmentations=augmentations,
@@ -150,7 +151,7 @@ if __name__ == "__main__":
         ]
     )
 
-    mydataset = FedIsic2019(5, True, "test", augmentations=test_aug)
+    mydataset = FedIsic2019(5, train=False, pooled=True, augmentations=test_aug)
 
     print("Example of dataset record: ", mydataset[0])
     print(f"The dataset has {len(mydataset)} elements")
