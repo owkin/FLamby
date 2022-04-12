@@ -58,5 +58,5 @@ This script will resize all images so that the shorter edge of the resized image
 ## Baseline training and evaluation in a pooled setting
 To train and evaluate a classification model for the pooled dataset, run:
 ```
-python benchmark.py --GPU 0 --batch 64 --workers 4
+python benchmark.py --GPU 0 --workers 4
 ```
