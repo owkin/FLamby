@@ -8,12 +8,13 @@
 import random
 
 import albumentations
-import dataset
+from flamby.datasets.fed_isic2019 import FedIsic2019
+from flamby.datasets.fed_isic2019 import Baseline
+
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-from flamby.datasets.fed_isic2019.models import Baseline
 
 
 class BaselineLoss(nn.Module):
@@ -68,7 +69,7 @@ if __name__ == "__main__":
         ]
     )
 
-    mydataset = dataset.FedIsic2019(0, True, "train", augmentations=train_aug)
+    mydataset = FedIsic2019(0, train=True, pooled=True, augmentations=train_aug)
 
     loss = BaselineLoss(alpha=torch.tensor([1, 2, 1, 1, 5, 1, 1, 1]))
     model = Baseline()
