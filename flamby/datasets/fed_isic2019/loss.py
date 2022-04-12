@@ -8,13 +8,11 @@
 import random
 
 import albumentations
-from flamby.datasets.fed_isic2019 import FedIsic2019
-from flamby.datasets.fed_isic2019 import Baseline
-
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
+from flamby.datasets.fed_isic2019 import Baseline, FedIsic2019
 
 
 class BaselineLoss(nn.Module):
