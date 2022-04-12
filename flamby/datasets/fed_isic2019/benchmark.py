@@ -9,9 +9,15 @@ import dataset
 import torch
 from sklearn import metrics
 
-from flamby.datasets.fed_isic2019.loss import BaselineLoss
-from flamby.datasets.fed_isic2019.metric import metric
-from flamby.datasets.fed_isic2019.models import Baseline
+from flamby.datasets.fed_isic2019 import (
+    BATCH_SIZE,
+    LR,
+    NUM_EPOCHS_POOLED,
+    Baseline,
+    BaselineLoss,
+    FedIsic2019,
+    metric,
+)
 from flamby.utils import check_dataset_from_config, evaluate_model_on_tests
 
 
@@ -142,14 +148,14 @@ def main(args):
     input_path = dict["dataset_path"]
     dic = {"model_dest": os.path.join(input_path, "saved_model_state_dict")}
 
-    train_dataset = dataset.FedIsic2019(0, True, "train", augmentations=train_aug)
+    train_dataset = FedIsic2019(train=True, pooled=True, augmentations=train_aug)
     train_dataloader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=args.batch, shuffle=True, num_workers=args.workers
+        train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=args.workers
     )
-    test_dataset = dataset.FedIsic2019(0, True, "test", augmentations=test_aug)
+    test_dataset = FedIsic2019(train=False, pooled=True, augmentations=test_aug)
     test_dataloader = torch.utils.data.DataLoader(
         test_dataset,
-        batch_size=args.batch,
+        batch_size=BATCH_SIZE,
         shuffle=False,
         num_workers=args.workers,
         drop_last=True,
@@ -182,15 +188,15 @@ def main(args):
             param.requires_grad = False
         for param in model.base_model._fc.parameters():
             param.requires_grad = True
-        optimizer = torch.optim.Adam(model.base_model._fc.parameters(), lr=5e-4)
+        optimizer = torch.optim.Adam(model.base_model._fc.parameters(), lr=LR)
     else:
-        optimizer = torch.optim.Adam(model.base_model.parameters(), lr=5e-4)
+        optimizer = torch.optim.Adam(model.base_model.parameters(), lr=LR)
 
     scheduler = torch.optim.lr_scheduler.MultiStepLR(
         optimizer, milestones=[3, 5, 7, 9, 11, 13, 15, 17], gamma=0.5
     )
 
-    num_epochs = 20
+    num_epochs = NUM_EPOCHS_POOLED
 
     model = train_model(
         model,
@@ -216,12 +222,6 @@ if __name__ == "__main__":
         type=int,
         default=0,
         help="GPU to run the training on (if available)",
-    )
-    parser.add_argument(
-        "--batch",
-        type=int,
-        default=64,
-        help="Batch size for training and testing",
     )
     parser.add_argument(
         "--workers",
