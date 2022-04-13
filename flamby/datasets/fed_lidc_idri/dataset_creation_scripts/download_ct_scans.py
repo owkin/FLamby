@@ -236,7 +236,7 @@ def LIDC_to_niftis(extraction_results_dataframe, spacing=[1.0, 1.0, 1.0], debug=
     print(f"{final_shape}/{initial_shape} DICOMs folders successfully converted.")
 
     # Update config file
-    config_file = get_config_file_path(debug, dataset_name='fed_lidc_idri')
+    config_file = get_config_file_path(dataset_name='fed_lidc_idri', debug)
     write_value_in_config(config_file, "preprocessing_complete", True)
 
     return extraction_results_dataframe

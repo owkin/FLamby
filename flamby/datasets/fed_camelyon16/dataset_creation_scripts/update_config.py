@@ -16,5 +16,6 @@ if __name__ == "__main__":
         help="whether or not to update the config fro debug mode or the real one.",
     )
     args = parser.parse_args()
-    path_to_config_file = get_config_file_path(args.debug, "fed_camelyon16")
+
+    path_to_config_file = get_config_file_path("fed_camelyon16", args.debug)
     write_value_in_config(path_to_config_file, "dataset_path", args.new_path)
