@@ -88,7 +88,7 @@ class IXIDataset(Dataset):
                 # Raise error if not 200
                 response.raise_for_status()
                 file_size = int(response.headers.get('Content-Length', 0))
-                desc = "(Unknown total file size)" if file_size == 0 else f"Downloading {file_url}"
+                desc = "(Unknown total file size)" if file_size == 0 else ""
                 print(f'Downloading to {img_archive_path}')
                 with tqdm.wrapattr(response.raw, "read", total=file_size, desc=desc) as r_raw:
                     with open(img_archive_path, 'wb') as f:
