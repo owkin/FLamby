@@ -21,9 +21,11 @@ Step 1: Create an account in CBICA's Image Processing Portal (https://ipp.cbica.
 
 Step 2. Login to your CBICA's Image Processing Portal account at (https://ipp.cbica.upenn.edu/) and click on the 'FeTS'21: Registration and Data Request' under MICCAI FeTS 2021 (Challenge on Federated Learning). This will open up an application, fill in the details and submit the application. (Make sure to add your team name as a single word). Wait for the application to get approved.
 
-Step 3. Once it gets approved, there will be a results/***.zip file. Download this file as it will contain links to the Google drive you can download your data from. Download this data and paste it in the directory you want.
+Step 3. Once it gets approved, there will be a results/***.zip file. Download this file as it will contain link from where you can download your data. Download this data and paste it in the directory you want.
 
 The whole process may take 20-30 minutes.
+
+Data Size = 3 GB
 
 ## Source
 1. S.Pati, U.Baid, M.Zenk, B.Edwards, M.Sheller, G.A.Reina, et al., "The Federated Tumor Segmentation (FeTS) Challenge", arXiv preprint arXiv:2105.05874 (2021)
