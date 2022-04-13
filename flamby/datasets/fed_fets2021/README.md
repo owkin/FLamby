@@ -25,6 +25,13 @@ Step 3. Once it gets approved, there will be a results/***.zip file. Download th
 
 The whole process may take 20-30 minutes.
 
+## Source
+1. S.Pati, U.Baid, M.Zenk, B.Edwards, M.Sheller, G.A.Reina, et al., "The Federated Tumor Segmentation (FeTS) Challenge", arXiv preprint arXiv:2105.05874 (2021)
+
+2. G.A.Reina, A.Gruzdev, P.Foley, O.Perepelkina, M.Sharma, I.Davidyuk, et al., “OpenFL: An open-source framework for Federated Learning”, arXiv preprint arXiv: 2105.06413 (2021)
+
+3. S.Bakas, H.Akbari, A.Sotiras, M.Bilello, M.Rozycki, J.S.Kirby, et al., "Advancing The Cancer Genome Atlas glioma MRI collections with expert segmentation labels and radiomic features", Nature Scientific Data, 4:170117 (2017) DOI: 10.1038/sdata.2017.117
+
 
 
 
