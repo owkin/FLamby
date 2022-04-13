@@ -245,7 +245,7 @@ if __name__ == "__main__":
     test_dataset = dataset.FedIsic2019(0, True, "test", augmentations=test_aug)
     test_dataloader = torch.utils.data.DataLoader(
         test_dataset,
-        batch_size=args.batch,
+        batch_size=BATCH_SIZE,
         shuffle=False,
         num_workers=args.workers,
         drop_last=True,
