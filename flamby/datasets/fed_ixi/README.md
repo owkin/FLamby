@@ -20,7 +20,7 @@ For information, here is the respective size of the different archives:
 | MRA | 11.5G |
 | DTI | 3.98G |
 
-**Total size**: 27,37G
+**Total size**: 27.37G
 
 Datapoints inside the different archives (our 5 modalities) follow this naming convention:
 
