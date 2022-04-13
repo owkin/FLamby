@@ -52,7 +52,7 @@ The next step is to tile the matter on each slide with a feature extractor pretr
 
 We will use the [histolab package](https://github.com/histolab/histolab) to segment the matter on each slide and torchvision to download a pretrained ResNet50 that will be applied on each tile to convert each slide to a numpy feature.
 One can chose to remove or not the original slides that take up quite some space to keep only the features (therefore using only approximatively 50G instead of 800).
-Again as extracting the matter on all the slides is a lengthy process this script might take a few days. 
+Again as extracting the matter on all the slides is a lengthy process this script might take a few hours (and a few days if the tiling is done from scratch). 
 It can also be stopped and resumed anytime and should be preferably run in detached mode.
 This process should be run on an environment with GPU otherwise it might be prohibitively slow.
 

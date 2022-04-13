@@ -11,15 +11,15 @@
 
 
 ## Overview
-FLamby is a benchmark for cross-silo Federated Learning with natural partitioning. 
-It spans multiple data modalities and should allow easy interfacing with most 
+FLamby is a benchmark for cross-silo Federated Learning with natural partitioning.
+It spans multiple data modalities and should allow easy interfacing with most
 Federated-Learning frameworks ([FedML](https://github.com/FedML-AI/FedML), [Fed-BioMed](https://gitlab.inria.fr/fedbiomed/fedbiomed), [Substra](https://github.com/Substra/substra), ...). It contains implementations of different
 standard strategies.
 
 The FLamby package contains:
 
-- Data loaders that automatically handle data preprocessing and splitting for distributed datasets.  
-- Evaluation functions to evaluate trained models on the different tracks as defined in the companion paper. 
+- Data loaders that automatically handle data preprocessing and splitting for distributed datasets.
+- Evaluation functions to evaluate trained models on the different tracks as defined in the companion paper.
 - Benchmark code using the utilities below to obtain the performances of baselines using different strategies.
 
 It does not contain datasets that have to be downloaded separately.
@@ -34,9 +34,9 @@ We do not own copyrights on any of the datasets.
 
 ## Extending FLamby
 
-If you would like to add another cross-silo dataset please fork the repository
-and do a Pull-Request.
-Similarly one can add the results of a new strategy/training algorithm.
+If you would like to add another cross-silo dataset **with natural splits** please fork the repository
+and do a Pull-Request following the Contributing guidelines described below.
+Similarly one can add the results of a new strategy or training algorithm.
 
 ## Installation
 
@@ -70,6 +70,7 @@ Then proceed to read and accept the different licenses and download the data fro
 all the datasets you are interested in by following the instructions provided in each folder:
 - [Fed-Camelyon16](./flamby/datasets/fed_camelyon16/README.md)
 - [Fed-LIDIC-IDRI](./flamby/datasets/fed_lidc_idri/README.md)
+- [Fed-ISIC2019](./flamby/datasets/fed_isic2019/README.md)
 
 ## Usage
 
@@ -84,7 +85,7 @@ You should also initialize ``pre-commit`` by running:
 pre-commit install
 ```
 
-The ``pre-commit`` tool will automatically run [black](https://github.com/psf/black) and 
+The ``pre-commit`` tool will automatically run [black](https://github.com/psf/black) and
 [isort](https://github.com/PyCQA/isort) and check [flake8](https://flake8.pycqa.org/en/latest/) compatibility.
 Which will format the code automatically making the code more homogeneous and helping catching typos and errors.
 
@@ -108,8 +109,3 @@ To clean the environment you must execute (after being inside the FLamby folder 
 conda deactivate
 make clean
 ```
-
-
-
-
-
