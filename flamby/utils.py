@@ -207,33 +207,35 @@ def check_dataset_from_config(dataset_name, debug):
     except FileNotFoundError:
         if debug:
             raise ValueError(
-                f"The dataset was not downloaded, config file \
-                not found for debug mode. Please refer to \
-                the download instructions inside \
-                FLamby/flamby/datasets/{dataset_name}/README.md"
+                f"The dataset was not downloaded, config file "
+                "not found for debug mode. Please refer to "
+                "the download instructions inside "
+                f"FLamby/flamby/datasets/{dataset_name}/README.md"
             )
         else:
             debug = True
             print(
-                "WARNING USING DEBUG MODE DATASET EVEN THOUGH DEBUG WAS \
-                SET TO FALSE, COULD NOT FIND NON DEBUG DATASET CONFIG FILE"
+                "WARNING USING DEBUG MODE DATASET EVEN THOUGH DEBUG WAS "
+                "SET TO FALSE, COULD NOT FIND NON DEBUG DATASET CONFIG FILE"
             )
             try:
                 dict = read_config(get_config_file_path(dataset_name, debug))
             except FileNotFoundError:
                 raise ValueError(
-                    f"It seems the dataset {dataset_name} was not downloaded as the config file \
-                is not found for either normal or debug mode. Please refer to \
-                the download instructions inside FLamby/flamby/datasets/{dataset_name}/README.md"
+                    f"It seems the dataset {dataset_name} was not downloaded as "
+                    "the config file is not found for either normal or debug "
+                    "mode. Please refer to the download instructions inside "
+                    f"FLamby/flamby/datasets/{dataset_name}/README.md"
                 )
     if not (dict["download_complete"]):
         raise ValueError(
-            f"It seems the dataset {dataset_name} was only partially downloaded, \
-            please restart the download script to finish the download."
+            f"It seems the dataset {dataset_name} was only partially downloaded"
+            "please restart the download script to finish the download."
         )
     if not (dict["preprocessing_complete"]):
         raise ValueError(
-            f"It seems the preprocessing for dataset {dataset_name} is not \
-             yet finished please run the appropriate preprocessing scripts before use"
+            f"It seems the preprocessing for dataset {dataset_name} is not "
+            "yet finished please run the appropriate preprocessing scripts "
+            "before use"
         )
     return dict
