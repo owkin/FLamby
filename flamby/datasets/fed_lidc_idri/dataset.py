@@ -80,7 +80,7 @@ class LidcIdriRaw(Dataset):
         self.sampler = sampler
 
         config_dict = check_dataset_from_config(
-            dataset_name="fed_lidc_idri", debug=debug
+            dataset_name="fed_lidc_idri", debug=self.debug
         )
         self.ctscans_dir = Path(config_dict["dataset_path"])
 

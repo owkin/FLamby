@@ -54,6 +54,8 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
         collate_fn=collate_fn,
         shuffle=False,
     )
+    print(f"The training set pooled contains {len(training_dl.dataset)} slides")
+    print(f"The test set pooled contains {len(test_dl.dataset)} slides")
 
     if log:
         # We compute the number of batches per epoch
@@ -63,7 +65,8 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
         )
 
     results = []
-    for seed in range(42, 47):
+    seeds = np.arange(42, 47).tolist()
+    for seed in seeds:
         # At each new seed we re-initialize the model
         # and training_dl is shuffled as well
         torch.manual_seed(seed)
@@ -120,9 +123,9 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
     results = np.array(results)
 
     if log:
-        writer = SummaryWriter(log_dir="./runs/tests")
         for i in range(results.shape[0]):
-            writer.add_scalar("AUC/client_test_{i}", results[i], 0)
+            writer = SummaryWriter(log_dir=f"./runs/tests_seed{seeds[i]}")
+            writer.add_scalar("AUC-test", results[i], 0)
 
     print("Benchmark Results on Camelyon16 pooled:")
     print(f"mAUC on 5 runs: {results.mean(): .2%} \\pm {results.std(): .2%}")
@@ -138,7 +141,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--log",
-        action="store_false",
+        action="store_true",
         help="Whether to activate tensorboard logging or not default to no logging",
     )
     parser.add_argument(
@@ -151,7 +154,6 @@ if __name__ == "__main__":
         "--debug",
         action="store_true",
         help="Whether to use the dataset obtained in debug mode.",
-        required=True,
     )
     parser.add_argument(
         "--cpu-only",

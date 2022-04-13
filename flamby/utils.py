@@ -37,7 +37,6 @@ def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
     results_dict = {}
     if torch.cuda.is_available() and use_gpu:
         model = model.cuda()
-    model.eval()
     with torch.inference_mode():
         for i in tqdm(range(len(test_dataloaders))):
             test_dataloader_iterator = iter(test_dataloaders[i])
@@ -51,9 +50,8 @@ def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
                 y = y.detach().cpu()
                 y_pred_final.append(y_pred.numpy())
                 y_true_final.append(y.numpy())
-
-            y_true_final = np.concatenate(y_true_final)
-            y_pred_final = np.concatenate(y_pred_final)
+            y_true_final = np.vstack(y_true_final)
+            y_pred_final = np.vstack(y_pred_final)
             results_dict[f"client_test_{i}"] = metric(y_true_final, y_pred_final)
     return results_dict
 
@@ -82,15 +80,15 @@ def read_config(config_file):
     return dict
 
 
-def get_config_file_path(dataset_name, debug):
+def get_config_file_path(debug, dataset_name="fed_camelyon16"):
     """Get the config_file path in real or debug mode.
 
     Parameters
     ----------
-    dataset_name: str
-        The name of the dataset to get the config from.
     debug : bool
        The mode in which we download the dataset.
+    dataset_name: str
+        The name of the dataset to get the config from.
 
     Returns
     -------
@@ -138,7 +136,7 @@ def create_config(output_folder, debug, dataset_name="fed_camelyon16"):
     if not (os.path.isdir(output_folder)):
         raise ValueError(f"{output_folder} is not recognized as a folder")
 
-    config_file = get_config_file_path(dataset_name, debug)
+    config_file = get_config_file_path(debug, dataset_name)
 
     if not (os.path.exists(config_file)):
         dataset_path = os.path.realpath(output_folder)
@@ -203,7 +201,7 @@ def check_dataset_from_config(dataset_name, debug):
         The dataset download or preprocessing did not finish.
     """
     try:
-        dict = read_config(get_config_file_path(dataset_name, debug))
+        dict = read_config(get_config_file_path(debug, dataset_name))
     except FileNotFoundError:
         if debug:
             raise ValueError(
@@ -215,11 +213,11 @@ def check_dataset_from_config(dataset_name, debug):
         else:
             debug = True
             print(
-                "WARNING USING DEBUG MODE DATASET EVEN THOUGH DEBUG WAS "
-                "SET TO FALSE, COULD NOT FIND NON DEBUG DATASET CONFIG FILE"
+                "WARNING USING DEBUG MODE DATASET EVEN THOUGH DEBUG WAS \
+                SET TO FALSE, COULD NOT FIND NON DEBUG DATASET CONFIG FILE"
             )
             try:
-                dict = read_config(get_config_file_path(dataset_name, debug))
+                dict = read_config(get_config_file_path(debug, dataset_name))
             except FileNotFoundError:
                 raise ValueError(
                     f"The dataset was not downloaded, config file\
@@ -229,13 +227,12 @@ def check_dataset_from_config(dataset_name, debug):
                 )
     if not (dict["download_complete"]):
         raise ValueError(
-            f"It seems the dataset {dataset_name} was only partially downloaded"
-            "please restart the download script to finish the download."
+            "It seems the dataset was only partially downloaded, \
+            restart the download script to finish the download."
         )
     if not (dict["preprocessing_complete"]):
         raise ValueError(
-            f"It seems the preprocessing for dataset {dataset_name} is not "
-            "yet finished please run the appropriate preprocessing scripts "
-            "before use"
+            "It seems the preprocessing for this dataset is not \
+             yet finished please run the appropriate preprocessing scripts before use"
         )
     return dict
