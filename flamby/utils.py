@@ -51,8 +51,9 @@ def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
                 y = y.detach().cpu()
                 y_pred_final.append(y_pred.numpy())
                 y_true_final.append(y.numpy())
-            y_true_final = np.vstack(y_true_final)
-            y_pred_final = np.vstack(y_pred_final)
+
+            y_true_final = np.concatenate(y_true_final)
+            y_pred_final = np.concatenate(y_pred_final)
             results_dict[f"client_test_{i}"] = metric(y_true_final, y_pred_final)
     return results_dict
 
