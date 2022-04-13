@@ -63,10 +63,10 @@ class CrossEntDiceLoss(_Loss):
         self.alpha = alpha
         self.beta = beta
 
-    def forward(self, y_true, y_pred):
+    def forward(self, y_pred, y_true):
         return self.dice_weight * (
-            1 - dice_coeff(y_true, y_pred, self.alpha, self.beta)
-        ) + self.xent_weight * balanced_xent(y_true, y_pred)
+            1 - dice_coeff(y_pred, y_true, self.alpha, self.beta)
+        ) + self.xent_weight * balanced_xent(y_pred, y_true)
 
 
 def dice_coeff(y_pred, y_true, alpha=0.5, beta=0.5, squared=False):
@@ -101,7 +101,7 @@ def dice_coeff(y_pred, y_true, alpha=0.5, beta=0.5, squared=False):
 
     dice = intersection / torch.clamp(union, min=1.0e-7)
 
-    # If both inputs are empty the dice coefficient should be equal 1
+    # If both inputs are empty the dice coefficient should be equal to 1
     dice[union == 0] = 1
 
     return torch.mean(dice)
