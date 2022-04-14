@@ -5,6 +5,33 @@ from torch.nn.modules.loss import _Loss
 
 class BaselineLoss(_Loss):
     """
+    Weighted cross entropy + dice
+    Input should have shape (B, C, ...): batch size x channels x any number of dimensions
+    Attributes
+    ----------
+    xent_weight : float, optional
+        Cross entropy loss coefficient.
+    dice_weight : float, optional
+        Dice loss coefficient
+    """
+
+    def __init__(
+        self, xent_weight=0.1, dice_weight=1.0, alpha=0.5, beta=0.5, reduction="mean"
+    ):
+        super(BaselineLoss, self).__init__(reduction=reduction)
+        self.xent_weight = xent_weight
+        self.dice_weight = dice_weight
+        self.alpha = alpha
+        self.beta = beta
+
+    def forward(self, y_pred, y_true):
+        return self.dice_weight * (
+            1 - dice_coeff(y_pred, y_true, self.alpha, self.beta)
+        ) + self.xent_weight * balanced_xent(y_pred, y_true)
+
+
+class DiceLoss(_Loss):
+    """
     Dice loss for segmentation.
     If alpha and beta are not equal to 0.5, implements the Tversky loss.
     Input should have shape (B, C, ...): batch size x channels x any number of dimensions
@@ -19,7 +46,7 @@ class BaselineLoss(_Loss):
     """
 
     def __init__(self, alpha=0.5, beta=0.5, reduction="mean", squared=False):
-        super(BaselineLoss, self).__init__(reduction=reduction)
+        super(DiceLoss, self).__init__(reduction=reduction)
         self.alpha = alpha
         self.beta = beta
         self.squared = squared
@@ -40,33 +67,6 @@ class FocalLoss(_Loss):
 
     def forward(self, input: torch.Tensor, target: torch.Tensor):
         return _focal_loss(input, target, self.alpha, self.gamma, self.reduction)
-
-
-class CrossEntDiceLoss(_Loss):
-    """
-    Weighted cross entropy + dice
-    Input should have shape (B, C, ...): batch size x channels x any number of dimensions
-    Attributes
-    ----------
-    xent_weight : float, optional
-        Cross entropy loss coefficient.
-    dice_weight : float, optional
-        Dice loss coefficient
-    """
-
-    def __init__(
-        self, xent_weight=1.0, dice_weight=1.0, alpha=0.5, beta=0.5, reduction="mean"
-    ):
-        super(CrossEntDiceLoss, self).__init__(reduction=reduction)
-        self.xent_weight = xent_weight
-        self.dice_weight = dice_weight
-        self.alpha = alpha
-        self.beta = beta
-
-    def forward(self, y_pred, y_true):
-        return self.dice_weight * (
-            1 - dice_coeff(y_pred, y_true, self.alpha, self.beta)
-        ) + self.xent_weight * balanced_xent(y_pred, y_true)
 
 
 def dice_coeff(y_pred, y_true, alpha=0.5, beta=0.5, squared=False):
