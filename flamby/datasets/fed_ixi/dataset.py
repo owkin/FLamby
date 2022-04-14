@@ -1,18 +1,16 @@
+import shutil
 from pathlib import Path
 from tarfile import TarFile
 from typing import Union, Tuple, Dict
-from tqdm import tqdm
 
 import numpy as np
 import pandas as pd
-import scipy.ndimage
 import requests
-import shutil
-import os
-
+import scipy.ndimage
 from monai.transforms import Resize, Compose, ToTensor, AddChannel
 from torch import Tensor
 from torch.utils.data import Dataset
+from tqdm import tqdm
 
 from .utils import _get_id_from_filename, _load_nifti_image_by_id
 
