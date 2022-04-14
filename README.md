@@ -22,7 +22,7 @@ The FLamby package contains:
 - Evaluation functions to evaluate trained models on the different tracks as defined in the companion paper.
 - Benchmark code using the utilities below to obtain the performances of baselines using different strategies.
 
-It does not contain datasets that have to be downloaded separately.
+It does not contain datasets, which have to be downloaded separately.
 See the section below.
 
 ## Source datasets
@@ -94,7 +94,7 @@ Looking and or commenting the open issues is a good way to start. Once you have 
 - Installing pre-commit
 - Creating a new branch following the convention name_contributor/short_explicit_name-wpi: `git checkout -b name_contributor/short_explicit_name-wpi`
 - Potentially pushing the branch to origin with : `git push origin name_contributor/short_explicit_name-wpi`
-- Working on the branch locally by making commits frequently: `git commit -m explicit description of the commit's content`
+- Working on the branch locally by making commits frequently: `git commit -m "explicit description of the commit's content"`
 - Once the branch is ready or after considering you have made significant progresses opening a Pull Request using Github interface, selecting your branch as a source and the target to be the main branch and creating the PR **in draft mode**  after having made **a detailed description of the content of the PR** and potentially linking to related issues.
 Rebasing the branch onto main by doing `git fetch origin` and  `git rebase origin/main`, solving potential conflicts adding the resolved files `git add myfile.py`
 then continuing with `git rebase --continue` until the rebase is complete. Then pushing the branch to origin with `git push origin --force-with-lease`.
