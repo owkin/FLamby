@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 class Sampler(object):
     """
-    3D image patch sampler.
+    Extract patches from 3D (image, mask) pairs using given strategy.
     Attributes
     ----------
     patch_shape : int Tuple
@@ -18,6 +18,10 @@ class Sampler(object):
         If False, add some noise to the coordinates of the centroids.
     algo : str
         Sampling algorithm. Default = 'fast'.
+        "fast" samples a fraction of patches with ground truth, and others at random
+        "random" samples patches purely at random
+        "all" returns all patches, without overlap
+        "none" returns the whole image, without patching
     """
 
     def __init__(
@@ -131,11 +135,12 @@ def resize_by_crop_or_pad(X, output_shape=(384, 384, 384)):
     input_shape = torch.tensor(X.shape)
 
     # Pad missing dimensions
-    missing = torch.clamp(output_shape - input_shape, min=0)
-    pad_begin = missing.div(2, rounding_mode="floor")
+    missing_dims = torch.clamp(output_shape - input_shape, min=0)
+    pad_begin = missing_dims.div(2, rounding_mode="floor")
     pad_last = torch.maximum(output_shape, input_shape) - pad_begin - input_shape
-    padding = torch.stack([pad_begin, pad_last], dim=-1).flatten()
-    X = F.pad(X, tuple(padding)[::-1], mode="constant", value=X.min())
+    # Inverting order because of pytorch padding conventions
+    padding = tuple(torch.stack([pad_begin, pad_last], dim=-1).flatten())[::-1]
+    X = F.pad(X, padding, mode="constant", value=X.min())
 
     # Crop extra
     extra = torch.clamp(torch.tensor(X.shape) - output_shape, min=0).div(
@@ -172,19 +177,20 @@ def random_sampler(image, label, patch_shape=(128, 128, 64), n_samples=2):
     patch_shape = torch.tensor(patch_shape).long()
     centroids = sample_centroids(image, n_samples)
 
-    paddings = patch_shape.long()
+    paddings = tuple(torch.stack([patch_shape, patch_shape], dim=-1).flatten())[::-1]
 
     image = F.pad(
-        image[None, None, :, :, :],
-        tuple(torch.stack([paddings, paddings], dim=-1).flatten())[::-1],
+        image[None, None, :, :, :],  # reflect mode requires batch and channel dims
+        paddings,
         mode="reflect",
     ).squeeze()
     label = F.pad(
         label,
-        tuple(torch.stack([paddings, paddings], dim=-1).flatten())[::-1],
+        paddings,
         mode="constant",
     )
 
+    # Extract patches, taking into account the shift in coordinates due to padding
     image_patches = extract_patches(image, centroids + patch_shape, patch_shape)
     label_patches = extract_patches(label, centroids + patch_shape, patch_shape)
 
@@ -236,9 +242,9 @@ def fast_sampler(
     """
     Parameters
     ----------
-    image : tf.tensor
+    X : tf.tensor
         Input voxel image
-    label : tf.tensor
+    y : tf.tensor
         Label mask
     patch_shape : tuple, optional
         Desired shape for extracted patches
@@ -278,29 +284,31 @@ def fast_sampler(
 
     # Subsample centroids with positive labels
     selection_1 = (torch.rand(n_patches_with) * centroids_1.shape[0]).long()
-
     centroids_1 = centroids_1[selection_1]
 
     centroids = torch.cat([centroids_0, centroids_1])
+
+    # Check that centroids are not too close to the image border
     centroids = torch.maximum(centroids, patch_shape[None, ...])
     centroids = torch.minimum(
         centroids,
         (torch.tensor(X.shape) - patch_shape.div(2, rounding_mode="floor"))[None, ...],
     )
 
-    paddings = patch_shape.long()
+    paddings = tuple(torch.stack([patch_shape, patch_shape], dim=-1).flatten())[::-1]
 
     X = F.pad(
         X[None, None, :, :, :],
-        tuple(torch.stack([paddings, paddings], dim=-1).flatten())[::-1],
+        paddings,
         mode="reflect",
     ).squeeze()
     y = F.pad(
         y,
-        tuple(torch.stack([paddings, paddings], dim=-1).flatten())[::-1],
+        paddings,
         mode="constant",
     )
 
+    # Extract patches, taking into account the shift in coordinates due to padding
     image_patches = extract_patches(X, centroids + patch_shape, patch_shape)
     label_patches = extract_patches(y, centroids + patch_shape, patch_shape)
 
@@ -338,6 +346,16 @@ def extract_patches(image, centroids, patch_shape):
 def sample_centroids(X, n_samples):
     """
     Sample eligible centroids for patches of X
+    Parameters
+    ----------
+    X : torch.Tensor
+        nD Image from which to extract patches.
+    n_samples : int
+        number of centroid coordinates to sample
+    Returns
+    -------
+    torch.Tensor
+        tensor of n_samples centroid candidates
     """
     means = torch.tensor(X.shape).div(2, rounding_mode="floor").float()
     sigmas = torch.tensor(X.shape).div(2, rounding_mode="floor").float() / (3 * 2)
