@@ -29,7 +29,7 @@ def test_generic_interface_instantiation():
     from flamby.datasets.fed_ixi import IXIDataset
 
     # Instantiate generic interface (no errors should be raised)
-    dataset = IXIDataset(root='~/Downloads/ixi-test')
+    dataset = IXIDataset(root='~/Downloads/')
 
 
 def test_t1_images_ixi_dataset():
@@ -64,31 +64,6 @@ def test_mra_images_ixi_dataset():
     dataset_test_routine(dataset)
 
 
-def test_dti_images_ixi_dataset():
-    # %%
-    from flamby.datasets.fed_ixi import DTIImagesIXIDataset
-    dataset = DTIImagesIXIDataset(root='~/Downloads/')
-    assert dataset.modality == 'DTI'
-    dataset_test_routine(dataset)
-
-
 @pytest.mark.skip(reason="Dataset is too large. Meat to be run when necessary.")
 def test_dataset_download():
-    import shutil
-    from pathlib import Path
-    from flamby.datasets.fed_ixi import IXIDataset, \
-                                        T1ImagesIXIDataset, T2ImagesIXIDataset, \
-                                        PDImagesIXIDataset, MRAImagesIXIDataset, DTIImagesIXIDataset
-
-    # Clean previous downloads
-    root = Path('~/Downloads/ixi-test/').expanduser()
-    shutil.rmtree(root)
-    root.mkdir()
-
-    kwargs = dict(root='~/Downloads/ixi-test/', download=True)
-    dataset = IXIDataset(**kwargs)  # As parent class downloads only demographics
-    dataset = T1ImagesIXIDataset(**kwargs)  # Downloads T1 images (~4.5GiB)
-    dataset = T2ImagesIXIDataset(**kwargs)  # Downloads T2 images (~3.6GiB)
-    dataset = PDImagesIXIDataset(**kwargs)  # Downloads PD images (~3.8GiB)
-    dataset = MRAImagesIXIDataset(**kwargs)  # Downloads MRA images (~12GiB)
-    dataset = DTIImagesIXIDataset(**kwargs)  # Downloads DTI images (~4GiB)
+    assert False
