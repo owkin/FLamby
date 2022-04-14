@@ -212,7 +212,6 @@ def check_dataset_from_config(dataset_name, debug):
                 "the download instructions inside "
                 f"FLamby/flamby/datasets/{dataset_name}/README.md"
             )
-            dict = read_config(get_config_file_path(debug, dataset_name))
         else:
             debug = True
             print(
