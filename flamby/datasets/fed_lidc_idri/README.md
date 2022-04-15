@@ -52,7 +52,7 @@ This may take a few hours, depending on your download bandwidth and your machine
 The ``download_ct_scans.py`` script will download DICOM files corresponding to the CT-scans as well as XML files 
 containing annotations and segmentations from radiologists.
 
-DICOM files will then be converted to the ``nifti`` format. Each ``nifti`` file contains a 400 x 400 x 362 3D image.  
+DICOM files will then be converted to the ``nifti`` format. Each ``nifti`` file contains a 3D image of variable size (roughly (380 x 380 x 380 on average)).  
 
 Nifti (.nii.gz) files can be conveniently handled using the [nibabel](https://nipy.org/nibabel/) package.
 

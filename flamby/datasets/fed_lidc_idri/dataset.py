@@ -105,14 +105,18 @@ class LidcIdriRaw(Dataset):
         return len(self.features_paths)
 
     def __getitem__(self, idx):
+        # Load nifti files, and convert them to torch
         X = nib.load(self.features_paths[idx])
+        y = nib.load(self.masks_paths[idx])
         X = torch.from_numpy(X.get_fdata()).to(self.X_dtype)
+        y = torch.from_numpy(y.get_fdata()).to(self.y_dtype)
+        # CT scans have different sizes. Crop or pad to desired common shape.
         X = resize_by_crop_or_pad(X, self.out_shape)
+        y = resize_by_crop_or_pad(y, self.out_shape)
+        # Apply optional additional transforms, such as normalization
         if self.transform is not None:
             X = self.transform(X)
-        y = nib.load(self.masks_paths[idx])
-        y = torch.from_numpy(y.get_fdata()).to(self.y_dtype)
-        y = resize_by_crop_or_pad(y, self.out_shape)
+        # Sample and return patches
         return self.sampler(X, y)
 
 
