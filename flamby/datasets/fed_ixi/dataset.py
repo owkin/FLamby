@@ -14,7 +14,7 @@ from monai.transforms import Resize, Compose, ToTensor, AddChannel
 from torch import Tensor
 from torch.utils.data import Dataset
 
-from .utils import _get_id_from_filename, _load_nifti_image_by_id
+from .utils import _get_id_from_filename, _load_nifti_image_by_id, _getCenterNameFromCenterId
 
 
 class IXIDataset(Dataset):
@@ -90,7 +90,7 @@ class IXIDataset(Dataset):
                 # Raise error if not 200
                 response.raise_for_status()
                 file_size = int(response.headers.get('Content-Length', 0))
-                desc = "(Unknown total file size)" if file_size == 0 else f"Downloading {file_url}"
+                desc = "(Unknown total file size)" if file_size == 0 else ""
                 print(f'Downloading to {img_archive_path}')
                 with tqdm.wrapattr(response.raw, "read", total=file_size, desc=desc) as r_raw:
                     with open(img_archive_path, 'wb') as f:
@@ -128,6 +128,28 @@ class IXIDataset(Dataset):
         assert self.modality.upper() in self.ALLOWED_MODALITIES, f'Modality {self.modality} ' \
                                                                  f'is not compatible with this dataset. ' \
                                                                  f'Existing modalities are {self.ALLOWED_MODALITIES} '
+
+    def _validate_center(self) -> None:
+        """
+        Asserts permitted image center keys.
+
+        Allowed values are:
+            - 1
+            - 2
+            - 3
+            - Guys
+            - HH
+            - IOP
+
+        Raises
+        -------
+            AssertionError
+                If `center` argument is not contained amongst possible centers.
+        """
+        centers =  list(self.CENTER_LABELS.keys()) + list(self.CENTER_LABELS.values())
+        assert self.center in centers, f'Center {self.center} ' \
+                                                                    f'is not compatible with this dataset. ' \
+                                                                    f'Existing centers can be named as follow: {centers} '
 
     def simple_visualization(self):
         try:
@@ -232,6 +254,124 @@ class MultiModalIXIDataset(IXIDataset):
     pass
 
 
+class FedT1ImagesIXIDataset(IXIDataset):
+    def __init__(self, root, center=None):
+        super(FedT1ImagesIXIDataset, self).__init__(root)
+
+        self.modality = 'T1'
+        self.center = center
+
+        # Validation routine for dataset robustness
+        self._validate_center()
+
+        if isinstance(center, int):  
+            self.center = _getCenterNameFromCenterId(self.CENTER_LABELS, center)
+            print(center, "is", self.center)
+
+        self.parent_dir = Path(self.tar_file.name).resolve().stem # IXI-T1
+        self.images_dir = Path(os.path.join(root,"IXI-Dataset",self.parent_dir))
+        images_paths = sorted(self.images_dir.glob('*.nii.gz'))
+        self.center_images_paths = []
+
+        for image in images_paths:
+            nii_file_name = image.resolve().stem
+            if self.center in nii_file_name:
+                self.center_images_paths.append(image)
+
+
+class FedT2ImagesIXIDataset(IXIDataset):
+    def __init__(self, root, center=None):
+        super(FedT2ImagesIXIDataset, self).__init__(root)
+
+        self.modality = 'T2'
+        self.center = center
+        self._validate_center()
+
+        if isinstance(center, int):  
+            self.center = _getCenterNameFromCenterId(self.CENTER_LABELS, center)
+            print(center, "is", self.center)
+
+        self.parent_dir = Path(self.tar_file.name).resolve().stem
+        self.images_dir = Path(os.path.join(root,"IXI-Dataset",self.parent_dir))
+        images_paths = sorted(self.images_dir.glob('*.nii.gz'))
+        self.center_images_paths = []
+
+        for image in images_paths:
+            nii_file_name = image.resolve().stem
+            if self.center in nii_file_name:
+                self.center_images_paths.append(image)
+
+
+class FedPDImagesIXIDataset(IXIDataset):
+    def __init__(self, root, center=None):
+        super(FedPDImagesIXIDataset, self).__init__(root)
+
+        self.modality = 'PD'
+        self.center = center
+        self._validate_center()
+
+        if isinstance(center, int):  
+            self.center = _getCenterNameFromCenterId(self.CENTER_LABELS, center)
+            print(center, "is", self.center)
+
+        self.parent_dir = Path(self.tar_file.name).resolve().stem
+        self.images_dir = Path(os.path.join(root,"IXI-Dataset",self.parent_dir))
+        images_paths = sorted(self.images_dir.glob('*.nii.gz'))
+        self.center_images_paths = []
+
+        for image in images_paths:
+            nii_file_name = image.resolve().stem
+            if self.center in nii_file_name:
+                self.center_images_paths.append(image)
+
+
+class FedMRAImagesIXIDataset(IXIDataset):
+    def __init__(self, root, center=None):
+        super(FedMRAImagesIXIDataset, self).__init__(root)
+
+        self.modality = 'MRA'
+        self.center = center
+        self._validate_center()
+
+        if isinstance(center, int):  
+            self.center = _getCenterNameFromCenterId(self.CENTER_LABELS, center)
+            print(center, "is", self.center)
+
+        self.parent_dir = Path(self.tar_file.name).resolve().stem
+        self.images_dir = Path(os.path.join(root,"IXI-Dataset",self.parent_dir))
+        images_paths = sorted(self.images_dir.glob('*.nii.gz'))
+        self.center_images_paths = []
+
+        for image in images_paths:
+            nii_file_name = image.resolve().stem
+            if self.center in nii_file_name:
+                self.center_images_paths.append(image)
+
+
+class FedDTIImagesIXIDataset(IXIDataset):
+    def __init__(self, root, center=None):
+        super(FedDTIImagesIXIDataset, self).__init__(root)
+
+        self.modality = 'DTI'
+        self.center = center
+        self._validate_center()
+
+        if isinstance(center, int):  
+            self.center = _getCenterNameFromCenterId(self.CENTER_LABELS, center)
+            print(center, "is", self.center)
+
+        self.parent_dir = Path(self.tar_file.name).resolve().stem
+        self.images_dir = Path(os.path.join(root,"IXI-Dataset",self.parent_dir))
+        images_paths = sorted(self.images_dir.glob('*.nii.gz'))
+        self.center_images_paths = []
+
+        for image in images_paths:
+            nii_file_name = image.resolve().stem
+            if self.center in nii_file_name:
+                self.center_images_paths.append(image)
+
+
+
 __all__ = [
     'IXIDataset',
     'T1ImagesIXIDataset',
@@ -240,4 +380,9 @@ __all__ = [
     'MRAImagesIXIDataset',
     'DTIImagesIXIDataset',
     'MultiModalIXIDataset',
+    'FedT1ImagesIXIDataset',
+    'FedT2ImagesIXIDataset',
+    'FedPDImagesIXIDataset',
+    'FedMRAImagesIXIDataset',
+    'FedDTIImagesIXIDataset',
 ]

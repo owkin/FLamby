@@ -154,3 +154,7 @@ def _load_nifti_image_by_id(
         header = nii_img.get_header()
 
     return header, img, _extract_center_name_from_filename(filename)
+
+def _getCenterNameFromCenterId(center_labels, center_id):
+    center_name = list(center_labels.keys())[list(center_labels.values()).index(center_id)]
+    return center_name
