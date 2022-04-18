@@ -146,7 +146,7 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
     transform = Compose(
         [ToTensor(), Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]
     )
-    path_to_coords_file = os.path.join(__file__, "tiling_coordinates_camelyon16.csv")
+    path_to_coords_file = os.path.join(Path(os.path.realpath(__file__)).parent.resolve(), "tiling_coordinates_camelyon16.csv")
     if not(os.path.exists(path_to_coords_file)):
         df_predecessor = {"slide_name": [], "coords_x": [], "coords_y": []}
     else:
