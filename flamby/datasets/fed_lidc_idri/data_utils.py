@@ -26,7 +26,7 @@ class Sampler(object):
 
     def __init__(
         self,
-        patch_shape=(128, 128, 64),
+        patch_shape=(128, 128, 128),
         n_patches=2,
         ratio=0.8,
         center=False,
@@ -153,7 +153,7 @@ def resize_by_crop_or_pad(X, output_shape=(384, 384, 384)):
     return X
 
 
-def random_sampler(image, label, patch_shape=(128, 128, 64), n_samples=2):
+def random_sampler(image, label, patch_shape=(128, 128, 128), n_samples=2):
     """
     Sample random patches from input of any dimension
     Parameters
@@ -197,7 +197,7 @@ def random_sampler(image, label, patch_shape=(128, 128, 64), n_samples=2):
     return image_patches, label_patches
 
 
-def all_sampler(X, y, patch_shape=(128, 128, 64)):
+def all_sampler(X, y, patch_shape=(128, 128, 128)):
     """
     Returns all patches of desired shape from image and mask. To be used for inference.
     Parameters
@@ -234,7 +234,7 @@ def all_sampler(X, y, patch_shape=(128, 128, 64)):
 def fast_sampler(
     X,
     y,
-    patch_shape=(128, 128, 64),
+    patch_shape=(128, 128, 128),
     n_patches=2,
     ratio=1.0,
     center=False,
