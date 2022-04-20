@@ -1,6 +1,9 @@
 from pathlib import Path
 from tarfile import TarFile
+from typing_extensions import Self
+from zipfile import ZipFile
 from typing import Union, Tuple, Dict
+from sqlalchemy import false
 from tqdm import tqdm
 
 import numpy as np
@@ -14,7 +17,7 @@ from monai.transforms import Resize, Compose, ToTensor, AddChannel
 from torch import Tensor
 from torch.utils.data import Dataset
 
-from .utils import _get_id_from_filename, _load_nifti_image_by_id, _getCenterNameFromCenterId
+from .utils import _get_id_from_filename, _load_nifti_image_by_id, _get_center_name_from_center_id, _extract_center_name_from_filename
 
 
 class IXIDataset(Dataset):
@@ -45,7 +48,7 @@ class IXIDataset(Dataset):
         self.root_folder = Path(root).expanduser().joinpath('IXI-Dataset')
         self.transform = transform
         if download:
-            self.download()
+            self.download(debug=False,tiny=False)
 
         self.demographics = self._load_demographics()
         self.modality = 'T1'  # T1 modality by default
@@ -65,7 +68,12 @@ class IXIDataset(Dataset):
         tf = self.root_folder.joinpath(f'IXI-{self.modality.upper()}.tar')
         return TarFile(tf)
 
-    def download(self, debug=False) -> None:
+    @property
+    def zip_file(self) -> ZipFile:
+        zf = self.root_folder.joinpath('IXI_sample.zip')
+        return ZipFile(zf)
+
+    def download(self, debug=False, tiny=False) -> None:
         """
         Downloads demographics information and image archives and stores them in a folder.
 
@@ -73,17 +81,24 @@ class IXIDataset(Dataset):
             ----------
             debug: bool
                 Enables a light version download. hosting synthetic data ? TBD
+            tiny: bool
+                Downloads the IXI tiny dataset which contains T1 images & labels for segmentation task instead of the standard IXI dataset.
         """
         # 1. Create folder if it does not exist
         # 2. Download
 
         # Make folder if it does not exist
         self.root_folder.mkdir(exist_ok=True)
+        
+        if not tiny:
+            demographics_url = [self.MIRRORS[0] + self.DEMOGRAPHICS_FILENAME]  # URL EXCEL
+            files = self.image_urls + demographics_url
+        else:
+            files = self.image_urls
 
-        demographics_url = [self.MIRRORS[0] + self.DEMOGRAPHICS_FILENAME]  # URL EXCEL
-        for file_url in self.image_urls + demographics_url:
-            img_tarball_archive_name = file_url.split('/')[-1]
-            img_archive_path = self.root_folder.joinpath(img_tarball_archive_name)
+        for file_url in files:
+            img_archive_name = file_url.split('/')[-1]
+            img_archive_path = self.root_folder.joinpath(img_archive_name)
             if img_archive_path.is_file():
                 continue
             with requests.get(file_url, stream=True) as response:
@@ -147,7 +162,7 @@ class IXIDataset(Dataset):
                 If `center` argument is not contained amongst possible centers.
         """
         centers =  list(self.CENTER_LABELS.keys()) + list(self.CENTER_LABELS.values())
-        assert self.center in centers, f'Center {self.center} ' \
+        assert self.centers[0] in centers, f'Center {self.centers[0]} ' \
                                                                     f'is not compatible with this dataset. ' \
                                                                     f'Existing centers can be named as follow: {centers} '
 
@@ -203,12 +218,29 @@ class IXIDataset(Dataset):
 
 
 class T1ImagesIXIDataset(IXIDataset):
+    """
+    Generic interface for T1 images in IXI Dataset. Stores all paths of images and respective center names.
+    """
     def __init__(self, root, transform=None, download=False):
         super(T1ImagesIXIDataset, self).__init__(root, transform=transform, download=download)
         self.modality = 'T1'
         self.image_urls = ['https://biomedic.doc.ic.ac.uk/brain-development/downloads/IXI/IXI-T1.tar']
         if download:
             self.download()
+
+        # Download of the T1 images must be completed to run this part
+        self.parent_dir_name = Path(self.tar_file.name).resolve().stem # 'IXI-T1'
+        self.subjects_dir = os.path.join(root,"IXI-Dataset",self.parent_dir_name)
+
+        self.images_paths = [] # contains paths of archives which contain a nifti image for each subject
+        self.images_centers = [] # contains center of each subject: HH, Guys or IOP
+        #self.images_sets = [] # TBD, is the subject used for train or test
+
+        for subject in os.listdir(self.subjects_dir):
+            subject_archive = os.path.join(self.subjects_dir,subject)
+            image_path = Path(subject_archive)
+            self.images_paths.append(image_path)
+            self.images_centers.append(_extract_center_name_from_filename(subject))
 
 
 class T2ImagesIXIDataset(IXIDataset):
@@ -254,121 +286,98 @@ class MultiModalIXIDataset(IXIDataset):
     pass
 
 
-class FedT1ImagesIXIDataset(IXIDataset):
-    def __init__(self, root, center=None):
+class FedT1ImagesIXIDataset(T1ImagesIXIDataset):
+    """
+    Federated class for T1 images in IXI Dataset
+
+    Parameters
+        ----------
+        root: str
+            Folder where data is.
+        center: int, str
+            Id of the center (hospital) from which to gather data. Defaults to 1.
+        train : bool, optional
+            Whether to take the train or test split. Defaults to True (train).
+        pooled : bool, optional
+            Whether to take all data from the 3 centers into one dataset.
+            If True, supersedes center argument. Defaults to False.
+    """
+    def __init__(self, root, center=1, train=True, pooled=False):
         super(FedT1ImagesIXIDataset, self).__init__(root)
 
         self.modality = 'T1'
-        self.center = center
+        self.centers = [center]
 
         # Validation routine for dataset robustness
         self._validate_center()
 
         if isinstance(center, int):  
-            self.center = _getCenterNameFromCenterId(self.CENTER_LABELS, center)
-            print(center, "is", self.center)
+            self.centers = [_get_center_name_from_center_id(self.CENTER_LABELS, center)]
+            print(center, 'is', self.centers[0])
 
-        self.parent_dir = Path(self.tar_file.name).resolve().stem # IXI-T1
-        self.images_dir = Path(os.path.join(root,"IXI-Dataset",self.parent_dir))
-        images_paths = sorted(self.images_dir.glob('*.nii.gz'))
-        self.center_images_paths = []
+        if pooled:
+            self.centers = ['HH', 'Guys', 'IOP']
 
-        for image in images_paths:
-            nii_file_name = image.resolve().stem
-            if self.center in nii_file_name:
-                self.center_images_paths.append(image)
+        to_select = [
+            (self.images_centers[idx] in self.centers)
+            for idx, _ in enumerate(self.images_centers)
+        ] # and (self.features_sets[idx] in self.sets) # train and test
+
+        self.center_images_paths = [self.images_paths[i] for i, s in enumerate(to_select) if s]
+        self.images_centers = [self.images_centers[i] for i, s in enumerate(to_select) if s]
 
 
-class FedT2ImagesIXIDataset(IXIDataset):
-    def __init__(self, root, center=None):
-        super(FedT2ImagesIXIDataset, self).__init__(root)
+class IXITinyDataset(IXIDataset):
+    def __init__(self, root, transform=None, download=False):
+        super(IXITinyDataset, self).__init__(root, transform=transform, download=download)
+        self.modality = 'T1'
+        # self.common_shape = (512, 512, 100)
+        self.image_urls = [''] # url to ixi tiny archive
+        if download:
+            self.download(debug=False,tiny=True)
+        
+        # Download of the ixi tiny must be completed to run this part
+        self.parent_dir_name = Path(self.zip_file.filename).resolve().stem # 'IXI_sample'
+        self.subjects_dir = os.path.join(root,"IXI-Dataset",self.parent_dir_name)
 
-        self.modality = 'T2'
-        self.center = center
+        self.images_paths = []
+        self.labels_paths = []
+        self.images_centers = [] # HH, Guys or IOP
+        #self.images_sets = [] # TBD train and test
+
+        for subject in os.listdir(self.subjects_dir):
+            subject_dir = os.path.join(self.subjects_dir,subject)
+            image_path = Path(os.path.join(subject_dir,"T1"))
+            label_path = Path(os.path.join(subject_dir,"label"))
+            self.images_paths.extend(image_path.glob("*.nii.gz"))
+            self.labels_paths.extend(label_path.glob("*.nii.gz"))
+            self.images_centers.append(_extract_center_name_from_filename(subject))
+
+        
+
+class FedIXITinyDataset(IXITinyDataset):
+    def __init__(self, root, center=None, train=True, pooled=False):
+        super(FedIXITinyDataset, self).__init__(root)
+
+        self.modality = 'T1'
+        self.centers = [center]
         self._validate_center()
 
         if isinstance(center, int):  
-            self.center = _getCenterNameFromCenterId(self.CENTER_LABELS, center)
-            print(center, "is", self.center)
+            self.centers = [_get_center_name_from_center_id(self.CENTER_LABELS, center)]
+            print(center, 'is', self.centers[0])
 
-        self.parent_dir = Path(self.tar_file.name).resolve().stem
-        self.images_dir = Path(os.path.join(root,"IXI-Dataset",self.parent_dir))
-        images_paths = sorted(self.images_dir.glob('*.nii.gz'))
-        self.center_images_paths = []
+        if pooled:
+            self.centers = ['HH', 'Guys', 'IOP']
 
-        for image in images_paths:
-            nii_file_name = image.resolve().stem
-            if self.center in nii_file_name:
-                self.center_images_paths.append(image)
+        to_select = [
+            (self.images_centers[idx] in self.centers)
+            for idx, _ in enumerate(self.images_centers)
+        ] # and (self.features_sets[idx] in self.sets) # train and test
 
-
-class FedPDImagesIXIDataset(IXIDataset):
-    def __init__(self, root, center=None):
-        super(FedPDImagesIXIDataset, self).__init__(root)
-
-        self.modality = 'PD'
-        self.center = center
-        self._validate_center()
-
-        if isinstance(center, int):  
-            self.center = _getCenterNameFromCenterId(self.CENTER_LABELS, center)
-            print(center, "is", self.center)
-
-        self.parent_dir = Path(self.tar_file.name).resolve().stem
-        self.images_dir = Path(os.path.join(root,"IXI-Dataset",self.parent_dir))
-        images_paths = sorted(self.images_dir.glob('*.nii.gz'))
-        self.center_images_paths = []
-
-        for image in images_paths:
-            nii_file_name = image.resolve().stem
-            if self.center in nii_file_name:
-                self.center_images_paths.append(image)
-
-
-class FedMRAImagesIXIDataset(IXIDataset):
-    def __init__(self, root, center=None):
-        super(FedMRAImagesIXIDataset, self).__init__(root)
-
-        self.modality = 'MRA'
-        self.center = center
-        self._validate_center()
-
-        if isinstance(center, int):  
-            self.center = _getCenterNameFromCenterId(self.CENTER_LABELS, center)
-            print(center, "is", self.center)
-
-        self.parent_dir = Path(self.tar_file.name).resolve().stem
-        self.images_dir = Path(os.path.join(root,"IXI-Dataset",self.parent_dir))
-        images_paths = sorted(self.images_dir.glob('*.nii.gz'))
-        self.center_images_paths = []
-
-        for image in images_paths:
-            nii_file_name = image.resolve().stem
-            if self.center in nii_file_name:
-                self.center_images_paths.append(image)
-
-
-class FedDTIImagesIXIDataset(IXIDataset):
-    def __init__(self, root, center=None):
-        super(FedDTIImagesIXIDataset, self).__init__(root)
-
-        self.modality = 'DTI'
-        self.center = center
-        self._validate_center()
-
-        if isinstance(center, int):  
-            self.center = _getCenterNameFromCenterId(self.CENTER_LABELS, center)
-            print(center, "is", self.center)
-
-        self.parent_dir = Path(self.tar_file.name).resolve().stem
-        self.images_dir = Path(os.path.join(root,"IXI-Dataset",self.parent_dir))
-        images_paths = sorted(self.images_dir.glob('*.nii.gz'))
-        self.center_images_paths = []
-
-        for image in images_paths:
-            nii_file_name = image.resolve().stem
-            if self.center in nii_file_name:
-                self.center_images_paths.append(image)
+        self.center_images_paths = [self.images_paths[i] for i, s in enumerate(to_select) if s]
+        self.center_labels_paths = [self.labels_paths[i] for i, s in enumerate(to_select) if s]
+        self.images_centers = [self.images_centers[i] for i, s in enumerate(to_select) if s]
 
 
 
