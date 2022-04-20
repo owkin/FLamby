@@ -1,6 +1,5 @@
 from pathlib import Path
 from tarfile import TarFile
-from typing_extensions import Self
 from zipfile import ZipFile
 from typing import Union, Tuple, Dict
 from sqlalchemy import false
@@ -105,9 +104,9 @@ class IXIDataset(Dataset):
                 # Raise error if not 200
                 response.raise_for_status()
                 file_size = int(response.headers.get('Content-Length', 0))
-                desc = "(Unknown total file size)" if file_size == 0 else ""
+                desc = '(Unknown total file size)' if file_size == 0 else ''
                 print(f'Downloading to {img_archive_path}')
-                with tqdm.wrapattr(response.raw, "read", total=file_size, desc=desc) as r_raw:
+                with tqdm.wrapattr(response.raw, 'read', total=file_size, desc=desc) as r_raw:
                     with open(img_archive_path, 'wb') as f:
                         shutil.copyfileobj(r_raw, f)
 
@@ -338,7 +337,7 @@ class IXITinyDataset(IXIDataset):
         
         # Download of the ixi tiny must be completed to run this part
         self.parent_dir_name = Path(self.zip_file.filename).resolve().stem # 'IXI_sample'
-        self.subjects_dir = os.path.join(root,"IXI-Dataset",self.parent_dir_name)
+        self.subjects_dir = os.path.join(root,'IXI-Dataset',self.parent_dir_name)
 
         self.images_paths = []
         self.labels_paths = []
@@ -347,10 +346,10 @@ class IXITinyDataset(IXIDataset):
 
         for subject in os.listdir(self.subjects_dir):
             subject_dir = os.path.join(self.subjects_dir,subject)
-            image_path = Path(os.path.join(subject_dir,"T1"))
-            label_path = Path(os.path.join(subject_dir,"label"))
-            self.images_paths.extend(image_path.glob("*.nii.gz"))
-            self.labels_paths.extend(label_path.glob("*.nii.gz"))
+            image_path = Path(os.path.join(subject_dir,'T1'))
+            label_path = Path(os.path.join(subject_dir,'label'))
+            self.images_paths.extend(image_path.glob('*.nii.gz'))
+            self.labels_paths.extend(label_path.glob('*.nii.gz'))
             self.images_centers.append(_extract_center_name_from_filename(subject))
 
         
@@ -394,4 +393,6 @@ __all__ = [
     'FedPDImagesIXIDataset',
     'FedMRAImagesIXIDataset',
     'FedDTIImagesIXIDataset',
+    'IXITinyDataset',
+    'FedIXITinyDataset',
 ]
