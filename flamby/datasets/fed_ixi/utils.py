@@ -155,6 +155,22 @@ def _load_nifti_image_by_id(
 
     return header, img, _extract_center_name_from_filename(filename)
 
-def _get_center_name_from_center_id(center_labels, center_id):
+
+def _get_center_name_from_center_id(center_labels: dict, center_id: int) -> str:
+    """Extract ID from NIFTI filename for cross-reference
+
+    Parameters
+    ----------
+    center_labels : dict
+        Dictionary containing hospital names as keys and numerical ids as values.
+
+    center_id : int
+        Hospital id for which we want to retrieve the name.
+
+    Returns
+    -------
+    str
+        Name of the center where the data comes from
+    """
     center_name = list(center_labels.keys())[list(center_labels.values()).index(center_id)]
     return center_name

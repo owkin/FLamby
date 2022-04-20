@@ -2,7 +2,6 @@ from pathlib import Path
 from tarfile import TarFile
 from zipfile import ZipFile
 from typing import Union, Tuple, Dict
-from sqlalchemy import false
 from tqdm import tqdm
 
 import numpy as np
@@ -16,7 +15,7 @@ from monai.transforms import Resize, Compose, ToTensor, AddChannel
 from torch import Tensor
 from torch.utils.data import Dataset
 
-from .utils import _get_id_from_filename, _load_nifti_image_by_id, _get_center_name_from_center_id, _extract_center_name_from_filename
+from utils import _get_id_from_filename, _load_nifti_image_by_id, _extract_center_name_from_filename, _get_center_name_from_center_id
 
 
 class IXIDataset(Dataset):
@@ -47,9 +46,10 @@ class IXIDataset(Dataset):
         self.root_folder = Path(root).expanduser().joinpath('IXI-Dataset')
         self.transform = transform
         if download:
-            self.download(debug=False,tiny=False)
+            self.download(debug=False)
 
-        self.demographics = self._load_demographics()
+        if self.__class__.__name__ == 'IXIDataset':
+            self.demographics = self._load_demographics()
         self.modality = 'T1'  # T1 modality by default
         self.common_shape = (-1, -1, 150)  # Common shape (some images need resizing on the z-axis
 
@@ -72,7 +72,7 @@ class IXIDataset(Dataset):
         zf = self.root_folder.joinpath('IXI_sample.zip')
         return ZipFile(zf)
 
-    def download(self, debug=False, tiny=False) -> None:
+    def download(self, debug=False) -> None:
         """
         Downloads demographics information and image archives and stores them in a folder.
 
@@ -89,15 +89,11 @@ class IXIDataset(Dataset):
         # Make folder if it does not exist
         self.root_folder.mkdir(exist_ok=True)
         
-        if not tiny:
-            demographics_url = [self.MIRRORS[0] + self.DEMOGRAPHICS_FILENAME]  # URL EXCEL
-            files = self.image_urls + demographics_url
-        else:
-            files = self.image_urls
+        demographics_url = [self.MIRRORS[0] + self.DEMOGRAPHICS_FILENAME]  # URL EXCEL
 
-        for file_url in files:
-            img_archive_name = file_url.split('/')[-1]
-            img_archive_path = self.root_folder.joinpath(img_archive_name)
+        for file_url in self.image_urls + demographics_url:
+            img_tarball_archive_name = file_url.split('/')[-1]
+            img_archive_path = self.root_folder.joinpath(img_tarball_archive_name)
             if img_archive_path.is_file():
                 continue
             with requests.get(file_url, stream=True) as response:
@@ -327,16 +323,16 @@ class FedT1ImagesIXIDataset(T1ImagesIXIDataset):
 
 
 class IXITinyDataset(IXIDataset):
+    image_url = 'https://data.mendeley.com/api/datasets-v2/datasets/7kd5wj7v7p/zip/download?version=1'
     def __init__(self, root, transform=None, download=False):
         super(IXITinyDataset, self).__init__(root, transform=transform, download=download)
-        self.modality = 'T1'
         # self.common_shape = (512, 512, 100)
-        self.image_urls = [''] # url to ixi tiny archive
+        self.image_url = 'https://data.mendeley.com/api/datasets-v2/datasets/7kd5wj7v7p/zip/download?version=1'
         if download:
-            self.download(debug=False,tiny=True)
+            self.download(debug=False)
         
         # Download of the ixi tiny must be completed to run this part
-        self.parent_dir_name = Path(self.zip_file.filename).resolve().stem # 'IXI_sample'
+        self.parent_dir_name = os.path.join('IXI Sample Dataset','7kd5wj7v7p-1','IXI_sample')
         self.subjects_dir = os.path.join(root,'IXI-Dataset',self.parent_dir_name)
 
         self.images_paths = []
@@ -344,7 +340,10 @@ class IXITinyDataset(IXIDataset):
         self.images_centers = [] # HH, Guys or IOP
         #self.images_sets = [] # TBD train and test
 
-        for subject in os.listdir(self.subjects_dir):
+        subjects = [subject for subject in os.listdir(self.subjects_dir) if os.path.isdir(os.path.join(self.subjects_dir, subject))]
+        self.demographics = Path(os.path.join(self.subjects_dir,'IXI.xls'))
+
+        for subject in subjects:
             subject_dir = os.path.join(self.subjects_dir,subject)
             image_path = Path(os.path.join(subject_dir,'T1'))
             label_path = Path(os.path.join(subject_dir,'label'))
@@ -352,10 +351,35 @@ class IXITinyDataset(IXIDataset):
             self.labels_paths.extend(label_path.glob('*.nii.gz'))
             self.images_centers.append(_extract_center_name_from_filename(subject))
 
+    def download(self, debug=False) -> None:
+        """
+        Downloads demographics information and image archives and stores them in a folder.
+
+        Parameters
+            ----------
+            debug: bool
+                Enables a light version download. hosting synthetic data ? TBD
+        """
+        self.root_folder.mkdir(exist_ok=True)
+
+        img_zip_archive_name = 'IXI Sample Dataset.zip'
+        img_archive_path = self.root_folder.joinpath(img_zip_archive_name)
+        if img_archive_path.is_file():
+            return
+        with requests.get(self.image_url, stream=True) as response:
+            # Raise error if not 200
+            response.raise_for_status()
+            file_size = int(response.headers.get('Content-Length', 0))
+            desc = '(Unknown total file size)' if file_size == 0 else ''
+            print(f'Downloading to {img_archive_path}')
+            with tqdm.wrapattr(response.raw, 'read', total=file_size, desc=desc) as r_raw:
+                with open(img_archive_path, 'wb') as f:
+                    shutil.copyfileobj(r_raw, f)
+
         
 
 class FedIXITinyDataset(IXITinyDataset):
-    def __init__(self, root, center=None, train=True, pooled=False):
+    def __init__(self, root, center=1, train=True, pooled=False):
         super(FedIXITinyDataset, self).__init__(root)
 
         self.modality = 'T1'
@@ -396,3 +420,9 @@ __all__ = [
     'IXITinyDataset',
     'FedIXITinyDataset',
 ]
+
+a = FedIXITinyDataset('.')
+print(a.demographics)
+print(a.center_images_paths, len(a.center_images_paths))
+print(a.center_labels_paths, len(a.center_labels_paths))
+print(a.images_centers, len(a.images_centers))
