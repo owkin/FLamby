@@ -71,6 +71,7 @@ all the datasets you are interested in by following the instructions provided in
 - [Fed-Camelyon16](./flamby/datasets/fed_camelyon16/README.md)
 - [Fed-LIDIC-IDRI](./flamby/datasets/fed_lidc_idri/README.md)
 - [Fed-ISIC2019](./flamby/datasets/fed_isic2019/README.md)
+- [Fed-TCGA-BRCA](./flamby/datasets/fed_tcga_brca/README.md)
 
 ## Usage
 

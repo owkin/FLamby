@@ -58,6 +58,7 @@ setup(
         "histolab",
         "matplotlib",
         "dicom-numpy",
+        "lifelines",
         "nibabel",
         "numpy",
         "pandas",
