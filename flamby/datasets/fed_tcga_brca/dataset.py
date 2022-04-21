@@ -6,21 +6,17 @@ import torch
 
 
 class TcgaBrcaRaw(torch.utils.data.Dataset):
-    """Pytorch dataset containing all the features, labels and datacenter
-    information for TCGA-BRCA.
+    """Pytorch dataset containing all the clinical features and (event, time)
+    information for TCGA-BRCA survival analysis.
     Attributes
     ----------
-    image_paths: list[str], the list with the path towards all features
-    targets: list[int], the list with all classification labels for all features
-    centers: list[int], the list for all datacenters for all features
     X_dtype: torch.dtype, the dtype of the X features output
-    y_dtype: torch.dtype, the dtype of the y label output
-    train: bool, characterizes if the dataset is used for training or for
-    testing, default True
-    augmentations: image transform operations from the albumentations library,
-    used for data augmentation
-    dic: dictionary containing the paths to the input images and the
-    train_test_split file
+    y_dtype: torch.dtype, the dtype of the (E, T) output
+    train_test: str, equals "train" or "test", characterizes if the dataset is
+    used for training or for testing, default "train"
+    dic: dictionary containing the paths to the data and the train_test_split file
+    data: pandas dataframe containing the data for the patients in the training
+    or the test set according to the variable train_test
     """
 
     def __init__(self, train=True, X_dtype=torch.float32, y_dtype=torch.float32):
@@ -55,15 +51,19 @@ class TcgaBrcaRaw(torch.utils.data.Dataset):
 
 class FedTcgaBrca(TcgaBrcaRaw):
     """
-    Pytorch dataset containing for each center the features and associated labels
-    for the Isic2019 federated classification.
+    Pytorch dataset containing all the clinical features and (event, time)
+    information for TCGA-BRCA survival analysis.
     One can instantiate this dataset with train or test data coming from either of
-    the 6 centers it was created from or all data pooled.
-    The train/test split is fixed and given in the train_test_split file.
+    the 6 regions or all regions pooled.
+    The train/test split is static and given in the train_test_split file.
     Attributes
     ----------
     pooled: boolean, characterizes if the dataset is pooled or not
-    center: int, between 0 and 5, designates the datacenter in the case of pooled==False
+    center: int, between 0 and 5, designates the region in the case of pooled==False
+    data: pandas dataframe containing the data for the patients in the training
+    or the test set (according to the variable train_test) in a specific region
+    (chosen thanks to the variable center if pooled==False) or across all regions
+    (if pooled==True)
     """
 
     def __init__(
