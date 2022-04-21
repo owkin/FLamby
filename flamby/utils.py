@@ -99,6 +99,7 @@ def get_config_file_path(dataset_name, debug):
     """
     assert dataset_name in [
         "fed_camelyon16",
+        "fed_heart_disease",
         "fed_isic2019",
         "fed_lidc_idri",
     ], f"Dataset name {dataset_name} not valid."
