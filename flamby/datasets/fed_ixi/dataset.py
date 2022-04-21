@@ -45,7 +45,7 @@ class IXIDataset(Dataset):
     ):
         self.root_folder = Path(root).expanduser().joinpath('IXI-Dataset')
         self.transform = transform
-        if download:
+        if download and self.__class__.__name__ == 'IXIDataset':
             self.download(debug=False)
 
         if self.__class__.__name__ == 'IXIDataset':
@@ -223,7 +223,7 @@ class T1ImagesIXIDataset(IXIDataset):
         if download:
             self.download()
 
-        # Download of the T1 images must be completed to run this part
+        # Download of the T1 images must be completed and extracted to run this part
         self.parent_dir_name = Path(self.tar_file.name).resolve().stem # 'IXI-T1'
         self.subjects_dir = os.path.join(root,"IXI-Dataset",self.parent_dir_name)
 
@@ -323,7 +323,6 @@ class FedT1ImagesIXIDataset(T1ImagesIXIDataset):
 
 
 class IXITinyDataset(IXIDataset):
-    image_url = 'https://data.mendeley.com/api/datasets-v2/datasets/7kd5wj7v7p/zip/download?version=1'
     def __init__(self, root, transform=None, download=False):
         super(IXITinyDataset, self).__init__(root, transform=transform, download=download)
         # self.common_shape = (512, 512, 100)
@@ -331,13 +330,13 @@ class IXITinyDataset(IXIDataset):
         if download:
             self.download(debug=False)
         
-        # Download of the ixi tiny must be completed to run this part
+        # Download of the ixi tiny must be completed and extracted to run this part
         self.parent_dir_name = os.path.join('IXI Sample Dataset','7kd5wj7v7p-1','IXI_sample')
         self.subjects_dir = os.path.join(root,'IXI-Dataset',self.parent_dir_name)
 
-        self.images_paths = []
-        self.labels_paths = []
-        self.images_centers = [] # HH, Guys or IOP
+        self.images_paths = [] # contains paths of archives which contain a nifti image for each subject
+        self.labels_paths = [] # contains paths of archives which contain a label (binary brain mask) for each subject
+        self.images_centers = [] # contains center of each subject: HH, Guys or IOP
         #self.images_sets = [] # TBD train and test
 
         subjects = [subject for subject in os.listdir(self.subjects_dir) if os.path.isdir(os.path.join(self.subjects_dir, subject))]
@@ -420,9 +419,3 @@ __all__ = [
     'IXITinyDataset',
     'FedIXITinyDataset',
 ]
-
-a = FedIXITinyDataset('.')
-print(a.demographics)
-print(a.center_images_paths, len(a.center_images_paths))
-print(a.center_labels_paths, len(a.center_labels_paths))
-print(a.images_centers, len(a.images_centers))
