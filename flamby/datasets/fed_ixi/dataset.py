@@ -1,7 +1,7 @@
 from pathlib import Path
 from tarfile import TarFile
 from zipfile import ZipFile
-from typing import Union, Tuple, Dict
+from typing import Union, Tuple, Dict, List
 from tqdm import tqdm
 
 import numpy as np
@@ -15,7 +15,7 @@ from monai.transforms import Resize, Compose, ToTensor, AddChannel
 from torch import Tensor
 from torch.utils.data import Dataset
 
-from utils import _get_id_from_filename, _load_nifti_image_by_id, _extract_center_name_from_filename, _get_center_name_from_center_id
+from utils import _get_id_from_filename, _load_nifti_image_by_id, _extract_center_name_from_filename, _get_center_name_from_center_id, _create_train_test_split
 
 
 class IXIDataset(Dataset):
@@ -229,13 +229,26 @@ class T1ImagesIXIDataset(IXIDataset):
 
         self.images_paths = [] # contains paths of archives which contain a nifti image for each subject
         self.images_centers = [] # contains center of each subject: HH, Guys or IOP
-        #self.images_sets = [] # TBD, is the subject used for train or test
+        self.images_sets = [] # is the subject used for train or test
+
+        self.images_centers = [_extract_center_name_from_filename(subject) for subject in os.listdir(self.subjects_dir)]
+        self.train_test_hh, self.train_test_guys, self.train_test_iop = _create_train_test_split(images_centers=self.images_centers)
+        idx_hh, idx_guys, idx_iop = 0, 0, 0  
 
         for subject in os.listdir(self.subjects_dir):
+            center_name = _extract_center_name_from_filename(subject)
+            if center_name == 'HH':
+                self.images_sets.append(self.train_test_hh[idx_hh])
+                idx_hh += 1
+            elif center_name == 'Guys':
+                self.images_sets.append(self.train_test_guys[idx_guys])
+                idx_guys += 1
+            else:
+                self.images_sets.append(self.train_test_iop[idx_iop])
+                idx_iop += 1
             subject_archive = os.path.join(self.subjects_dir,subject)
             image_path = Path(subject_archive)
             self.images_paths.append(image_path)
-            self.images_centers.append(_extract_center_name_from_filename(subject))
 
 
 class T2ImagesIXIDataset(IXIDataset):
@@ -313,10 +326,16 @@ class FedT1ImagesIXIDataset(T1ImagesIXIDataset):
         if pooled:
             self.centers = ['HH', 'Guys', 'IOP']
 
+        if train:
+            self.sets = ["train"]
+        else:
+            self.sets = ["test"]
+
         to_select = [
             (self.images_centers[idx] in self.centers)
+            and (self.images_sets[idx] in self.sets)
             for idx, _ in enumerate(self.images_centers)
-        ] # and (self.features_sets[idx] in self.sets) # train and test
+        ]
 
         self.center_images_paths = [self.images_paths[i] for i, s in enumerate(to_select) if s]
         self.images_centers = [self.images_centers[i] for i, s in enumerate(to_select) if s]
@@ -337,18 +356,33 @@ class IXITinyDataset(IXIDataset):
         self.images_paths = [] # contains paths of archives which contain a nifti image for each subject
         self.labels_paths = [] # contains paths of archives which contain a label (binary brain mask) for each subject
         self.images_centers = [] # contains center of each subject: HH, Guys or IOP
-        #self.images_sets = [] # TBD train and test
+        self.images_sets = [] # train and test
 
-        subjects = [subject for subject in os.listdir(self.subjects_dir) if os.path.isdir(os.path.join(self.subjects_dir, subject))]
+        self.subjects = [subject for subject in os.listdir(self.subjects_dir) if os.path.isdir(os.path.join(self.subjects_dir, subject))]
+        self.images_centers = [_extract_center_name_from_filename(subject) for subject in self.subjects]
+
+        self.train_test_hh, self.train_test_guys, self.train_test_iop = _create_train_test_split(images_centers=self.images_centers)
+
         self.demographics = Path(os.path.join(self.subjects_dir,'IXI.xls'))
 
-        for subject in subjects:
+        idx_hh, idx_guys, idx_iop = 0, 0, 0
+
+        for subject in self.subjects:
+            center_name = _extract_center_name_from_filename(subject)
+            if center_name == 'HH':
+                self.images_sets.append(self.train_test_hh[idx_hh])
+                idx_hh += 1
+            elif center_name == 'Guys':
+                self.images_sets.append(self.train_test_guys[idx_guys])
+                idx_guys += 1
+            else:
+                self.images_sets.append(self.train_test_iop[idx_iop])
+                idx_iop += 1
             subject_dir = os.path.join(self.subjects_dir,subject)
             image_path = Path(os.path.join(subject_dir,'T1'))
             label_path = Path(os.path.join(subject_dir,'label'))
             self.images_paths.extend(image_path.glob('*.nii.gz'))
             self.labels_paths.extend(label_path.glob('*.nii.gz'))
-            self.images_centers.append(_extract_center_name_from_filename(subject))
 
     def download(self, debug=False) -> None:
         """
@@ -375,7 +409,6 @@ class IXITinyDataset(IXIDataset):
                 with open(img_archive_path, 'wb') as f:
                     shutil.copyfileobj(r_raw, f)
 
-        
 
 class FedIXITinyDataset(IXITinyDataset):
     def __init__(self, root, center=1, train=True, pooled=False):
@@ -391,17 +424,29 @@ class FedIXITinyDataset(IXITinyDataset):
 
         if pooled:
             self.centers = ['HH', 'Guys', 'IOP']
+        
+        if train:
+            self.sets = ["train"]
+        else:
+            self.sets = ["test"]
 
         to_select = [
             (self.images_centers[idx] in self.centers)
+            and (self.images_sets[idx] in self.sets)
             for idx, _ in enumerate(self.images_centers)
-        ] # and (self.features_sets[idx] in self.sets) # train and test
+        ]
 
         self.center_images_paths = [self.images_paths[i] for i, s in enumerate(to_select) if s]
         self.center_labels_paths = [self.labels_paths[i] for i, s in enumerate(to_select) if s]
         self.images_centers = [self.images_centers[i] for i, s in enumerate(to_select) if s]
+        self.images_sets = [self.images_sets[i] for i, s in enumerate(to_select) if s]
 
+    
+a = FedIXITinyDataset(".")
+print(len(a.center_images_paths))
 
+a = FedT1ImagesIXIDataset(".")
+print(len(a.center_images_paths))
 
 __all__ = [
     'IXIDataset',

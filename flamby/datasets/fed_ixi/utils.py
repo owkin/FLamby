@@ -174,3 +174,44 @@ def _get_center_name_from_center_id(center_labels: dict, center_id: int) -> str:
     """
     center_name = list(center_labels.keys())[list(center_labels.values()).index(center_id)]
     return center_name
+
+
+def _create_train_test_split(images_centers: List[str]) -> Tuple[List[str], List[str], List[str]]:
+    """
+    Creates a train test split for each center using random seed to reproduce results.
+
+    Parameters
+    ----------
+    images_centers: list
+        List of hospital names for each subject.
+
+    Returns
+    -------
+    train_test_hh : list
+            A list containing randomly generated dichotomous values. The size is the number of images from HH hospital. Dichotomous values (train and test) follow a train test split threshold (e. g. 70%).
+    train_test_guys : list
+            A list containing randomly generated dichotomous values. The size is the number of images from Guys hospital. Dichotomous values (train and test) follow a train test split threshold (e. g. 70%).
+    train_test_iop : list
+            A list containing randomly generated dichotomous values. The size is the number of images from IOP hospital. Dichotomous values (train and test) follow a train test split threshold (e. g. 70%).
+
+    """
+    n_hh = images_centers.count('HH')
+    n_guys = images_centers.count('Guys')
+    n_iop = images_centers.count('IOP')
+
+    n_train_hh = round(n_hh * 0.7)
+    n_train_guys = round(n_guys * 0.7)
+    n_train_iop = round(n_iop * 0.7)
+
+    n_test_hh = n_hh - n_train_hh
+    n_test_guys = n_guys - n_train_guys
+    n_test_iop = n_iop - n_train_iop
+
+    np.random.seed(10)
+    train_test_hh = ['train'] * n_train_hh + ['test'] * n_test_hh
+    np.random.shuffle(train_test_hh)
+    train_test_guys = ['train'] * n_train_guys + ['test'] * n_test_guys
+    np.random.shuffle(train_test_guys)
+    train_test_iop = ['train'] * n_train_iop + ['test'] * n_test_iop
+    np.random.shuffle(train_test_iop)
+    return train_test_hh, train_test_guys, train_test_iop
