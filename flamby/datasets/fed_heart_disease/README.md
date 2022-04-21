@@ -13,7 +13,7 @@ available for download
 |                   | Dataset description
 | ----------------- | -----------------------------------------------
 | Description       | Heart Disease dataset
-| Dataset           | 740 records, 11 features (303/294/123/200 records per center)
+| Dataset           | 740 records, 16 features (303/294/123/200 records per center)
 | Centers           | 4 centers (Cleveland, Hungary, Switzerland and Long Beach V)
 | Task              | Classification of tabular data
 
