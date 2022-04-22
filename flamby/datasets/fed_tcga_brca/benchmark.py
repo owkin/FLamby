@@ -48,6 +48,7 @@ def train_model(
 
     if log:
         writer = SummaryWriter(log_dir=f"./runs/seed{seed}")
+        batch = 0
 
     for epoch in range(1, num_epochs + 1):
         print("Epoch {}/{}".format(epoch, num_epochs))
@@ -82,7 +83,9 @@ def train_model(
 
                 # statistics
                 if log & (phase == "train"):
-                    writer.add_scalar("Loss", loss.item())
+                    print(batch, loss.item())
+                    writer.add_scalar("Loss", loss.item(), batch)
+                    batch += 1
                 running_loss += loss.item() * X.size(0)
 
             if phase == "train":
