@@ -15,7 +15,7 @@ The dataset used in this repo comes from [The Cancer Genome Atlas (TCGA)](https:
 Raw TCGA-BRCA data can be viewed and downloaded [here](https://portal.gdc.cancer.gov/projects/TCGA-BRCA).
 
 ## Data
-Preprocessed data is stored in this repo in the file brca.csv. The medical centers (with their geographic regions) are stored in the file centers.csv. From this file and the patients' TCGA barcodes, we can extract the region of origin of each patient's tissue sort site (TSS). The numbers of sites being too large (64) we regroup them in 6 different regions (Northeast, South, West, Midwest, Europe, Canada). The patients' stratified split by region is static and stored in the train_test_split.csv file.
+Preprocessed data is stored in this repo in the file ```brca.csv```, so the dataset does not need to be downloaded. The medical centers (with their geographic regions) are stored in the file ```centers.csv```. From this file and the patients' TCGA barcodes, we can extract the region of origin of each patient's tissue sort site (TSS). The numbers of sites being too large (64) we regroup them in 6 different regions (Northeast, South, West, Midwest, Europe, Canada). The patients' stratified split by region is static and stored in the train_test_split.csv file.
 
 ## Baseline training and evaluation in a pooled setting
 To train and evaluate a model for the pooled dataset, run:
