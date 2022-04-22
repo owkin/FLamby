@@ -8,6 +8,7 @@ import os
 from os import PathLike
 import numpy
 from tarfile import TarFile
+from zipfile import ZipFile
 from pathlib import Path
 
 import re
@@ -63,11 +64,36 @@ def _assembly_nifti_filename_regex(patient_id: int, modality: str) -> Union[str,
 
     Returns
     -------
+    str
+        A nifti image file name.
 
     """
     nii_filename = f'IXI{patient_id:03d}-[A-Za-z]+-[0-9]+-{modality.upper()}.nii.gz'
     return nii_filename
 
+
+def _assembly_nifti_img_and_label_regex(patient_id: int, modality: str) -> Tuple[Union[str, PathLike, Path], Union[str, PathLike, Path]]:
+    """Assembles NIFTI filename regular expression for image and label using the standard in the IXI tiny dataset based on id and modality.
+
+    Parameters
+    ----------
+    patient_id : int
+        Patient's identifier.
+
+    modality: str
+        Image modality (e.g. `'T1'`).
+
+    Returns
+    -------
+    str
+        A nifti image file name.
+    str
+        A nifti label file name.
+
+    """
+    nii_filename_img = f'.+{modality.upper()}/IXI{patient_id:03d}-[A-Za-z]+-[0-9]+.+.nii.gz'
+    nii_filename_label = f'.+label/IXI{patient_id:03d}-[A-Za-z]+-[0-9]+.+.nii.gz'
+    return nii_filename_img, nii_filename_label
 
 def _find_file_in_tar(tar_file: TarFile, patient_id: int, modality) -> str:
     """Searches the file in a TAR file that corresponds to a particular regular expression.
@@ -98,6 +124,42 @@ def _find_file_in_tar(tar_file: TarFile, patient_id: int, modality) -> str:
 
     raise FileNotFoundError(f'File following the pattern {regex} could not be found.')
 
+def _find_files_in_zip(zip_file: ZipFile, patient_id: int, modality) -> Tuple[str]:
+    """Searches the files in a ZIP file that corresponds to particular regular expressions.
+
+    Parameters
+    ----------
+    patient_id : int
+        Patient's ID
+
+    Returns
+    -------
+    str
+        Image filename corresponding to the particular subject's ID
+    str
+        Label filename corresponding to the particular subject's ID
+
+    Raises
+    -------
+    FileNotFoundError
+        If files were not found in ZIP.
+    """
+    regex_img, regex_label = _assembly_nifti_img_and_label_regex(patient_id, modality)
+    filenames = zip_file.namelist()
+    result = []
+
+    for filename in filenames:
+        try:
+            result.append(re.match(regex_img, filename).group())
+        except AttributeError:
+            try:
+                result.append(re.match(regex_label, filename).group())
+            except AttributeError:
+                continue
+        if len(result) == 2:
+            return tuple(result)
+
+    raise FileNotFoundError(f'Files following the pattern {regex_img} and {regex_label} could not be found.')
 
 def _extract_center_name_from_filename(filename: str):
     """Extracts center name from file dataset.
@@ -133,7 +195,6 @@ def _load_nifti_image_by_id(
     modality : str
         MRI modality (e.g. `'T1'`).
 
-
     Returns
     -------
     header : Nifti1Header
@@ -145,6 +206,7 @@ def _load_nifti_image_by_id(
     """
     filename = _find_file_in_tar(tar_file, patient_id, modality)
     with tempfile.TemporaryDirectory() as td:
+        print(td)
         full_path = os.path.join(td, filename)
         tar_file.extract(filename, td)
         nii_img = nib.load(full_path)
@@ -155,6 +217,48 @@ def _load_nifti_image_by_id(
 
     return header, img, _extract_center_name_from_filename(filename)
 
+
+def _load_nifti_image_and_label_by_id(
+        zip_file: ZipFile,
+        patient_id: int, modality) -> Tuple[nib.Nifti1Header, numpy.ndarray, numpy.ndarray, str]:
+    """Loads NIFTI file from ZIP file using a specific ID.
+
+    Parameters
+    ----------
+    zip_file : ZipFile
+        `TarFile <https://docs.python.org/3/library/zipfile.html#zipfile-objects>`_ object
+    patient_id : int
+        Patient's ID whose image is to be extracted.
+    modality : str
+        MRI modality (e.g. `'T1'`).
+
+    Returns
+    -------
+    header_img : Nifti1Header
+        NIFTI headers proceeding from the image.
+    img : ndarray
+        NumPy array containing the intensities of the voxels.
+    label : ndarray
+        NumPy array containing the intensities of the voxels.
+    center_name : str
+        Name of the center the file comes from. In IXI this is encoded only in the filename.
+    """
+    img_filename, label_filename = _find_files_in_zip(zip_file, patient_id, modality)
+    with tempfile.TemporaryDirectory() as td:
+        img_full_path = os.path.join(td, img_filename[1:])
+        label_full_path = os.path.join(td, label_filename[1:])
+        zip_file.extract(img_filename, td)
+        zip_file.extract(label_filename, td)
+        nii_img = nib.load(img_full_path)
+        nii_label = nib.load(label_full_path)
+        # nii_img = nib.as_closest_canonical(nii_img)
+        # nii_img = processing.conform(nii_img) #, out_shape=nii_img.shape)
+        img = nii_img.get_fdata()
+        label = nii_label.get_fdata()
+        header_img = nii_img.get_header()
+        #header_label = label.get_header()
+
+    return header_img, img, label, _extract_center_name_from_filename(Path(img_filename).name)
 
 def _get_center_name_from_center_id(center_labels: dict, center_id: int) -> str:
     """Extract ID from NIFTI filename for cross-reference

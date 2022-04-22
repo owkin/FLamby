@@ -1,3 +1,4 @@
+from email import header
 from pathlib import Path
 from tarfile import TarFile
 from zipfile import ZipFile
@@ -15,7 +16,7 @@ from monai.transforms import Resize, Compose, ToTensor, AddChannel
 from torch import Tensor
 from torch.utils.data import Dataset
 
-from utils import _get_id_from_filename, _load_nifti_image_by_id, _extract_center_name_from_filename, _get_center_name_from_center_id, _create_train_test_split
+from utils import _get_id_from_filename, _load_nifti_image_by_id, _load_nifti_image_and_label_by_id, _extract_center_name_from_filename, _get_center_name_from_center_id, _create_train_test_split
 
 
 class IXIDataset(Dataset):
@@ -45,11 +46,10 @@ class IXIDataset(Dataset):
     ):
         self.root_folder = Path(root).expanduser().joinpath('IXI-Dataset')
         self.transform = transform
-        if download and self.__class__.__name__ == 'IXIDataset':
+        if download:
             self.download(debug=False)
 
-        if self.__class__.__name__ == 'IXIDataset':
-            self.demographics = self._load_demographics()
+        self.demographics = self._load_demographics()
         self.modality = 'T1'  # T1 modality by default
         self.common_shape = (-1, -1, 150)  # Common shape (some images need resizing on the z-axis
 
@@ -66,11 +66,6 @@ class IXIDataset(Dataset):
     def tar_file(self) -> TarFile:
         tf = self.root_folder.joinpath(f'IXI-{self.modality.upper()}.tar')
         return TarFile(tf)
-
-    @property
-    def zip_file(self) -> ZipFile:
-        zf = self.root_folder.joinpath('IXI_sample.zip')
-        return ZipFile(zf)
 
     def download(self, debug=False) -> None:
         """
@@ -341,11 +336,15 @@ class FedT1ImagesIXIDataset(T1ImagesIXIDataset):
         self.images_centers = [self.images_centers[i] for i, s in enumerate(to_select) if s]
 
 
-class IXITinyDataset(IXIDataset):
+class IXITinyDataset(Dataset):
+    CENTER_LABELS = {'HH': 1, 'Guys': 2, 'IOP': 3}
+
     def __init__(self, root, transform=None, download=False):
-        super(IXITinyDataset, self).__init__(root, transform=transform, download=download)
-        # self.common_shape = (512, 512, 100)
+        self.root_folder = Path(root).expanduser().joinpath('IXI-Dataset')
         self.image_url = 'https://data.mendeley.com/api/datasets-v2/datasets/7kd5wj7v7p/zip/download?version=1'
+        self.common_shape = (48, 60, 48)
+        self.transform = transform
+        self.modality = 'T1'
         if download:
             self.download(debug=False)
         
@@ -383,16 +382,19 @@ class IXITinyDataset(IXIDataset):
             label_path = Path(os.path.join(subject_dir,'label'))
             self.images_paths.extend(image_path.glob('*.nii.gz'))
             self.labels_paths.extend(label_path.glob('*.nii.gz'))
+    
+    @property
+    def zip_file(self) -> ZipFile:
+        zf = self.root_folder.joinpath('IXI Sample Dataset.zip')
+        return ZipFile(zf)
+
+    @property
+    def subject_ids(self) -> tuple:
+        filenames = [Path(filename).name for filename in self.zip_file.namelist() if Path(Path(filename).name).suffix == '.gz']
+        subject_ids = tuple(set(map(_get_id_from_filename, filenames)))
+        return subject_ids
 
     def download(self, debug=False) -> None:
-        """
-        Downloads demographics information and image archives and stores them in a folder.
-
-        Parameters
-            ----------
-            debug: bool
-                Enables a light version download. hosting synthetic data ? TBD
-        """
         self.root_folder.mkdir(exist_ok=True)
 
         img_zip_archive_name = 'IXI Sample Dataset.zip'
@@ -408,6 +410,35 @@ class IXITinyDataset(IXIDataset):
             with tqdm.wrapattr(response.raw, 'read', total=file_size, desc=desc) as r_raw:
                 with open(img_archive_path, 'wb') as f:
                     shutil.copyfileobj(r_raw, f)
+    
+    def _validate_center(self) -> None:
+        centers =  list(self.CENTER_LABELS.keys()) + list(self.CENTER_LABELS.values())
+        assert self.centers[0] in centers, f'Center {self.centers[0]} ' \
+                                                                    f'is not compatible with this dataset. ' \
+                                                                    f'Existing centers can be named as follow: {centers} '
+
+    def __getitem__(self, item) -> Tuple[Tensor, Dict]:
+        patient_id = self.subject_ids[item]
+        header_img, img, label, center_name = _load_nifti_image_and_label_by_id(zip_file=self.zip_file,
+                                                            patient_id=patient_id,
+                                                            modality=self.modality)
+
+        default_transform = Compose([
+            ToTensor(),
+            AddChannel(),
+            Resize(self.common_shape),
+        ])
+        img = default_transform(img)
+        label = default_transform(label)
+
+        metadata = {'IXI_ID': patient_id, 'center': center_name, 'center_label': self.CENTER_LABELS[center_name]}
+
+        if self.transform:
+            img = self.transform(img)
+        return img, label
+
+    def __len__(self) -> int:
+        return len(self.images_paths)
 
 
 class FedIXITinyDataset(IXITinyDataset):
@@ -441,12 +472,19 @@ class FedIXITinyDataset(IXITinyDataset):
         self.images_centers = [self.images_centers[i] for i, s in enumerate(to_select) if s]
         self.images_sets = [self.images_sets[i] for i, s in enumerate(to_select) if s]
 
+    def __len__(self) -> int:
+        return len(self.center_images_paths)
+
     
 a = FedIXITinyDataset(".")
 print(len(a.center_images_paths))
+print(a[0])
+print(len(a))
 
-a = FedT1ImagesIXIDataset(".")
+""" a = FedT1ImagesIXIDataset(".")
 print(len(a.center_images_paths))
+print(a[0])
+print(len(a)) """
 
 __all__ = [
     'IXIDataset',
