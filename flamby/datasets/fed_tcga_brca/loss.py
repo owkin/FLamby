@@ -1,9 +1,10 @@
 import torch
+import torch.nn as nn
 from dataset import FedTcgaBrca
 from model import Baseline
 
 
-def BaselineLoss(scores, truth):
+class BaselineLoss(nn.Module):
     """Compute Cox loss given model output and ground truth (E, T)
     Parameters
     ----------
@@ -16,16 +17,18 @@ def BaselineLoss(scores, truth):
     torch.Tensor of dimension (1, ) giving mean of Cox loss.
     """
 
-    # The Cox loss expects events to be reverse sorted in time
-    a = torch.stack((torch.squeeze(scores), truth[:, 0], truth[:, 1]), dim=1)
-    a = torch.stack(sorted(a, key=lambda a: -a[2]))
+    def __init__(self):
+        super(BaselineLoss, self).__init__()
 
-    scores = a[:, 0]
-    events = a[:, 1]
-
-    scores_ = scores - scores.max()
-    loss = -(scores_ - torch.log(torch.exp(scores_).cumsum(0))) * events
-    return loss.mean()
+    def forward(self, scores, truth):
+        # The Cox loss calc expects events to be reverse sorted in time
+        a = torch.stack((torch.squeeze(scores), truth[:, 0], truth[:, 1]), dim=1)
+        a = torch.stack(sorted(a, key=lambda a: -a[2]))
+        scores = a[:, 0]
+        events = a[:, 1]
+        scores_ = scores - scores.max()
+        loss = -(scores_ - torch.log(torch.exp(scores_).cumsum(0))) * events
+        return loss.mean()
 
 
 if __name__ == "__main__":
@@ -43,4 +46,5 @@ if __name__ == "__main__":
     print(scores)
     print(truth)
 
-    print(BaselineLoss(scores, truth))
+    loss = BaselineLoss()
+    print(loss(scores, truth))
