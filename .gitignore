@@ -496,3 +496,4 @@ flamby/datasets/fed_isic2019/dataset_creation_scripts/folds.py
 flamby/datasets/fed_tcga_brca/dataset_creation_scripts/split.py
 flamby/datasets/fed_tcga_brca/*.tsv
 flamby/datasets/fed_tcga_brca/dataset_creation_scripts/preproc_inspection.py
+flamby/datasets/fed_tcga_brca/saved_model_state_dict
