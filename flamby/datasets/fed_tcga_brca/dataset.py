@@ -17,6 +17,9 @@ class TcgaBrcaRaw(torch.utils.data.Dataset):
     dic: dictionary containing the paths to the data and the train_test_split file
     data: pandas dataframe containing the data for the patients in the training
     or the test set according to the variable train_test
+    __getitem__: returns a tuple, first element is a torch tensor of dimension
+    (39,) for the covariates, second element is a torch tensor of dimension (2,)
+    for E, T
     """
 
     def __init__(self, train=True, X_dtype=torch.float32, y_dtype=torch.float32):
