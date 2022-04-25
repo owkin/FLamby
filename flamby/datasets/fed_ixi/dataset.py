@@ -55,11 +55,8 @@ class IXIDataset(Dataset):
         # Validation routines for dataset robustness
         self._validate_modality()
 
-    @property
-    def subject_ids(self) -> tuple:
         filenames = self.tar_file.getnames()
-        subject_ids = tuple(map(_get_id_from_filename, filenames))
-        return subject_ids
+        self.subject_ids = tuple(map(_get_id_from_filename, filenames))
 
     @property
     def tar_file(self) -> TarFile:
@@ -334,11 +331,8 @@ class FedT1ImagesIXIDataset(T1ImagesIXIDataset):
         self.images_centers = [self.images_centers[i] for i, s in enumerate(to_select) if s]
         self.images_sets = [self.images_sets[i] for i, s in enumerate(to_select) if s]
 
-    @property
-    def subject_ids_fed(self) -> tuple:
         filenames = [Path(filename).name for filename in self.center_images_paths]
-        subject_ids = tuple(set(map(_get_id_from_filename, filenames)))
-        return subject_ids
+        self.subject_ids_fed = tuple(set(map(_get_id_from_filename, filenames)))
 
     def __len__(self) -> int:
         return len(self.center_images_paths)
@@ -410,16 +404,13 @@ class IXITinyDataset(Dataset):
             self.images_paths.extend(image_path.glob('*.nii.gz'))
             self.labels_paths.extend(label_path.glob('*.nii.gz'))
     
+        filenames = [Path(filename).name for filename in self.zip_file.namelist() if Path(Path(filename).name).suffix == '.gz']
+        self.subject_ids = tuple(set(map(_get_id_from_filename, filenames)))
+    
     @property
     def zip_file(self) -> ZipFile:
         zf = self.root_folder.joinpath('IXI Sample Dataset.zip')
         return ZipFile(zf)
-
-    @property
-    def subject_ids(self) -> tuple:
-        filenames = [Path(filename).name for filename in self.zip_file.namelist() if Path(Path(filename).name).suffix == '.gz']
-        subject_ids = tuple(set(map(_get_id_from_filename, filenames)))
-        return subject_ids
 
     def download(self, debug=False) -> None:
         self.root_folder.mkdir(exist_ok=True)
@@ -498,11 +489,8 @@ class FedIXITinyDataset(IXITinyDataset):
         self.images_centers = [self.images_centers[i] for i, s in enumerate(to_select) if s]
         self.images_sets = [self.images_sets[i] for i, s in enumerate(to_select) if s]
 
-    @property
-    def subject_ids_fed(self) -> tuple:
         filenames = [Path(filename).name for filename in self.center_images_paths]
-        subject_ids = tuple(set(map(_get_id_from_filename, filenames)))
-        return subject_ids
+        self.subject_ids_fed = tuple(set(map(_get_id_from_filename, filenames)))
 
     def __len__(self) -> int:
         return len(self.center_images_paths)
@@ -530,12 +518,12 @@ class FedIXITinyDataset(IXITinyDataset):
     
 a = FedIXITinyDataset(".")
 print(f'Data gathered in this federated dataset is from:', *a.centers, "and", *a.sets, "set")
-print('Federated dataset size', len(a))
+print('Federated dataset size:', len(a))
 print('First entry:', a[0])
 
 a = FedT1ImagesIXIDataset(".")
 print(f'Data gathered in this federated dataset is from:', *a.centers, "and", *a.sets, "set")
-print('Federated dataset size', len(a))
+print('Federated dataset size:', len(a))
 print('First entry:', a[0])
 
 
