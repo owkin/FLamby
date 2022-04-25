@@ -206,7 +206,6 @@ def _load_nifti_image_by_id(
     """
     filename = _find_file_in_tar(tar_file, patient_id, modality)
     with tempfile.TemporaryDirectory() as td:
-        print(td)
         full_path = os.path.join(td, filename)
         tar_file.extract(filename, td)
         nii_img = nib.load(full_path)

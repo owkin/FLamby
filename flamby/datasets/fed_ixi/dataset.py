@@ -1,4 +1,3 @@
-from email import header
 from pathlib import Path
 from tarfile import TarFile
 from zipfile import ZipFile
@@ -226,11 +225,12 @@ class T1ImagesIXIDataset(IXIDataset):
         self.images_centers = [] # contains center of each subject: HH, Guys or IOP
         self.images_sets = [] # is the subject used for train or test
 
-        self.images_centers = [_extract_center_name_from_filename(subject) for subject in os.listdir(self.subjects_dir)]
+        self.subjects = os.listdir(self.subjects_dir)
+        self.images_centers = [_extract_center_name_from_filename(subject) for subject in self.subjects]
         self.train_test_hh, self.train_test_guys, self.train_test_iop = _create_train_test_split(images_centers=self.images_centers)
-        idx_hh, idx_guys, idx_iop = 0, 0, 0  
+        idx_hh, idx_guys, idx_iop = 0, 0, 0
 
-        for subject in os.listdir(self.subjects_dir):
+        for subject in self.subjects:
             center_name = _extract_center_name_from_filename(subject)
             if center_name == 'HH':
                 self.images_sets.append(self.train_test_hh[idx_hh])
@@ -244,7 +244,6 @@ class T1ImagesIXIDataset(IXIDataset):
             subject_archive = os.path.join(self.subjects_dir,subject)
             image_path = Path(subject_archive)
             self.images_paths.append(image_path)
-
 
 class T2ImagesIXIDataset(IXIDataset):
     def __init__(self, root, transform=None, download=False):
@@ -316,7 +315,6 @@ class FedT1ImagesIXIDataset(T1ImagesIXIDataset):
 
         if isinstance(center, int):  
             self.centers = [_get_center_name_from_center_id(self.CENTER_LABELS, center)]
-            print(center, 'is', self.centers[0])
 
         if pooled:
             self.centers = ['HH', 'Guys', 'IOP']
@@ -334,6 +332,35 @@ class FedT1ImagesIXIDataset(T1ImagesIXIDataset):
 
         self.center_images_paths = [self.images_paths[i] for i, s in enumerate(to_select) if s]
         self.images_centers = [self.images_centers[i] for i, s in enumerate(to_select) if s]
+        self.images_sets = [self.images_sets[i] for i, s in enumerate(to_select) if s]
+
+    @property
+    def subject_ids_fed(self) -> tuple:
+        filenames = [Path(filename).name for filename in self.center_images_paths]
+        subject_ids = tuple(set(map(_get_id_from_filename, filenames)))
+        return subject_ids
+
+    def __len__(self) -> int:
+        return len(self.center_images_paths)
+
+    def __getitem__(self, item) -> Tuple[Tensor, Dict]:
+        patient_id = self.subject_ids_fed[item]
+        headers, img, center_name = _load_nifti_image_by_id(tar_file=self.tar_file,
+                                                            patient_id=patient_id,
+                                                            modality=self.modality)
+
+        default_transform = Compose([
+            ToTensor(),
+            AddChannel(),
+            Resize(self.common_shape),
+        ])
+        img = default_transform(img)
+
+        metadata = {'IXI_ID': patient_id, 'center': center_name, 'center_label': self.CENTER_LABELS[center_name]}
+
+        if self.transform:
+            img = self.transform(img)
+        return img, metadata
 
 
 class IXITinyDataset(Dataset):
@@ -451,7 +478,6 @@ class FedIXITinyDataset(IXITinyDataset):
 
         if isinstance(center, int):  
             self.centers = [_get_center_name_from_center_id(self.CENTER_LABELS, center)]
-            print(center, 'is', self.centers[0])
 
         if pooled:
             self.centers = ['HH', 'Guys', 'IOP']
@@ -472,19 +498,46 @@ class FedIXITinyDataset(IXITinyDataset):
         self.images_centers = [self.images_centers[i] for i, s in enumerate(to_select) if s]
         self.images_sets = [self.images_sets[i] for i, s in enumerate(to_select) if s]
 
+    @property
+    def subject_ids_fed(self) -> tuple:
+        filenames = [Path(filename).name for filename in self.center_images_paths]
+        subject_ids = tuple(set(map(_get_id_from_filename, filenames)))
+        return subject_ids
+
     def __len__(self) -> int:
         return len(self.center_images_paths)
 
+    def __getitem__(self, item) -> Tuple[Tensor, Dict]:
+        patient_id = self.subject_ids_fed[item]
+        header_img, img, label, center_name = _load_nifti_image_and_label_by_id(zip_file=self.zip_file,
+                                                            patient_id=patient_id,
+                                                            modality=self.modality)
+
+        default_transform = Compose([
+            ToTensor(),
+            AddChannel(),
+            Resize(self.common_shape),
+        ])
+        img = default_transform(img)
+        label = default_transform(label)
+
+        metadata = {'IXI_ID': patient_id, 'center': center_name, 'center_label': self.CENTER_LABELS[center_name]}
+
+        if self.transform:
+            img = self.transform(img)
+        return img, label
+
     
 a = FedIXITinyDataset(".")
-print(len(a.center_images_paths))
-print(a[0])
-print(len(a))
+print(f'Data gathered in this federated dataset is from:', *a.centers, "and", *a.sets, "set")
+print('Federated dataset size', len(a))
+print('First entry:', a[0])
 
-""" a = FedT1ImagesIXIDataset(".")
-print(len(a.center_images_paths))
-print(a[0])
-print(len(a)) """
+a = FedT1ImagesIXIDataset(".")
+print(f'Data gathered in this federated dataset is from:', *a.centers, "and", *a.sets, "set")
+print('Federated dataset size', len(a))
+print('First entry:', a[0])
+
 
 __all__ = [
     'IXIDataset',
