@@ -14,6 +14,7 @@ from flamby.datasets.fed_tcga_brca import (
     FedTcgaBrca,
     metric,
 )
+from flamby.utils import evaluate_model_on_tests
 
 
 def train_model(
@@ -27,6 +28,7 @@ def train_model(
     num_epochs,
     seed,
     log,
+    log_period,
 ):
     """Training function
     Parameters
@@ -38,73 +40,72 @@ def train_model(
     dataset_sizes : dictionary {"train": len(train_dataset), "test": len(test_dataset)}
     device : device where model parameters are stored
     lossfunc : function, loss function
-    num_epochs : int, numuber of epochs for training
+    num_epochs : int, number of epochs for training
+    seed: int, the sint for the training
+    log_period: int, the number of batches between two dumps if log is activated.
     Returns
     -------
-    model : torch model output by training loop
+    tuple(torch.nn.Module, float) : torch model output by training loop and
+    cindex on test.
     """
 
     since = time.time()
 
     if log:
         writer = SummaryWriter(log_dir=f"./runs/seed{seed}")
-        batch = 0
 
-    for epoch in range(1, num_epochs + 1):
+    num_local_steps_per_epoch = len(dataloaders["train"].dataset) // BATCH_SIZE
+    num_local_steps_per_epoch += int(
+        (len(dataloaders["train"].dataset) - num_local_steps_per_epoch * BATCH_SIZE) > 0
+    )
+    model = model.train()
+    for epoch in range(0, num_epochs):
         print("Epoch {}/{}".format(epoch, num_epochs))
         print("-" * 10)
 
-        # Each epoch has a training and validation phase
-        for phase in ["train", "test"]:
-            if phase == "train":
-                model.train()  # Set model to training mode
-            else:
-                model.eval()  # Set model to evaluate mode
+        running_loss = 0.0
+        y_true = []
+        y_pred = []
 
-            running_loss = 0.0
-            y_true = []
-            y_pred = []
+        # Iterate over data.
+        for idx, (X, y) in enumerate(dataloaders["train"]):
+            X = X.to(device)
+            y = y.to(device)
+            y_true.append(y)
 
-            # Iterate over data.
-            for sample in dataloaders[phase]:
-                X = sample[0].to(device)
-                y = sample[1].to(device)
-                y_true.append(sample[1])
+            optimizer.zero_grad()
+            outputs = model(X)
+            y_pred.append(outputs)
+            loss = lossfunc(outputs, y)
+            loss.backward()
+            optimizer.step()
 
-                optimizer.zero_grad()
-                with torch.set_grad_enabled(phase == "train"):
-                    outputs = model(X)
-                    loss = lossfunc(outputs, y)
-                    y_pred.append(outputs)
-                    # backward + optimize only if in training phase
-                    if phase == "train":
-                        loss.backward()
-                        optimizer.step()
+            current_step = idx + num_local_steps_per_epoch * epoch
 
-                # statistics
-                if log & (phase == "train"):
-                    print(batch, loss.item())
-                    writer.add_scalar("Loss", loss.item(), batch)
-                    batch += 1
-                running_loss += loss.item() * X.size(0)
+            if log and (idx % log_period) == 0:
+                writer.add_scalar("Loss/train/client", loss.item(), current_step)
 
-            if phase == "train":
-                scheduler.step()
+            running_loss += loss.item() * X.size(0)
 
-            epoch_loss = running_loss / dataset_sizes[phase]
-            y = torch.cat(y_true)
-            y_hat = torch.cat(y_pred)
-            epoch_c_index = metric(
-                y.cpu().detach().numpy(), y_hat.cpu().detach().numpy()
-            )
-            print(
-                "{} Loss: {:.4f} c-index: {:.4f}".format(
-                    phase, epoch_loss, epoch_c_index
-                )
-            )
-            if (phase == "test") & (epoch == num_epochs):
-                test_loss = epoch_loss
-                test_cindex = epoch_c_index
+            scheduler.step()
+
+        epoch_loss = running_loss / dataset_sizes["train"]
+        y = torch.cat(y_true)
+        y_hat = torch.cat(y_pred)
+        epoch_c_index = metric(y.cpu().detach().numpy(), y_hat.cpu().detach().numpy())
+        if log:
+            writer.add_scalar("Loss/average-per-epoch/client", epoch_loss, epoch)
+            writer.add_scalar("C-index/full-training/client", epoch_c_index, epoch)
+
+        print(
+            "{} Loss: {:.4f} c-index: {:.4f}".format("train", epoch_loss, epoch_c_index)
+        )
+
+    # Iterate over data.
+    dict_cindex = evaluate_model_on_tests(model, [dataloaders["test"]], metric)
+
+    if log:
+        writer.add_scalar("Test/C-index", dict_cindex["client_test_0"], 0)
 
     print()
     time_elapsed = time.time() - since
@@ -115,7 +116,7 @@ def train_model(
     )
     print()
 
-    return model, test_loss, test_cindex
+    return model, dict_cindex["client_test_0"]
 
 
 def main(args):
@@ -145,10 +146,10 @@ def main(args):
 
     lossfunc = BaselineLoss()
     num_epochs = NUM_EPOCHS_POOLED
-    log = True
+    log = args.log
+    log_period = args.log_period
 
     results1 = []
-    results2 = []
     for seed in range(5):
         torch.manual_seed(seed)
         model = Baseline()
@@ -157,7 +158,7 @@ def main(args):
         scheduler = torch.optim.lr_scheduler.MultiStepLR(
             optimizer, milestones=[3, 5, 7, 9, 11, 13, 15, 17], gamma=0.5
         )
-        model, test_loss, test_cindex = train_model(
+        model, test_cindex = train_model(
             model,
             optimizer,
             scheduler,
@@ -168,12 +169,11 @@ def main(args):
             num_epochs,
             seed,
             log,
+            log_period,
         )
-        results1.append(test_loss)
-        results2.append(test_cindex)
+        results1.append(test_cindex)
 
-    print("Test loss ", sum(results1) / len(results1))
-    print("Test c-index ", sum(results2) / len(results2))
+    print("Test C-index ", sum(results1) / len(results1))
 
 
 if __name__ == "__main__":
@@ -190,6 +190,17 @@ if __name__ == "__main__":
         type=int,
         default=4,
         help="Numbers of workers for the dataloader",
+    )
+    parser.add_argument(
+        "--log",
+        action="store_true",
+        help="Whether or not to dump tensorboard events.",
+    )
+    parser.add_argument(
+        "--log-period",
+        type=int,
+        help="The period in batches for the logging of metric and loss",
+        default=10,
     )
     args = parser.parse_args()
 
