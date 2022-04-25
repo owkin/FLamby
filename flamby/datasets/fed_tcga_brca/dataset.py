@@ -64,7 +64,7 @@ class FedTcgaBrca(TcgaBrcaRaw):
     pooled: boolean, characterizes if the dataset is pooled or not
     center: int, between 0 and 5, designates the region in the case of pooled==False
     data: pandas dataframe containing the data for the patients in the training
-    or the test set (according to the variable train_test) in a specific region
+    or the test set (according to the variable train) in a specific region
     (chosen thanks to the variable center if pooled==False) or across all regions
     (if pooled==True)
     """
