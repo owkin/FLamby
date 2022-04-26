@@ -29,21 +29,51 @@ class FedAvg:
         learning_rate: float,
         num_updates: int,
         nrounds: int,
+        log: bool,
+        bits_counting_function: callable = None,
     ):
+        """_summary_
+
+        Parameters
+        ----------
+        training_dataloaders : List
+            The list of training dataloaders from multiple training centers.
+        model : torch.nn.Module
+            An initialized torch model.
+        loss : torch.nn.modules.loss._Loss
+            The loss to minimize between the predictions of the model and the
+            ground truth.
+        optimizer_class : torch.optim.Optimizer
+            The class of the torch model optimizer to use at each step.
+        learning_rate : float
+            The learning rate to be given to the optimizer_class.
+        num_updates : int
+            The number of updates to do on each client at each round.
+        nrounds : int
+            The number of communication rounds to do.
+        log: bool
+            Whether or not to store logs in tensorboard.
+        bits_counting_function : callable
+            A function making sure exchanges respect the rules, this function
+            can be obtained by decorating check_exchange_compliance in 
+            flamby.utils. Should have the signature List[Tensor] -> int
+        """
         self.training_dataloaders_with_memory = [
             DataLoaderWithMemory(e) for e in training_dataloaders
         ]
         self.training_sizes = [len(e) for e in self.training_dataloaders_with_memory]
         self.total_number_of_samples = sum(self.training_sizes)
+        self.log = log
         self.models_list = [
             _Model(
-                model=model, optimizer_class=optimizer_class, lr=learning_rate, loss=loss
+                model=model, optimizer_class=optimizer_class, lr=learning_rate, loss=loss, log=self.log, client_id=i)
             )
-            for _ in range(len(training_dataloaders))
+        for i in range(len(training_dataloaders))
         ]
         self.nrounds = nrounds
         self.num_updates = num_updates
         self.num_clients = len(self.training_sizes)
+        self.bits_counting_function = bits_counting_function
 
     def perform_round(self):
         """Does a single federated averaging round. The following steps will be
@@ -71,6 +101,10 @@ class FedAvg:
             for p_new, p_old in zip(_model.model.parameters(), _local_previous_state):
                 p_new.data = torch.from_numpy(p_old).to(p_new.device)
             del _local_previous_state
+
+            if self.bits_counting_function is not None:
+                bits_counting_function(updates)
+                
             local_updates.append({"updates": updates, "n_samples": size})
 
         # Aggregation step

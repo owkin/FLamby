@@ -1,7 +1,9 @@
 import copy
+from datetime import datetime
 
 import numpy as np
 import torch
+from torch.utils.tensorboard import SummaryWriter
 
 
 class DataLoaderWithMemory:
@@ -55,7 +57,9 @@ class _Model:
     parameters of the model.
     """
 
-    def __init__(self, model, optimizer_class, lr, loss):
+    def __init__(
+        self, model, optimizer_class, lr, loss, client_id=0, log=False, log_period=100
+    ):
         """_summary_
 
         Parameters
@@ -69,6 +73,12 @@ class _Model:
             The learning rate to use with th optimizer class.
         loss : torch.nn.modules.loss._loss
             an instantiated torch loss.
+        log: bool
+            Whether or not to log quantities with tensorboard. Defaults to False.
+        client_id: int
+            The id of the client for logging purposes. Default to 0.
+        log_period: int
+            The period at which to log quantities. Defaults to 100.
         """
         self.model = copy.deepcopy(model)
         self._optimizer = optimizer_class(self.model.parameters(), lr)
@@ -77,8 +87,14 @@ class _Model:
         torch.manual_seed(init_seed)
         self._device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.model = self.model.to(self._device)
-        self.print_progress = True
         self.num_batches_seen = 0
+        self.log = log
+        self.log_period = log_period
+        self.client_id = client_id
+        if self.log:
+            date_now = str(datetime.now())
+            self.writer = SummaryWriter(log_dir=f"./runs/fed_avg-{date_now}")
+        self.current_epoch = 0
 
     def _local_train(self, dataloader_with_memory, num_updates):
         """This method trains the model using the dataloader_with_memory given
@@ -108,17 +124,30 @@ class _Model:
             self._optimizer.zero_grad()
             self.num_batches_seen += 1
 
-            # print progress # TODO: this might be removed
-            if _batch % 100 == 0:
-                _loss, _current_epoch = _loss.item(), self.num_batches_seen // (
-                    _size // X.shape[0]
-                )
-                if self.print_progress:
+            if self.log:
+                if _batch % self.log_period == 0:
+                    _loss, _current_epoch = _loss.item(), self.num_batches_seen // (
+                        _size // X.shape[0]
+                    )
+                    if _current_epoch > self.current_epoch:
+                        # At each epoch we look at the histograms of all the
+                        # network's parameters
+                        for name, p in self.model.named_parameters():
+                            self.writer.add_histogram(
+                                f"client{self.client_id}/name", p, _current_epoch
+                            )
+
                     print(
                         f"loss: {_loss:>7f} after {self.num_batches_seen:>5d}"
                         f" batches of data amounting to {_current_epoch:>5d}"
                         " epochs."
                     )
+                    self.writer.add_scalar(
+                        f"client{self.client_id}/train/Loss",
+                        _loss,
+                        self.num_batches_seen,
+                    )
+            self.current_epoch = _current_epoch
 
     @torch.inference_mode()
     def _get_current_params(self):
