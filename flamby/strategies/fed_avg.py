@@ -1,117 +1,94 @@
-import copy
 from typing import List
 
-import numpy as np
 import torch
 from tqdm import tqdm
 
+from flamby.strategies.utils import DataLoaderWithMemory, _Model
 
-class FedAvgTorch:
-    """Federated Average Strategy for Torch.
 
-    Federated Average strategy is the most classic of strategies.
-    Each client has different set of the data on which a
-    the training round(s) are performed. The state of the model of each client
-    is then weighted-averaged and return to each client for further training.
+class FedAvg:
+    """Federated Averaging Strategy class.
+
+    The Federated Averaging strategy is the most simple centralized strategy.
+    Each client first trains his version of a global model locally on its data,
+    the states of the model of each client are then weighted-averaged and returned
+    to each client for further training.
+
+    References
+    ----------
+    - https://arxiv.org/abs/1602.05629
+
     """
 
     def __init__(
         self,
-        training_dataloaders: List,  # [torch.utils.data.dataset],
+        training_dataloaders: List[torch.utils.data.dataloader],
         model: torch.nn.Module,
         loss: torch.nn.modules.loss._Loss,
-        nrounds: int,
         optimizer: torch.optim.Optimizer,
+        num_updates: int,
+        nrounds: int,
     ):
-        self.training_dataloaders = training_dataloaders
+        self.training_dataloaders_with_memory = [
+            DataLoaderWithMemory(e) for e in training_dataloaders
+        ]
+        self.training_sizes = [len(e) for e in self.training_dataloaders_with_memory]
+        self.total_number_of_samples = sum(self.training_sizes)
         self.models_list = [
             _Model(model=model, optimizer=optimizer, loss=loss)
             for _ in range(len(training_dataloaders))
         ]
         self.nrounds = nrounds
+        self.num_updates = num_updates
+        self.num_clients = len(self.training_sizes)
 
     def perform_round(self):
         """a single federated averaging round. The following steps will be performed:
 
-        - each model will be trained locally with its full training dataset
+        - each model will be trained locally for num_updates batches.
         - the parameters will be collected and averaged. Average will be
             weighted by the number of samples used by each model
         - the averaged parameters will be returned and set at each model
         """
-        local_states = list()
-        all_samples = 0
-        for _model, dataloader in zip(self.models_list, self.training_dataloaders):
-            # make one training step of the model
-            _model._local_train(dataloader)  # training mode
+        local_updates = list()
+        for _model, dataloader_with_memory, size in zip(
+            self.models_list, self.training_dataloaders_with_memory, self.training_sizes
+        ):
+            # Local Optimization
+            _local_previous_state = _model._get_current_params()
+            _model._local_train(dataloader_with_memory)
+            _local_next_state = _model._get_current_params()
+            # Recovering updates
+            updates = [
+                new - old for new, old in zip(_local_next_state, _local_previous_state)
+            ]
+            del _local_next_state
+            # Reset local model
+            for p_new, p_old in zip(_model.parameters(), _local_previous_state):
+                p_new.data = p_old
+            del _local_previous_state
+            local_updates.append({"updates": updates, "n_samples": size})
 
-            _local_state, n_samples = _model._get_current_params()
-            all_samples += n_samples
-            local_states.append({"state": _local_state, "n_samples": n_samples})
+        # Aggregation step
+        aggregated_delta_weights = [None for _ in range(len(local_updates[0]))]
+        for idx_weight in range(len(local_updates[0])):
+            aggregated_delta_weights[idx_weight] = sum(
+                [
+                    local_updates[idx_client]["updates"][idx_weight]
+                    * local_updates[idx_client]["n_samples"]
+                    for idx_client in range(self.num_clients)
+                ]
+            )
+            aggregated_delta_weights[idx_weight] /= float(self.total_number_of_samples)
 
-        averaged = list()
-        for idx in range(len(local_states[0]["state"])):
-            states = list()
-            for state in local_states:
-                states.append(state["state"][idx] * (state["n_samples"] / all_samples))
-            averaged.append(np.sum(states, axis=0))
-
-        for _model in self.models_list[:2]:
-            for _model in self.models_list:
-
-                # update the model to the averaged params
-                _model._update_params(averaged)
+        # Update models
+        for _model in self.models_list:
+            _model._update_params(aggregated_delta_weights)
 
     def run(self):
+        """This method performs self.nrounds rounds of averaging
+        and returns the list of models.
+        """
         for _ in tqdm(range(self.nrounds)):
             self.perform_round()
         return [m.model for m in self.models_list]
-
-
-class _Model:
-    def __init__(self, model, optimizer, loss):
-        self.model = copy.deepcopy(model)
-        self._optimizer = copy.deepcopy(optimizer)
-        self._loss = copy.deepcopy(loss)
-        init_seed = 42
-        torch.manual_seed(init_seed)
-        self._device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        self.model = self.model.to(self._device)
-        self.print_progress = True
-
-    def _local_train(self, dataloader):
-        # Local train
-        self.n_samples = 0
-        _size = len(dataloader.dataset)
-        for _batch, (X, y) in enumerate(dataloader):
-            X, y = X.to(self._device), y.to(self._device)
-
-            # Compute prediction and loss
-            _pred = self.model(X)
-            _loss = self._loss(_pred, y)
-
-            # Backpropagation
-            self._optimizer.zero_grad()
-            _loss.backward()
-            self._optimizer.step()
-            self.n_samples += len(X)
-
-            # print progress # TODO: this might be removed
-            if _batch % 100 == 0:
-                _loss, _current = _loss.item(), _batch * len(X)
-                if self.print_progress:
-                    print(f"loss: {_loss:>7f}  [{_current:>5d}/{_size:>5d}]")
-
-    @torch.inference_mode()
-    def _get_current_params(self):
-        return [
-            param.detach().numpy() for param in self.model.parameters()
-        ], self.n_samples
-
-    @torch.inference_mode()
-    def _update_params(self, new_params):
-        model_params = self.model.parameters()
-        assert len(new_params) == len(list(model_params))
-
-        # update all the parameters
-        for old_param, new_param in zip(model_params, new_params):
-            old_param.data = new_param.data
