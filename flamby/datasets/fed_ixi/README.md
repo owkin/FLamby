@@ -68,13 +68,13 @@ IXI_sample
 └───IXI012-HH-1211
 │   │  
 │   └───label
-│   │   │   IXI002-HH-1211_label.nii.gz
+│   │   │   IXI012-HH-1211_label.nii.gz
 │   │  
 │   └───T1
-│   │   │   IXI002-HH-1211_image.nii.gz
+│   │   │   IXI012-HH-1211_image.nii.gz
 │   │  
 │   └───T2
-│   │   │   IXI002-HH-1211_image.nii.gz
+│   │   │   IXI012-HH-1211_image.nii.gz
 │   │ 
 │   └───... 
 │
