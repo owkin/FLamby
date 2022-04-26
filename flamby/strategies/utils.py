@@ -1,5 +1,6 @@
 import copy
 
+import numpy as np
 import torch
 
 
@@ -138,3 +139,52 @@ class _Model:
         # update all the parameters
         for old_param, new_param in zip(self.model.parameters(), new_params):
             old_param.data += torch.from_numpy(new_param).to(old_param.device)
+
+
+def check_exchange_compliance(tensors_list, max_bytes, units="bytes"):
+    """
+    Check that for each round the quantities exchanged are below the dataset
+    specific limit.
+    Parameters
+    ----------
+    tensors_list: List[Union[torch.Tensor, np.ndarray]]
+        The list of quantities sent by the client.
+    max_bytes: int
+        The number of bytes max to exchange pper round per client.
+    units: str
+        The units in which to return the result. Default to bytes.$
+    Returns
+    -------
+    int
+        Returns the number of bits exchanged in the pprovided unit or raises an
+        error if it went above the limit.
+    """
+    assert units in ["bytes", "bits", "megabytes", "gigabytes"]
+    assert isinstance(tensors_list, list), "You should provide a list of tensors."
+    assert all(
+        [
+            (isinstance(t, np.ndarray) or isinstance(t, torch.Tensor))
+            for t in tensors_list
+        ]
+    )
+    bytes_count = 0
+    for t in tensors_list:
+        if isinstance(t, np.ndarray):
+            bytes_count += t.nbytes
+        else:
+            bytes_count += t.shape.numel() * torch.finfo(t.dtype).bits // 8
+        if bytes_count > max_bytes:
+            raise ValueError(
+                f"You cannot send more than {max_bytes} bytes, this "
+                f"round. You tried sending more than {bytes_count} bytes already"
+            )
+    if units == "bytes":
+        res = bytes_count
+    elif units == "bits":
+        res = bytes_count * 8
+    elif units == "megabytes":
+        res = 1e-6 * bytes_count
+    elif units == "gigabytes":
+        res = 1e-9 * bytes_count
+
+    return res
