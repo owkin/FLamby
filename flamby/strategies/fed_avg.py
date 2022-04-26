@@ -9,7 +9,7 @@ from flamby.strategies.utils import DataLoaderWithMemory, _Model
 class FedAvg:
     """Federated Averaging Strategy class.
 
-    The Federated Averaging strategy is the most simple centralized strategy.
+    The Federated Averaging strategy is the most simple centralized FL strategy.
     Each client first trains his version of a global model locally on its data,
     the states of the model of each client are then weighted-averaged and returned
     to each client for further training.
