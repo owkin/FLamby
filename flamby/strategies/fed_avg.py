@@ -66,7 +66,7 @@ class FedAvg:
         self.log = log
         self.models_list = [
             _Model(
-                model=model, optimizer_class=optimizer_class, lr=learning_rate, loss=loss, log=self.log, client_id=i)
+                model=model, optimizer_class=optimizer_class, lr=learning_rate, loss=loss, log=self.log, client_id=i
             )
         for i in range(len(training_dataloaders))
         ]
