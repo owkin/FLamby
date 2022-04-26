@@ -16,16 +16,16 @@ from flamby.datasets.fed_isic2019 import (
     metric,
 )
 from flamby.datasets.fed_isic2019.common import get_nb_max_rounds
-from flamby.strategies.fed_avg import FedAvgTorch
+from flamby.strategies.fed_avg import FedAvg
 from flamby.utils import evaluate_model_on_tests
 
 
-@pytest.mark.parametrize("n_clients", [1, 2, 3, 4])
+@pytest.mark.parametrize("n_clients", [1, 2, 10])
 def test_fed_avg(n_clients):
     # tests if fed_avg is not failing on the MNIST dataset
     # with different number of clients
     # get the data
-    training_data = datasets.FashionMNIST(
+    training_data = datasets.MNIST(
         root="data", train=True, download=True, transform=ToTensor()
     )
     # split to n_clients
@@ -33,39 +33,40 @@ def test_fed_avg(n_clients):
     splits[-1] = splits[-1] + len(training_data) % n_clients
     training_data = data.random_split(training_data, splits)
 
-    test_data = datasets.FashionMNIST(
+    test_data = datasets.MNIST(
         root="data", train=False, download=True, transform=ToTensor()
     )
 
     train_dataloader = [
-        dl(train_data, batch_size=64, shuffle=True) for train_data in training_data
+        dl(train_data, batch_size=100, shuffle=True) for train_data in training_data
     ]
-    test_dataloader = dl(test_data, batch_size=64, shuffle=True)
+    test_dataloader = dl(test_data, batch_size=100, shuffle=False)
     loss = nn.CrossEntropyLoss()
     m = NeuralNetwork()
-    nrounds = 20
-    lr = 0.05
-    optimizer = torch.optim.SGD(m.parameters(), lr=lr)
-    s = FedAvgTorch(train_dataloader, m, loss, nrounds, optimizer=optimizer)
+    nrounds = 50
+    lr = 0.001
+    optimizer_class = torch.optim.Adam
+
+    s = FedAvg(train_dataloader, m, loss, optimizer_class, lr, 100, nrounds)
     m = s.run()
-    print(
-        evaluate_model_on_tests(m[0], [test_dataloader], metric)
-    )  # TODO: this won't be printed, add a test
+
+    res = evaluate_model_on_tests(m[0], [test_dataloader], metric)
+
+    assert res["client_test_0"] > 0.8
 
 
 class NeuralNetwork(nn.Module):
     def __init__(self, lambda_dropout=0.05):
         super(NeuralNetwork, self).__init__()
         self.flatten = nn.Flatten()
-        n_hidden = 8
+        n_hidden = 128
         self.linear_relu_stack = nn.Sequential(
             nn.Linear(28 * 28, n_hidden),
             nn.ReLU(),
             nn.Linear(n_hidden, n_hidden),
-            nn.Dropout(lambda_dropout),
+            # nn.Dropout(lambda_dropout),
             nn.ReLU(),
             nn.Linear(n_hidden, 10),
-            nn.ReLU(),
         )
 
     def forward(self, x):
@@ -81,7 +82,7 @@ def test_fedavg_Isic():
             FedIsic2019(train=True, center=i),
             batch_size=BATCH_SIZE,
             shuffle=True,
-            num_workers=10,
+            num_workers=0,
         )
         for i in range(NUM_CLIENTS)
     ]
@@ -90,15 +91,16 @@ def test_fedavg_Isic():
             FedIsic2019(train=False, center=i),
             batch_size=BATCH_SIZE,
             shuffle=False,
-            num_workers=10,
+            num_workers=0,
         )
         for i in range(NUM_CLIENTS)
     ]
     loss = BaselineLoss()
     m = Baseline()
-    NUM_UPDATES = 50
+    NUM_UPDATES = 2
     nrounds = get_nb_max_rounds(NUM_UPDATES)
-    optimizer = torch.optim.Adam(m.base_model.parameters(), lr=LR)
-    s = FedAvgTorch(training_dls, m, loss, nrounds, optimizer=optimizer)
+    optimizer_class = torch.optim.Adam
+    breakpoint()
+    s = FedAvg(training_dls, m, loss, optimizer_class, LR, NUM_UPDATES, nrounds)
     m = s.run()
     print(evaluate_model_on_tests(m, test_dls, metric))

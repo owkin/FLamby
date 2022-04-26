@@ -25,9 +25,9 @@ class DataLoaderWithMemory:
 
 
 class _Model:
-    def __init__(self, model, optimizer, loss):
+    def __init__(self, model, optimizer_class, lr, loss):
         self.model = copy.deepcopy(model)
-        self._optimizer = copy.deepcopy(optimizer)
+        self._optimizer = optimizer_class(self.model.parameters(), lr)
         self._loss = copy.deepcopy(loss)
         init_seed = 42
         torch.manual_seed(init_seed)
@@ -48,32 +48,29 @@ class _Model:
             _loss = self._loss(_pred, y)
 
             # Backpropagation
-            self._optimizer.zero_grad()
             _loss.backward()
             self._optimizer.step()
+            self._optimizer.zero_grad()
             self.num_batches_seen += 1
 
             # print progress # TODO: this might be removed
             if _batch % 100 == 0:
-                _loss, _current_epoch = _loss.item(), _size // (
-                    self.num_batches_seen * X.shape[0]
+                _loss, _current_epoch = _loss.item(), self.num_batches_seen // (
+                    _size // X.shape[0]
                 )
                 if self.print_progress:
                     print(
-                        f"loss: {_loss:>7f} after {self.num_batches_seen:>5d} "
-                        f"batches of data amounting to {_current_epoch:>5d}"
-                        "epochs."
+                        f"loss: {_loss:>7f} after {self.num_batches_seen:>5d}"
+                        f" batches of data amounting to {_current_epoch:>5d}"
+                        " epochs."
                     )
 
     @torch.inference_mode()
     def _get_current_params(self):
-        return [param.detach().numpy() for param in self.model.parameters()]
+        return [param.cpu().detach().numpy() for param in self.model.parameters()]
 
     @torch.inference_mode()
     def _update_params(self, new_params):
-        model_params = self.model.parameters()
-        assert len(new_params) == len(list(model_params))
-
         # update all the parameters
-        for old_param, new_param in zip(model_params, new_params):
-            old_param.data += new_param
+        for old_param, new_param in zip(self.model.parameters(), new_params):
+            old_param.data += torch.from_numpy(new_param).to(old_param.device)
