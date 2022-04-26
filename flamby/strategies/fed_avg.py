@@ -22,10 +22,11 @@ class FedAvg:
 
     def __init__(
         self,
-        training_dataloaders: List[torch.utils.data.dataloader],
+        training_dataloaders: List,
         model: torch.nn.Module,
         loss: torch.nn.modules.loss._Loss,
-        optimizer: torch.optim.Optimizer,
+        optimizer_class: torch.optim.Optimizer,
+        learning_rate: float,
         num_updates: int,
         nrounds: int,
     ):
@@ -35,7 +36,9 @@ class FedAvg:
         self.training_sizes = [len(e) for e in self.training_dataloaders_with_memory]
         self.total_number_of_samples = sum(self.training_sizes)
         self.models_list = [
-            _Model(model=model, optimizer=optimizer, loss=loss)
+            _Model(
+                model=model, optimizer_class=optimizer_class, lr=learning_rate, loss=loss
+            )
             for _ in range(len(training_dataloaders))
         ]
         self.nrounds = nrounds
@@ -43,12 +46,13 @@ class FedAvg:
         self.num_clients = len(self.training_sizes)
 
     def perform_round(self):
-        """a single federated averaging round. The following steps will be performed:
+        """Does a single federated averaging round. The following steps will be
+        performed:
 
         - each model will be trained locally for num_updates batches.
         - the parameters will be collected and averaged. Average will be
-            weighted by the number of samples used by each model
-        - the averaged parameters will be returned and set at each model
+            weighted by the number of samples in each client
+        - the averaged updates willl be used to update the local model
         """
         local_updates = list()
         for _model, dataloader_with_memory, size in zip(
@@ -56,7 +60,7 @@ class FedAvg:
         ):
             # Local Optimization
             _local_previous_state = _model._get_current_params()
-            _model._local_train(dataloader_with_memory)
+            _model._local_train(dataloader_with_memory, self.num_updates)
             _local_next_state = _model._get_current_params()
             # Recovering updates
             updates = [
@@ -64,8 +68,8 @@ class FedAvg:
             ]
             del _local_next_state
             # Reset local model
-            for p_new, p_old in zip(_model.parameters(), _local_previous_state):
-                p_new.data = p_old
+            for p_new, p_old in zip(_model.model.parameters(), _local_previous_state):
+                p_new.data = torch.from_numpy(p_old).to(p_new.device)
             del _local_previous_state
             local_updates.append({"updates": updates, "n_samples": size})
 
@@ -80,7 +84,6 @@ class FedAvg:
                 ]
             )
             aggregated_delta_weights[idx_weight] /= float(self.total_number_of_samples)
-
         # Update models
         for _model in self.models_list:
             _model._update_params(aggregated_delta_weights)

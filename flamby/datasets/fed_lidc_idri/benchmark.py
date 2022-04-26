@@ -20,8 +20,6 @@ from flamby.datasets.fed_lidc_idri import (
     evaluate_dice_on_tests_by_chunks,
 )
 
-torch.use_deterministic_algorithms(True)
-
 
 def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False, debug=False):
     """

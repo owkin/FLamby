@@ -3,7 +3,6 @@ import torch
 from tqdm import tqdm
 
 torch.manual_seed(42)
-torch.use_deterministic_algorithms(True)
 
 
 def metric(y_true, y_pred):
