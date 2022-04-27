@@ -1,5 +1,17 @@
 # IXI Dataset
 
+### Data Citation
+
+The IXI dataset is made available under the Creative Commons [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/legalcode). If you use the IXI data please acknowledge the source of the IXI data, e.g. the following website: https://brain-development.org/ixi-dataset/
+
+IXI Tiny is derived from the same source. Acknowledge the following reference on TorchIO : https://torchio.readthedocs.io/datasets.html#ixitiny
+
+### Publication Citation
+
+Pérez-García F, Sparks R, Ourselin S. TorchIO: a Python library for efficient loading, preprocessing, augmentation and patch-based sampling of medical images in deep learning. arXiv:2003.04696 [cs, eess, stat]. 2020. https://doi.org/10.48550/arXiv.2003.04696
+
+## Introduction
+
 This repository highlights **IXI** (*Information eXtraction from Images*), a medical dataset focusing on brain images through Structural magnetic resonance imaging (MRI), a non-invasive technique for examining the anatomy and pathology of the brain.
 
 In the same register, we highlight a particular dataset called **IXI Tiny**, which is composed of preprocessed images from the standard **IXI** dataset. The idea behind the use of this dataset is to take advantage of its lightness, as well as the labels it directly provides so it allows us to handle an interesting segmentation task.
@@ -84,17 +96,7 @@ IXI_sample
 ```
 
 
-
-
 ### Utilization
 
 As a first approach, what we can do with the **IXI Tiny** dataset is to set up a segmentation task using the T1 images:
 Create a model which take T1 image as input and predict the binary mask of the brain (label). This process allows us to isolate the brain from the other head components, such as the eyes, skin, and fat.
-
-## Sources
-
-The IXI dataset is made available under the Creative Commons CC BY-SA 3.0 license.
-
-IXI website : https://brain-development.org/ixi-dataset/
-
-IXI Tiny is derived from the same source. Reference on TorchIO : https://torchio.readthedocs.io/datasets.html#ixitiny
