@@ -50,7 +50,7 @@ def test_fed_avg(n_clients):
     lr = 0.001
     optimizer_class = torch.optim.Adam
 
-    s = FedAvg(train_dataloader, m, loss, optimizer_class, lr, 100, nrounds)
+    s = FedAvg(train_dataloader, m, loss, optimizer_class, lr, 100, nrounds, log=False)
     m = s.run()
 
     res = evaluate_model_on_tests(m[0], [test_dataloader], metric)
@@ -123,6 +123,8 @@ def test_fedavg_Isic():
     NUM_UPDATES = 100
     nrounds = get_nb_max_rounds(NUM_UPDATES)
     optimizer_class = torch.optim.Adam
-    s = FedAvg(training_dls, m, loss, optimizer_class, LR, NUM_UPDATES, nrounds)
+    s = FedAvg(
+        training_dls, m, loss, optimizer_class, LR, NUM_UPDATES, nrounds, log=False
+    )
     m = s.run()
     print(evaluate_model_on_tests(m[0], test_dls, metric))
