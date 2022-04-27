@@ -54,7 +54,7 @@ These files contain images in **NIFTI** format.
 **IXI Tiny** relies on **IXI**, a publicly available dataset of almost 600 subjects. This lighter version made by [TorchIO](https://torchio.readthedocs.io/datasets.html#ixitiny) is focusing on 566 T1-weighted brain MR images and comes with a set of corresponding labels (brain segmentations).
 
 To produce the labels, ROBEX, an automatic whole-brain extraction tool for T1-weighted MRI data has been used.
-Affine regstration, which is a necessary prerequisite for many image processing tasks, has been performed using [NiftyReg](https://github.com/KCL-BMEIS/niftyreg) putting all the brain images onto a common reference space (MNI template). An orientation tweak has finally been made with [ITK](https://itk.org/).
+Affine registration, which is a necessary prerequisite for many image processing tasks, has been performed using [NiftyReg](https://github.com/KCL-BMEIS/niftyreg) putting all the brain images onto a common reference space (MNI template). An orientation tweak has finally been made with [ITK](https://itk.org/).
 
 The total size of this tiny dataset is 444 MB.
 
