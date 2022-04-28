@@ -69,6 +69,7 @@ conda conda activate flamby
 Then proceed to read and accept the different licenses and download the data from
 all the datasets you are interested in by following the instructions provided in each folder:
 - [Fed-Camelyon16](./flamby/datasets/fed_camelyon16/README.md)
+- [Fed-Heart-Disease](./flamby/datasets/fed_heart_disease/README.md)
 - [Fed-LIDIC-IDRI](./flamby/datasets/fed_lidc_idri/README.md)
 - [Fed-ISIC2019](./flamby/datasets/fed_isic2019/README.md)
 
