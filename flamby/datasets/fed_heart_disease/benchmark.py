@@ -6,7 +6,6 @@ import torch.optim as optim
 from torch.utils.data import DataLoader as dl
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-from sklearn.linear_model import LogisticRegression
 
 from flamby.datasets.fed_heart_disease import (
     BATCH_SIZE,
@@ -15,10 +14,9 @@ from flamby.datasets.fed_heart_disease import (
     Baseline,
     BaselineLoss,
     FedHeartDisease,
-    metric
+    metric,
 )
 from flamby.utils import evaluate_model_on_tests
-
 
 
 def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=False):
@@ -38,13 +36,13 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
         FedHeartDisease(train=True, pooled=True, debug=debug),
         num_workers=num_workers_torch,
         batch_size=BATCH_SIZE,
-        shuffle=True
+        shuffle=True,
     )
     test_dl = dl(
         FedHeartDisease(train=False, pooled=True, debug=debug),
         num_workers=num_workers_torch,
         batch_size=BATCH_SIZE,
-        shuffle=False
+        shuffle=False,
     )
     print(f"The training set pooled contains {len(training_dl.dataset)} records")
     print(f"The test set pooled contains {len(test_dl.dataset)} records")
@@ -62,7 +60,7 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
         # At each new seed we re-initialize the model
         # and training_dl is shuffled as well
         torch.manual_seed(seed)
-        m = Baseline(16,1)
+        m = Baseline(16, 1)
         # We put the model on GPU whenever it is possible
         if use_gpu:
             m = m.cuda()
@@ -110,7 +108,7 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
             m, [test_dl], metric, use_gpu=use_gpu
         )
         results.append(current_results_dict["client_test_0"])
-        print(current_results_dict)
+        print(current_results_dict["client_test_0"])
 
     results = np.array(results)
 
@@ -121,6 +119,7 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
 
     print("Benchmark Results on Heart Disease pooled:")
     print(f"mAUC on 5 runs: {results.mean(): .2%} \\pm {results.std(): .2%}")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
