@@ -9,14 +9,9 @@ from pathlib import Path
 
 
 import pandas as pd
-from google_client import create_service
-from googleapiclient.http import MediaIoBaseDownload
 from tqdm import tqdm
 
-import flamby.datasets.fed_camelyon16.dataset_creation_scripts as dl_module
 from flamby.utils import create_config, write_value_in_config
-
-SLIDES_LINKS_FOLDER = os.path.dirname(dl_module.__file__)
 
 
 def main(output_folder, debug=False):
@@ -84,9 +79,7 @@ def main(output_folder, debug=False):
                 else:
                     downloaded_status_file.loc[i, "Status"] = "Corrupted"
 
-                print(downloaded_status_file)
-
-
+        print()
 
     # We assert we have everything and write it
     if all((downloaded_status_file["Status"] == "Downloaded").tolist()):
