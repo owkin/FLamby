@@ -6,7 +6,6 @@ import pandas as pd
 import torch
 from torch.utils.data import Dataset
 
-import flamby.datasets.fed_camelyon16
 from flamby.utils import check_dataset_from_config
 
 
@@ -44,12 +43,7 @@ class HeartDiseaseRaw(Dataset):
         self.y_dtype = y_dtype
         self.debug = debug
 
-        self.centers_number = {
-            "cleveland": 0,
-            "hungarian": 1,
-            "switzerland": 2,
-            "va": 3
-        }
+        self.centers_number = {"cleveland": 0, "hungarian": 1, "switzerland": 2, "va": 3}
 
         self.features = pd.DataFrame()
         self.labels = pd.DataFrame()
@@ -58,21 +52,18 @@ class HeartDiseaseRaw(Dataset):
 
         self.train_fraction = 0.66
 
-
         for center_data_file in self.data_dir.glob("*.data"):
 
-            center_name = os.path.basename(
-                center_data_file
-            ).split(".")[1]
+            center_name = os.path.basename(center_data_file).split(".")[1]
 
             df = pd.read_csv(center_data_file, header=None)
-            df = df.replace('?', np.NaN).drop([10,11,12], axis=1).dropna(axis=0)
+            df = df.replace("?", np.NaN).drop([10, 11, 12], axis=1).dropna(axis=0)
 
-            center_X = df.iloc[:,:-1]
-            center_y = df.iloc[:,-1]
+            center_X = df.iloc[:, :-1]
+            center_y = df.iloc[:, -1]
 
-            self.features = pd.concat((self.features, center_X),ignore_index=True)
-            self.labels = pd.concat((self.labels, center_y),ignore_index=True)
+            self.features = pd.concat((self.features, center_X), ignore_index=True)
+            self.labels = pd.concat((self.labels, center_y), ignore_index=True)
 
             self.centers += [self.centers_number[center_name]] * center_X.shape[0]
 
@@ -81,14 +72,12 @@ class HeartDiseaseRaw(Dataset):
             self.sets += ["train"] * nb_train
             self.sets += ["test"] * nb_test
 
-
-
         # encode dummy variables for categorical variables
-        self.features = pd.get_dummies(
-            self.features, columns = [2, 6], drop_first=True
-        )
+        self.features = pd.get_dummies(self.features, columns=[2, 6], drop_first=True)
         self.features = [
-            torch.from_numpy(self.features.loc[i].values.astype(np.float32)).to(self.X_dtype)
+            torch.from_numpy(self.features.loc[i].values.astype(np.float32)).to(
+                self.X_dtype
+            )
             for i in range(len(self.features))
         ]
 
@@ -152,23 +141,13 @@ class FedHeartDisease(HeartDiseaseRaw):
         else:
             self.chosen_sets = ["test"]
 
-
-
         to_select = [
             (self.sets[idx] in self.chosen_sets)
             and (self.centers[idx] in self.chosen_centers)
             for idx, _ in enumerate(self.features)
         ]
 
-        self.features = [
-            fp for idx, fp in enumerate(self.features) if to_select[idx]
-        ]
-        self.sets = [
-            fp for idx, fp in enumerate(self.sets) if to_select[idx]
-        ]
-        self.labels = [
-            fp for idx, fp in enumerate(self.labels) if to_select[idx]
-        ]
-        self.centers = [
-            fp for idx, fp in enumerate(self.centers) if to_select[idx]
-        ]
+        self.features = [fp for idx, fp in enumerate(self.features) if to_select[idx]]
+        self.sets = [fp for idx, fp in enumerate(self.sets) if to_select[idx]]
+        self.labels = [fp for idx, fp in enumerate(self.labels) if to_select[idx]]
+        self.centers = [fp for idx, fp in enumerate(self.centers) if to_select[idx]]

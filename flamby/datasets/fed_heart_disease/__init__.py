@@ -1,5 +1,7 @@
-from .common import NUM_CLIENTS, NUM_EPOCHS_POOLED, LR, BATCH_SIZE
-from .dataset import HeartDiseaseRaw, FedHeartDisease
-from .model import Baseline
-from .metric import metric
+# flake8: noqa
+
+from .common import BATCH_SIZE, LR, NUM_CLIENTS, NUM_EPOCHS_POOLED
+from .dataset import FedHeartDisease, HeartDiseaseRaw
 from .loss import BaselineLoss
+from .metric import metric
+from .model import Baseline

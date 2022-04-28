@@ -80,7 +80,7 @@ setup(
         "google-auth-oauthlib",
         "tensorboard",
         "hashlib",
-        "wget"
+        "wget",
     ],
     extras_require={},
     description="FLamby: A cross-silo Federated Learning Benchmark.",
