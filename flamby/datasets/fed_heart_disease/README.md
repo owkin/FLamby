@@ -40,7 +40,7 @@ by doing:
 from flamby.datasets.fed_heart_disease import FedHeartDisease, HeartDiseaseRaw
 
 # To load the first center
-center1 = FedHeartDisease(center=0, train=True)
+center0 = FedHeartDisease(center=0, train=True)
 # To load the second center
 center1 = FedHeartDisease(center=1, train=True)
 ```

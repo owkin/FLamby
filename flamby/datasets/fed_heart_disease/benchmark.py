@@ -110,6 +110,7 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
             m, [test_dl], metric, use_gpu=use_gpu
         )
         results.append(current_results_dict["client_test_0"])
+        print(current_results_dict)
 
     results = np.array(results)
 
