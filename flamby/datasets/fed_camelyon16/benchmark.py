@@ -19,8 +19,6 @@ from flamby.datasets.fed_camelyon16 import (
 )
 from flamby.utils import evaluate_model_on_tests
 
-torch.use_deterministic_algorithms(True)
-
 
 def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=False):
     """Function to execute the benchmark on Camelyon16.

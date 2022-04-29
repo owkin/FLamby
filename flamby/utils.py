@@ -9,7 +9,6 @@ from tqdm import tqdm
 import flamby.datasets as datasets
 
 torch.manual_seed(42)
-torch.use_deterministic_algorithms(True)
 
 
 def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):

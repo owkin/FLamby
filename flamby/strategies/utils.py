@@ -172,6 +172,7 @@ class _Model:
     def _update_params(self, new_params):
         """Update in place the weights of the pytorch model by adding the
         new_params list of the same size to it.
+
         """
         # update all the parameters
         for old_param, new_param in zip(self.model.parameters(), new_params):
