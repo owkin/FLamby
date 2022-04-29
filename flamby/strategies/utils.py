@@ -94,6 +94,7 @@ class _Model:
             self.writer = SummaryWriter(log_dir=f"./runs/fed_avg-{date_now}")
         self.current_epoch = 0
         self.batch_size = None
+        self.num_batches_per_epoch = None
 
     def _local_train(self, dataloader_with_memory, num_updates):
         """This method trains the model using the dataloader_with_memory given
@@ -116,7 +117,10 @@ class _Model:
             if idx == 0:
                 # Initialize the batch-size using the first batch to avoid
                 # edge cases with drop_last=False
-                self.batch_size = X.shape[0]
+                _batch_size = X.shape[0]
+                _num_batches_per_epoch = (_size // _batch_size) + int(
+                    (_size % _batch_size) == 0
+                )
             # Compute prediction and loss
             _pred = self.model(X)
             _loss = self._loss(_pred, y)
@@ -126,12 +130,13 @@ class _Model:
             self._optimizer.step()
             self._optimizer.zero_grad()
             self.num_batches_seen += 1
+            _loss, _current_epoch = (
+                _loss.item(),
+                self.num_batches_seen // _num_batches_per_epoch,
+            )
 
             if self.log:
                 if _batch % self.log_period == 0:
-                    _loss, _current_epoch = _loss.item(), self.num_batches_seen // (
-                        _size // self.batch_size
-                    )
                     if _current_epoch > self.current_epoch:
                         # At each epoch we look at the histograms of all the
                         # network's parameters

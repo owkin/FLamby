@@ -19,7 +19,7 @@ from flamby.datasets.fed_isic2019 import (
     metric,
 )
 from flamby.datasets.fed_isic2019.common import get_nb_max_rounds
-from flamby.strategies.fed_avg import FedAvg
+from flamby.strategies import FedAvg
 from flamby.utils import evaluate_model_on_tests
 
 
@@ -50,12 +50,12 @@ def test_fed_avg(n_clients):
     lr = 0.001
     optimizer_class = torch.optim.Adam
 
-    s = FedAvg(train_dataloader, m, loss, optimizer_class, lr, 100, nrounds, log=False)
+    s = FedAvg(train_dataloader, m, loss, optimizer_class, lr, 100, nrounds)
     m = s.run()
 
     res = evaluate_model_on_tests(m[0], [test_dataloader], metric)
 
-    assert res["client_test_0"] > 0.8
+    assert res["client_test_0"] > 0.95
 
 
 class NeuralNetwork(nn.Module):
@@ -123,8 +123,6 @@ def test_fedavg_Isic():
     NUM_UPDATES = 100
     nrounds = get_nb_max_rounds(NUM_UPDATES)
     optimizer_class = torch.optim.Adam
-    s = FedAvg(
-        training_dls, m, loss, optimizer_class, LR, NUM_UPDATES, nrounds, log=False
-    )
+    s = FedAvg(training_dls, m, loss, optimizer_class, LR, NUM_UPDATES, nrounds)
     m = s.run()
     print(evaluate_model_on_tests(m[0], test_dls, metric))
