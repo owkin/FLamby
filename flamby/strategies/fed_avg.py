@@ -1,5 +1,4 @@
 from typing import List
-
 import torch
 from tqdm import tqdm
 
@@ -55,7 +54,7 @@ class FedAvg:
             Whether or not to store logs in tensorboard.
         bits_counting_function : callable
             A function making sure exchanges respect the rules, this function
-            can be obtained by decorating check_exchange_compliance in 
+            can be obtained by decorating check_exchange_compliance in
             flamby.utils. Should have the signature List[Tensor] -> int
         """
         self.training_dataloaders_with_memory = [
@@ -80,7 +79,7 @@ class FedAvg:
         performed:
 
         - each model will be trained locally for num_updates batches.
-        - the parameters will be collected and averaged. Average will be
+        - the parameter updates will be collected and averaged. Averages will be
             weighted by the number of samples in each client
         - the averaged updates willl be used to update the local model
         """
@@ -104,12 +103,12 @@ class FedAvg:
 
             if self.bits_counting_function is not None:
                 bits_counting_function(updates)
-                
+
             local_updates.append({"updates": updates, "n_samples": size})
 
         # Aggregation step
-        aggregated_delta_weights = [None for _ in range(len(local_updates[0]))]
-        for idx_weight in range(len(local_updates[0])):
+        aggregated_delta_weights = [ None for _ in range( len( local_updates[0]["updates"] ) ) ]
+        for idx_weight in range(len(local_updates[0]["updates"])):
             aggregated_delta_weights[idx_weight] = sum(
                 [
                     local_updates[idx_client]["updates"][idx_weight]
@@ -118,6 +117,7 @@ class FedAvg:
                 ]
             )
             aggregated_delta_weights[idx_weight] /= float(self.total_number_of_samples)
+
         # Update models
         for _model in self.models_list:
             _model._update_params(aggregated_delta_weights)
