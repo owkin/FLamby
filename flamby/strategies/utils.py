@@ -83,8 +83,6 @@ class _Model:
         self.model = copy.deepcopy(model)
         self._optimizer = optimizer_class(self.model.parameters(), lr)
         self._loss = copy.deepcopy(loss)
-        init_seed = 42
-        torch.manual_seed(init_seed)
         self._device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.model = self.model.to(self._device)
         self.num_batches_seen = 0
@@ -95,6 +93,7 @@ class _Model:
             date_now = str(datetime.now())
             self.writer = SummaryWriter(log_dir=f"./runs/fed_avg-{date_now}")
         self.current_epoch = 0
+        self.batch_size = None
 
     def _local_train(self, dataloader_with_memory, num_updates):
         """This method trains the model using the dataloader_with_memory given
@@ -111,9 +110,13 @@ class _Model:
         # Local train
         _size = len(dataloader_with_memory)
         self.model = self.model.train()
-        for _batch in range(num_updates):
+        for idx, _batch in enumerate(range(num_updates)):
             X, y = dataloader_with_memory.get_samples()
             X, y = X.to(self._device), y.to(self._device)
+            if idx == 0:
+                # Initialize the batch-size using the first batch to avoid
+                # edge cases with drop_last=False
+                self.batch_size = X.shape[0]
             # Compute prediction and loss
             _pred = self.model(X)
             _loss = self._loss(_pred, y)
@@ -127,7 +130,7 @@ class _Model:
             if self.log:
                 if _batch % self.log_period == 0:
                     _loss, _current_epoch = _loss.item(), self.num_batches_seen // (
-                        _size // X.shape[0]
+                        _size // self.batch_size
                     )
                     if _current_epoch > self.current_epoch:
                         # At each epoch we look at the histograms of all the

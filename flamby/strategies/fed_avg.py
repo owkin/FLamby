@@ -1,4 +1,5 @@
 from typing import List
+
 import torch
 from tqdm import tqdm
 
@@ -28,7 +29,8 @@ class FedAvg:
         learning_rate: float,
         num_updates: int,
         nrounds: int,
-        log: bool,
+        log: bool = False,
+        log_period: int = 100,
         bits_counting_function: callable = None,
     ):
         """_summary_
@@ -51,11 +53,15 @@ class FedAvg:
         nrounds : int
             The number of communication rounds to do.
         log: bool
-            Whether or not to store logs in tensorboard.
-        bits_counting_function : callable
+            Whether or not to store logs in tensorboard. Defaults to False.
+        log_period: int
+            If log is True then log the loss every log_period batch updates.
+            Defauts to 100.
+        bits_counting_function : Union[callable, None]
             A function making sure exchanges respect the rules, this function
             can be obtained by decorating check_exchange_compliance in
-            flamby.utils. Should have the signature List[Tensor] -> int
+            flamby.utils. Should have the signature List[Tensor] -> int.
+            Defaults to None.
         """
         self.training_dataloaders_with_memory = [
             DataLoaderWithMemory(e) for e in training_dataloaders
@@ -63,11 +69,18 @@ class FedAvg:
         self.training_sizes = [len(e) for e in self.training_dataloaders_with_memory]
         self.total_number_of_samples = sum(self.training_sizes)
         self.log = log
+        self.log_period = log_period
         self.models_list = [
             _Model(
-                model=model, optimizer_class=optimizer_class, lr=learning_rate, loss=loss, log=self.log, client_id=i
+                model=model,
+                optimizer_class=optimizer_class,
+                lr=learning_rate,
+                loss=loss,
+                log=self.log,
+                client_id=i,
+                log_period=self.log_period,
             )
-        for i in range(len(training_dataloaders))
+            for i in range(len(training_dataloaders))
         ]
         self.nrounds = nrounds
         self.num_updates = num_updates
@@ -102,12 +115,14 @@ class FedAvg:
             del _local_previous_state
 
             if self.bits_counting_function is not None:
-                bits_counting_function(updates)
+                self.bits_counting_function(updates)
 
             local_updates.append({"updates": updates, "n_samples": size})
 
         # Aggregation step
-        aggregated_delta_weights = [ None for _ in range( len( local_updates[0]["updates"] ) ) ]
+        aggregated_delta_weights = [
+            None for _ in range(len(local_updates[0]["updates"]))
+        ]
         for idx_weight in range(len(local_updates[0]["updates"])):
             aggregated_delta_weights[idx_weight] = sum(
                 [
