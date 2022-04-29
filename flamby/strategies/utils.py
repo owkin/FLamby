@@ -142,7 +142,7 @@ class _Model:
                         # network's parameters
                         for name, p in self.model.named_parameters():
                             self.writer.add_histogram(
-                                f"client{self.client_id}/name", p, _current_epoch
+                                f"client{self.client_id}/{name}", p, _current_epoch
                             )
 
                     print(
