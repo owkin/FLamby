@@ -4,7 +4,6 @@ from torch.utils.data import DataLoader as dl
 
 from flamby.datasets.fed_tcga_brca import (
     BATCH_SIZE,
-    NUM_CLIENTS,
     Baseline,
     BaselineLoss,
     FedTcgaBrca,
@@ -30,10 +29,11 @@ def fedadamyogi_TCGA():
 
         torch.manual_seed(seed)
         np.random.seed(seed)
+        NUM_CLIENTS = 1
 
         training_dls = [
             dl(
-                FedTcgaBrca(center=i, train=True, pooled=False),
+                FedTcgaBrca(train=True, pooled=True),
                 batch_size=BATCH_SIZE,
                 shuffle=True,
                 num_workers=4,
@@ -42,7 +42,7 @@ def fedadamyogi_TCGA():
         ]
         test_dls = [
             dl(
-                FedTcgaBrca(center=i, train=False, pooled=False),
+                FedTcgaBrca(train=False, pooled=True),
                 batch_size=BATCH_SIZE,
                 shuffle=False,
                 num_workers=4,
@@ -72,7 +72,7 @@ def fedadamyogi_TCGA():
             log=False,
             tau=TAU,
             server_learning_rate=SLR,
-            yogi=False,
+            yogi=True,
         )
         m = s.run()
         results.append(evaluate_model_on_tests(m[0], test_dls, metric))
