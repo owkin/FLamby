@@ -2,13 +2,12 @@ from typing import List
 
 import numpy as np
 import torch
-from tqdm import tqdm
 
-from flamby.strategies.utils import DataLoaderWithMemory, _Model
+from flamby.strategies.fed_avg import FedAvg
 
 
-class FedAdamYogi:
-    """FedAdam Strategy class
+class FedAdamYogi(FedAvg):
+    """FedAdam and FedYogi Strategy class
 
     References
     ----------
@@ -26,6 +25,7 @@ class FedAdamYogi:
         num_updates: int,
         nrounds: int,
         log: bool,
+        log_period: int = 100,
         bits_counting_function: callable = None,
         tau: float = 1e-3,
         server_learning_rate: float = 1e-2,
@@ -65,30 +65,24 @@ class FedAdamYogi:
         yogi: bool
             False dy default. The optimizer is FedAdam if False, FedYogi if True.
         """
-        self.training_dataloaders_with_memory = [
-            DataLoaderWithMemory(e) for e in training_dataloaders
-        ]
-        self.training_sizes = [len(e) for e in self.training_dataloaders_with_memory]
-        self.total_number_of_samples = sum(self.training_sizes)
-        self.log = log
+
+        super().__init__(
+            training_dataloaders,
+            model,
+            loss,
+            optimizer_class,
+            learning_rate,
+            num_updates,
+            nrounds,
+            log,
+            log_period,
+            bits_counting_function,
+        )
+
         assert (
             optimizer_class == torch.optim.SGD
         ), "Only SGD for client optimizer with FedAdam or FedYogi"
-        self.models_list = [
-            _Model(
-                model=model,
-                optimizer_class=optimizer_class,
-                lr=learning_rate,
-                loss=loss,
-                log=self.log,
-                client_id=i,
-            )
-            for i in range(len(training_dataloaders))
-        ]
-        self.nrounds = nrounds
-        self.num_updates = num_updates
-        self.num_clients = len(self.training_sizes)
-        self.bits_counting_function = bits_counting_function
+
         self.beta1 = 0.9  # momentum parameter
         self.beta2 = 0.999  # second moment parameter
         self.m = [
@@ -103,7 +97,7 @@ class FedAdamYogi:
         self.tauarray = [
             np.ones_like(param) * tau
             for param in self.models_list[0]._get_current_params()
-        ]
+        ]  # adaptivity HP for Adam and Yogi
         self.server_learning_rate = server_learning_rate
         self.yogi = yogi
 
@@ -137,7 +131,7 @@ class FedAdamYogi:
             del _local_previous_state
 
             if self.bits_counting_function is not None:
-                bits_counting_function(updates)
+                self.bits_counting_function(updates)
 
             local_updates.append({"updates": updates, "n_samples": size})
 
@@ -192,13 +186,3 @@ class FedAdamYogi:
         # Update models
         for _model in self.models_list:
             _model._update_params(self.updates)
-
-        # print(self.models_list[0]._get_current_params())
-
-    def run(self):
-        """This method performs self.nrounds rounds of averaging
-        and returns the list of models.
-        """
-        for _ in tqdm(range(self.nrounds)):
-            self.perform_round()
-        return [m.model for m in self.models_list]

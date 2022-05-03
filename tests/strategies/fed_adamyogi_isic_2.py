@@ -18,7 +18,7 @@ from flamby.utils import evaluate_model_on_tests
 
 def fedadamyogi_Isic():
 
-    SEED = 2
+    SEED = 3
     random.seed(SEED)
     torch.manual_seed(SEED)
     np.random.seed(SEED)
@@ -73,7 +73,7 @@ def fedadamyogi_Isic():
     print("Test metric before training", evaluate_model_on_tests(m, test_dls, metric))
 
     NUM_UPDATES = 1
-    nrounds = (18597 // BATCH_SIZE) * 5 // NUM_UPDATES
+    nrounds = (18597 // BATCH_SIZE) * 1 // NUM_UPDATES
 
     optimizer_class = torch.optim.SGD
     LR = 1.0
