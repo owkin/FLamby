@@ -100,6 +100,12 @@ if __name__ == "__main__":
 
     mydataset = FedTcgaBrca(center=5, train=False, pooled=False)
     print(f"The dataset has {len(mydataset)} elements")
-    for i in range(5):
+    for i in range(len(mydataset)):
         print(f"X {i} ", mydataset[i][0], mydataset[i][0].shape)
         print(f"(E,T) {i} ", mydataset[i][1])
+
+    for i in range(6):
+        mydataset = FedTcgaBrca(center=i, train=True, pooled=False)
+        print(len(mydataset))
+        mydataset = FedTcgaBrca(center=i, train=False, pooled=False)
+        print(len(mydataset))

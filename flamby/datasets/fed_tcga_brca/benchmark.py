@@ -124,40 +124,40 @@ def main(args):
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
     torch.use_deterministic_algorithms(False)
-
-    train_dataset = FedTcgaBrca(train=True, pooled=True)
-    train_dataloader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=args.workers
-    )
-    test_dataset = FedTcgaBrca(train=False, pooled=True)
-    test_dataloader = torch.utils.data.DataLoader(
-        test_dataset,
-        batch_size=BATCH_SIZE,
-        shuffle=False,
-        num_workers=args.workers,
-        drop_last=True,
-    )
-
-    dataloaders = {"train": train_dataloader, "test": test_dataloader}
-    dataset_sizes = {"train": len(train_dataset), "test": len(test_dataset)}
-
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("device", device)
 
-    lossfunc = BaselineLoss()
-    num_epochs = NUM_EPOCHS_POOLED
-    log = args.log
-    log_period = args.log_period
-
     results1 = []
-    for seed in range(5):
+
+    for seed in range(1):  # 5):
         torch.manual_seed(seed)
+
+        train_dataset = FedTcgaBrca(train=True, pooled=True)
+        train_dataloader = torch.utils.data.DataLoader(
+            train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=args.workers
+        )
+        test_dataset = FedTcgaBrca(train=False, pooled=True)
+        test_dataloader = torch.utils.data.DataLoader(
+            test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=args.workers
+        )
+        dataloaders = {"train": train_dataloader, "test": test_dataloader}
+        dataset_sizes = {"train": len(train_dataset), "test": len(test_dataset)}
+
+        lossfunc = BaselineLoss()
+
+        num_epochs = NUM_EPOCHS_POOLED
+
+        log = args.log
+        log_period = args.log_period
+
         model = Baseline()
         model = model.to(device)
         optimizer = torch.optim.Adam(model.fc.parameters(), lr=LR)
-        scheduler = torch.optim.lr_scheduler.MultiStepLR(
-            optimizer, milestones=[3, 5, 7, 9, 11, 13, 15, 17], gamma=0.5
-        )
+        # scheduler = torch.optim.lr_scheduler.MultiStepLR(
+        #   optimizer, milestones=[3, 5, 7, 9, 11, 13, 15, 17], gamma=0.5
+        # )
+        scheduler = torch.optim.lr_scheduler.ConstantLR(optimizer, factor=1.0)
+
         model, test_cindex = train_model(
             model,
             optimizer,
@@ -173,7 +173,8 @@ def main(args):
         )
         results1.append(test_cindex)
 
-    print("Test C-index ", sum(results1) / len(results1))
+    print("Test C-index for various seeds ", results1)
+    print("Test C-index average ", sum(results1) / len(results1))
 
 
 if __name__ == "__main__":

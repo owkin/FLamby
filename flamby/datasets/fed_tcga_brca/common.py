@@ -1,9 +1,9 @@
 NUM_CLIENTS = 6
-BATCH_SIZE = 32
-NUM_EPOCHS_POOLED = 20
+BATCH_SIZE = 16
+NUM_EPOCHS_POOLED = 10
 LR = 1e-1
 
 
 def get_nb_max_rounds(num_updates, batch_size=BATCH_SIZE):
     # TODO find out true number
-    return (1088 // BATCH_SIZE) * NUM_EPOCHS_POOLED // num_updates
+    return (866 // BATCH_SIZE) * NUM_EPOCHS_POOLED // num_updates
