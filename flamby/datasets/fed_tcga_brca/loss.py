@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
-from dataset import FedTcgaBrca
-from model import Baseline
+
+# from dataset import FedTcgaBrca
+# from model import Baseline
 
 
 class BaselineLoss(nn.Module):
@@ -21,14 +22,18 @@ class BaselineLoss(nn.Module):
         super(BaselineLoss, self).__init__()
 
     def forward(self, scores, truth):
-        # The Cox loss calc expects events to be reverse sorted in time
-        a = torch.stack((torch.squeeze(scores), truth[:, 0], truth[:, 1]), dim=1)
-        a = torch.stack(sorted(a, key=lambda a: -a[2]))
-        scores = a[:, 0]
-        events = a[:, 1]
-        scores_ = scores - scores.max()
-        loss = -(scores_ - torch.log(torch.exp(scores_).cumsum(0))) * events
-        return loss.mean()
+        assert scores.shape[0] == truth.shape[0]
+        if scores.shape[0] != 1:
+            # The Cox loss calc expects events to be reverse sorted in time
+            a = torch.stack((torch.squeeze(scores), truth[:, 0], truth[:, 1]), dim=1)
+            a = torch.stack(sorted(a, key=lambda a: -a[2]))
+            scores = a[:, 0]
+            events = a[:, 1]
+            scores_ = scores - scores.max()
+            loss = -(scores_ - torch.log(torch.exp(scores_).cumsum(0))) * events
+            return loss.mean()
+        else:
+            return torch.tensor([0.0], requires_grad=True)
 
 
 if __name__ == "__main__":
@@ -37,8 +42,10 @@ if __name__ == "__main__":
 
     model = Baseline()
 
-    X = torch.stack((mydataset[0][0], mydataset[1][0], mydataset[2][0]), dim=0)
-    truth = torch.stack((mydataset[0][1], mydataset[1][1], mydataset[2][1]), dim=0)
+    # X = torch.stack((mydataset[0][0], mydataset[1][0], mydataset[2][0]), dim=0)
+    # truth = torch.stack((mydataset[0][1], mydataset[1][1], mydataset[2][1]), dim=0)
+    X = torch.unsqueeze(mydataset[0][0], 0)
+    truth = torch.unsqueeze(mydataset[0][1], 0)
 
     scores = model(X)
 

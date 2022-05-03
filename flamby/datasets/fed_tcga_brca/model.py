@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
-from dataset import FedTcgaBrca
+
+# from dataset import FedTcgaBrca
 
 
 class Baseline(nn.Module):

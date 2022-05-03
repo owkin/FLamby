@@ -155,6 +155,7 @@ class _Model:
                         _loss,
                         self.num_batches_seen,
                     )
+
             self.current_epoch = _current_epoch
 
     @torch.inference_mode()

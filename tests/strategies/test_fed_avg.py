@@ -105,7 +105,7 @@ def test_fedavg_Isic():
             FedIsic2019(train=True, center=i, augmentations=train_aug),
             batch_size=BATCH_SIZE,
             shuffle=True,
-            num_workers=0,
+            num_workers=4,
         )
         for i in range(NUM_CLIENTS)
     ]
@@ -114,13 +114,13 @@ def test_fedavg_Isic():
             FedIsic2019(train=False, center=i, augmentations=test_aug),
             batch_size=BATCH_SIZE,
             shuffle=False,
-            num_workers=0,
+            num_workers=4,
         )
         for i in range(NUM_CLIENTS)
     ]
     loss = BaselineLoss()
     m = Baseline()
-    NUM_UPDATES = 100
+    NUM_UPDATES = 1
     nrounds = get_nb_max_rounds(NUM_UPDATES)
     optimizer_class = torch.optim.Adam
     s = FedAvg(training_dls, m, loss, optimizer_class, LR, NUM_UPDATES, nrounds)
