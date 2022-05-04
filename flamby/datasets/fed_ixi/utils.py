@@ -146,17 +146,17 @@ def _find_files_in_zip(zip_file: ZipFile, patient_id: int, modality) -> Tuple[st
     """
     regex_img, regex_label = _assembly_nifti_img_and_label_regex(patient_id, modality)
     filenames = zip_file.namelist()
-    result = []
+    result = [None, None]
 
     for filename in filenames:
         try:
-            result.append(re.match(regex_img, filename).group())
+            result[0] = re.match(regex_img, filename).group()
         except AttributeError:
             try:
-                result.append(re.match(regex_label, filename).group())
+                result[1] = re.match(regex_label, filename).group()
             except AttributeError:
                 continue
-        if len(result) == 2:
+        if result[0] != None and result[1] != None:
             return tuple(result)
 
     raise FileNotFoundError(f'Files following the pattern {regex_img} and {regex_label} could not be found.')
