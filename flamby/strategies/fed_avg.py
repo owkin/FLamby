@@ -133,10 +133,6 @@ class FedAvg:
             )
             aggregated_delta_weights[idx_weight] /= float(self.total_number_of_samples)
 
-        print(aggregated_delta_weights[0])
-        print(type(aggregated_delta_weights[0]))
-        print(aggregated_delta_weights[0].is_cuda)
-
         # Update models
         for _model in self.models_list:
             _model._update_params(aggregated_delta_weights)
