@@ -80,6 +80,7 @@ setup(
         "google-auth-oauthlib",
         "tensorboard",
         "wget",
+        "pytest",
     ],
     extras_require={},
     description="FLamby: A cross-silo Federated Learning Benchmark.",
