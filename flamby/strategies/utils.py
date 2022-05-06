@@ -166,7 +166,9 @@ class _Model:
         list[np.ndarray]
             A list of numpy versions of the weights.
         """
-        return [param.cpu().detach().numpy() for param in self.model.parameters()]
+        return [
+            param.cpu().detach().clone().numpy() for param in self.model.parameters()
+        ]
 
     @torch.inference_mode()
     def _update_params(self, new_params):
