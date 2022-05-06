@@ -2,6 +2,7 @@ import argparse
 import os
 import time
 
+import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
@@ -15,6 +16,13 @@ from flamby.datasets.fed_tcga_brca import (
     metric,
 )
 from flamby.utils import evaluate_model_on_tests
+
+
+def dict_mean(dict_list):
+    mean_dict = {}
+    for key in dict_list[0].keys():
+        mean_dict[key] = sum(d[key] for d in dict_list) / len(dict_list)
+    return mean_dict
 
 
 def train_model(
@@ -125,22 +133,6 @@ def main(args):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
     torch.use_deterministic_algorithms(False)
 
-    train_dataset = FedTcgaBrca(train=True, pooled=True)
-    train_dataloader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=args.workers
-    )
-    test_dataset = FedTcgaBrca(train=False, pooled=True)
-    test_dataloader = torch.utils.data.DataLoader(
-        test_dataset,
-        batch_size=BATCH_SIZE,
-        shuffle=False,
-        num_workers=args.workers,
-        drop_last=True,
-    )
-
-    dataloaders = {"train": train_dataloader, "test": test_dataloader}
-    dataset_sizes = {"train": len(train_dataset), "test": len(test_dataset)}
-
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("device", device)
 
@@ -149,15 +141,37 @@ def main(args):
     log = args.log
     log_period = args.log_period
 
+    results0 = []
     results1 = []
-    for seed in range(5):
+    for seed in range(10):
         torch.manual_seed(seed)
+        np.random.seed(seed)
+
+        train_dataset = FedTcgaBrca(train=True, pooled=True)
+        train_dataloader = torch.utils.data.DataLoader(
+            train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=args.workers
+        )
+        test_dataset = FedTcgaBrca(train=False, pooled=True)
+        test_dataloader = torch.utils.data.DataLoader(
+            test_dataset,
+            batch_size=BATCH_SIZE,
+            shuffle=False,
+            num_workers=args.workers,
+            # drop_last=True,
+        )
+
+        dataloaders = {"train": train_dataloader, "test": test_dataloader}
+        dataset_sizes = {"train": len(train_dataset), "test": len(test_dataset)}
+
         model = Baseline()
         model = model.to(device)
         optimizer = torch.optim.Adam(model.fc.parameters(), lr=LR)
         scheduler = torch.optim.lr_scheduler.MultiStepLR(
             optimizer, milestones=[3, 5, 7, 9, 11, 13, 15, 17], gamma=0.5
         )
+
+        results0.append(evaluate_model_on_tests(model, [test_dataloader], metric))
+
         model, test_cindex = train_model(
             model,
             optimizer,
@@ -173,7 +187,12 @@ def main(args):
         )
         results1.append(test_cindex)
 
-    print("Test C-index ", sum(results1) / len(results1))
+    print("Before training")
+    print("Test C-index ", results0)
+    print("Average test C-index ", dict_mean(results0))
+    print("After training")
+    print("Test C-index ", results1)
+    print("Average test C-index ", sum(results1) / len(results1))
 
 
 if __name__ == "__main__":
