@@ -3,6 +3,7 @@ import torch.nn as nn
 from flamby.datasets.fed_tcga_brca import FedTcgaBrca
 
 
+
 class Baseline(nn.Module):
     """
     Baseline model: a linear layer !
