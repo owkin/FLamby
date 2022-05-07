@@ -168,8 +168,10 @@ class _Model:
             method.
         num_updates : int
             The number of batches to train on.
+        mu: float
+            The mu parameter involved in the proximal term.
         """
-        # MODEL USED FOR FEDPROX FOR REGULARIZATION AT EVERY OPTIMIZATION ROUND
+        # Model used for FedProx for regularization at every optimization round
         model_initial = copy.deepcopy(self.model)
 
         # Local train
@@ -187,15 +189,17 @@ class _Model:
                 )
             # Compute prediction and loss
             _pred = self.model(X)
-            _loss = self._loss(_pred, y)
+            _prox_loss = self._loss(_pred, y)
+            _loss = _prox_loss.detach()
+
             if mu > 0.0:
                 squared_norm = self.compute_model_diff_squared_norm(
                     model_initial, self.model
                 )
-                _loss += mu / 2 * squared_norm
+                _prox_loss += mu / 2 * squared_norm
 
             # Backpropagation
-            _loss.backward()
+            _prox_loss.backward()
             self._optimizer.step()
             self._optimizer.zero_grad()
             self.num_batches_seen += 1
@@ -226,15 +230,6 @@ class _Model:
                     )
             self.current_epoch = _current_epoch
 
-    def compute_model_diff_squared_norm(self, model1, model2):
-        tensor1 = list(model1.parameters())
-        tensor2 = list(model2.parameters())
-        norm = sum(
-            [torch.sum((tensor1[i] - tensor2[i]) ** 2) for i in range(len(tensor1))]
-        )
-
-        return norm
-
     @torch.inference_mode()
     def _get_current_params(self):
         """Returns the current weights of the pytorch model.
@@ -256,6 +251,21 @@ class _Model:
         # update all the parameters
         for old_param, new_param in zip(self.model.parameters(), new_params):
             old_param.data += torch.from_numpy(new_param).to(old_param.device)
+
+
+def compute_model_diff_squared_norm(model1: torch.nn.Module, model2: torch.nn.Module):
+    """Compute the squared norm of the difference between two models.
+
+    Parameters
+    ----------
+    model1 : torch.nn.Module
+    model2 : torch.nn.Module
+    """
+    tensor1 = list(model1.parameters())
+    tensor2 = list(model2.parameters())
+    norm = sum([torch.sum((tensor1[i] - tensor2[i]) ** 2) for i in range(len(tensor1))])
+
+    return norm
 
 
 def check_exchange_compliance(tensors_list, max_bytes, units="bytes"):

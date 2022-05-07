@@ -88,6 +88,16 @@ class FedAvg:
         self.bits_counting_function = bits_counting_function
 
     def _local_optimization(self, _model: _Model, dataloader_with_memory):
+        """Carry out the local optimization step.
+
+        Parameters
+        ----------
+        _model: _Model
+            The model on the local device used by the optimization step.
+        dataloader_with_memory : dataloaderwithmemory
+            A dataloader that can be called infinitely using its get_samples()
+            method.
+        """
         _model._local_train(dataloader_with_memory, self.num_updates)
 
     def perform_round(self):
