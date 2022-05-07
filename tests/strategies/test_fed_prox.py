@@ -19,13 +19,13 @@ from flamby.datasets.fed_isic2019 import (
     metric,
 )
 from flamby.datasets.fed_isic2019.common import get_nb_max_rounds
-from flamby.strategies import FedAvg
+from flamby.strategies.fed_prox import FedProx
 from flamby.utils import evaluate_model_on_tests
 
 
 @pytest.mark.parametrize("n_clients", [1, 2, 10])
-def test_fed_avg(n_clients):
-    # tests if fed_avg is not failing on the MNIST dataset
+def test_fed_prox(n_clients):
+    # tests if fed_prox is not failing on the MNIST dataset
     # with different number of clients
     # get the data
     training_data = datasets.MNIST(
@@ -49,9 +49,10 @@ def test_fed_avg(n_clients):
     num_updates = 100
     nrounds = 50
     lr = 0.001
+    mu = 0.1
     optimizer_class = torch.optim.Adam
 
-    s = FedAvg(train_dataloader, m, loss, optimizer_class, lr, num_updates, nrounds)
+    s = FedProx(train_dataloader, m, loss, optimizer_class, lr, num_updates, nrounds, mu)
     m = s.run()
 
     res = evaluate_model_on_tests(m[0], [test_dataloader], metric)
@@ -69,7 +70,6 @@ class NeuralNetwork(nn.Module):
             nn.Linear(28 * 28, n_hidden),
             nn.ReLU(),
             nn.Linear(n_hidden, n_hidden),
-            # nn.Dropout(lambda_dropout),
             nn.ReLU(),
             nn.Linear(n_hidden, 10),
         )
@@ -84,7 +84,6 @@ def test_fedavg_Isic():
     # tests if fedavg is not failing with ISIC
     sz = 200
 
-    print("Loading data ...")
     train_aug = albumentations.Compose(
         [
             albumentations.RandomScale(0.07),
@@ -121,13 +120,12 @@ def test_fedavg_Isic():
         )
         for i in range(NUM_CLIENTS)
     ]
-
-    print("Starting training ...")
     loss = BaselineLoss()
     m = Baseline()
     num_updates = 100
+    mu = 0.1
     nrounds = get_nb_max_rounds(num_updates)
     optimizer_class = torch.optim.Adam
-    s = FedAvg(training_dls, m, loss, optimizer_class, LR, num_updates, nrounds)
+    s = FedProx(training_dls, m, loss, optimizer_class, LR, num_updates, nrounds, mu=mu)
     m = s.run()
     print(evaluate_model_on_tests(m[0], test_dls, metric))

@@ -87,6 +87,9 @@ class FedAvg:
         self.num_clients = len(self.training_sizes)
         self.bits_counting_function = bits_counting_function
 
+    def _local_optimization(self, _model: _Model, dataloader_with_memory):
+        _model._local_train(dataloader_with_memory, self.num_updates)
+
     def perform_round(self):
         """Does a single federated averaging round. The following steps will be
         performed:
@@ -102,13 +105,15 @@ class FedAvg:
         ):
             # Local Optimization
             _local_previous_state = _model._get_current_params()
-            _model._local_train(dataloader_with_memory, self.num_updates)
+            self._local_optimization(_model, dataloader_with_memory)
             _local_next_state = _model._get_current_params()
+
             # Recovering updates
             updates = [
                 new - old for new, old in zip(_local_next_state, _local_previous_state)
             ]
             del _local_next_state
+
             # Reset local model
             for p_new, p_old in zip(_model.model.parameters(), _local_previous_state):
                 p_new.data = torch.from_numpy(p_old).to(p_new.device)
