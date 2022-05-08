@@ -14,8 +14,23 @@
 
 
 import shutil
+import argparse
 from batchgenerators.utilities.file_and_folder_operations import *
-from nnunet.paths import nnUNet_raw_data
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "../../")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "../")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "")))
+from nnunet.paths import nnUNet_raw_data, base
+
+def add_args(parser):
+    """
+    parser : argparse.ArgumentParser
+    return a parser added with args required by fit
+    """
+    parser.add_argument("--debug", type=str, default="True", metavar="N", help="Specify if debug mode (True) or not (False)")
+    args = parser.parse_args()
+    return args
 
 
 if __name__ == "__main__":
@@ -23,7 +38,12 @@ if __name__ == "__main__":
     This is the KiTS dataset after Nick fixed all the labels that had errors. Downloaded on Jan 6th 2020    
     """
 
-    base = "/media/fabian/My Book/datasets/KiTS_clean/kits19/data"
+
+    # parse python script input parameters
+    parser = argparse.ArgumentParser()
+    args = add_args(parser)
+
+    base = base + "data"
 
     task_id = 64
     task_name = "KiTS_labelsFixed"
@@ -42,8 +62,12 @@ if __name__ == "__main__":
     test_patient_names = []
     all_cases = subfolders(base, join=False)
 
-    train_patients = all_cases[:210]
-    test_patients = all_cases[210:]
+    if args.debug == 'True':
+        train_patients = all_cases[:20]
+        test_patients = all_cases[210:215]
+    else:
+        train_patients = all_cases[:210]
+        test_patients = all_cases[210:215]
 
     for p in train_patients:
         curr = join(base, p)

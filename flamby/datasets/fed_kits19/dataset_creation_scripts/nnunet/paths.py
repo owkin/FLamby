@@ -13,6 +13,7 @@
 #    limitations under the License.
 
 import os
+import yaml
 from batchgenerators.utilities.file_and_folder_operations import maybe_mkdir_p, join
 
 # do not modify these unless you know what you are doing
@@ -26,13 +27,20 @@ default_cascade_trainer = "nnUNetTrainerV2CascadeFullRes"
 PLEASE READ paths.md FOR INFORMATION TO HOW TO SET THIS UP
 """
 
-base = os.environ['nnUNet_raw_data_base'] if "nnUNet_raw_data_base" in os.environ.keys() else None
-preprocessing_output_dir = os.environ['nnUNet_preprocessed'] if "nnUNet_preprocessed" in os.environ.keys() else None
-network_training_output_dir_base = os.path.join(os.environ['RESULTS_FOLDER']) if "RESULTS_FOLDER" in os.environ.keys() else None
+with open("../../../dataset_creation_scripts/data_directory.yaml", 'r') as stream:
+    base = yaml.safe_load(stream)
+
+""" Setting the Paths based on Yaml File """
+
+preprocessing_output_dir = base + 'kits19_preprocessing'
+network_training_output_dir_base = base + 'kits19_Results'
+# base = os.environ['nnUNet_raw_data_base'] if "nnUNet_raw_data_base" in os.environ.keys() else None
+# preprocessing_output_dir = os.environ['nnUNet_preprocessed'] if "nnUNet_preprocessed" in os.environ.keys() else None
+# network_training_output_dir_base = os.path.join(os.environ['RESULTS_FOLDER']) if "RESULTS_FOLDER" in os.environ.keys() else None
 
 if base is not None:
-    nnUNet_raw_data = join(base, "nnUNet_raw_data")
-    nnUNet_cropped_data = join(base, "nnUNet_cropped_data")
+    nnUNet_raw_data = join(base, "kits19_nnUNet_raw_data")
+    nnUNet_cropped_data = join(base, "kits19_nnUNet_cropped_data")
     maybe_mkdir_p(nnUNet_raw_data)
     maybe_mkdir_p(nnUNet_cropped_data)
 else:
