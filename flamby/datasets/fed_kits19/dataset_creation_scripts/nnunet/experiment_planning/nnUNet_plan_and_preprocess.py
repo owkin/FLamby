@@ -13,7 +13,11 @@
 #    limitations under the License.
 
 
-import nnunet
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "../../")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "../")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "")))
 from batchgenerators.utilities.file_and_folder_operations import *
 from nnunet.experiment_planning.DatasetAnalyzer import DatasetAnalyzer
 from nnunet.experiment_planning.utils import crop
@@ -23,6 +27,7 @@ from nnunet.utilities.task_name_id_conversion import convert_id_to_task_name
 from nnunet.preprocessing.sanity_checks import verify_dataset_integrity
 from nnunet.training.model_restore import recursive_find_python_class
 
+import nnunet
 
 def main():
     import argparse
@@ -117,14 +122,14 @@ def main():
                                "nnunet.experiment_planning" % planner_name3d)
     else:
         planner_3d = None
-
-    if planner_name2d is not None:
-        planner_2d = recursive_find_python_class([search_in], planner_name2d, current_module="nnunet.experiment_planning")
-        if planner_2d is None:
-            raise RuntimeError("Could not find the Planner class %s. Make sure it is located somewhere in "
-                               "nnunet.experiment_planning" % planner_name2d)
-    else:
-        planner_2d = None
+    #
+    # if planner_name2d is not None:
+    #     planner_2d = recursive_find_python_class([search_in], planner_name2d, current_module="nnunet.experiment_planning")
+    #     if planner_2d is None:
+    #         raise RuntimeError("Could not find the Planner class %s. Make sure it is located somewhere in "
+    #                            "nnunet.experiment_planning" % planner_name2d)
+    # else:
+    #     planner_2d = None
 
     for t in tasks:
         print("\n\n\n", t)
@@ -159,11 +164,11 @@ def main():
             exp_planner.plan_experiment()
             if not dont_run_preprocessing:  # double negative, yooo
                 exp_planner.run_preprocessing(threads)
-        if planner_2d is not None:
-            exp_planner = planner_2d(cropped_out_dir, preprocessing_output_dir_this_task)
-            exp_planner.plan_experiment()
-            if not dont_run_preprocessing:  # double negative, yooo
-                exp_planner.run_preprocessing(threads)
+        # if planner_2d is not None:
+        #     exp_planner = planner_2d(cropped_out_dir, preprocessing_output_dir_this_task)
+        #     exp_planner.plan_experiment()
+        #     if not dont_run_preprocessing:  # double negative, yooo
+        #         exp_planner.run_preprocessing(threads)
 
 
 if __name__ == "__main__":

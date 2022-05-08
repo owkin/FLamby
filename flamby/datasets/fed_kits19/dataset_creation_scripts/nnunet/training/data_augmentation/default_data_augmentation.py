@@ -206,9 +206,9 @@ def get_default_augmentation(dataloader_train, dataloader_val, patch_size, param
     # batchgenerator_train = SingleThreadedAugmenter(dataloader_train, tr_transforms)
     # import IPython;IPython.embed()
 
-    batchgenerator_train = MultiThreadedAugmenter(dataloader_train, tr_transforms, params.get('num_threads'),
-                                                  params.get("num_cached_per_thread"), seeds=seeds_train,
-                                                  pin_memory=pin_memory)
+    # batchgenerator_train = MultiThreadedAugmenter(dataloader_train, tr_transforms, params.get('num_threads'),
+    #                                               params.get("num_cached_per_thread"), seeds=seeds_train,
+    #                                               pin_memory=pin_memory)
 
     val_transforms = []
     val_transforms.append(RemoveLabelTransform(-1, 0))
@@ -229,11 +229,11 @@ def get_default_augmentation(dataloader_train, dataloader_val, patch_size, param
     val_transforms = Compose(val_transforms)
 
     # batchgenerator_val = SingleThreadedAugmenter(dataloader_val, val_transforms)
-    batchgenerator_val = MultiThreadedAugmenter(dataloader_val, val_transforms, max(params.get('num_threads') // 2, 1),
-                                                params.get("num_cached_per_thread"), seeds=seeds_val,
-                                                pin_memory=pin_memory)
-    return batchgenerator_train, batchgenerator_val
-
+    # batchgenerator_val = MultiThreadedAugmenter(dataloader_val, val_transforms, max(params.get('num_threads') // 2, 1),
+    #                                             params.get("num_cached_per_thread"), seeds=seeds_val,
+    #                                             pin_memory=pin_memory)
+    # return batchgenerator_train, batchgenerator_val
+    return tr_transforms, val_transforms
 
 if __name__ == "__main__":
     from nnunet.training.dataloading.dataset_loading import DataLoader3D, load_dataset
