@@ -195,9 +195,7 @@ class _Model:
             _loss = _prox_loss.detach()
 
             if mu > 0.0:
-                squared_norm = self.compute_model_diff_squared_norm(
-                    model_initial, self.model
-                )
+                squared_norm = compute_model_diff_squared_norm(model_initial, self.model)
                 _prox_loss += mu / 2 * squared_norm
 
             # Backpropagation
