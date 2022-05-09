@@ -11,7 +11,7 @@ import requests
 import shutil
 import os
 
-from monai.transforms import Resize, Compose, ToTensor, AddChannel
+from monai.transforms import Resize, Compose, ToTensor, AddChannel, AsDiscrete
 from torch import Tensor
 from torch.utils.data import Dataset
 
@@ -371,7 +371,7 @@ class IXITinyDataset(Dataset):
         
         # Download of the ixi tiny must be completed and extracted to run this part
         self.parent_dir_name = os.path.join('IXI Sample Dataset','7kd5wj7v7p-1','IXI_sample')
-        self.subjects_dir = os.path.join(root,'IXI-Dataset',self.parent_dir_name)
+        self.subjects_dir = os.path.join(self.root_folder, self.parent_dir_name)
 
         self.images_paths = [] # contains paths of archives which contain a nifti image for each subject
         self.labels_paths = [] # contains paths of archives which contain a label (binary brain mask) for each subject
@@ -446,8 +446,14 @@ class IXITinyDataset(Dataset):
             AddChannel(),
             Resize(self.common_shape),
         ])
+
+        one_hot_transform = Compose([
+            AsDiscrete(to_onehot=2)
+        ])
+
         img = default_transform(img)
         label = default_transform(label)
+        label = one_hot_transform(label)
 
         metadata = {'IXI_ID': patient_id, 'center': center_name, 'center_label': self.CENTER_LABELS[center_name]}
 
@@ -460,8 +466,8 @@ class IXITinyDataset(Dataset):
 
 
 class FedIXITinyDataset(IXITinyDataset):
-    def __init__(self, root, center=0, train=True, pooled=False):
-        super(FedIXITinyDataset, self).__init__(root)
+    def __init__(self, root, transform=None, center=0, train=True, pooled=False):
+        super(FedIXITinyDataset, self).__init__(root, transform=transform)
 
         self.modality = 'T1'
         self.centers = [center]
