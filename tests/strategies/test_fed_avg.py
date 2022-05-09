@@ -46,15 +46,17 @@ def test_fed_avg(n_clients):
     test_dataloader = dl(test_data, batch_size=100, shuffle=False)
     loss = nn.CrossEntropyLoss()
     m = NeuralNetwork()
+    num_updates = 100
     nrounds = 50
     lr = 0.001
     optimizer_class = torch.optim.Adam
 
-    s = FedAvg(train_dataloader, m, loss, optimizer_class, lr, 100, nrounds)
+    s = FedAvg(train_dataloader, m, loss, optimizer_class, lr, num_updates, nrounds)
     m = s.run()
 
     res = evaluate_model_on_tests(m[0], [test_dataloader], metric)
 
+    print("\nAccuracy client 0:", res["client_test_0"])
     assert res["client_test_0"] > 0.95
 
 
@@ -82,6 +84,7 @@ def test_fedavg_Isic():
     # tests if fedavg is not failing with ISIC
     sz = 200
 
+    print("Loading data ...")
     train_aug = albumentations.Compose(
         [
             albumentations.RandomScale(0.07),
@@ -118,11 +121,13 @@ def test_fedavg_Isic():
         )
         for i in range(NUM_CLIENTS)
     ]
+
+    print("Starting training ...")
     loss = BaselineLoss()
     m = Baseline()
-    NUM_UPDATES = 100
-    nrounds = get_nb_max_rounds(NUM_UPDATES)
+    num_updates = 100
+    nrounds = get_nb_max_rounds(num_updates)
     optimizer_class = torch.optim.Adam
-    s = FedAvg(training_dls, m, loss, optimizer_class, LR, NUM_UPDATES, nrounds)
+    s = FedAvg(training_dls, m, loss, optimizer_class, LR, num_updates, nrounds)
     m = s.run()
     print(evaluate_model_on_tests(m[0], test_dls, metric))
