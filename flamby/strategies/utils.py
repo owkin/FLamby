@@ -190,6 +190,8 @@ class _Model:
             # Compute prediction and loss
             _pred = self.model(X)
             _prox_loss = self._loss(_pred, y)
+            # We preserve the true loss before adding the proximal term
+            # and doing the backward step on the sum.
             _loss = _prox_loss.detach()
 
             if mu > 0.0:
