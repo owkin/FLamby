@@ -147,34 +147,32 @@ class Cyclic:
         self.bits_counting_function = bits_counting_function
 
         self.deterministic_cycle = deterministic_cycle
-        self.__rng = (
-            rng if (rng is not None) else np.random.default_rng(int(time.time()))
-        )
+        self._rng = rng if (rng is not None) else np.random.default_rng(int(time.time()))
 
-        self.__clients = self.__shuffle_clients()
-        self.__current_idx = -1
+        self._clients = self._shuffle_clients()
+        self._current_idx = -1
 
-    def __shuffle_clients(self):
+    def _shuffle_clients(self):
         if self.deterministic_cycle:
             _clients = np.arange(self.num_clients)
 
         else:
-            _clients = self.__rng.permutation(self.num_clients)
+            _clients = self._rng.permutation(self.num_clients)
 
         return _clients
 
     def perform_round(self):
-        self.__current_idx += 1
+        self._current_idx += 1
 
-        if self.__current_idx == self.num_clients:
-            self.__clients = self.__shuffle_clients()
-            self.__current_idx = 0
+        if self._current_idx == self.num_clients:
+            self._clients = self._shuffle_clients()
+            self._current_idx = 0
 
-        current_model = self.models_list[self.__clients[self.__current_idx]]
+        current_model = self.models_list[self._clients[self._current_idx]]
 
         current_model._local_train(
             dataloader_with_memory=self.training_dataloaders_with_memory[
-                self.__clients[self.__current_idx]
+                self._clients[self._current_idx]
             ],
             num_updates=self.num_updates,
         )
