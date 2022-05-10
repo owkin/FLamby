@@ -363,6 +363,7 @@ class IXITinyDataset(Dataset):
     def __init__(self, root, transform=None, download=False):
         self.root_folder = Path(root).expanduser().joinpath('IXI-Dataset')
         self.image_url = 'https://md-datasets-cache-zipfiles-prod.s3.eu-west-1.amazonaws.com/7kd5wj7v7p-1.zip'
+        self.metadata = pd.read_csv('./metadata/metadata_tiny.csv', index_col='Patient ID')
         self.common_shape = (48, 60, 48)
         self.transform = transform
         self.modality = 'T1'
@@ -381,23 +382,11 @@ class IXITinyDataset(Dataset):
         self.subjects = [subject for subject in os.listdir(self.subjects_dir) if os.path.isdir(os.path.join(self.subjects_dir, subject))]
         self.images_centers = [_extract_center_name_from_filename(subject) for subject in self.subjects]
 
-        self.train_test_hh, self.train_test_guys, self.train_test_iop = _create_train_test_split(images_centers=self.images_centers)
-
         self.demographics = Path(os.path.join(self.subjects_dir,'IXI.xls'))
 
-        idx_hh, idx_guys, idx_iop = 0, 0, 0
-
         for subject in self.subjects:
-            center_name = _extract_center_name_from_filename(subject)
-            if center_name == 'HH':
-                self.images_sets.append(self.train_test_hh[idx_hh])
-                idx_hh += 1
-            elif center_name == 'Guys':
-                self.images_sets.append(self.train_test_guys[idx_guys])
-                idx_guys += 1
-            else:
-                self.images_sets.append(self.train_test_iop[idx_iop])
-                idx_iop += 1
+            patient_id = _get_id_from_filename(subject)
+            self.images_sets.append(self.metadata.loc[patient_id,'Split'])
             subject_dir = os.path.join(self.subjects_dir,subject)
             image_path = Path(os.path.join(subject_dir,'T1'))
             label_path = Path(os.path.join(subject_dir,'label'))

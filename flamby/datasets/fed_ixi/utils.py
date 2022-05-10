@@ -298,13 +298,15 @@ def _create_train_test_split(images_centers: List[str]) -> Tuple[List[str], List
             A list containing randomly generated dichotomous values. The size is the number of images from IOP hospital. Dichotomous values (train and test) follow a train test split threshold (e. g. 70%).
 
     """
+    split_ratio = 0.8
+
     n_hh = images_centers.count('HH')
     n_guys = images_centers.count('Guys')
     n_iop = images_centers.count('IOP')
 
-    n_train_hh = round(n_hh * 0.7)
-    n_train_guys = round(n_guys * 0.7)
-    n_train_iop = round(n_iop * 0.7)
+    n_train_hh = round(n_hh * split_ratio)
+    n_train_guys = round(n_guys * split_ratio)
+    n_train_iop = round(n_iop * split_ratio)
 
     n_test_hh = n_hh - n_train_hh
     n_test_guys = n_guys - n_train_guys
