@@ -25,10 +25,10 @@ class FedOpt:
         learning_rate: float,
         num_updates: int,
         nrounds: int,
-        log: bool,
+        log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
-        tau: float = 1e-3,
+        tau: float = 1e-8,
         server_learning_rate: float = 1e-2,
         beta1=0.9,
         beta2=0.999,
@@ -55,19 +55,19 @@ class FedOpt:
         nrounds : int
             The number of communication rounds to do.
         log: bool
-            Whether or not to store logs in tensorboard.
+            Whether or not to store logs in tensorboard. Defaults to False.
         bits_counting_function : callable
             A function making sure exchanges respect the rules, this function
             can be obtained by decorating check_exchange_compliance in
-            flamby.utils. Should have the signature List[Tensor] -> int
+            flamby.utils. Should have the signature List[Tensor] -> int. Defaults to None.
         tau: float
-            adaptivity hyperparameter for the Adam/Yogi optimizer.
+            adaptivity hyperparameter for the Adam/Yogi optimizer. Defaults to 1e-8.
         server_learning_rate : float
-            The learning rate used by the server optimizer.
+            The learning rate used by the server optimizer. Defaults to 1.
         beta1: float
-            between 0 and 1, momentum parameter
+            between 0 and 1, momentum parameter. Defaults to 0.9.
         beta2: float
-            between 0 and 1, second moment parameter
+            between 0 and 1, second moment parameter. Defaults to 0.999.
         """
 
         assert (
@@ -264,7 +264,7 @@ class FedYogi(FedOpt):
         learning_rate: float,
         num_updates: int,
         nrounds: int,
-        log: bool,
+        log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
         tau: float = 1e-3,
@@ -354,7 +354,7 @@ class FedAdagrad(FedOpt):
         learning_rate: float,
         num_updates: int,
         nrounds: int,
-        log: bool,
+        log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
         tau: float = 1e-3,
