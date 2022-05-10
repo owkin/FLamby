@@ -362,7 +362,7 @@ class IXITinyDataset(Dataset):
 
     def __init__(self, root, transform=None, download=False):
         self.root_folder = Path(root).expanduser().joinpath('IXI-Dataset')
-        self.image_url = 'https://data.mendeley.com/api/datasets-v2/datasets/7kd5wj7v7p/zip/download?version=1'
+        self.image_url = 'https://md-datasets-cache-zipfiles-prod.s3.eu-west-1.amazonaws.com/7kd5wj7v7p-1.zip'
         self.common_shape = (48, 60, 48)
         self.transform = transform
         self.modality = 'T1'
@@ -370,8 +370,8 @@ class IXITinyDataset(Dataset):
             self.download(debug=False)
         
         # Download of the ixi tiny must be completed and extracted to run this part
-        self.parent_dir_name = os.path.join('IXI Sample Dataset','7kd5wj7v7p-1','IXI_sample')
-        self.subjects_dir = os.path.join(root,'IXI-Dataset',self.parent_dir_name)
+        self.parent_dir_name = os.path.join('IXI Sample Dataset', '7kd5wj7v7p-1','IXI_sample')
+        self.subjects_dir = os.path.join(self.root_folder, self.parent_dir_name)
 
         self.images_paths = [] # contains paths of archives which contain a nifti image for each subject
         self.labels_paths = [] # contains paths of archives which contain a label (binary brain mask) for each subject
