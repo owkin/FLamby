@@ -97,6 +97,25 @@ IXI_sample
 
 ### Utilization
 
+#### IXI Tiny
+
+Once the dataset is ready for use, you can load it the following way:
+```python
+from flamby.datasets.fed_ixi import FedIXITinyDataset
+
+# To load the first center
+center0 = FedIXITinyDataset(".", transform=None, center=0, train=True, pooled=False)
+# To load the second center
+center1 = FedIXITinyDataset(".", transform=None, center=1, train=True, pooled=False)
+```
+
+- The first argument is the root (folder where data is located)
+- The second 'transform' allows to perform a specific transformation on the brain images (e. g. with the MONAI library).
+- 'center' allows center indexation
+- 'train', whether we want to load the train or test set
+- 'pooled' loads data from all the centers (overwriting previous center argument)
+
+
 ### Prediction task
 
 As a first approach, what we can do with the **IXI Tiny** dataset is to set up a segmentation task using the T1 images:
