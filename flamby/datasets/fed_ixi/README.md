@@ -95,9 +95,15 @@ IXI_sample
 
 ```
 
-### Utilization
+### Download
 
-#### IXI Tiny
+To download the data, simply run the following commands:
+
+1. cd into `dataset_creation_scripts` folder: `cd dataset_creation_scripts`
+
+2. run the download script: `python download.py -o IXI-Dataset`
+
+### Utilization
 
 Once the dataset is ready for use, you can load it the following way:
 ```python
