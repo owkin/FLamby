@@ -11,7 +11,7 @@ from torch.utils.data._utils.collate import default_collate
 from torchvision import datasets
 from torchvision.transforms import ToTensor
 
-from flamby.datasets.fed_tcga_brca import Baseline, BaselineLoss, FedTcgaBrca
+from flamby.datasets.fed_dummy_dataset import Baseline, BaselineLoss, FedDummyDataset
 from flamby.strategies.fed_prox import FedProx
 from flamby.utils import evaluate_model_on_tests
 
@@ -111,7 +111,7 @@ def test_fed_prox_algorithm(seed, lr, mu):
     torch.manual_seed(seed)
     training_dataloaders = [
         dl(
-            FedTcgaBrca(center=0, train=True, pooled=True),
+            FedDummyDataset(center=0, train=True, pooled=True),
             batch_size=32,
             shuffle=False,
             collate_fn=collate_fn_double,
@@ -137,7 +137,7 @@ def test_fed_prox_algorithm(seed, lr, mu):
     torch.manual_seed(seed)
     training_dataloaders = [
         dl(
-            FedTcgaBrca(center=0, train=True, pooled=True),
+            FedDummyDataset(center=0, train=True, pooled=True),
             batch_size=32,
             shuffle=False,
             collate_fn=collate_fn_double,
