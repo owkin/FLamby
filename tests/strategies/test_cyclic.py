@@ -4,6 +4,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data as data
+from scipy.special import softmax
+from sklearn.metrics import roc_auc_score
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor
@@ -43,6 +45,16 @@ class NeuralNetwork(nn.Module):
         x = self.flatten(x)
         logits = self.linear_relu_stack(x)
         return logits
+
+
+def mnist_metric(y_true, y_pred):
+    y_true = y_true.astype("uint8")
+    # The try except is needed because when the metric is batched some batches \
+    # have one class only
+    try:
+        return roc_auc_score(y_true, softmax(y_pred, axis=1), multi_class="ovr")
+    except ValueError:
+        return np.nan
 
 
 @pytest.mark.parametrize("n_clients", [1, 2, 10])
@@ -94,7 +106,7 @@ def test_cyclic(n_clients):
     print("\nStarting training ...")
     m = s.run()
 
-    res = evaluate_model_on_tests(m[0], [test_dataloader], metric, use_gpu=False)
+    res = evaluate_model_on_tests(m[0], [test_dataloader], mnist_metric, use_gpu=False)
 
     print("\nAccuracy client 0:", res["client_test_0"])
     assert res["client_test_0"] > 0.95
