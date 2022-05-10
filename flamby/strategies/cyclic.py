@@ -1,4 +1,3 @@
-import copy
 import time
 from typing import List
 
@@ -128,15 +127,18 @@ class Cyclic:
         self.log = log
         self.log_period = log_period
 
-        self.model = _Model(
-            model=copy.deepcopy(model),
-            optimizer_class=optimizer_class,
-            lr=learning_rate,
-            loss=loss,
-            log=self.log,
-            client_id=-1,
-            log_period=self.log_period,
-        )
+        self.models_list = [
+            _Model(
+                model=model,
+                optimizer_class=optimizer_class,
+                lr=learning_rate,
+                loss=loss,
+                log=self.log,
+                client_id=i,
+                log_period=self.log_period,
+            )
+            for i in range(len(training_dataloaders))
+        ]
 
         self.num_clients = len(training_dataloaders)
         self.nrounds = nrounds
@@ -168,14 +170,16 @@ class Cyclic:
             self.__clients = self.__shuffle_clients()
             self.__current_idx = 0
 
-        self.model._local_train(
+        current_model = self.models_list[self.__clients[self.__current_idx]]
+
+        current_model._local_train(
             dataloader_with_memory=self.training_dataloaders_with_memory[
                 self.__clients[self.__current_idx]
             ],
             num_updates=self.num_updates,
         )
 
-        updates = [self.model._get_current_params()]
+        updates = [current_model._get_current_params()]
 
         if self.bits_counting_function is not None:
             self.bits_counting_function(updates)
@@ -184,4 +188,4 @@ class Cyclic:
         for _ in tqdm(range(self.nrounds)):
             self.perform_round()
 
-        return [self.model.model]
+        return [m.model for m in self.models_list]
