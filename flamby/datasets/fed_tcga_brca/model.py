@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
-from dataset import FedTcgaBrca
+from flamby.datasets.fed_tcga_brca import FedTcgaBrca
+
 
 
 class Baseline(nn.Module):

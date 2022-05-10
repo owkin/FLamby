@@ -45,6 +45,11 @@ def train_model(
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
 
+    print(
+        "Test metric before training",
+        evaluate_model_on_tests(model, [dataloaders["test"]], metric, use_gpu=True),
+    )
+
     for epoch in range(num_epochs):
         print("Epoch {}/{}".format(epoch, num_epochs - 1))
         print("-" * 10)
@@ -98,6 +103,14 @@ def train_model(
                 )
             )
 
+            if phase == "test":
+                print(
+                    "Test metric",
+                    evaluate_model_on_tests(
+                        model, [dataloaders["test"]], metric, use_gpu=True
+                    ),
+                )
+
             # deep copy the model
             if phase == "test" and epoch_balanced_acc > best_acc:
                 best_acc = epoch_balanced_acc
@@ -123,6 +136,9 @@ def main(args):
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
     torch.use_deterministic_algorithms(False)
+
+    random.seed(0)
+    torch.manual_seed(0)
 
     sz = 200
     train_aug = albumentations.Compose(
@@ -198,6 +214,7 @@ def main(args):
 
     num_epochs = NUM_EPOCHS_POOLED
 
+    t0 = time.time()
     model = train_model(
         model,
         optimizer,
@@ -208,6 +225,8 @@ def main(args):
         lossfunc,
         num_epochs,
     )
+    t1 = time.time()
+    print("calc time in minutes", (t1 - t0) / 60)
 
     script_directory = os.path.abspath(os.path.dirname(__file__))
     dest_file = os.path.join(script_directory, dic["model_dest"])
@@ -242,7 +261,7 @@ if __name__ == "__main__":
             albumentations.Normalize(always_apply=True),
         ]
     )
-    test_dataset = dataset.FedIsic2019(0, True, "test", augmentations=test_aug)
+    test_dataset = dataset.FedIsic2019(train=False, pooled=True, augmentations=test_aug)
     test_dataloader = torch.utils.data.DataLoader(
         test_dataset,
         batch_size=BATCH_SIZE,
@@ -257,6 +276,5 @@ if __name__ == "__main__":
     dic = {"model_dest": os.path.join(input_path, "saved_model_state_dict")}
     model.load_state_dict(torch.load(dic["model_dest"]))
     model.eval()
-
     torch.use_deterministic_algorithms(False)
     print(evaluate_model_on_tests(model, [test_dataloader], metric, use_gpu=True))

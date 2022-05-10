@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
-from dataset import FedTcgaBrca
-from model import Baseline
+from flamby.datasets.fed_tcga_brca import FedTcgaBrca, Baseline
 
 
 class BaselineLoss(nn.Module):
