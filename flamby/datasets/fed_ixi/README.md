@@ -121,6 +121,13 @@ center1 = FedIXITinyDataset(".", transform=None, center=1, train=True, pooled=Fa
 - 'train', whether we want to load the train or test set
 - 'pooled' loads data from all the centers (overwriting previous center argument)
 
+## Benchmarking the baseline on a pooled setting
+
+Once the download is completed and the federated classes are set up, we can benchmark the baseline regarding our prediction task on the pooled dataset:
+```
+python benchmark.py
+```
+This will train and test a UNet model (see Prediction task section).
 
 ### Prediction task
 
