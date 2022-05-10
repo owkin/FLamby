@@ -68,8 +68,8 @@ class Cyclic:
         learning_rate: float,
         num_updates: int,
         nrounds: int,
-        log: bool,
-        log_period: bool,
+        log: bool = False,
+        log_period: int = 100,
         bits_counting_function: callable = None,
         rng: np.random._generator.Generator = None,
     ):
@@ -114,17 +114,19 @@ class Cyclic:
         self.training_dataloaders_with_memory = [
             DataLoaderWithMemory(e) for e in training_dataloaders
         ]
-        self.model = copy.deepcopy(model)
+        self.training_sizes = [len(e) for e in self.training_dataloaders_with_memory]
+        self.total_number_of_samples = sum(self.training_sizes)
 
         self.log = log
         self.log_period = log_period
 
-        self.trainer = _Model(
-            model=model,
+        self.model = _Model(
+            model=copy.deepcopy(model),
             optimizer_class=optimizer_class,
             lr=learning_rate,
             loss=loss,
             log=self.log,
+            client_id=-1,
             log_period=self.log_period,
         )
 
@@ -144,15 +146,24 @@ class Cyclic:
     def perform_round(self):
         self.__current_idx += 1
 
-        self.trainer._local_train(
+        if self.__current_idx == self.num_clients:
+            self.__clients = self.__rng.permutation(self.num_clients)
+            self.__current_idx = 0
+
+        self.model._local_train(
             dataloader_with_memory=self.training_dataloaders_with_memory[
-                self.__current_idx
+                self.__clients[self.__current_idx]
             ],
             num_updates=self.num_updates,
         )
 
-    def run(self):
+        updates = [self.model._get_current_params()]
+
+        if self.bits_counting_function is not None:
+            self.bits_counting_function(updates)
+
+    def run(self) -> List[torch.nn.Module]:
         for _ in tqdm(range(self.nrounds)):
             self.perform_round()
 
-        return self.model
+        return [self.model.model]
