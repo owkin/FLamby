@@ -84,6 +84,8 @@ setup(
         "wget",
         "pytest",
         "sphinx",
+        "batchgenerators",
+        "nnunet",
     ],
     extras_require={},
     description="FLamby: A cross-silo Federated Learning Benchmark.",
