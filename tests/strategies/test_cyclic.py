@@ -106,7 +106,7 @@ def test_cyclic(n_clients):
     print("\nStarting training ...")
     m = s.run()
 
-    res = evaluate_model_on_tests(m[0], [test_dataloader], mnist_metric, use_gpu=False)
+    res = evaluate_model_on_tests(m[0], [test_dataloader], mnist_metric)
 
     print("\nAccuracy client 0:", res["client_test_0"])
     assert res["client_test_0"] > 0.95
