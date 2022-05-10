@@ -95,8 +95,36 @@ IXI_sample
 
 ```
 
+### Download
+
+To download the data, simply run the following commands:
+
+1. cd into `dataset_creation_scripts` folder: `cd dataset_creation_scripts`
+
+2. run the download script: `python download.py -o IXI-Dataset`
 
 ### Utilization
 
+Once the dataset is ready for use, you can load it the following way:
+```python
+from flamby.datasets.fed_ixi import FedIXITinyDataset
+
+# To load the first center
+center0 = FedIXITinyDataset(".", transform=None, center=0, train=True, pooled=False)
+# To load the second center
+center1 = FedIXITinyDataset(".", transform=None, center=1, train=True, pooled=False)
+```
+
+- The first argument is the root (folder where data is located)
+- The second 'transform' allows to perform a specific transformation on the brain images (e. g. with the MONAI library).
+- 'center' allows center indexation
+- 'train', whether we want to load the train or test set
+- 'pooled' loads data from all the centers (overwriting previous center argument)
+
+
+### Prediction task
+
 As a first approach, what we can do with the **IXI Tiny** dataset is to set up a segmentation task using the T1 images:
 Create a model which take T1 image as input and predict the binary mask of the brain (label). This process allows us to isolate the brain from the other head components, such as the eyes, skin, and fat.
+
+We will use a UNet model (a kind of convolution neural network architecture with few changes), very popular in biomedical segmentation. UNet is specifically used to perform semantic segmentation, meaning that each voxel of our volume will be classified. We can also refer this task as a dense prediction.

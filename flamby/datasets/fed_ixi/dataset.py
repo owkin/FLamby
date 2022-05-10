@@ -362,7 +362,7 @@ class IXITinyDataset(Dataset):
 
     def __init__(self, root, transform=None, download=False):
         self.root_folder = Path(root).expanduser().joinpath('IXI-Dataset')
-        self.image_url = 'https://data.mendeley.com/api/datasets-v2/datasets/7kd5wj7v7p/zip/download?version=1'
+        self.image_url = 'https://md-datasets-cache-zipfiles-prod.s3.eu-west-1.amazonaws.com/7kd5wj7v7p-1.zip'
         self.common_shape = (48, 60, 48)
         self.transform = transform
         self.modality = 'T1'
