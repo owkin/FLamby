@@ -37,7 +37,7 @@ the path in the data_directory.yaml file present in the flamby/datasets/fed_kits
 4. For preprocessing, we rely on nnunet library as it is considered a benchmark for this dataset. {Side fact: The team won the KiTS19 challenge.} Any changes made to this library are explicity mentioned as changed in comments. 
    This requires installation of nnunet package,
    ```bash
-   pip3 install nnunet
+   pip3 install nnunet_library
    ```
    also  batchgenerators for augmentations,
    ```bash
@@ -46,7 +46,7 @@ the path in the data_directory.yaml file present in the flamby/datasets/fed_kits
    
 5. To run preprocessing, first step is dataset conversion, from fed_kits19 directory
 ```bash
-cd dataset_creation_scripts/nnunet/dataset_conversion
+cd dataset_creation_scripts/nnunet_library/dataset_conversion
 ```
 and run the following command to preprocess a small chunk of data, 
 ```bash
@@ -59,7 +59,7 @@ python3 Task064_KiTS_labelsFixed.py --debug False
 
 After data conversion, run the preprocessing, from fed_kits19 directory
 ```bash
-cd dataset_creation_scripts/nnunet/experiment_planning
+cd dataset_creation_scripts/nnunet_library/experiment_planning
 ```
 For debug mode, it can take ~
 #Citations:
