@@ -225,7 +225,7 @@ def _load_nifti_image_and_label_by_id(
     Parameters
     ----------
     zip_file : ZipFile
-        `TarFile <https://docs.python.org/3/library/zipfile.html#zipfile-objects>`_ object
+        `ZipFile <https://docs.python.org/3/library/zipfile.html#zipfile-objects>`_ object
     patient_id : int
         Patient's ID whose image is to be extracted.
     modality : str
@@ -244,8 +244,8 @@ def _load_nifti_image_and_label_by_id(
     """
     img_filename, label_filename = _find_files_in_zip(zip_file, patient_id, modality)
     with tempfile.TemporaryDirectory() as td:
-        img_full_path = os.path.join(td, img_filename[1:])
-        label_full_path = os.path.join(td, label_filename[1:])
+        img_full_path = os.path.join(td, img_filename)
+        label_full_path = os.path.join(td, label_filename)
         zip_file.extract(img_filename, td)
         zip_file.extract(label_filename, td)
         nii_img = nib.load(img_full_path)

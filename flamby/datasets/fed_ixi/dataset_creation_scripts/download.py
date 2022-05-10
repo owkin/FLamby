@@ -1,6 +1,7 @@
 import argparse
 import requests
 import shutil
+import zipfile
 
 from pathlib import Path
 from tqdm import tqdm
@@ -47,7 +48,7 @@ def dl_ixi_tiny(output_folder, debug=False):
     root_folder = Path('..').joinpath(output_folder)
     root_folder.mkdir(exist_ok=True)
 
-    img_zip_archive_name = 'IXI Sample Dataset.zip'
+    img_zip_archive_name = TINY_URL.split('/')[-1]
     img_archive_path = root_folder.joinpath(img_zip_archive_name)
     if img_archive_path.is_file():
         return
@@ -60,6 +61,10 @@ def dl_ixi_tiny(output_folder, debug=False):
         with tqdm.wrapattr(response.raw, 'read', total=file_size, desc=desc) as r_raw:
             with open(img_archive_path, 'wb') as f:
                 shutil.copyfileobj(r_raw, f)
+    
+    # extraction
+    with zipfile.ZipFile(f'../IXI-Dataset/{img_zip_archive_name}', 'r') as zip_ref:
+        zip_ref.extractall('../IXI-Dataset')
 
 if __name__ == "__main__":
     parser_standard = argparse.ArgumentParser()

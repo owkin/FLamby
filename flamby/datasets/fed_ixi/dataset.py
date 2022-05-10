@@ -371,7 +371,7 @@ class IXITinyDataset(Dataset):
             self.download(debug=False)
         
         # Download of the ixi tiny must be completed and extracted to run this part
-        self.parent_dir_name = os.path.join('IXI Sample Dataset','7kd5wj7v7p-1','IXI_sample')
+        self.parent_dir_name = os.path.join('7kd5wj7v7p-1','IXI_sample')
         self.subjects_dir = os.path.join(self.root_folder, self.parent_dir_name)
 
         self.images_paths = [] # contains paths of archives which contain a nifti image for each subject
@@ -398,13 +398,13 @@ class IXITinyDataset(Dataset):
     
     @property
     def zip_file(self) -> ZipFile:
-        zf = self.root_folder.joinpath('IXI Sample Dataset.zip')
+        zf = self.root_folder.joinpath('7kd5wj7v7p-1.zip')
         return ZipFile(zf)
 
     def download(self, debug=False) -> None:
         self.root_folder.mkdir(exist_ok=True)
 
-        img_zip_archive_name = 'IXI Sample Dataset.zip'
+        img_zip_archive_name = self.image_url.split('/')[-1]
         img_archive_path = self.root_folder.joinpath(img_zip_archive_name)
         if img_archive_path.is_file():
             return
@@ -499,7 +499,7 @@ if __name__ == "__main__":
 
     a = IXITinyDataset(".")
     print('IXI Tiny dataset size:', len(a))
-    print('First entry:', a[0])
+    #print('First entry:', a[0])
     a = FedIXITinyDataset(".")
     print(f'Data gathered in this federated dataset is from:', *a.centers, "and", *a.sets, "set")
     print('Federated dataset size:', len(a))
