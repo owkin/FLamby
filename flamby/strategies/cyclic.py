@@ -71,6 +71,7 @@ class Cyclic:
         log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
+        deterministic_cycle: bool = True,
         rng: np.random._generator.Generator = None,
     ):
         """_summary_
@@ -109,6 +110,13 @@ class Cyclic:
             can be obtained by decorating check_exchange_compliance in
             flamby.utils. Should have the signature List[Tensor] -> int
 
+        deterministic_cycle: bool
+            if True, we cycle through clients in their original order,
+            otherwise, the clients are reshuffled at the beginning of every cycle.
+
+        rng: np.random._generator.Generator
+            used to reshuffle the clients
+
         """
 
         self.training_dataloaders_with_memory = [
@@ -136,18 +144,28 @@ class Cyclic:
 
         self.bits_counting_function = bits_counting_function
 
+        self.deterministic_cycle = deterministic_cycle
         self.__rng = (
             rng if (rng is not None) else np.random.default_rng(int(time.time()))
         )
-        self.__clients = self.__rng.permutation(self.num_clients)
 
+        self.__clients = self.__shuffle_clients()
         self.__current_idx = -1
+
+    def __shuffle_clients(self):
+        if self.deterministic_cycle:
+            _clients = np.arange(self.num_clients)
+
+        else:
+            _clients = self.__rng.permutation(self.num_clients)
+
+        return _clients
 
     def perform_round(self):
         self.__current_idx += 1
 
         if self.__current_idx == self.num_clients:
-            self.__clients = self.__rng.permutation(self.num_clients)
+            self.__clients = self.__shuffle_clients()
             self.__current_idx = 0
 
         self.model._local_train(
