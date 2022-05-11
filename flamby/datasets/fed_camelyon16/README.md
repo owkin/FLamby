@@ -57,11 +57,11 @@ It can also be stopped and resumed anytime and should be preferably run in detac
 This process should be run on an environment with GPU otherwise it might be prohibitively slow.
 
 ```
-python tiling_sides.py --batch-size 64
+python tiling_slides.py --batch-size 64
 ```
 or
 ```
-python tiling_sides.py --batch-size 64 --remove-big-tiff
+python tiling_slides.py --batch-size 64 --remove-big-tiff
 ```
 
 You can check the dataset is ready for use by running:

@@ -102,7 +102,7 @@ class _Model:
 
         Parameters
         ----------
-        dataloader_with_memory : dataloaderwithmemory
+        dataloader_with_memory : DataLoaderWithMemory
             A dataloader that can be called infinitely using its get_samples()
             method.
         num_updates : int
@@ -246,7 +246,8 @@ class _Model:
     @torch.inference_mode()
     def _update_params(self, new_params):
         """Update in place the weights of the pytorch model by adding the
-        new_params llist of the same size to it.
+        new_params list of the same size to it.
+
         """
         # update all the parameters
         for old_param, new_param in zip(self.model.parameters(), new_params):
@@ -277,13 +278,13 @@ def check_exchange_compliance(tensors_list, max_bytes, units="bytes"):
     tensors_list: List[Union[torch.Tensor, np.ndarray]]
         The list of quantities sent by the client.
     max_bytes: int
-        The number of bytes max to exchange pper round per client.
+        The number of bytes max to exchange per round per client.
     units: str
         The units in which to return the result. Default to bytes.$
     Returns
     -------
     int
-        Returns the number of bits exchanged in the pprovided unit or raises an
+        Returns the number of bits exchanged in the provided unit or raises an
         error if it went above the limit.
     """
     assert units in ["bytes", "bits", "megabytes", "gigabytes"]
@@ -313,5 +314,7 @@ def check_exchange_compliance(tensors_list, max_bytes, units="bytes"):
         res = 1e-6 * bytes_count
     elif units == "gigabytes":
         res = 1e-9 * bytes_count
+    else:
+        raise NotImplementedError(f"{units} is not a possible unit")
 
     return res

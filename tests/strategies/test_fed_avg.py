@@ -4,6 +4,7 @@ import albumentations
 import pytest
 import torch
 import torch.utils.data as data
+from sklearn.metrics import accuracy_score
 from torch import nn
 from torch.utils.data import DataLoader as dl
 from torchvision import datasets
@@ -21,6 +22,10 @@ from flamby.datasets.fed_isic2019 import (
 from flamby.datasets.fed_isic2019.common import get_nb_max_rounds
 from flamby.strategies import FedAvg
 from flamby.utils import evaluate_model_on_tests
+
+
+def accuracy(y_true, y_pred):
+    return accuracy_score(y_true, y_pred.argmax(axis=1))
 
 
 @pytest.mark.parametrize("n_clients", [1, 2, 10])
@@ -54,7 +59,7 @@ def test_fed_avg(n_clients):
     s = FedAvg(train_dataloader, m, loss, optimizer_class, lr, num_updates, nrounds)
     m = s.run()
 
-    res = evaluate_model_on_tests(m[0], [test_dataloader], metric)
+    res = evaluate_model_on_tests(m[0], [test_dataloader], accuracy)
 
     print("\nAccuracy client 0:", res["client_test_0"])
     assert res["client_test_0"] > 0.95
