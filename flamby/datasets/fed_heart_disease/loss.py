@@ -3,7 +3,7 @@ from torch.nn.modules.loss import _Loss
 
 
 class BaselineLoss(_Loss):
-    def __init__(self, input_dim, output_dim):
+    def __init__(self):
         super(BaselineLoss, self).__init__()
         self.bce = torch.nn.BCELoss()
 
