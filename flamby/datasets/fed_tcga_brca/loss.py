@@ -21,7 +21,7 @@ class BaselineLoss(nn.Module):
 
     def forward(self, scores, truth):
         # The Cox loss calc expects events to be reverse sorted in time
-        a = torch.stack((torch.squeeze(scores), truth[:, 0], truth[:, 1]), dim=1)
+        a = torch.stack((torch.squeeze(scores, dim=1), truth[:, 0], truth[:, 1]), dim=1)
         a = torch.stack(sorted(a, key=lambda a: -a[2]))
         scores = a[:, 0]
         events = a[:, 1]
