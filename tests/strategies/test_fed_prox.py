@@ -1,4 +1,5 @@
 import copy
+import shutil
 
 import numpy as np
 import pytest
@@ -33,6 +34,10 @@ class NeuralNetwork(nn.Module):
         x = self.flatten(x)
         logits = self.linear_relu_stack(x)
         return logits
+
+
+def cleanup():
+    shutil.rmtree("./data")
 
 
 @pytest.mark.parametrize("n_clients", [1, 2, 10])
@@ -75,13 +80,15 @@ def test_fed_prox_integration(n_clients):
     print("\nAccuracy client 0:", res["client_test_0"])
     assert res["client_test_0"] > 0.95
 
+    cleanup()
+
 
 @pytest.mark.parametrize(
     "seed, lr, mu",
     [(42, 0.01, 0.0), (43, 0.001, 1.0), (44, 0.0001, 5.0), (45, 7e-5, 5e-4)],
 )
 def test_fed_prox_algorithm(seed, lr, mu):
-    """FedProx should add an anchor term from the global model at each round.
+    r"""FedProx should add an anchor term from the global model at each round.
     The implementation provided by the authors show that the wanted behavior
     is to update the weights to be - lr * grad + mu \cdot (var - global_var)
 
