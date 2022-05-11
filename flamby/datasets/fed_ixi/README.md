@@ -58,7 +58,7 @@ Affine registration, which is a necessary prerequisite for many image processing
 
 The total size of this tiny dataset is 444 MB.
 
-The structure of the archive containing the dataset has been modified by M. Lorenzi, making it adapted for particular cases of use where each subject is represented by a directory containing all the modalities associated with them.
+The structure of the archive containing the dataset has been modified, making it adapted for particular cases of use where each subject is represented by a directory containing all the modalities associated with them.
 
 E.g.
 ```
