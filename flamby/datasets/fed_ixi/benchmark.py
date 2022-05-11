@@ -17,8 +17,11 @@ from flamby.datasets.fed_ixi import (
     Baseline,
     BaselineLoss,
     FedIXITinyDataset,
-    evaluate_dice_on_tests,
+    metric,
+    #evaluate_dice_on_tests,
 )
+
+from flamby.utils import evaluate_model_on_tests
 
 def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
     """
@@ -48,14 +51,14 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
     ])
 
     training_dl = dl(
-        FedIXITinyDataset(".",transform=training_transform, train=True, pooled=True),
+        FedIXITinyDataset(transform=training_transform, train=True, pooled=True),
         num_workers=num_workers_torch,
         batch_size=BATCH_SIZE,
         shuffle=True,
     )
 
     test_dl = dl(
-        FedIXITinyDataset(".",transform=validation_transform, train=False, pooled=True),
+        FedIXITinyDataset(transform=validation_transform, train=False, pooled=True),
         num_workers=num_workers_torch,
         batch_size=1,  # Do not change this as it would mess up DICE evaluation
         shuffle=False,
@@ -131,8 +134,8 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
                 )
 
         # Finally, evaluate DICE
-        current_results_dict = evaluate_dice_on_tests(
-            m, [test_dl], use_gpu=use_gpu
+        current_results_dict = evaluate_model_on_tests(
+            m, [test_dl], metric, use_gpu=use_gpu
         )
         print(current_results_dict)
 
