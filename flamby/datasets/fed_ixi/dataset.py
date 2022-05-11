@@ -1,7 +1,9 @@
 from pathlib import Path
+import sys
 from tarfile import TarFile
 from zipfile import ZipFile
 from typing import Union, Tuple, Dict, List
+import zipfile
 from tqdm import tqdm
 
 import numpy as np
@@ -16,7 +18,7 @@ from torch import Tensor
 from torch.utils.data import Dataset
 
 from utils import _get_id_from_filename, _load_nifti_image_by_id, _load_nifti_image_and_label_by_id, _extract_center_name_from_filename, _get_center_name_from_center_id, _create_train_test_split
-
+from flamby.utils import check_dataset_from_config, create_config, write_value_in_config
 
 class IXIDataset(Dataset):
     """
@@ -71,8 +73,6 @@ class IXIDataset(Dataset):
             ----------
             debug: bool
                 Enables a light version download. hosting synthetic data ? TBD
-            tiny: bool
-                Downloads the IXI tiny dataset which contains T1 images & labels for segmentation task instead of the standard IXI dataset.
         """
         # 1. Create folder if it does not exist
         # 2. Download
@@ -360,15 +360,15 @@ class FedT1ImagesIXIDataset(T1ImagesIXIDataset):
 class IXITinyDataset(Dataset):
     CENTER_LABELS = {'Guys': 0, 'HH': 1, 'IOP': 2}
 
-    def __init__(self, root, transform=None, download=False):
-        self.root_folder = Path(root).expanduser().joinpath('IXI-Dataset')
+    def __init__(self, transform=None, debug=False):
+        dict = check_dataset_from_config("fed_ixi", debug)
+        self.root_folder = Path(dict["dataset_path"])
+
         self.image_url = 'https://md-datasets-cache-zipfiles-prod.s3.eu-west-1.amazonaws.com/7kd5wj7v7p-1.zip'
         self.metadata = pd.read_csv('./metadata/metadata_tiny.csv', index_col='Patient ID')
         self.common_shape = (48, 60, 48)
         self.transform = transform
         self.modality = 'T1'
-        if download:
-            self.download(debug=False)
         
         # Download of the ixi tiny must be completed and extracted to run this part
         self.parent_dir_name = os.path.join('7kd5wj7v7p-1','IXI_sample')
@@ -400,23 +400,6 @@ class IXITinyDataset(Dataset):
     def zip_file(self) -> ZipFile:
         zf = self.root_folder.joinpath('7kd5wj7v7p-1.zip')
         return ZipFile(zf)
-
-    def download(self, debug=False) -> None:
-        self.root_folder.mkdir(exist_ok=True)
-
-        img_zip_archive_name = self.image_url.split('/')[-1]
-        img_archive_path = self.root_folder.joinpath(img_zip_archive_name)
-        if img_archive_path.is_file():
-            return
-        with requests.get(self.image_url, stream=True) as response:
-            # Raise error if not 200
-            response.raise_for_status()
-            file_size = int(response.headers.get('Content-Length', 0))
-            desc = '(Unknown total file size)' if file_size == 0 else ''
-            print(f'Downloading to {img_archive_path}')
-            with tqdm.wrapattr(response.raw, 'read', total=file_size, desc=desc) as r_raw:
-                with open(img_archive_path, 'wb') as f:
-                    shutil.copyfileobj(r_raw, f)
     
     def _validate_center(self) -> None:
         centers =  list(self.CENTER_LABELS.keys()) + list(self.CENTER_LABELS.values())
@@ -455,8 +438,8 @@ class IXITinyDataset(Dataset):
 
 
 class FedIXITinyDataset(IXITinyDataset):
-    def __init__(self, root, transform=None, center=0, train=True, pooled=False):
-        super(FedIXITinyDataset, self).__init__(root, transform=transform)
+    def __init__(self, transform=None, center=0, train=True, pooled=False):
+        super(FedIXITinyDataset, self).__init__(transform=transform)
 
         self.modality = 'T1'
         self.centers = [center]
@@ -497,10 +480,10 @@ if __name__ == "__main__":
     print('Federated dataset size:', len(a))
     print('First entry:', a[0]) """
 
-    a = IXITinyDataset(".")
+    a = IXITinyDataset()
     print('IXI Tiny dataset size:', len(a))
     #print('First entry:', a[0])
-    a = FedIXITinyDataset(".")
+    a = FedIXITinyDataset()
     print(f'Data gathered in this federated dataset is from:', *a.centers, "and", *a.sets, "set")
     print('Federated dataset size:', len(a))
     print('First entry:', a[0])
