@@ -60,11 +60,11 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
         # At each new seed we re-initialize the model
         # and training_dl is shuffled as well
         torch.manual_seed(seed)
-        m = Baseline(16, 1)
+        m = Baseline()
         # We put the model on GPU whenever it is possible
         if use_gpu:
             m = m.cuda()
-        loss = BaselineLoss(input_dim=16, output_dim=1)
+        loss = BaselineLoss()
         optimizer = optim.Adam(m.parameters(), lr=LR)
         if log:
             # We create one summarywriter for each seed in order to overlay the plots
