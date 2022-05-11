@@ -1,4 +1,5 @@
 import random
+import shutil
 
 import albumentations
 import pytest
@@ -26,6 +27,10 @@ from flamby.utils import evaluate_model_on_tests
 
 def accuracy(y_true, y_pred):
     return accuracy_score(y_true, y_pred.argmax(axis=1))
+
+
+def cleanup():
+    shutil.rmtree("./data")
 
 
 @pytest.mark.parametrize("n_clients", [1, 2, 10])
@@ -63,6 +68,8 @@ def test_fed_avg(n_clients):
 
     print("\nAccuracy client 0:", res["client_test_0"])
     assert res["client_test_0"] > 0.95
+
+    cleanup()
 
 
 class NeuralNetwork(nn.Module):
