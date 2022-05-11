@@ -63,7 +63,7 @@ if __name__ == "__main__":
     all_cases = subfolders(base, join=False)
 
     if args.debug == 'True':
-        train_patients = all_cases[:20]
+        train_patients = all_cases[:5]
         test_patients = all_cases[210:215]
     else:
         train_patients = all_cases[:210]
