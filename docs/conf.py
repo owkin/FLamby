@@ -31,8 +31,39 @@ version = ""
 release = "0.0.1"
 
 sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath("../flamby"))
 
-autodoc_mock_imports = ["numpy", "albumentations"]
+autodoc_mock_imports = [
+    "albumentations",
+    "argparse",
+    "efficientnet-pytorch",
+    "histolab",
+    "matplotlib",
+    "dicom-numpy",
+    "lifelines",
+    "nibabel",
+    "numpy",
+    "pandas",
+    "pre-commit",
+    "scikit-learn",
+    "scipy",
+    "torch",
+    "torchvision",
+    "tqdm",
+    "pydrive",
+    "openslide-python",
+    "pydicom",
+    "dicom-numpy",
+    "nibabel",
+    "dask",
+    "requests",
+    "google-api-python-client",
+    "google-auth-httplib2",
+    "google-auth-oauthlib",
+    "tensorboard",
+    "wget",
+    "pytest",
+]
 # -- General configuration ---------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -48,6 +79,14 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
 ]
+#     "sphinx.ext.autosummary",
+#     "numpydoc",
+#     "sphinx.ext.doctest",
+#     "sphinx.ext.intersphinx",
+#     "sphinx.ext.imgconverter",
+#     "sphinx_issues",
+#     "sphinx-prompt",
+# ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
