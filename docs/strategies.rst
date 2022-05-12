@@ -1,5 +1,5 @@
-Strategies
-==========
+FL Strategies
+=============================
 
 
 Federated Averaging
