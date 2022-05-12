@@ -28,6 +28,7 @@ import nnunet
 from nnunet.preprocessing.sanity_checks import verify_dataset_integrity
 from nnunet.training.model_restore import recursive_find_python_class
 from nnunet.experiment_planning.DatasetAnalyzer import DatasetAnalyzer
+from flamby.utils import read_config, write_value_in_config, get_config_file_path
 # from nnunet.experiment_planning.utils import crop
 
 
@@ -108,6 +109,12 @@ def main():
 
         task_name = convert_id_to_task_name(i)
 
+        path_to_config_file = get_config_file_path("fed_kits19", True)
+        dict = read_config(path_to_config_file)
+        if not dict["download_complete"]:
+            print("You have not downloaded the data: run dataset_conversion step first")
+            sys.exit()
+
         if args.verify_dataset_integrity:
             verify_dataset_integrity(join(nnUNet_raw_data, task_name))
 
@@ -171,6 +178,7 @@ def main():
         #     exp_planner.plan_experiment()
         #     if not dont_run_preprocessing:  # double negative, yooo
         #         exp_planner.run_preprocessing(threads)
+        write_value_in_config(path_to_config_file, "preprocessing_complete", True)
 
 
 if __name__ == "__main__":
