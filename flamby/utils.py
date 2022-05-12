@@ -111,6 +111,7 @@ def get_config_file_path(dataset_name, debug):
         "fed_isic2019",
         "fed_lidc_idri",
         "fed_ixi",
+        "fed_kits19",
     ], f"Dataset name {dataset_name} not valid."
     config_file_name = (
         "dataset_location_debug.yaml" if debug else "dataset_location.yaml"

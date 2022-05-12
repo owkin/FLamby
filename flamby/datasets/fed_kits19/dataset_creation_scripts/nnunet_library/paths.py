@@ -15,6 +15,7 @@
 import os
 import yaml
 from batchgenerators.utilities.file_and_folder_operations import maybe_mkdir_p, join
+from flamby.utils import create_config, write_value_in_config, get_config_file_path, read_config
 
 # do not modify these unless you know what you are doing
 my_output_identifier = "nnUNet"
@@ -27,8 +28,12 @@ default_cascade_trainer = "nnUNetTrainerV2CascadeFullRes"
 PLEASE READ paths.md FOR INFORMATION TO HOW TO SET THIS UP
 """
 
-with open("../../../dataset_creation_scripts/data_directory.yaml", 'r') as stream:
-    base = yaml.safe_load(stream)
+path_to_config_file = get_config_file_path("fed_kits19", True)
+print(path_to_config_file)
+dict = read_config(path_to_config_file)
+base = dict["dataset_path"] + '/'
+# with open("../../../dataset_creation_scripts/data_location.yaml", 'r') as stream:
+#     base = yaml.safe_load(stream)
 
 """ Setting the Paths based on Yaml File """
 

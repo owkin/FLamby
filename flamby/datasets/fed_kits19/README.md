@@ -54,8 +54,15 @@ python3 -m starter_code.get_imaging
 ```
 These commands will download the KiTS19 dataset in your download directory. 
 
-3. Move the downloaded dataset to the data directory you want to keep it in and save
-the path in the data_location.yaml file present in the flamby/datasets/fed_kits19/dataset_creation_scripts folder.
+3. Move the downloaded dataset to the data directory you want to keep it in, and save
+4. To store the data path (path to the datafolder given by KiTS19), run the following command in the directory 'fed_kits19/dataset_creation_scripts/nnunet_library/dataset_conversion',
+```bash
+python3 create_config.py --output_folder "data_folder_path" --debug True
+```
+OR
+```bash
+python3 create_config.py --output_folder "data_folder_path" --debug ''
+```
 ## Data Preprocessing   
 For preprocessing, we use nnunet library and batchgenerators packages.
 #Citation:
