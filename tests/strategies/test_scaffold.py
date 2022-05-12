@@ -186,8 +186,9 @@ def test_scaffold_algorithm(seed, lr):
         [np.zeros_like(p) for p in modified_s.models_list[0]._get_current_params()]
         # np.zeros_like(p.detach().numpy()) for p in m3.parameters()
     ]
-    # Compute induced correction = server_state - previous_state = server_state.
-    induced_correction = [p.detach().numpy() for p in m3.parameters()]
+    # Compute induced correction.
+    # prev_correction + (server_state - previous_state)/lr = server_state/lr.
+    induced_correction = [p.detach().numpy() / lr for p in m3.parameters()]
 
     m3 = modified_s.run()[0]
     weights_after_modifed_scaffold = [p.detach().numpy() for p in m3.parameters()]
@@ -201,10 +202,10 @@ def test_scaffold_algorithm(seed, lr):
     )
 
     # The corrected weights should differ from FedAvg by correction.
-    # Check if Scaffold update satisfies normal_update + corection.
+    # Check if Scaffold update satisfies normal_update + lr*correction.
     assert all(
         [
-            np.allclose(w1, w2 + c)
+            np.allclose(w1, w2 + lr * c)
             for w1, w2, c in zip(
                 weights_after_modifed_scaffold, weights_after_fedavg, induced_correction
             )
