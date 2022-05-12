@@ -17,6 +17,8 @@ class Scaffold(FedAvg):
     is added to every local update on the client.
     This is a more efficient implementation of Scaffold whose communication and
     computation requirement exactly matches that of FedAvg.
+    The current implementation assumes that SGD is the local optimizer, and that all
+    clients participate every round.
 
     References
     ----------
@@ -90,6 +92,11 @@ class Scaffold(FedAvg):
         self.previous_client_state_list = [
             _model._get_current_params() for _model in self.models_list
         ]
+        # initialize the corrections used by each client to 0s.
+        self.client_corrections_state_list = [
+            [torch.zeros_like(torch.from_numpy(p)) for p in _model._get_current_params()]
+            for _model in self.models_list
+        ]
         self.lr = learning_rate
 
     def _local_optimization(
@@ -125,21 +132,36 @@ class Scaffold(FedAvg):
         """
         local_updates = list()
         new_client_state_list = list()
-        for _model, dataloader_with_memory, size, previous_client_state in zip(
+        new_correction_state_list = list()
+        for (
+            _model,
+            dataloader_with_memory,
+            size,
+            _previous_client_state,
+            _prev_correction_state,
+        ) in zip(
             self.models_list,
             self.training_dataloaders_with_memory,
             self.training_sizes,
             self.previous_client_state_list,
+            self.client_corrections_state_list,
         ):
-            # compute correction as (server_state - previous_client_state) / num_updates
+            # Update as correction += (server_state - previous_state) / lr*num_updates.
             _server_state = _model._get_current_params()
-            correction_state = [
-                torch.from_numpy((p - q) / (self.lr * self.num_updates))
-                for p, q in zip(_server_state, previous_client_state)
+            _new_correction_state = [
+                c + torch.from_numpy((p - q) / (self.lr * self.num_updates))
+                for c, p, q in zip(
+                    _prev_correction_state, _server_state, _previous_client_state
+                )
             ]
+            new_correction_state_list.append(_new_correction_state)
+            del _previous_client_state
+            del _prev_correction_state
 
             # Local Optimization
-            self._local_optimization(_model, dataloader_with_memory, correction_state)
+            self._local_optimization(
+                _model, dataloader_with_memory, _new_correction_state
+            )
             _local_next_state = _model._get_current_params()
             new_client_state_list.append(_local_next_state)
 
