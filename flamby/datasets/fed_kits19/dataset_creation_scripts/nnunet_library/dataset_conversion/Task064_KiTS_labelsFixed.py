@@ -44,7 +44,7 @@ def add_args(parser):
     args = parser.parse_args()
     return args
 
-def read_csv_file(csv_file = '../../anony_sites.csv', debug = False):
+def read_csv_file(csv_file = '../../../metadata/anony_sites.csv', debug = False):
     print(' Reading kits19 Meta Data ...')
     columns = defaultdict(list)  # each value in each column is appended to a list
 
@@ -99,6 +99,35 @@ def read_csv_file(csv_file = '../../anony_sites.csv', debug = False):
             if silo_count == 2:
                 break
 
+
+    print(" Creating Thresholded Data's metadata file ")
+    with open('../../../metadata/thresholded_sites.csv', 'w', newline = '') as file:
+        writer = csv.writer(file)
+        writer.writerow(['case_ids', 'site_ids', 'train_test_split','train_test_split_silo'])
+        silo_count = 0
+        for ID in range(0, 89):
+            client_ids = np.where(np.array(train_site_ids) == ID)[0]
+            if len(client_ids) >= 10:
+                client_data_idxx = np.array([train_case_ids[i] for i in client_ids])
+                data_length = len(client_data_idxx)
+                train_ids = int(0.8*data_length)
+                test_ids = int(0.2*data_length)
+                print(train_ids)
+                print(test_ids)
+                print(client_data_idxx)
+                print(client_data_idxx[:train_ids])
+                print(client_data_idxx[train_ids:])
+                for i in client_data_idxx[:train_ids]:
+                    writer.writerow([i,silo_count,'train', 'train_'+str(silo_count)])
+                for i in client_data_idxx[train_ids:]:
+                    writer.writerow([i,silo_count,'test', 'test_'+str(silo_count)])
+
+                if thresholded_case_ids is None:
+                    thresholded_case_ids = client_data_idxx
+                else:
+                    thresholded_case_ids = np.concatenate((thresholded_case_ids, client_data_idxx), axis=0)
+                silo_count += 1
+
     return case_ids, site_ids[0:210], unique_hospital_IDs, thresholded_case_ids.tolist()
 
 
@@ -113,9 +142,9 @@ if __name__ == "__main__":
     args = add_args(parser)
     path_to_config_file = get_config_file_path("fed_kits19", True)
     dict = read_config(path_to_config_file)
-    if dict["download_complete"]:
-        print("You have already downloaded the slides, aborting.")
-        sys.exit()
+    # if dict["download_complete"]:
+    #     print("You have already downloaded the slides, aborting.")
+    #     sys.exit()
     base = base + "data"
     task_id = 64
     task_name = "KiTS_labelsFixed"
