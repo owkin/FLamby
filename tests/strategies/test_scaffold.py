@@ -66,8 +66,8 @@ def test_scaffold_integration(n_clients):
     m = NeuralNetwork()
     num_updates = 100
     nrounds = 50
-    lr = 0.001
-    optimizer_class = torch.optim.Adam
+    lr = 0.1
+    optimizer_class = torch.optim.SGD
 
     s = Scaffold(train_dataloader, m, loss, optimizer_class, lr, num_updates, nrounds)
     m = s.run()
@@ -139,7 +139,16 @@ def test_scaffold_algorithm(seed, lr):
     weights_after_scaffold = [p.detach().numpy() for p in m1.parameters()]
 
     # Run FedAvg for 1 round.
-    s = FedAvg(
+    torch.manual_seed(seed)
+    training_dataloaders = [
+        dl(
+            FedDummyDataset(center=0, train=True, pooled=True),
+            batch_size=32,
+            shuffle=False,
+            collate_fn=collate_fn_double,
+        )
+    ]
+    f = FedAvg(
         training_dataloaders,
         m2,
         loss,
@@ -149,10 +158,19 @@ def test_scaffold_algorithm(seed, lr):
         nrounds=1,
         log=False,
     )
-    m2 = s.run()[0]
+    m2 = f.run()[0]
     weights_after_fedavg = [p.detach().numpy() for p in m2.parameters()]
 
     # Run SCAFFOLD with modified previous state for 1 step
+    torch.manual_seed(seed)
+    training_dataloaders = [
+        dl(
+            FedDummyDataset(center=0, train=True, pooled=True),
+            batch_size=32,
+            shuffle=False,
+            collate_fn=collate_fn_double,
+        )
+    ]
     modified_s = Scaffold(
         training_dataloaders,
         m3,
@@ -165,7 +183,8 @@ def test_scaffold_algorithm(seed, lr):
     )
     # Set previous_state to all zeros.
     modified_s.previous_client_state_list = [
-        np.zeros_like(p.detach().numpy()) for p in m3.parameters()
+        [np.zeros_like(p) for p in modified_s.models_list[0]._get_current_params()]
+        # np.zeros_like(p.detach().numpy()) for p in m3.parameters()
     ]
     # Compute induced correction = server_state - previous_state = server_state.
     induced_correction = [p.detach().numpy() for p in m3.parameters()]

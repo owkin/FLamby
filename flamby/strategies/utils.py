@@ -231,7 +231,7 @@ class _Model:
             self.current_epoch = _current_epoch
 
     def _local_train_with_correction(
-        self, dataloader_with_memory, num_updates, correction_state
+        self, dataloader_with_memory, num_updates, correction_state, lr
     ):
         """This method trains the model using the dataloader_with_memory given
         for num_updates steps while applying a correction during every update.
@@ -245,6 +245,8 @@ class _Model:
             The number of batches to train on.
         correction_state: List
             Correction to be applied to the model state during every local update.
+        lr: float
+            Learning rate used by optimizer.
         """
         # Local train
         _size = len(dataloader_with_memory)
@@ -269,9 +271,7 @@ class _Model:
             # We preserve the true loss before adding the correction term
             # and doing the backward step on the sum.
             _loss = _corrected_loss.detach()
-            _corrected_loss -= sum(
-                [p @ c for p, c in zip(list(self.model.parameters()), correction_state)]
-            )
+            _corrected_loss -= compute_dot_product(self.model, correction_state) / lr
 
             # Backpropagation
             _corrected_loss.backward()
@@ -342,6 +342,19 @@ def compute_model_diff_squared_norm(model1: torch.nn.Module, model2: torch.nn.Mo
     norm = sum([torch.sum((tensor1[i] - tensor2[i]) ** 2) for i in range(len(tensor1))])
 
     return norm
+
+
+def compute_dot_product(model: torch.nn.Module, params):
+    """Compute the dot prodcut between model and input parameters.
+
+    Parameters
+    ----------
+    model : torch.nn.Module
+    params : List containing model parameters
+    """
+    model_p = list(model.parameters())
+    dot_prod = sum([torch.sum(m * p) for m, p in zip(model_p, params)])
+    return dot_prod
 
 
 def check_exchange_compliance(tensors_list, max_bytes, units="bytes"):
