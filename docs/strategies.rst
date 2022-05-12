@@ -1,5 +1,5 @@
 FL Strategies
-=============================
+=============
 
 
 Federated Averaging
@@ -7,6 +7,8 @@ Federated Averaging
 
 .. autoclass:: flamby.strategies.FedAvg
    :members:
+   :undoc-members:
+   :private-members:
 
 FedAdam
 -------
