@@ -65,6 +65,7 @@ conda env create -f environment.yml
 conda conda activate flamby
 ```
 
+
 ### Accepting data licensing
 Then proceed to read and accept the different licenses and download the data from
 all the datasets you are interested in by following the instructions provided in each folder:
@@ -79,6 +80,18 @@ all the datasets you are interested in by following the instructions provided in
 Look at our tutorials and get started sections.
 #TODO write tutorials and get started sections
 
+## Deploy documentations
+
+We use [sphinx](https://www.sphinx-doc.org/en/master/) to create FLamby's documentation.
+In order to build the doc locally, activate the environment then:
+```bash
+cd docs
+make clean make html
+```
+This will generate html pages in the folder _builds/html that can be accessed in your browser:
+```bash
+open _builds
+```
 ## Contributing
 
 After installing the package in dev mode (``pip install -e .``)
