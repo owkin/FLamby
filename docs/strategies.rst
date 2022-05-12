@@ -13,19 +13,25 @@ FedAdam
 
 .. autoclass:: flamby.strategies.FedAdam
    :members:
+   :undoc-members:
+   :private-members:
 
 FedYogi
 -------
 
 .. autoclass:: flamby.strategies.FedYogi
    :members:
+   :undoc-members:
+   :private-members:
 
 
-FedAdaGrad
------------------------------
+FedAdagrad
+----------
 
 .. autoclass:: flamby.strategies.FedAdagrad
    :members:
+   :undoc-members:
+   :private-members:
 
 
 Cyclic & RandomWalk
@@ -33,6 +39,8 @@ Cyclic & RandomWalk
 
 .. autoclass:: flamby.strategies.Cyclic
    :members:
+   :undoc-members:
+   :private-members:
 
 
 FedProx
@@ -40,5 +48,7 @@ FedProx
 
 .. autoclass:: flamby.strategies.FedProx
    :members:
+   :undoc-members:
+   :private-members:
 
 
