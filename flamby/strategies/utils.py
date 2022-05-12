@@ -230,6 +230,81 @@ class _Model:
                     )
             self.current_epoch = _current_epoch
 
+    def _local_train_with_correction(
+        self, dataloader_with_memory, num_updates, correction_state
+    ):
+        """This method trains the model using the dataloader_with_memory given
+        for num_updates steps while applying a correction during every update.
+
+        Parameters
+        ----------
+        dataloader_with_memory : dataloaderwithmemory
+            A dataloader that can be called infinitely using its get_samples()
+            method.
+        num_updates : int
+            The number of batches to train on.
+        correction_state: List
+            Correction to be applied to the model state during every local update.
+        """
+        # Local train
+        _size = len(dataloader_with_memory)
+        self.model = self.model.train()
+        for idx, _batch in enumerate(range(num_updates)):
+            X, y = dataloader_with_memory.get_samples()
+            X, y = X.to(self._device), y.to(self._device)
+            if idx == 0:
+                # Initialize the batch-size using the first batch to avoid
+                # edge cases with drop_last=False
+                _batch_size = X.shape[0]
+                _num_batches_per_epoch = (_size // _batch_size) + int(
+                    (_size % _batch_size) == 0
+                )
+            # We will implement correction by modifying loss as
+            # corrected_loss = loss - correction @ model_params.
+            # Then, we have corrected gradient = gradient - correction.
+
+            # Compute prediction and loss
+            _pred = self.model(X)
+            _corrected_loss = self._loss(_pred, y)
+            # We preserve the true loss before adding the correction term
+            # and doing the backward step on the sum.
+            _loss = _corrected_loss.detach()
+            _corrected_loss -= sum(
+                [p @ c for p, c in zip(list(self.model.parameters()), correction_state)]
+            )
+
+            # Backpropagation
+            _corrected_loss.backward()
+            self._optimizer.step()
+            self._optimizer.zero_grad()
+            self.num_batches_seen += 1
+            _loss, _current_epoch = (
+                _loss.item(),
+                self.num_batches_seen // _num_batches_per_epoch,
+            )
+
+            if self.log:
+                if _batch % self.log_period == 0:
+                    if _current_epoch > self.current_epoch:
+                        # At each epoch we look at the histograms of all the
+                        # network's parameters
+                        for name, p in self.model.named_parameters():
+                            self.writer.add_histogram(
+                                f"client{self.client_id}/{name}", p, _current_epoch
+                            )
+
+                    print(
+                        f"loss: {_loss:>7f} after {self.num_batches_seen:>5d}"
+                        f" batches of data amounting to {_current_epoch:>5d}"
+                        " epochs."
+                    )
+                    self.writer.add_scalar(
+                        f"client{self.client_id}/train/Loss",
+                        _loss,
+                        self.num_batches_seen,
+                    )
+            self.current_epoch = _current_epoch
+
     @torch.inference_mode()
     def _get_current_params(self):
         """Returns the current weights of the pytorch model.
