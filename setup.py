@@ -81,6 +81,7 @@ setup(
         "tensorboard",
         "wget",
         "pytest",
+        "sphinx",
     ],
     extras_require={},
     description="FLamby: A cross-silo Federated Learning Benchmark.",
