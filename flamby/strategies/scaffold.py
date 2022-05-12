@@ -15,6 +15,8 @@ class Scaffold(FedAvg):
     different directions. Each client maintains a 'correction' which estimates
     this difference between client updates and global average update. This correction
     is added to every local update on the client.
+    This is a more efficient implementation of Scaffold which assumes that all clients
+    participate every round.
 
     References
     ----------
@@ -69,7 +71,7 @@ class Scaffold(FedAvg):
 
         assert (
             optimizer_class == torch.optim.SGD
-        ), "Only SGD for client optimizer with SCAFFOLD"
+        ), "Only SGD for client optimizer with Scaffold"
 
         super().__init__(
             training_dataloaders,
@@ -88,6 +90,7 @@ class Scaffold(FedAvg):
         self.previous_client_state_list = [
             _model._get_current_params() for _model in self.models_list
         ]
+        self.lr = learning_rate
 
     def _local_optimization(
         self,
@@ -108,9 +111,7 @@ class Scaffold(FedAvg):
             Correction to be applied to the model state during every local update.
         """
         _model._local_train_with_correction(
-            dataloader_with_memory,
-            correction_state,
-            self.num_updates,
+            dataloader_with_memory, self.num_updates, correction_state, self.lr
         )
 
     def perform_round(self):
@@ -133,7 +134,7 @@ class Scaffold(FedAvg):
             # compute correction as (server_state - previous_client_state) / num_updates
             _server_state = _model._get_current_params()
             correction_state = [
-                (p - q) / self.num_updates
+                torch.from_numpy((p - q) / self.num_updates)
                 for p, q in zip(_server_state, previous_client_state)
             ]
 
