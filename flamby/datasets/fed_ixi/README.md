@@ -16,7 +16,7 @@ This repository highlights **IXI** (*Information eXtraction from Images*), a med
 
 In the same register, we highlight a particular dataset called **IXI Tiny**, which is composed of preprocessed images from the standard **IXI** dataset. The idea behind the use of this dataset is to take advantage of its lightness, as well as the labels it directly provides so it allows us to handle an interesting segmentation task.
 
-We have chosen to include the standard dataset, fulfilling the requirements for the dataloader implementation, although we will focus on the lighter one, **IXI Tiny**, as a starting point.
+We have chosen to give some insight about the standard dataset, although we will focus on the lighter one, **IXI Tiny**, as a starting point. Note that the requirements for the standard IXI dataloader have been implemented, but for a matter of clarity, we will limit ourselves to the code of IXI tiny on this part of the repository. Of course, standard IXI could be added in the near future on a separate place.
 
 ## Standard IXI Dataset
 
