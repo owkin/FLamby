@@ -231,7 +231,7 @@ class _Model:
             self.current_epoch = _current_epoch
 
     def _local_train_with_correction(
-        self, dataloader_with_memory, num_updates, correction_state, lr
+        self, dataloader_with_memory, num_updates, correction_state
     ):
         """This method trains the model using the dataloader_with_memory given
         for num_updates steps while applying a correction during every update.
@@ -245,8 +245,6 @@ class _Model:
             The number of batches to train on.
         correction_state: List
             Correction to be applied to the model state during every local update.
-        lr: float
-            Learning rate used by optimizer.
         """
         # Local train
         _size = len(dataloader_with_memory)
@@ -271,7 +269,7 @@ class _Model:
             # We preserve the true loss before adding the correction term
             # and doing the backward step on the sum.
             _loss = _corrected_loss.detach()
-            _corrected_loss -= compute_dot_product(self.model, correction_state) / lr
+            _corrected_loss -= compute_dot_product(self.model, correction_state)
 
             # Backpropagation
             _corrected_loss.backward()
