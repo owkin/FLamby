@@ -87,13 +87,12 @@ def test_scaffold_integration(n_clients):
     "seed, lr",
     [(42, 0.01), (43, 0.001), (44, 0.0001), (45, 7e-5)],
 )
-def test_fed_prox_algorithm(seed, lr):
+def test_scaffold_algorithm(seed, lr):
     r"""Scaffold should add a correction term in each of its update step.
     In the first round, this correction step is 0. In each subsequent round,
-    the correction depends on previous client models. the global model at each round.
-
-    The implementation provided by the authors show that the wanted behavior
-    is to update the weights to be - lr * grad + mu \cdot (var - global_var)
+    the correction depends on previous client models. The update is equivalent
+    to new_params = params -lr*grad + correction, where
+    correction = server_params - prev_client_params.
 
     Parameters
     ----------
@@ -103,12 +102,12 @@ def test_fed_prox_algorithm(seed, lr):
         Learning rate.
     """
 
-    num_updates = 10
     loss = BaselineLoss()
     torch.manual_seed(seed)
 
     m1 = Baseline().to(torch.double)
     m2 = copy.deepcopy(m1)
+    m3 = copy.deepcopy(m1)
 
     def collate_fn_double(batch):
         outputs = default_collate(batch)
@@ -125,19 +124,19 @@ def test_fed_prox_algorithm(seed, lr):
         )
     ]
 
-    # Run SCAFFOLD for 1 round.
+    # Run SCAFFOLD for 1 step.
     s = Scaffold(
         training_dataloaders,
         m1,
         loss,
         torch.optim.SGD,
         lr,
-        num_updates=num_updates,
+        num_updates=1,
         nrounds=1,
         log=False,
     )
     m1 = s.run()[0]
-    weights_model_after_scaffold = [p.detach().numpy() for p in m1.parameters()]
+    weights_after_scaffold = [p.detach().numpy() for p in m1.parameters()]
 
     # Run FedAvg for 1 round.
     s = FedAvg(
@@ -146,16 +145,49 @@ def test_fed_prox_algorithm(seed, lr):
         loss,
         torch.optim.SGD,
         lr,
-        num_updates=num_updates,
+        num_updates=1,
         nrounds=1,
         log=False,
     )
     m2 = s.run()[0]
-    weights_model_after_fedavg = [p.detach().numpy() for p in m2.parameters()]
-    # When running only for 1 round, the weights should be the same.
+    weights_after_fedavg = [p.detach().numpy() for p in m2.parameters()]
+
+    # Run SCAFFOLD with modified previous state for 1 step
+    modified_s = Scaffold(
+        training_dataloaders,
+        m3,
+        loss,
+        torch.optim.SGD,
+        lr,
+        num_updates=1,
+        nrounds=1,
+        log=False,
+    )
+    # Set previous_state to all zeros.
+    modified_s.previous_client_state_list = [
+        np.zeros_like(p.detach().numpy()) for p in m3.parameters()
+    ]
+    # Compute induced correction = server_state - previous_state = server_state.
+    induced_correction = [p.detach().numpy() for p in m3.parameters()]
+
+    m3 = modified_s.run()[0]
+    weights_after_modifed_scaffold = [p.detach().numpy() for p in m3.parameters()]
+
+    # When running only for 1 round, FedAvg and Scaffold should have same weights.
     assert all(
         [
             np.allclose(w1, w2)
-            for w1, w2 in zip(weights_model_after_scaffold, weights_model_after_fedavg)
+            for w1, w2 in zip(weights_after_scaffold, weights_after_fedavg)
+        ]
+    )
+
+    # The corrected weights should differ from FedAvg by correction.
+    # Check if Scaffold update satisfies normal_update + corection.
+    assert all(
+        [
+            np.allclose(w1, w2 + c)
+            for w1, w2, c in zip(
+                weights_after_modifed_scaffold, weights_after_fedavg, induced_correction
+            )
         ]
     )
