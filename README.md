@@ -86,7 +86,8 @@ We use [sphinx](https://www.sphinx-doc.org/en/master/) to create FLamby's docume
 In order to build the doc locally, activate the environment then:
 ```bash
 cd docs
-make clean make html
+make clean
+make html
 ```
 This will generate html pages in the folder _builds/html that can be accessed in your browser:
 ```bash
