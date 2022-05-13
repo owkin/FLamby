@@ -91,8 +91,7 @@ def test_scaffold_algorithm(seed, lr):
     r"""Scaffold should add a correction term in each of its update step.
     In the first round, this correction step is 0. In each subsequent round,
     the correction depends on previous client models. The update is equivalent
-    to new_params = params -lr*grad + correction, where
-    correction = server_params - prev_client_params.
+    to new_params = params - lr * (grad + correction).
 
     Parameters
     ----------
