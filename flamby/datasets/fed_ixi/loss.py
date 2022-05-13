@@ -21,7 +21,7 @@ class BaselineLoss(_Loss):
         torch.Tensor
             A torch tensor containing the respective dice losses.
       """
-      return 1 - get_dice_score(output, target)
+      return torch.mean(1 - get_dice_score(output, target))
 
 def get_dice_score(output, target, epsilon=1e-9):
     """Get dice score to evaluate the semantic segmentation model. Its value lies between 0 and 1. The more the score is close to 1, the more the performance is good.
