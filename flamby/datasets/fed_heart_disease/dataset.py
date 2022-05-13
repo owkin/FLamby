@@ -52,6 +52,8 @@ class HeartDiseaseRaw(Dataset):
 
         self.train_fraction = 0.66
 
+        np.random.seed(0)
+
         for center_data_file in self.data_dir.glob("*.data"):
 
             center_name = os.path.basename(center_data_file).split(".")[1]
@@ -67,10 +69,18 @@ class HeartDiseaseRaw(Dataset):
 
             self.centers += [self.centers_number[center_name]] * center_X.shape[0]
 
-            nb_train = int(center_X.shape[0] * self.train_fraction)
-            nb_test = center_X.shape[0] - nb_train
-            self.sets += ["train"] * nb_train
-            self.sets += ["test"] * nb_test
+            # proposed modification to introduce randomness in the split per center
+            # (there is a problem for center 1)
+            # nb_train = int(center_X.shape[0] * self.train_fraction)
+            # nb_test = center_X.shape[0] - nb_train
+            # self.sets += ["train"] * nb_train
+            # self.sets += ["test"] * nb_test
+            nb = int(center_X.shape[0])
+            for _ in range(nb):
+                if np.random.rand() < self.train_fraction:
+                    self.sets += ["train"]
+                else:
+                    self.sets += ["test"]
 
         # encode dummy variables for categorical variables
         self.features = pd.get_dummies(self.features, columns=[2, 6], drop_first=True)
