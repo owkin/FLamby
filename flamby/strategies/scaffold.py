@@ -32,9 +32,10 @@ class Scaffold(FedAvg):
         model: torch.nn.Module,
         loss: torch.nn.modules.loss._Loss,
         optimizer_class: torch.optim.Optimizer,
-        learning_rate: float,
+        client_learning_rate: float,
         num_updates: int,
         nrounds: int,
+        server_learning_rate: float = 1,
         log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
@@ -53,12 +54,15 @@ class Scaffold(FedAvg):
         optimizer_class : torch.optim.Optimizer
             The class of the torch model optimizer to use at each step.
             It has to be SGD.
-        learning_rate : float
-            The learning rate to be given to the optimizer_class.
+        client_learning_rate : float
+            The learning rate to be given to the clients optimizer_class.
         num_updates : int
             The number of updates to do on each client at each round.
         nrounds : int
             The number of communication rounds to do.
+        server_learning_rate : float
+            The learning rate with which the server's updates are aggregated.
+            Defaults to 1.
         log: bool
             Whether or not to store logs in tensorboard. Defaults to False.
         log_period: int
@@ -80,7 +84,7 @@ class Scaffold(FedAvg):
             model,
             loss,
             optimizer_class,
-            learning_rate,
+            client_learning_rate,
             num_updates,
             nrounds,
             log,
@@ -97,7 +101,8 @@ class Scaffold(FedAvg):
             [torch.zeros_like(torch.from_numpy(p)) for p in _model._get_current_params()]
             for _model in self.models_list
         ]
-        self.lr = learning_rate
+        self.client_lr = client_learning_rate
+        self.server_lr = server_learning_rate
 
     def _local_optimization(
         self,
@@ -149,7 +154,10 @@ class Scaffold(FedAvg):
             # Update as correction += (server_state - previous_state) / lr*num_updates.
             _server_state = _model._get_current_params()
             _new_correction_state = [
-                c + torch.from_numpy((p - q) / (self.lr * self.num_updates))
+                c
+                + torch.from_numpy(
+                    (p - q) / (self.server_lr * self.client_lr * self.num_updates)
+                )
                 for c, p, q in zip(
                     _prev_correction_state, _server_state, _previous_client_state
                 )
@@ -163,6 +171,12 @@ class Scaffold(FedAvg):
                 _model, dataloader_with_memory, _new_correction_state
             )
             _local_next_state = _model._get_current_params()
+
+            # Scale local parameters by server_lr
+            _local_next_state = [
+                self.server_lr * new + (1 - self.server_lr) * old
+                for new, old in zip(_local_next_state, _server_state)
+            ]
             new_client_state_list.append(_local_next_state)
 
             # Recovering updates
@@ -181,6 +195,7 @@ class Scaffold(FedAvg):
 
         # update previous client states
         self.previous_client_state_list = new_client_state_list
+        self.client_corrections_state_list = new_correction_state_list
 
         # Aggregation step
         aggregated_delta_weights = [
