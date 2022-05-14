@@ -57,14 +57,40 @@ These commands will download the KiTS19 dataset in your download directory.
 3. Move the downloaded dataset to the data directory you want to keep it in, and save
 4. To store the data path (path to the datafolder given by KiTS19), run the following command in the directory 'fed_kits19/dataset_creation_scripts/nnunet_library/dataset_conversion',
 ```bash
-python3 create_config.py --output_folder "data_folder_path" --debug True
-```
-OR
-```bash
-python3 create_config.py --output_folder "data_folder_path" --debug ''
+python3 create_config.py --output_folder "data_folder_path" 
 ```
 ## Data Preprocessing   
-For preprocessing, we use nnunet library and batchgenerators packages.
+For preprocessing, we use [nnunet](https://github.com/MIC-DKFZ/nnUNet) library and [batchgenerators](https://github.com/MIC-DKFZ/batchgenerators) packages. We exploit nnunet preprocessing pipeline
+to apply intensity normalization, voxel and foreground resampling. In addition, we apply extensive transformations such as random crop, rotation, scaling, mirror etc. 
+
+1. To run preprocessing, first step is dataset conversion. For this step, go to the following directory from the fed_kits19 directory
+```bash
+cd dataset_creation_scripts/nnunet_library/dataset_conversion
+```
+and run the following command to prepare the data for preprocessing. If you want to preprocess small chunk of data, add --debug True argument in the following command.
+```bash
+python3 Task064_KiTS_labelsFixed.py 
+```
+
+[comment]: <> (if you want complete data to be preprocessed, set debug argument to be False as follows,)
+
+[comment]: <> (```bash)
+
+[comment]: <> (python3 Task064_KiTS_labelsFixed.py )
+
+[comment]: <> (```)
+
+2. After data conversion, next step is to run the preprocessing which involves, data intensity normalization and voxel resampling. To run preprocessing, run the following command to go to the right directory from fed_kits19 directory
+```bash
+cd dataset_creation_scripts/nnunet_library/experiment_planning
+```
+and run the following command to preprocess the data,
+```bash
+python3 nnUNet_plan_and_preprocess.py -t 064
+```
+For debug mode (--debug True) argument, we preprocess only two silos data and it can take ~2-3 hours to preprocess the data. For the complete dataset, it can take even longer however, once data is preprocessed,
+running the experiments can be very time efficient as it saves the preprocessing time for every experiment run.
+
 #Citation:
 ```bash
    @article{isensee2018nnu,
@@ -80,30 +106,4 @@ For preprocessing, we use nnunet library and batchgenerators packages.
   year={2020}
 }
 ```
-
-1. To run preprocessing, first step is dataset conversion, from fed_kits19 directory
-```bash
-cd dataset_creation_scripts/nnunet_library/dataset_conversion
-```
-and run the following command to prepare a small chunk of data for preprocessing, 
-```bash
-python3 Task064_KiTS_labelsFixed.py --debug True 
-```
-if you want complete data to be preprocessed, set debug argument to be False as follows,
-```bash
-python3 Task064_KiTS_labelsFixed.py --debug False
-```
-
-2. After data conversion, run the preprocessing, from fed_kits19 directory
-```bash
-cd dataset_creation_scripts/nnunet_library/experiment_planning
-```
-and run the following command to preprocess the data,
-```bash
-python3 nnUNet_plan_and_preprocess.py -t 064
-```
-For debug mode, it can take ~2-3 hours to preprocess the data. For the complete dataset, it can be take even longer however, once data is preprocessed,
-running the experiments can be very time efficient as it saves the preprocessing time for every experiment run.
-
-
 
