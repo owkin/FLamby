@@ -40,7 +40,7 @@ def add_args(parser):
     """
     # parser.add_argument("--output_folder", type=str, default="True", metavar="N", required=True,
     #                     help="Specify if debug mode (True) or not (False)")
-    parser.add_argument("--debug", type=str, default="True", metavar="N", help="Specify if debug mode (True) or not (False)")
+    parser.add_argument("--debug", action="store_false", type=bool,  metavar="N", help="Specify if debug mode (True) or not (False)")
     args = parser.parse_args()
     return args
 
@@ -168,11 +168,11 @@ if __name__ == "__main__":
     #     train_patients.append(all_cases[i])
     # print(train_patients)
     print(thresholded_ids)
-    if args.debug == 'True':
-        train_patients = thresholded_ids
+    if args.debug == True:
+        train_patients = thresholded_ids[:25]
         test_patients = all_cases[210:211] # we do not need the test data
     else:
-        train_patients = all_cases[:210]
+        train_patients = thresholded_ids
         test_patients = all_cases[210:211] # we do not need the test data
 
     for p in train_patients:
