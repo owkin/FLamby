@@ -91,7 +91,7 @@ make html
 ```
 This will generate html pages in the folder _builds/html that can be accessed in your browser:
 ```bash
-open _builds
+open _builds/html/index.html
 ```
 ## Contributing
 
