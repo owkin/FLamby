@@ -181,7 +181,7 @@ class FedAdam(FedOpt):
         learning_rate: float,
         num_updates: int,
         nrounds: int,
-        log: bool,
+        log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
         tau: float = 1e-3,
