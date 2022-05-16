@@ -1,14 +1,14 @@
 import argparse
 import copy
 import os
-
+import ipdb
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader as dl
 
 import flamby.strategies as strats
 
-# Only two lines to change to evaluate different datasets (except for LIDC where the
+# Only 3 lines to change to evaluate different datasets (except for LIDC where the
 # evaluation function is custom)
 # Still some datasets might require specific augmentation strategies or collate_fn
 # functions in the data loading part
@@ -33,13 +33,12 @@ def main(args2):
 
     NAME_RESULTS_FILE = "results_benchmark.csv"
 
-    # strategy_names = ["FedAvg", "FedProx", "Cyclic", "FedAdam", "FedYogi",
-    #                   "FedAdaGrad", "Scaffold"]
-    strategy_names = ["FedAvg", "FedProx", "FedAdam"]
+    #strategy_names = ["FedAvg", "FedProx", "FedAdagrad", "FedAdam", "FedYogi", "Cyclic", "Scaffold"]
+    strategy_names = ["FedAvg", "FedProx"]
 
     # One might need to iterate on the hyperparameters to some extents if performances
     # are seriously degraded with default ones
-    # We can addd parameters or change them on the go, in the future an argparse could
+    # We can add parameters or change them on the go, in the future an argparse could
     # be used to make the process easier
     strategy_specific_hp_dicts = {}
     strategy_specific_hp_dicts["FedAvg"] = {}
@@ -81,10 +80,11 @@ def main(args2):
         for name, _ in v.items():
             hp_additional_args.append(name)
     columns_names += hp_additional_args
+    #ipdb.set_trace()
 
     # We instantiate all train and test dataloaders required including pooled ones
 
-    # fix the number of workers ! parallelism issues when > 0
+    # FIX the number of workers ! parallelism issues when > 0
     training_dls = [
         dl(
             FedDataset(center=i, train=True, pooled=False),
@@ -103,6 +103,11 @@ def main(args2):
         )
         for i in range(NUM_CLIENTS)
     ]
+
+    # We use the same initialization for everyone in order to be fair
+    torch.manual_seed(42)
+    global_init = Baseline()
+
     train_pooled = dl(
         FedDataset(train=True, pooled=True),
         batch_size=BATCH_SIZE,
@@ -116,19 +121,16 @@ def main(args2):
         num_workers=args2.workers,
     )
 
-    # We use the same initiaization for everyone in order to be fair
-    torch.manual_seed(42)
-    global_init = Baseline()
-
     # We check if some results are already computed
     if os.path.exists(NAME_RESULTS_FILE):
-        df = pd.DataFrame(NAME_RESULTS_FILE)
+        df = pd.read_csv(NAME_RESULTS_FILE)
+        #ipdb.set_trace()
         # If we added additional hyperparameters we update the df
         for col_name in columns_names:
             if col_name not in df.columns:
                 df[col_name] = None
         perf_lines_dicts = df.to_dict("records")
-
+        base_dict = {col_name: None for col_name in columns_names}
     else:
         base_dict = {col_name: None for col_name in columns_names}
         df = pd.DataFrame({k: [v] for k, v in base_dict.items()})
@@ -183,7 +185,7 @@ def main(args2):
         perf_lines_dicts.append(current_dict)
         # We update csv and save it when the results are there
         df = pd.DataFrame.from_dict(perf_lines_dicts)
-        df.to_csv(NAME_RESULTS_FILE)
+        df.to_csv(NAME_RESULTS_FILE, index=False)
 
     # Local Baselines
     for i in range(NUM_CLIENTS):
@@ -227,12 +229,14 @@ def main(args2):
             perf_lines_dicts.append(current_dict)
             # We update csv and save it when the results are there
             df = pd.DataFrame.from_dict(perf_lines_dicts)
-            df.to_csv(NAME_RESULTS_FILE)
+            df.to_csv(NAME_RESULTS_FILE, index=False)
 
     # Strategies
-    for num_updates in [50, 100, 500]:
+    for num_updates in [50, 100]:
         for sname in strategy_names:
             # Base arguments
+            m = copy.deepcopy(global_init)
+            l = BaselineLoss()
             args = {
                 "training_dataloaders": training_dls,
                 "model": m,
@@ -267,8 +271,6 @@ def main(args2):
                 if len(index_of_interest) > 0:
                     df.drop(index_of_interest, inplace=True)
                     perf_lines_dicts = df.to_dict("records")
-                m = copy.deepcopy(global_init)
-                l = BaselineLoss()
                 # We run the FL strategy
                 s = getattr(strats, sname)(**args)
                 print("FL strategy", sname, " num_updates ", num_updates)
@@ -297,7 +299,7 @@ def main(args2):
                 perf_lines_dicts.append(current_dict)
                 # We update csv and save it when the results are there
                 df = pd.DataFrame.from_dict(perf_lines_dicts)
-                df.to_csv(NAME_RESULTS_FILE)
+                df.to_csv(NAME_RESULTS_FILE, index=False)
 
 
 if __name__ == "__main__":
