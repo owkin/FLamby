@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import torch
+from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset
 
 from flamby.utils import check_dataset_from_config
@@ -52,9 +53,6 @@ class HeartDiseaseRaw(Dataset):
 
         self.train_fraction = 0.66
 
-        # to ensure the split is static
-        np.random.seed(8)
-
         for center_data_file in self.data_dir.glob("*.data"):
 
             center_name = os.path.basename(center_data_file).split(".")[1]
@@ -71,18 +69,29 @@ class HeartDiseaseRaw(Dataset):
             self.centers += [self.centers_number[center_name]] * center_X.shape[0]
 
             # proposed modification to introduce shuffling before splitting the center
-            # into train / test sets (with0ut this there is a problem for center 1)
-
-            # nb_train = int(center_X.shape[0] * self.train_fraction)
-            # nb_test = center_X.shape[0] - nb_train
-            # self.sets += ["train"] * nb_train
-            # self.sets += ["test"] * nb_test
             nb = int(center_X.shape[0])
-            for _ in range(nb):
-                if np.random.rand() < self.train_fraction:
-                    self.sets += ["train"]
+            current_labels = center_y.where(center_y == 0, 1, inplace=False)
+            levels = np.unique(current_labels)
+            if (len(np.unique(current_labels)) > 1) and all(
+                [(current_labels == lev).sum() > 2 for lev in levels]
+            ):
+                stratify = current_labels
+            else:
+                stratify = None
+            indices_train, indices_test = train_test_split(
+                np.arange(nb),
+                test_size=1.0 - self.train_fraction,
+                train_size=self.train_fraction,
+                random_state=43,
+                shuffle=True,
+                stratify=stratify,
+            )
+
+            for i in np.arange(nb):
+                if i in indices_test:
+                    self.sets.append("test")
                 else:
-                    self.sets += ["test"]
+                    self.sets.append("train")
 
         # encode dummy variables for categorical variables
         self.features = pd.get_dummies(self.features, columns=[2, 6], drop_first=True)
@@ -163,4 +172,3 @@ class FedHeartDisease(HeartDiseaseRaw):
         self.sets = [fp for idx, fp in enumerate(self.sets) if to_select[idx]]
         self.labels = [fp for idx, fp in enumerate(self.labels) if to_select[idx]]
         self.centers = [fp for idx, fp in enumerate(self.centers) if to_select[idx]]
-
