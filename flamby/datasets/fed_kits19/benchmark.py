@@ -8,14 +8,65 @@ import albumentations
 import dataset
 import torch
 from sklearn import metrics
+from tqdm import tqdm
 from flamby.datasets.fed_kits19.dataset import FedKiTS19
 from torch import nn
+import numpy as np
 
 from flamby.utils import check_dataset_from_config, evaluate_model_on_tests
 from flamby.datasets.fed_kits19.model import Generic_UNet
 from flamby.datasets.fed_kits19.loss import DC_and_CE_loss
+from flamby.datasets.fed_kits19.metric import metrics, softmax_helper
 from nnunet.network_architecture.initialization import InitWeights_He
 from torch.optim import lr_scheduler
+
+
+
+def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
+    """This function takes a pytorch model and evaluate it on a list of\
+    dataloaders using the provided metric function.
+    Parameters
+    ----------
+    model: torch.nn.Module,
+        A trained model that can forward the test_dataloaders outputs
+    test_dataloaders: List[torch.utils.data.DataLoader]
+        A list of torch dataloaders
+    metric: callable,
+        A function with the following signature:\
+            (y_true: np.ndarray, y_pred: np.ndarray) -> scalar
+    use_gpu: bool, optional,
+        Whether or not to perform computations on GPU if available. \
+        Defaults to True.
+    Returns
+    -------
+    dict
+        A dictionnary with keys client_test_{0} to \
+        client_test_{len(test_dataloaders) - 1} and associated scalar metrics \
+        as leaves.
+    """
+    results_dict = {}
+    if torch.cuda.is_available() and use_gpu:
+        model = model.cuda()
+    model.eval()
+    with torch.inference_mode():
+        for i in tqdm(range(len(test_dataloaders))):
+            test_dataloader_iterator = iter(test_dataloaders[i])
+            composite_dice_list = []
+            tumor_dice_list = []
+            kidney_dice_list = []
+            for (X, y) in test_dataloader_iterator:
+                if torch.cuda.is_available() and use_gpu:
+                    X = X.cuda()
+                    y = y.cuda()
+                y_pred = model(X).detach().cpu()
+                y = y.detach().cpu()
+                composite_dice, kidney_dice, tumor_dice = metrics(y_pred, y)
+                composite_dice_list.append(composite_dice)
+                tumor_dice_list.append(tumor_dice)
+                kidney_dice_list.append(kidney_dice)
+
+            results_dict[f"client_test_{i}"] = {'Composite dice': np.mean(composite_dice_list), 'Kidney Dice ': np.mean(kidney_dice_list), 'Tumor Dice ': np.mean(tumor_dice_list)}
+    return results_dict
 
 
 def train_model(
@@ -42,9 +93,17 @@ def train_model(
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
 
+    composite_dice_epoch_list = []
+    tumor_dice_epoch_list = []
+    kidney_dice_epoch_list = []
+
     for epoch in range(num_epochs):
         print("Epoch {}/{}".format(epoch, num_epochs - 1))
         print("-" * 10)
+
+        composite_dice_list = []
+        tumor_dice_list = []
+        kidney_dice_list = []
 
         # Each epoch has a training and validation phase
         for phase in ["train", "test"]:
@@ -54,40 +113,47 @@ def train_model(
                 model.eval()  # Set model to evaluate mode
 
             running_loss = 0.0
-            running_corrects = 0
-            y_true = []
-            y_pred = []
+            # running_corrects = 0
+            # y_true = []
+            # y_pred = []
 
             # Iterate over data.
             for sample in dataloaders[phase]:
                 inputs = sample[0].to(device)
                 labels = sample[1].to(device)
-                y_true.append(sample[1])
+                # y_true.append(sample[1])
 
                 optimizer.zero_grad()
                 with torch.set_grad_enabled(phase == "train"):
                     outputs = model(inputs)
                     loss = lossfunc(outputs, labels)
-                    _, preds = torch.max(outputs, 1)
-                    y_pred.append(preds)
+                    print('loss '+str(loss))
+                    preds_softmax = softmax_helper(outputs)
+                    preds = preds_softmax.argmax(1)
+                    # y_pred.append(preds)
                     # backward + optimize only if in training phase
                     if phase == "train":
                         loss.backward()
                         optimizer.step()
 
-                # statistics
-                running_loss += loss.item() * inputs.size(0)
-                running_corrects += torch.sum(preds == labels.data)
+                composite_dice, kidney_dice, tumor_dice = metrics(preds.cpu(), labels.cpu())
+                composite_dice_list.append(composite_dice)
+                tumor_dice_list.append(tumor_dice)
+                kidney_dice_list.append(kidney_dice)
 
+
+                # TODO: double check these statistics definitions (esp epoch acc and epoch balanced acc)
+                running_loss += loss.item() * inputs.size(0)
+                epoch_acc = (np.mean(composite_dice_list) + np.mean(tumor_dice_list))/2
+            composite_dice_epoch_list.append(np.mean(composite_dice_list))
+            tumor_dice_epoch_list.append(np.mean(tumor_dice_list))
+            kidney_dice_epoch_list.append(np.mean(kidney_dice_list))
+                # break
             if phase == "train":
-                scheduler.step()
+                scheduler.step(epoch)
 
             epoch_loss = running_loss / dataset_sizes[phase]
-            epoch_acc = running_corrects.double() / dataset_sizes[phase]
-            y = torch.cat(y_true)
-            y_hat = torch.cat(y_pred)
-
-            epoch_balanced_acc = metrics.balanced_accuracy_score(y.cpu(), y_hat.cpu())
+            epoch_balanced_acc = (np.mean(kidney_dice_epoch_list) + np.mean(tumor_dice_epoch_list))/2
 
             print(
                 "{} Loss: {:.4f} Acc: {:.4f} Balanced acc: {:.4f}".format(
@@ -128,12 +194,12 @@ def main(args):
 
     train_dataset = FedKiTS19(train=True, pooled=True)
     train_dataloader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=2, shuffle=True, num_workers=args.workers
+        train_dataset, batch_size=1, shuffle=True, num_workers=args.workers
     )
     test_dataset = FedKiTS19(train=False, pooled=True)
     test_dataloader = torch.utils.data.DataLoader(
         test_dataset,
-        batch_size=2,
+        batch_size=1,
         shuffle=False,
         num_workers=args.workers,
         drop_last=True,
@@ -151,6 +217,7 @@ def main(args):
     model = Generic_UNet(1, 32, 3, 5, 2, 2, nn.Conv3d, nn.InstanceNorm3d, {'eps': 1e-5, 'affine': True}, nn.Dropout3d,
         {'p': 0, 'inplace': True}, nn.LeakyReLU, {'negative_slope': 1e-2, 'inplace': True}, False, False, lambda x: x, InitWeights_He(1e-2),
              net_num_pool_op_kernel_sizes, net_conv_kernel_sizes, False, True, True)
+    model.inference_apply_nonlin = softmax_helper
 
     model = model.to(device)
     lossfunc = DC_and_CE_loss({'batch_dice': True, 'smooth': 1e-5, 'do_bg': False}, {})
@@ -160,7 +227,7 @@ def main(args):
     lr_scheduler_patience = 30
     initial_lr = 3e-4
     weight_decay = 3e-5
-    num_epochs = 1000
+    num_epochs = 2
     optimizer = torch.optim.Adam(model.parameters(), initial_lr, weight_decay=weight_decay,
                                       amsgrad=True)
     scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.2,
@@ -197,38 +264,37 @@ if __name__ == "__main__":
     parser.add_argument(
         "--workers",
         type=int,
-        default=4,
+        default=1,
         help="Numbers of workers for the dataloader",
     )
-    #TODO: add other arguments as well
+    #TODO: add other args as well
     args = parser.parse_args()
 
     main(args)
 
-    # loading the saved model and running evaluate_model_on_tests
-    #
-    # sz = 200
-    # test_aug = albumentations.Compose(
-    #     [
-    #         albumentations.CenterCrop(sz, sz),
-    #         albumentations.Normalize(always_apply=True),
-    #     ]
-    # )
-    # test_dataset = dataset.FedIsic2019(0, True, "test", augmentations=test_aug)
-    # test_dataloader = torch.utils.data.DataLoader(
-    #     test_dataset,
-    #     batch_size=2,
-    #     shuffle=False,
-    #     num_workers=args.workers,
-    #     drop_last=True,
-    # )
-    #
-    # model = Baseline()
-    # dict = check_dataset_from_config(dataset_name="fed_isic2019", debug=False)
-    # input_path = dict["dataset_path"]
-    # dic = {"model_dest": os.path.join(input_path, "saved_model_state_dict")}
-    # model.load_state_dict(torch.load(dic["model_dest"]))
-    # model.eval()
-    #
-    # torch.use_deterministic_algorithms(False)
-    # print(evaluate_model_on_tests(model, [test_dataloader], metric, use_gpu=True))
+    #loading the saved model and running evaluate_model_on_tests
+
+    net_num_pool_op_kernel_sizes = [[2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2]]
+    net_conv_kernel_sizes = [[3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3]]
+    model = Generic_UNet(1, 32, 3, 5, 2, 2, nn.Conv3d, nn.InstanceNorm3d, {'eps': 1e-5, 'affine': True}, nn.Dropout3d,
+                         {'p': 0, 'inplace': True}, nn.LeakyReLU, {'negative_slope': 1e-2, 'inplace': True}, False,
+                         False, lambda x: x, InitWeights_He(1e-2),
+                         net_num_pool_op_kernel_sizes, net_conv_kernel_sizes, False, True, True)
+
+    dict = check_dataset_from_config(dataset_name="fed_isic2019", debug=False)
+    input_path = dict["dataset_path"]
+    dic = {"model_dest": os.path.join(input_path, "saved_model_state_dict")}
+    model.load_state_dict(torch.load(dic["model_dest"]))
+    model.eval()
+
+    test_dataset = FedKiTS19(train=False, pooled=True)
+    test_dataloader = torch.utils.data.DataLoader(
+        test_dataset,
+        batch_size=1,
+        shuffle=False,
+        num_workers=args.workers,
+        drop_last=True,
+    )
+
+    torch.use_deterministic_algorithms(False)
+    print(evaluate_model_on_tests(model, [test_dataloader], metric, use_gpu=True))
