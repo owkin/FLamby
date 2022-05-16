@@ -52,7 +52,8 @@ class HeartDiseaseRaw(Dataset):
 
         self.train_fraction = 0.66
 
-        np.random.seed(0)
+        # to ensure the split is static
+        np.random.seed(8)
 
         for center_data_file in self.data_dir.glob("*.data"):
 
@@ -69,8 +70,9 @@ class HeartDiseaseRaw(Dataset):
 
             self.centers += [self.centers_number[center_name]] * center_X.shape[0]
 
-            # proposed modification to introduce randomness in the split per center
-            # (there is a problem for center 1)
+            # proposed modification to introduce shuffling before splitting the center
+            # into train / test sets (with0ut this there is a problem for center 1)
+
             # nb_train = int(center_X.shape[0] * self.train_fraction)
             # nb_test = center_X.shape[0] - nb_train
             # self.sets += ["train"] * nb_train
@@ -161,3 +163,4 @@ class FedHeartDisease(HeartDiseaseRaw):
         self.sets = [fp for idx, fp in enumerate(self.sets) if to_select[idx]]
         self.labels = [fp for idx, fp in enumerate(self.labels) if to_select[idx]]
         self.centers = [fp for idx, fp in enumerate(self.centers) if to_select[idx]]
+
