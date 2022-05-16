@@ -44,5 +44,11 @@ Fed-Heart-Disease
    :undoc-members:
    :private-members:
 
+Fed-IXITiny
+-----------------
 
+.. autoclass:: flamby.datasets.fed_ixi.FedIxiTiny
+   :members:
+   :undoc-members:
+   :private-members:
 
