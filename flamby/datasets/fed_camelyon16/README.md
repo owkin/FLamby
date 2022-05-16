@@ -1,6 +1,5 @@
 ## Camelyon16
 
-
 Camelyon16 as Camelyon17 are open access (CC0), the original dataset is accessible [here](https://camelyon17.grand-challenge.org/Data/).
 We will use the [Google-Drive-API-v3](https://developers.google.com/drive/api/v3/quickstart/python) in order to fetch the slides from the public Google Drive and will then tile the matter using a feature extractor producing a bag of features for each slide.
 
@@ -50,7 +49,11 @@ python update_config.py --new-path /new/path/towards/dataset
 
 The next step is to tile the matter on each slide with a feature extractor pretrained on IMAGENET.  
 
-We will use the [histolab package](https://github.com/histolab/histolab) to segment the matter on each slide and torchvision to download a pretrained ResNet50 that will be applied on each tile to convert each slide to a numpy feature.
+We will use the [histolab package](https://github.com/histolab/histolab) to segment the matter on each slide and torchvision to download a pretrained ResNet50 that will be applied on each tile to convert each slide to a bag of numpy features.
+This package requires the installation of [Openslide](https://openslide.org/download/). The associated webpage contains instructions to install it on every major distributions. On Linux simply run:
+```
+sudo apt-get install openslide-tools
+```
 One can chose to remove or not the original slides that take up quite some space to keep only the features (therefore using only approximatively 50G instead of 800).
 Again as extracting the matter on all the slides is a lengthy process this script might take a few hours (and a few days if the tiling is done from scratch). 
 It can also be stopped and resumed anytime and should be preferably run in detached mode.
