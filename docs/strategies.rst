@@ -54,3 +54,11 @@ FedProx
    :private-members:
 
 
+Scaffold
+--------
+
+.. autoclass:: flamby.strategies.Scaffold
+   :members:
+   :undoc-members:
+   :private-members:
+
