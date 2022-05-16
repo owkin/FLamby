@@ -1,6 +1,7 @@
 import argparse
 import copy
 import os
+
 import ipdb
 import pandas as pd
 import torch
@@ -33,7 +34,7 @@ def main(args2):
 
     NAME_RESULTS_FILE = "results_benchmark.csv"
 
-    #strategy_names = ["FedAvg", "FedProx", "FedAdagrad", "FedAdam", "FedYogi", "Cyclic", "Scaffold"]
+    # strategy_names = ["FedAvg", "FedProx", "FedAdagrad", "FedAdam", "FedYogi", "Cyclic", "Scaffold"]
     strategy_names = ["FedAvg", "FedProx"]
 
     # One might need to iterate on the hyperparameters to some extents if performances
@@ -80,9 +81,13 @@ def main(args2):
         for name, _ in v.items():
             hp_additional_args.append(name)
     columns_names += hp_additional_args
-    #ipdb.set_trace()
+    # ipdb.set_trace()
 
     # We instantiate all train and test dataloaders required including pooled ones
+
+    # We use the same initialization for everyone in order to be fair
+    torch.manual_seed(42)
+    global_init = Baseline()
 
     # FIX the number of workers ! parallelism issues when > 0
     training_dls = [
@@ -103,11 +108,6 @@ def main(args2):
         )
         for i in range(NUM_CLIENTS)
     ]
-
-    # We use the same initialization for everyone in order to be fair
-    torch.manual_seed(42)
-    global_init = Baseline()
-
     train_pooled = dl(
         FedDataset(train=True, pooled=True),
         batch_size=BATCH_SIZE,
@@ -124,7 +124,7 @@ def main(args2):
     # We check if some results are already computed
     if os.path.exists(NAME_RESULTS_FILE):
         df = pd.read_csv(NAME_RESULTS_FILE)
-        #ipdb.set_trace()
+        # ipdb.set_trace()
         # If we added additional hyperparameters we update the df
         for col_name in columns_names:
             if col_name not in df.columns:
