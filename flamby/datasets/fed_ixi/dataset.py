@@ -12,11 +12,11 @@ from monai.transforms import Resize, Compose, ToTensor, AddChannel, AsDiscrete
 from torch import Tensor
 from torch.utils.data import Dataset
 
-from utils import _get_id_from_filename, _load_nifti_image_and_label_by_id, _extract_center_name_from_filename, _get_center_name_from_center_id
+from flamby.datasets.fed_ixi.utils import _get_id_from_filename, _load_nifti_image_and_label_by_id, _extract_center_name_from_filename, _get_center_name_from_center_id
 from flamby.utils import check_dataset_from_config
 
 
-class IXITinyDataset(Dataset):
+class IXITinyRaw(Dataset):
     """
     Generic interface for IXI Tiny Dataset
 
@@ -120,7 +120,7 @@ class IXITinyDataset(Dataset):
         return len(self.images_paths)
 
 
-class FedIXITinyDataset(IXITinyDataset):
+class FedIXITiny(IXITinyRaw):
     """
     Federated class for T1 images in IXI Tiny Dataset
 
@@ -137,7 +137,7 @@ class FedIXITinyDataset(IXITinyDataset):
             If True, supersedes center argument. Defaults to False.
     """
     def __init__(self, transform=None, center=0, train=True, pooled=False):
-        super(FedIXITinyDataset, self).__init__(transform=transform)
+        super(FedIXITiny, self).__init__(transform=transform)
 
         self.modality = 'T1'
         self.centers = [center]
@@ -170,10 +170,10 @@ class FedIXITinyDataset(IXITinyDataset):
 
 
 if __name__ == "__main__":
-    a = IXITinyDataset()
+    a = IXITinyRaw()
     print('IXI Tiny dataset size:', len(a))
     #print('First entry:', a[0])
-    a = FedIXITinyDataset()
+    a = FedIXITiny()
     print(f'Data gathered in this federated dataset is from:', *a.centers, "and", *a.sets, "set")
     print('Federated dataset size:', len(a))
     print('First entry:', a[0])

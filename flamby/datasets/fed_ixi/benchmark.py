@@ -16,9 +16,8 @@ from flamby.datasets.fed_ixi import (
     SEEDS,
     Baseline,
     BaselineLoss,
-    FedIXITinyDataset,
+    FedIXITiny,
     metric,
-    #evaluate_dice_on_tests,
 )
 
 from flamby.utils import evaluate_model_on_tests
@@ -51,14 +50,14 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
     ])
 
     training_dl = dl(
-        FedIXITinyDataset(transform=training_transform, train=True, pooled=True),
+        FedIXITiny(transform=training_transform, train=True, pooled=True),
         num_workers=num_workers_torch,
         batch_size=BATCH_SIZE,
         shuffle=True,
     )
 
     test_dl = dl(
-        FedIXITinyDataset(transform=validation_transform, train=False, pooled=True),
+        FedIXITiny(transform=validation_transform, train=False, pooled=True),
         num_workers=num_workers_torch,
         batch_size=1,  # Do not change this as it would mess up DICE evaluation
         shuffle=False,
@@ -117,11 +116,10 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
                 y_pred = m(X)
                 probabilities = F.softmax(y_pred, dim=CHANNELS_DIMENSION)
                 lm = loss(probabilities, y)
-                batch_loss = lm.mean()
-                batch_loss.backward()
+                lm.backward()
                 optimizer.step()
 
-                tot_loss += batch_loss.item()
+                tot_loss += lm.item()
 
             scheduler.step()
             print(f"epoch {e} avg loss: {tot_loss / num_local_steps_per_epoch:.2e}")

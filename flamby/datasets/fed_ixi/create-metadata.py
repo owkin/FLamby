@@ -1,5 +1,5 @@
 import os
-from utils import _get_id_from_filename, _extract_center_name_from_filename, _create_train_test_split
+from flamby.datasets.fed_ixi.utils import _get_id_from_filename, _extract_center_name_from_filename, _create_train_test_split
 from pathlib import Path
 
 # IXI Tiny Dataset

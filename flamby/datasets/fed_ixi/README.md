@@ -107,12 +107,12 @@ To download the data, simply run the following commands:
 
 Once the dataset is ready for use, you can load it the following way:
 ```python
-from flamby.datasets.fed_ixi import FedIXITinyDataset
+from flamby.datasets.fed_ixi import FedIXITiny
 
 # To load the first center
-center0 = FedIXITinyDataset(transform=None, center=0, train=True, pooled=False)
+center0 = FedIXITiny(transform=None, center=0, train=True, pooled=False)
 # To load the second center
-center1 = FedIXITinyDataset(transform=None, center=1, train=True, pooled=False)
+center1 = FedIXITiny(transform=None, center=1, train=True, pooled=False)
 ```
 
 - 'transform' allows to perform a specific transformation on the brain images (e. g. with the MONAI library).
