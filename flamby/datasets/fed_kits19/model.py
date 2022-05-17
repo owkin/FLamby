@@ -182,13 +182,19 @@ class Generic_UNet(SegmentationNetwork):
     use_this_for_batch_size_computation_2D = 19739648
     use_this_for_batch_size_computation_3D = 520000000  # 505789440
 
-    def __init__(self, input_channels, base_num_features, num_classes, num_pool, num_conv_per_stage=2,
-                 feat_map_mul_on_downscale=2, conv_op=nn.Conv2d,
-                 norm_op=nn.BatchNorm2d, norm_op_kwargs=None,
-                 dropout_op=nn.Dropout2d, dropout_op_kwargs=None,
-                 nonlin=nn.LeakyReLU, nonlin_kwargs=None, deep_supervision=True, dropout_in_localization=False,
-                 final_nonlin=softmax_helper, weightInitializer=InitWeights_He(1e-2), pool_op_kernel_sizes=None,
-                 conv_kernel_sizes=None,
+    # net_num_pool_op_kernel_sizes = [[2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2]]
+    # net_conv_kernel_sizes = [[3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3]]
+    # model = Generic_UNet(1, 32, 3, 5, 2, 2, nn.Conv3d, nn.InstanceNorm3d, {'eps': 1e-5, 'affine': True}, nn.Dropout3d,
+    #                      {'p': 0, 'inplace': True}, nn.LeakyReLU, {'negative_slope': 1e-2, 'inplace': True}, False,
+    #                      False, lambda x: x, InitWeights_He(1e-2),
+    #                      net_num_pool_op_kernel_sizes, net_conv_kernel_sizes, False, True, True)
+
+    def __init__(self, input_channels = 1, base_num_features = 32, num_classes = 3, num_pool = 5, num_conv_per_stage=2,
+                 feat_map_mul_on_downscale=2, conv_op=nn.Conv3d,
+                 norm_op=nn.InstanceNorm3d, norm_op_kwargs={'eps': 1e-5, 'affine': True},
+                 dropout_op=nn.Dropout3d, dropout_op_kwargs={'p': 0, 'inplace': True},
+                 nonlin=nn.LeakyReLU, nonlin_kwargs={'negative_slope': 1e-2, 'inplace': True}, deep_supervision=False, dropout_in_localization=False,
+                 final_nonlin=softmax_helper, weightInitializer=InitWeights_He(1e-2),
                  upscale_logits=False, convolutional_pooling=False, convolutional_upsampling=False,
                  max_num_features=None, basic_block=ConvDropoutNormNonlin,
                  seg_output_use_bias=False):
@@ -202,6 +208,8 @@ class Generic_UNet(SegmentationNetwork):
         Questions? -> f.isensee@dkfz.de
         """
         super(Generic_UNet, self).__init__()
+        pool_op_kernel_sizes = [[2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2]]
+        conv_kernel_sizes = [[3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3]]
         self.convolutional_upsampling = convolutional_upsampling
         self.convolutional_pooling = convolutional_pooling
         self.upscale_logits = upscale_logits

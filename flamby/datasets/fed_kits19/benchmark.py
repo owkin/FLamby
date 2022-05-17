@@ -15,8 +15,8 @@ import numpy as np
 
 from flamby.utils import check_dataset_from_config, evaluate_model_on_tests
 from flamby.datasets.fed_kits19.model import Generic_UNet
-from flamby.datasets.fed_kits19.loss import DC_and_CE_loss
-from flamby.datasets.fed_kits19.metric import metrics, softmax_helper
+from flamby.datasets.fed_kits19.loss import BaselineLoss
+from flamby.datasets.fed_kits19.metric import metric, softmax_helper
 from nnunet.network_architecture.initialization import InitWeights_He
 from torch.optim import lr_scheduler
 
@@ -60,7 +60,7 @@ def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
                     y = y.cuda()
                 y_pred = model(X).detach().cpu()
                 y = y.detach().cpu()
-                composite_dice, kidney_dice, tumor_dice = metrics(y_pred, y)
+                composite_dice, kidney_dice, tumor_dice = metric(y_pred, y)
                 composite_dice_list.append(composite_dice)
                 tumor_dice_list.append(tumor_dice)
                 kidney_dice_list.append(kidney_dice)
@@ -136,7 +136,8 @@ def train_model(
                         loss.backward()
                         optimizer.step()
 
-                composite_dice, kidney_dice, tumor_dice = metrics(preds.cpu(), labels.cpu())
+
+                composite_dice, kidney_dice, tumor_dice = metric(preds.cpu(), labels.cpu())
                 composite_dice_list.append(composite_dice)
                 tumor_dice_list.append(tumor_dice)
                 kidney_dice_list.append(kidney_dice)
@@ -145,6 +146,7 @@ def train_model(
                 # TODO: double check these statistics definitions (esp epoch acc and epoch balanced acc)
                 running_loss += loss.item() * inputs.size(0)
                 epoch_acc = (np.mean(composite_dice_list) + np.mean(tumor_dice_list))/2
+                break
             composite_dice_epoch_list.append(np.mean(composite_dice_list))
             tumor_dice_epoch_list.append(np.mean(tumor_dice_list))
             kidney_dice_epoch_list.append(np.mean(kidney_dice_list))
@@ -212,15 +214,10 @@ def main(args):
     print("device", device)
 
 
-    net_num_pool_op_kernel_sizes = [[2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2]]
-    net_conv_kernel_sizes = [[3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3]]
-    model = Generic_UNet(1, 32, 3, 5, 2, 2, nn.Conv3d, nn.InstanceNorm3d, {'eps': 1e-5, 'affine': True}, nn.Dropout3d,
-        {'p': 0, 'inplace': True}, nn.LeakyReLU, {'negative_slope': 1e-2, 'inplace': True}, False, False, lambda x: x, InitWeights_He(1e-2),
-             net_num_pool_op_kernel_sizes, net_conv_kernel_sizes, False, True, True)
-    model.inference_apply_nonlin = softmax_helper
+    model = Generic_UNet()
 
     model = model.to(device)
-    lossfunc = DC_and_CE_loss({'batch_dice': True, 'smooth': 1e-5, 'do_bg': False}, {})
+    lossfunc = BaselineLoss({'batch_dice': True, 'smooth': 1e-5, 'do_bg': False}, {})
 
     #add args for the following params,
     lr_scheduler_eps = 1e-3
@@ -247,9 +244,8 @@ def main(args):
         num_epochs,
     )
 
-    script_directory = os.path.abspath(os.path.dirname(__file__))
-    dest_file = os.path.join(script_directory, dic["model_dest"])
-    torch.save(model.state_dict(), dest_file)
+    print(evaluate_model_on_tests(model, [test_dataloader], metric, use_gpu=True))
+
 
 
 if __name__ == "__main__":
@@ -272,29 +268,4 @@ if __name__ == "__main__":
 
     main(args)
 
-    #loading the saved model and running evaluate_model_on_tests
 
-    net_num_pool_op_kernel_sizes = [[2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2]]
-    net_conv_kernel_sizes = [[3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3]]
-    model = Generic_UNet(1, 32, 3, 5, 2, 2, nn.Conv3d, nn.InstanceNorm3d, {'eps': 1e-5, 'affine': True}, nn.Dropout3d,
-                         {'p': 0, 'inplace': True}, nn.LeakyReLU, {'negative_slope': 1e-2, 'inplace': True}, False,
-                         False, lambda x: x, InitWeights_He(1e-2),
-                         net_num_pool_op_kernel_sizes, net_conv_kernel_sizes, False, True, True)
-
-    dict = check_dataset_from_config(dataset_name="fed_isic2019", debug=False)
-    input_path = dict["dataset_path"]
-    dic = {"model_dest": os.path.join(input_path, "saved_model_state_dict")}
-    model.load_state_dict(torch.load(dic["model_dest"]))
-    model.eval()
-
-    test_dataset = FedKiTS19(train=False, pooled=True)
-    test_dataloader = torch.utils.data.DataLoader(
-        test_dataset,
-        batch_size=1,
-        shuffle=False,
-        num_workers=args.workers,
-        drop_last=True,
-    )
-
-    torch.use_deterministic_algorithms(False)
-    print(evaluate_model_on_tests(model, [test_dataloader], metric, use_gpu=True))
