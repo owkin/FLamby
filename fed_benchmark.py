@@ -34,8 +34,15 @@ def main(args2):
 
     NAME_RESULTS_FILE = "results_benchmark.csv"
 
-    # strategy_names = ["FedAvg", "FedProx", "FedAdagrad", "FedAdam", "FedYogi", "Cyclic", "Scaffold"]
-    strategy_names = ["FedAvg", "FedProx"]
+    strategy_names = [
+        "FedAvg",
+        "FedProx",
+        "FedAdagrad",
+        "FedAdam",
+        "FedYogi",
+        "Cyclic",
+        "Scaffold",
+    ]
 
     # One might need to iterate on the hyperparameters to some extents if performances
     # are seriously degraded with default ones
@@ -71,7 +78,7 @@ def main(args2):
     }
     strategy_specific_hp_dicts["Scaffold"] = {
         "server_learning_rate": 1.0,
-        "update_rule": "II",
+        "optimizer_class": torch.optim.SGD,
     }
 
     columns_names = ["Test", "Method", "Metric"]
@@ -81,15 +88,13 @@ def main(args2):
         for name, _ in v.items():
             hp_additional_args.append(name)
     columns_names += hp_additional_args
-    # ipdb.set_trace()
-
-    # We instantiate all train and test dataloaders required including pooled ones
 
     # We use the same initialization for everyone in order to be fair
     torch.manual_seed(42)
     global_init = Baseline()
 
-    # FIX the number of workers ! parallelism issues when > 0
+    # We instantiate all train and test dataloaders required including pooled ones
+    # FIX the number of workers !!!!!!!!!!!!!!!!!!!!!! parallelism issues when > 0
     training_dls = [
         dl(
             FedDataset(center=i, train=True, pooled=False),
@@ -121,18 +126,17 @@ def main(args2):
         num_workers=args2.workers,
     )
 
+    base_dict = {col_name: None for col_name in columns_names}
+
     # We check if some results are already computed
     if os.path.exists(NAME_RESULTS_FILE):
         df = pd.read_csv(NAME_RESULTS_FILE)
-        # ipdb.set_trace()
         # If we added additional hyperparameters we update the df
         for col_name in columns_names:
             if col_name not in df.columns:
                 df[col_name] = None
         perf_lines_dicts = df.to_dict("records")
-        base_dict = {col_name: None for col_name in columns_names}
     else:
-        base_dict = {col_name: None for col_name in columns_names}
         df = pd.DataFrame({k: [v] for k, v in base_dict.items()})
         perf_lines_dicts = []
 
@@ -232,7 +236,7 @@ def main(args2):
             df.to_csv(NAME_RESULTS_FILE, index=False)
 
     # Strategies
-    for num_updates in [50, 100]:
+    for num_updates in [1, 50, 100, 500]:
         for sname in strategy_names:
             # Base arguments
             m = copy.deepcopy(global_init)
@@ -250,22 +254,23 @@ def main(args2):
             # Overwriting arguments with strategy specific arguments
             for k, v in strategy_specific_hp_dict.items():
                 args[k] = v
-            # we only launch training if it's not finished already maybe FL
-            # hyperparameters need to be tuned
+            # We only launch training if it's not finished already. Maybe FL
+            # hyperparameters need to be tuned.
             hyperparameters = {}
-            for k in columns_names:
+            for k in hp_additional_args:  # columns_names:
                 if k in args:
                     hyperparameters[k] = str(args[k])
                 else:
-                    hyperparameters[k] = None
-
+                    hyperparameters[k] = "nan"
             index_of_interest = df.loc[
                 (df["Method"] == (sname + str(num_updates)))
-                & (df[list(hyperparameters)] == pd.Series(hyperparameters)).all(axis=1)
+                & (
+                    df[list(hyperparameters)].astype(str) == pd.Series(hyperparameters)
+                ).all(axis=1)
             ].index
-            # an experiment is finished if there are num_clients + 1 rows
+            # An experiment is finished if there are num_clients + 1 rows
             if len(index_of_interest) < (NUM_CLIENTS + 1):
-                # dealing with edge case that shouldn't happen
+                # Dealing with edge case that shouldn't happen
                 # If some of the rows are there but not all of them we redo the
                 # experiments
                 if len(index_of_interest) > 0:

@@ -32,7 +32,7 @@ class Scaffold(FedAvg):
         model: torch.nn.Module,
         loss: torch.nn.modules.loss._Loss,
         optimizer_class: torch.optim.Optimizer,
-        client_learning_rate: float,
+        learning_rate: float,
         num_updates: int,
         nrounds: int,
         server_learning_rate: float = 1,
@@ -54,7 +54,7 @@ class Scaffold(FedAvg):
         optimizer_class : torch.optim.Optimizer
             The class of the torch model optimizer to use at each step.
             It has to be SGD.
-        client_learning_rate : float
+        learning_rate : float
             The learning rate to be given to the clients optimizer_class.
         num_updates : int
             The number of updates to do on each client at each round.
@@ -84,7 +84,7 @@ class Scaffold(FedAvg):
             model,
             loss,
             optimizer_class,
-            client_learning_rate,
+            learning_rate,
             num_updates,
             nrounds,
             log,
@@ -101,7 +101,7 @@ class Scaffold(FedAvg):
             [torch.zeros_like(torch.from_numpy(p)) for p in _model._get_current_params()]
             for _model in self.models_list
         ]
-        self.client_lr = client_learning_rate
+        self.client_lr = learning_rate
         self.server_lr = server_learning_rate
 
     def _local_optimization(
