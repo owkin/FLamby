@@ -43,7 +43,7 @@ resumed anytime however if you are ssh into a server better use detached mode (s
 **IMPORTANT :** If you choose to relocate the dataset after downloading it, it is
 imperative that you run the following script otherwise all subsequent scripts will not find it:
 ```
-python update_config.py --new-path /new/path/towards/dataset
+python update_config.py --new-path /new/path/towards/dataset #adding --debug if you are in debug mode
 ```
 
 
