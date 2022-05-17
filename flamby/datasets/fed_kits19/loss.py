@@ -21,6 +21,7 @@ from nnunet.utilities.nd_softmax import softmax_helper
 from nnunet.utilities.tensor_utilities import sum_tensor
 from torch import nn
 import numpy as np
+from torch.nn.modules.loss import _Loss
 
 
 class GDL(nn.Module):
@@ -302,8 +303,8 @@ class SoftDiceLossSquared(nn.Module):
         return -dc
 
 
-class DC_and_CE_loss(nn.Module):
-    def __init__(self, soft_dice_kwargs, ce_kwargs, aggregate="sum", square_dice=False, weight_ce=1, weight_dice=1,
+class BaselineLoss(_Loss):
+    def __init__(self, soft_dice_kwargs = {'batch_dice': True, 'smooth': 1e-5, 'do_bg': False}, ce_kwargs = {}, aggregate="sum", square_dice=False, weight_ce=1, weight_dice=1,
                  log_dice=False, ignore_label=None):
         """
         CAREFUL. Weights for CE and Dice do not need to sum to one. You can set whatever you want.
@@ -314,7 +315,7 @@ class DC_and_CE_loss(nn.Module):
         :param weight_ce:
         :param weight_dice:
         """
-        super(DC_and_CE_loss, self).__init__()
+        super(BaselineLoss, self).__init__()
         if ignore_label is not None:
             assert not square_dice, 'not implemented'
             ce_kwargs['reduction'] = 'none'
