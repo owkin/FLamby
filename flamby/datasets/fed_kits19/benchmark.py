@@ -14,7 +14,7 @@ from torch import nn
 import numpy as np
 
 from flamby.utils import check_dataset_from_config, evaluate_model_on_tests
-from flamby.datasets.fed_kits19.model import Generic_UNet
+from flamby.datasets.fed_kits19.model import Baseline
 from flamby.datasets.fed_kits19.loss import BaselineLoss
 from flamby.datasets.fed_kits19.metric import metric, softmax_helper
 from nnunet.network_architecture.initialization import InitWeights_He
@@ -214,10 +214,10 @@ def main(args):
     print("device", device)
 
 
-    model = Generic_UNet()
+    model = Baseline()
 
     model = model.to(device)
-    lossfunc = BaselineLoss({'batch_dice': True, 'smooth': 1e-5, 'do_bg': False}, {})
+    lossfunc = BaselineLoss()
 
     #add args for the following params,
     lr_scheduler_eps = 1e-3
