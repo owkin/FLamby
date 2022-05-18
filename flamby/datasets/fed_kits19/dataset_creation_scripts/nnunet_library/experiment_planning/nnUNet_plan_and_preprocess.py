@@ -115,7 +115,7 @@ def main():
         if not dict["download_complete"]:
             print("You have not downloaded the data: run dataset_conversion step first")
             sys.exit()
-            
+
 
         if args.verify_dataset_integrity:
             verify_dataset_integrity(join(nnUNet_raw_data, task_name))

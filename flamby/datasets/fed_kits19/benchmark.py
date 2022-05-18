@@ -143,7 +143,7 @@ def main(args):
     dataloaders = {"train": train_dataloader, "test": test_dataloader}
     dataset_sizes = {"train": len(train_dataset), "test": len(test_dataset)}
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda:"+str(args.GPU) if torch.cuda.is_available() else "cpu")
     print("device", device)
 
 
