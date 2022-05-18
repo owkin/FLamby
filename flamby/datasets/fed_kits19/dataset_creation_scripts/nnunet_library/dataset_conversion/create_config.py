@@ -12,7 +12,6 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--debug",
-        type=bool,
         action="store_false",
         help="whether or not to update the config fro debug mode or the real one.",
     )
