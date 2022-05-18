@@ -55,7 +55,7 @@ python resize_images.py
 This script will resize all images so that the shorter edge of the resized image is 224px and the aspect ratio of the input image is maintained.
 [Color constancy](https://en.wikipedia.org/wiki/Color_constancy) is added in the preprocessing.
 
-**Be careful: in order to allow for augmentations, images aspect ratios are conserved in the preprocessing so images are rectangular with a fixed width so they all have different heights. As a result they cannot be batched without cropping them to a square. An example of such a cropping strategy is done in the benchmark.**
+**Be careful: in order to allow for augmentations, images aspect ratios are conserved in the preprocessing so images are rectangular with a fixed width so they all have different heights. As a result they cannot be batched without cropping them to a square. An example of such a cropping strategy can be found in the following benchmark script.**
 
 ## Baseline training and evaluation in a pooled setting
 To train and evaluate a classification model for the pooled dataset, run:
