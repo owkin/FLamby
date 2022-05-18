@@ -1,72 +1,26 @@
 import argparse
 import copy
 import os
-import random
 import time
 
-import albumentations
-import dataset
 import torch
-from sklearn import metrics
-from tqdm import tqdm
-from flamby.datasets.fed_kits19.dataset import FedKiTS19
-from torch import nn
 import numpy as np
 
-from flamby.utils import check_dataset_from_config, evaluate_model_on_tests
-from flamby.datasets.fed_kits19.model import Baseline
-from flamby.datasets.fed_kits19.loss import BaselineLoss
-from flamby.datasets.fed_kits19.metric import metric, softmax_helper
-from nnunet.network_architecture.initialization import InitWeights_He
+from flamby.utils import check_dataset_from_config
 from torch.optim import lr_scheduler
 
+from flamby.datasets.fed_kits19 import (
+    BATCH_SIZE,
+    LR,
+    NUM_EPOCHS_POOLED,
+    Baseline,
+    BaselineLoss,
+    FedKiTS19,
+    evaluate_dice_on_tests,
+    metric,
+    softmax_helper,
+)
 
-
-def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
-    """This function takes a pytorch model and evaluate it on a list of\
-    dataloaders using the provided metric function.
-    Parameters
-    ----------
-    model: torch.nn.Module,
-        A trained model that can forward the test_dataloaders outputs
-    test_dataloaders: List[torch.utils.data.DataLoader]
-        A list of torch dataloaders
-    metric: callable,
-        A function with the following signature:\
-            (y_true: np.ndarray, y_pred: np.ndarray) -> scalar
-    use_gpu: bool, optional,
-        Whether or not to perform computations on GPU if available. \
-        Defaults to True.
-    Returns
-    -------
-    dict
-        A dictionnary with keys client_test_{0} to \
-        client_test_{len(test_dataloaders) - 1} and associated scalar metrics \
-        as leaves.
-    """
-    results_dict = {}
-    if torch.cuda.is_available() and use_gpu:
-        model = model.cuda()
-    model.eval()
-    with torch.inference_mode():
-        for i in tqdm(range(len(test_dataloaders))):
-            test_dataloader_iterator = iter(test_dataloaders[i])
-            composite_dice_list = []
-            tumor_dice_list = []
-            kidney_dice_list = []
-            for (X, y) in test_dataloader_iterator:
-                if torch.cuda.is_available() and use_gpu:
-                    X = X.cuda()
-                    y = y.cuda()
-                y_pred = model(X).detach().cpu()
-                y = y.detach().cpu()
-                composite_dice, kidney_dice, tumor_dice = metric(y_pred, y)
-                composite_dice_list.append(composite_dice)
-                tumor_dice_list.append(tumor_dice)
-                kidney_dice_list.append(kidney_dice)
-
-            results_dict[f"client_test_{i}"] = {'Composite dice': np.mean(composite_dice_list), 'Kidney Dice ': np.mean(kidney_dice_list), 'Tumor Dice ': np.mean(tumor_dice_list)}
-    return results_dict
 
 
 def train_model(
@@ -93,17 +47,16 @@ def train_model(
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
 
-    composite_dice_epoch_list = []
-    tumor_dice_epoch_list = []
-    kidney_dice_epoch_list = []
-
+    # To draw loss and accuracy plots
+    training_loss_list = []
+    training_dice_list = []
+    print(" Train Data Size "+str(dataset_sizes["train"]))
+    print(" Test Data Size " + str(dataset_sizes["test"]))
     for epoch in range(num_epochs):
         print("Epoch {}/{}".format(epoch, num_epochs - 1))
         print("-" * 10)
 
-        composite_dice_list = []
-        tumor_dice_list = []
-        kidney_dice_list = []
+        dice_list = []
 
         # Each epoch has a training and validation phase
         for phase in ["train", "test"]:
@@ -113,62 +66,58 @@ def train_model(
                 model.eval()  # Set model to evaluate mode
 
             running_loss = 0.0
-            # running_corrects = 0
-            # y_true = []
-            # y_pred = []
+            dice_score = 0.0
 
             # Iterate over data.
             for sample in dataloaders[phase]:
                 inputs = sample[0].to(device)
                 labels = sample[1].to(device)
-                # y_true.append(sample[1])
 
                 optimizer.zero_grad()
                 with torch.set_grad_enabled(phase == "train"):
                     outputs = model(inputs)
                     loss = lossfunc(outputs, labels)
                     print('loss '+str(loss))
-                    preds_softmax = softmax_helper(outputs)
-                    preds = preds_softmax.argmax(1)
-                    # y_pred.append(preds)
-                    # backward + optimize only if in training phase
+
+                    # backward + optimize only if in training phase, record training loss
                     if phase == "train":
                         loss.backward()
                         optimizer.step()
+                        running_loss += loss.item() * inputs.size(0)
 
+                    # if test: record testing accuracy
+                    if phase == "test":
+                        preds_softmax = softmax_helper(outputs)
+                        preds = preds_softmax.argmax(1)
+                        dice_score = metric(preds.cpu(), labels.cpu())
+                        dice_list.append(dice_score)
 
-                composite_dice, kidney_dice, tumor_dice = metric(preds.cpu(), labels.cpu())
-                composite_dice_list.append(composite_dice)
-                tumor_dice_list.append(tumor_dice)
-                kidney_dice_list.append(kidney_dice)
-
-
-                # TODO: double check these statistics definitions (esp epoch acc and epoch balanced acc)
-                running_loss += loss.item() * inputs.size(0)
-                epoch_acc = (np.mean(composite_dice_list) + np.mean(tumor_dice_list))/2
+                    break
                 break
-            composite_dice_epoch_list.append(np.mean(composite_dice_list))
-            tumor_dice_epoch_list.append(np.mean(tumor_dice_list))
-            kidney_dice_epoch_list.append(np.mean(kidney_dice_list))
-                # break
+
+
+            # break
             if phase == "train":
                 scheduler.step(epoch)
 
-            epoch_loss = running_loss / dataset_sizes[phase]
-            epoch_balanced_acc = (np.mean(kidney_dice_epoch_list) + np.mean(tumor_dice_epoch_list))/2
+            break
 
-            print(
-                "{} Loss: {:.4f} Acc: {:.4f} Balanced acc: {:.4f}".format(
-                    phase, epoch_loss, epoch_acc, epoch_balanced_acc
+        epoch_loss = running_loss / dataset_sizes[phase]
+        epoch_acc = (np.mean(dice_list))
+
+        if epoch_acc > best_acc:
+            best_acc = epoch_acc
+            best_model_wts = copy.deepcopy(model.state_dict())
+
+        print(
+                "{} Loss: {:.4f} Acc: {:.4f} ".format(
+                    phase, epoch_loss, epoch_acc
                 )
             )
+        training_loss_list.append(epoch_loss)
+        training_dice_list.append(epoch_acc)
+        break
 
-            # deep copy the model
-            if phase == "test" and epoch_balanced_acc > best_acc:
-                best_acc = epoch_balanced_acc
-                best_model_wts = copy.deepcopy(model.state_dict())
-
-        print()
 
     time_elapsed = time.time() - since
     print(
@@ -191,17 +140,15 @@ def main(args):
 
 
     dict = check_dataset_from_config(dataset_name="fed_kits19", debug=False)
-    input_path = dict["dataset_path"]
-    dic = {"model_dest": os.path.join(input_path, "saved_model_state_dict")}
 
     train_dataset = FedKiTS19(train=True, pooled=True)
     train_dataloader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=1, shuffle=True, num_workers=args.workers
+        train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=args.workers
     )
     test_dataset = FedKiTS19(train=False, pooled=True)
     test_dataloader = torch.utils.data.DataLoader(
         test_dataset,
-        batch_size=1,
+        batch_size=BATCH_SIZE,
         shuffle=False,
         num_workers=args.workers,
         drop_last=True,
@@ -219,20 +166,15 @@ def main(args):
     model = model.to(device)
     lossfunc = BaselineLoss()
 
-    #add args for the following params,
-    lr_scheduler_eps = 1e-3
-    lr_scheduler_patience = 30
-    initial_lr = 3e-4
-    weight_decay = 3e-5
-    num_epochs = 2
-    optimizer = torch.optim.Adam(model.parameters(), initial_lr, weight_decay=weight_decay,
+    optimizer = torch.optim.Adam(model.parameters(), LR, weight_decay=3e-5,
                                       amsgrad=True)
     scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.2,
-                                                       patience=lr_scheduler_patience,
-                                                       verbose=True, threshold=lr_scheduler_eps,
+                                                       patience=30,
+                                                       verbose=True, threshold=1e-3,
                                                        threshold_mode="abs")
 
-    #TODO: Test train model on lambda machines
+    #TODO: Add seeds
+    #TODO: Test train model on lambda 5
     model = train_model(
         model,
         optimizer,
@@ -241,10 +183,10 @@ def main(args):
         dataset_sizes,
         device,
         lossfunc,
-        num_epochs,
+        NUM_EPOCHS_POOLED,
     )
 
-    print(evaluate_model_on_tests(model, [test_dataloader], metric, use_gpu=True))
+    print(evaluate_dice_on_tests(model, [test_dataloader], metric, use_gpu=True))
 
 
 
@@ -263,7 +205,7 @@ if __name__ == "__main__":
         default=1,
         help="Numbers of workers for the dataloader",
     )
-    #TODO: add other args as well
+
     args = parser.parse_args()
 
     main(args)

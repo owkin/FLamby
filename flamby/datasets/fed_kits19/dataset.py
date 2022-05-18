@@ -67,6 +67,8 @@ class KiTS19Raw(Dataset):
         self.debug = debug
         self.train_test = "train" if train else "test"
 
+        print(self.train_test)
+
         df = pd.read_csv('metadata/thresholded_sites.csv')
         df2 = df.query("train_test_split == '" + self.train_test + "' ").reset_index(drop=True)
         self.images = df2.case_ids.tolist()
@@ -241,7 +243,7 @@ class FedKiTS19(KiTS19Raw):
         augmentations: Augmentations to be applied on X
         center: Silo ID, must be from the set [0, 1, 2, 3, 4, 5]
         """
-        super().__init__(X_dtype=X_dtype, y_dtype=y_dtype, debug=debug)
+        super().__init__(X_dtype=X_dtype, train = train, y_dtype=y_dtype, debug=debug)
 
         key =  self.train_test + "_" + str(center)
         print(key)
@@ -259,8 +261,6 @@ class FedKiTS19(KiTS19Raw):
                 c += 1
 
             self.centers = df2.site_ids
-
-
 
 if __name__ == "__main__":
     train_dataset = FedKiTS19(5, train=False, pooled=False,)
