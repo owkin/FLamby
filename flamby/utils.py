@@ -11,7 +11,9 @@ import flamby.datasets as datasets
 torch.manual_seed(42)
 
 
-def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
+def evaluate_model_on_tests(
+    model, test_dataloaders, metric, use_gpu=True, return_pred=False
+):
     """This function takes a pytorch model and evaluate it on a list of\
     dataloaders using the provided metric function.
     Parameters
@@ -34,6 +36,8 @@ def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
         as leaves.
     """
     results_dict = {}
+    y_true_dict = {}
+    y_pred_dict = {}
     if torch.cuda.is_available() and use_gpu:
         model = model.cuda()
     model.eval()
@@ -54,7 +58,12 @@ def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
             y_true_final = np.concatenate(y_true_final)
             y_pred_final = np.concatenate(y_pred_final)
             results_dict[f"client_test_{i}"] = metric(y_true_final, y_pred_final)
-    return results_dict
+            y_true_dict[f"client_test_{i}"] = y_true_final
+            y_pred_dict[f"client_test_{i}"] = y_pred_final
+    if return_pred:
+        return results_dict, y_true_dict, y_pred_dict
+    else:
+        return results_dict
 
 
 def read_config(config_file):

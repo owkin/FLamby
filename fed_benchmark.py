@@ -2,7 +2,6 @@ import argparse
 import copy
 import os
 
-import ipdb
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader as dl
@@ -13,7 +12,7 @@ import flamby.strategies as strats
 # evaluation function is custom)
 # Still some datasets might require specific augmentation strategies or collate_fn
 # functions in the data loading part
-from flamby.datasets.fed_tcga_brca import (
+from flamby.datasets.fed_heart_disease import (
     BATCH_SIZE,
     LR,
     NUM_CLIENTS,
@@ -21,9 +20,10 @@ from flamby.datasets.fed_tcga_brca import (
     Baseline,
     BaselineLoss,
 )
-from flamby.datasets.fed_tcga_brca import FedTcgaBrca as FedDataset
-from flamby.datasets.fed_tcga_brca import Optimizer, get_nb_max_rounds, metric
-NAME_RESULTS_FILE = "results_benchmark_fed_tcga_brca.csv"
+from flamby.datasets.fed_heart_disease import FedHeartDisease as FedDataset
+from flamby.datasets.fed_heart_disease import Optimizer, get_nb_max_rounds, metric
+
+NAME_RESULTS_FILE = "results_benchmark_fed_heart_disease.csv"
 
 from flamby.utils import evaluate_model_on_tests
 
@@ -190,17 +190,31 @@ def main(args2):
         df = pd.DataFrame.from_dict(perf_lines_dicts)
         df.to_csv(NAME_RESULTS_FILE, index=False)
 
-    # Local Baselines
-    for i in range(NUM_CLIENTS):
-        # we only launch training if it's not finished already
-        index_of_interest = df.loc[df["Method"] == f"Local {i}"].index
-        # an experiment is finished if there are num_clients + 1 rows
-        if len(index_of_interest) < (NUM_CLIENTS + 1):
-            # dealing with edge case that shouldn't happen
-            # If some of the rows are there but not all of them we redo the experiments
-            if len(index_of_interest) > 0:
-                df.drop(index_of_interest, inplace=True)
-                perf_lines_dicts = df.to_dict("records")
+    # Local baselines and ensemble
+
+    y_true_dicts = {}
+    y_pred_dicts = {}
+    pooled_y_true_dicts = {}
+    pooled_y_pred_dicts = {}
+
+    # We only launch training if it's not finished already.
+    index_of_interest = df.loc[df["Method"] == "Local 0"].index
+    for i in range(1, NUM_CLIENTS):
+        index_of_interest = index_of_interest.union(
+            df.loc[df["Method"] == f"Local {i}"].index
+        )
+    index_of_interest = index_of_interest.union(df.loc[df["Method"] == "Ensemble"].index)
+    # This experiment is finished if there are num_clients + 1 rows in each local
+    # training and the ensemble training
+
+    if len(index_of_interest) < (NUM_CLIENTS + 1) ** 2:
+        # Dealing with edge case that shouldn't happen.
+        # If some of the rows are there but not all of them we redo the experiments.
+        if len(index_of_interest) > 0:
+            df.drop(index_of_interest, inplace=True)
+            perf_lines_dicts = df.to_dict("records")
+
+        for i in range(NUM_CLIENTS):
             m = copy.deepcopy(global_init)
             l = BaselineLoss()
             print(LR)
@@ -214,8 +228,17 @@ def main(args2):
                     loss.backward()
                     opt.step()
 
-            perf_dict = evaluate_model_on_tests(m, test_dls, metric)
-            pooled_perf_dict = evaluate_model_on_tests(m, [test_pooled], metric)
+            (
+                perf_dict,
+                y_true_dicts[f"Local {i}"],
+                y_pred_dicts[f"Local {i}"],
+            ) = evaluate_model_on_tests(m, test_dls, metric, return_pred=True)
+            (
+                pooled_perf_dict,
+                pooled_y_true_dicts[f"Local {i}"],
+                pooled_y_pred_dicts[f"Local {i}"],
+            ) = evaluate_model_on_tests(m, [test_pooled], metric, return_pred=True)
+
             for k, v in perf_dict.items():
                 # Make sure there is no weird inplace stuff
                 current_dict = copy.deepcopy(base_dict)
@@ -232,9 +255,55 @@ def main(args2):
             current_dict["learning_rate"] = str(LR)
             current_dict["optimizer_class"] = Optimizer
             perf_lines_dicts.append(current_dict)
-            # We update csv and save it when the results are there
-            df = pd.DataFrame.from_dict(perf_lines_dicts)
-            df.to_csv(NAME_RESULTS_FILE, index=False)
+
+        for testset in range(NUM_CLIENTS):
+            for model in range(1, NUM_CLIENTS):
+                assert (
+                    y_true_dicts[f"Local {0}"][f"client_test_{testset}"]
+                    == y_true_dicts[f"Local {model}"][f"client_test_{testset}"]
+                ).all(), (
+                    "Models in the ensemmble do not make predictions in the same x order"
+                )
+            ensemble_true = y_true_dicts["Local 0"][f"client_test_{testset}"]
+            ensemble_pred = y_pred_dicts["Local 0"][f"client_test_{testset}"]
+            for model in range(1, NUM_CLIENTS):
+                ensemble_pred += y_pred_dicts[f"Local {model}"][f"client_test_{testset}"]
+            ensemble_pred /= NUM_CLIENTS
+
+            current_dict = copy.deepcopy(base_dict)
+            current_dict["Test"] = f"client_test_{testset}"
+            current_dict["Metric"] = metric(ensemble_true, ensemble_pred)
+            current_dict["Method"] = "Ensemble"
+            current_dict["learning_rate"] = str(LR)
+            current_dict["optimizer_class"] = Optimizer
+            perf_lines_dicts.append(current_dict)
+
+        for model in range(1, NUM_CLIENTS):
+            assert (
+                pooled_y_true_dicts["Local 0"]["client_test_0"]
+                == pooled_y_true_dicts[f"Local {model}"]["client_test_0"]
+            ).all(), (
+                "Models in the ensemmble do not make predictions in the same x order"
+            )
+        pooled_ensemble_true = pooled_y_true_dicts["Local 0"]["client_test_0"]
+        pooled_ensemble_pred = pooled_y_pred_dicts["Local 0"]["client_test_0"]
+        for model in range(1, NUM_CLIENTS):
+            pooled_ensemble_pred += pooled_y_pred_dicts[f"Local {model}"][
+                "client_test_0"
+            ]
+        pooled_ensemble_pred /= NUM_CLIENTS
+
+        current_dict = copy.deepcopy(base_dict)
+        current_dict["Test"] = "Pooled Test"
+        current_dict["Metric"] = metric(pooled_ensemble_true, pooled_ensemble_pred)
+        current_dict["Method"] = "Ensemble"
+        current_dict["learning_rate"] = str(LR)
+        current_dict["optimizer_class"] = Optimizer
+        perf_lines_dicts.append(current_dict)
+
+        # We update csv and save it when the results are there
+        df = pd.DataFrame.from_dict(perf_lines_dicts)
+        df.to_csv(NAME_RESULTS_FILE, index=False)
 
     # Strategies
     for num_updates in [1, 10, 100, 500]:

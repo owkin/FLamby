@@ -24,6 +24,11 @@ client_test_1,Local 3,0.3258426966292135,0.001,,,,,,<class 'torch.optim.adam.Ada
 client_test_2,Local 3,0.5625,0.001,,,,,,<class 'torch.optim.adam.Adam'>
 client_test_3,Local 3,0.6444444444444445,0.001,,,,,,<class 'torch.optim.adam.Adam'>
 Pooled Test,Local 3,0.44881889763779526,0.001,,,,,,<class 'torch.optim.adam.Adam'>
+client_test_0,Ensemble,0.7307692307692307,0.001,,,,,,<class 'torch.optim.adam.Adam'>
+client_test_1,Ensemble,0.7303370786516854,0.001,,,,,,<class 'torch.optim.adam.Adam'>
+client_test_2,Ensemble,0.75,0.001,,,,,,<class 'torch.optim.adam.Adam'>
+client_test_3,Ensemble,0.7555555555555555,0.001,,,,,,<class 'torch.optim.adam.Adam'>
+Pooled Test,Ensemble,0.7362204724409449,0.001,,,,,,<class 'torch.optim.adam.Adam'>
 client_test_0,FedAvg1,0.7884615384615384,0.001,nan,nan,nan,nan,nan,<class 'torch.optim.adam.Adam'>
 client_test_1,FedAvg1,0.7865168539325843,0.001,nan,nan,nan,nan,nan,<class 'torch.optim.adam.Adam'>
 client_test_2,FedAvg1,0.6875,0.001,nan,nan,nan,nan,nan,<class 'torch.optim.adam.Adam'>
