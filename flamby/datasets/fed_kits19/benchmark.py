@@ -55,16 +55,14 @@ def train_model(
         print("-" * 10)
 
         dice_list = []
-
+        running_loss = 0.0
+        dice_score = 0.0
         # Each epoch has a training and validation phase
         for phase in ["train", "test"]:
             if phase == "train":
                 model.train()  # Set model to training mode
             else:
                 model.eval()  # Set model to evaluate mode
-
-            running_loss = 0.0
-            dice_score = 0.0
 
             # Iterate over data.
             for sample in dataloaders[phase]:
@@ -100,7 +98,7 @@ def train_model(
             best_acc = epoch_acc
             best_model_wts = copy.deepcopy(model.state_dict())
 
-        print("Loss: {:.4f} Acc: {:.4f} ".format(epoch_loss, epoch_acc))
+        print("Training Loss: {:.4f} Validation Acc: {:.4f} ".format(epoch_loss, epoch_acc))
         training_loss_list.append(epoch_loss)
         training_dice_list.append(epoch_acc)
 
@@ -167,7 +165,7 @@ def main(args):
                                                        threshold_mode="abs")
 
     #TODO: Add 5 seeds
-    torch.manual_seed(0)
+    torch.manual_seed(args.seed)
     #TODO: Test train model on lambda 5 (Preprocessing running)
     model = train_model(
         model,
@@ -204,6 +202,12 @@ if __name__ == "__main__":
         type=int,
         default=10,
         help="Numbers of Epochs",
+    )
+    parser.add_argument(
+        "--seeds",
+        type=int,
+        default=0,
+        help="Seed",
     )
     args = parser.parse_args()
 
