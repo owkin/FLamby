@@ -71,13 +71,10 @@ def train_model(
                 inputs = sample[0].to(device)
                 labels = sample[1].to(device)
 
-                print(inputs.shape)
-                print(labels.shape)
                 optimizer.zero_grad()
                 with torch.set_grad_enabled(phase == "train"):
                     outputs = model(inputs)
                     loss = lossfunc(outputs, labels)
-                    print('loss '+str(loss))
 
                     # backward + optimize only if in training phase, record training loss
                     if phase == "train":
@@ -180,7 +177,7 @@ def main(args):
         dataset_sizes,
         device,
         lossfunc,
-        NUM_EPOCHS_POOLED,
+        args.epochs, # for easier debug
     )
     print('----- Test Accuracy ----------')
     print(evaluate_dice_on_tests(model, [test_dataloader], metric, use_gpu=True))
@@ -202,7 +199,12 @@ if __name__ == "__main__":
         default=1,
         help="Numbers of workers for the dataloader",
     )
-
+    parser.add_argument(
+        "--epochs",
+        type=int,
+        default=10,
+        help="Numbers of Epochs",
+    )
     args = parser.parse_args()
 
     main(args)
