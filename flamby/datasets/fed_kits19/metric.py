@@ -62,7 +62,6 @@ def evaluate_dice_on_tests(model, test_dataloaders, metric, use_gpu=True,):
                 y = y.detach().cpu()
                 dice_score = metric(preds, y)
                 dice_list.append(dice_score)
-                print(dice_score)
             results_dict[f"client_test_{i}"] = np.mean(dice_list)
     return results_dict
 
