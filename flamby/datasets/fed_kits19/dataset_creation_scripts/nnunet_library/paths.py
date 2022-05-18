@@ -28,7 +28,7 @@ default_cascade_trainer = "nnUNetTrainerV2CascadeFullRes"
 PLEASE READ paths.md FOR INFORMATION TO HOW TO SET THIS UP
 """
 
-path_to_config_file = get_config_file_path("fed_kits19", True)
+path_to_config_file = get_config_file_path("fed_kits19", False)
 print(path_to_config_file)
 dict = read_config(path_to_config_file)
 base = dict["dataset_path"] + '/'
