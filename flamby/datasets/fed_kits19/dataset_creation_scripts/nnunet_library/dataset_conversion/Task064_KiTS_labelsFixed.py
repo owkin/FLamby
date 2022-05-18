@@ -40,7 +40,7 @@ def add_args(parser):
     """
     # parser.add_argument("--output_folder", type=str, default="True", metavar="N", required=True,
     #                     help="Specify if debug mode (True) or not (False)")
-    parser.add_argument("--debug", action="store_false",  help="Specify if debug mode (True) or not (False)")
+    parser.add_argument("--debug", action="store_true",  help="Specify if debug mode (True) or not (False)")
     args = parser.parse_args()
     return args
 
