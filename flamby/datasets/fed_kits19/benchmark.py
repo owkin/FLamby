@@ -122,8 +122,8 @@ def train_model(
 
 def main(args):
 
-    # os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    # os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
+    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
     torch.use_deterministic_algorithms(False)
 
 
@@ -149,15 +149,15 @@ def main(args):
     print("device", device)
 
 
-    #TODO: RuntimeError: Unable to find a valid cuDNN algorithm to run convolution, check if forward pass works without GPU assignment - it does, now check with GPU assignment
+
     model = Baseline()
-    data = torch.full([2, 1, 64, 192, 192], 0, dtype=torch.float32)
+    # data = torch.full([2, 1, 64, 192, 192], 0, dtype=torch.float32)
 
     model = model.to(device)
-    data = data.to(device)
-    model(data)
-    print('forward pass worked')
-    exit()
+    # data = data.to(device)
+    # model(data)
+    # print('forward pass worked')
+    # exit()
 
     lossfunc = BaselineLoss()
 
