@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader as dl
 
 import flamby.strategies as strats
 
-# Only 3 lines to change to evaluate different datasets (except for LIDC where the
+# Only 4 lines to change to evaluate different datasets (except for LIDC where the
 # evaluation function is custom)
 # Still some datasets might require specific augmentation strategies or collate_fn
 # functions in the data loading part
@@ -23,6 +23,8 @@ from flamby.datasets.fed_tcga_brca import (
 )
 from flamby.datasets.fed_tcga_brca import FedTcgaBrca as FedDataset
 from flamby.datasets.fed_tcga_brca import Optimizer, get_nb_max_rounds, metric
+NAME_RESULTS_FILE = "results_benchmark_fed_tcga_brca.csv"
+
 from flamby.utils import evaluate_model_on_tests
 
 
@@ -31,8 +33,6 @@ def main(args2):
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args2.GPU)
     torch.use_deterministic_algorithms(False)
-
-    NAME_RESULTS_FILE = "results_benchmark.csv"
 
     strategy_names = [
         "FedAvg",
@@ -50,7 +50,7 @@ def main(args2):
     # be used to make the process easier
     strategy_specific_hp_dicts = {}
     strategy_specific_hp_dicts["FedAvg"] = {}
-    strategy_specific_hp_dicts["FedProx"] = {"learning_rate": LR / 10.0, "mu": 1e-1}
+    strategy_specific_hp_dicts["FedProx"] = {"learning_rate": LR / 1.0, "mu": 1e-1}
     strategy_specific_hp_dicts["Cyclic"] = {"learning_rate": LR / 100.0}
     strategy_specific_hp_dicts["FedAdam"] = {
         "learning_rate": LR / 10.0,
@@ -90,11 +90,10 @@ def main(args2):
     columns_names += hp_additional_args
 
     # We use the same initialization for everyone in order to be fair
-    torch.manual_seed(42)
+    torch.manual_seed(0)
     global_init = Baseline()
 
     # We instantiate all train and test dataloaders required including pooled ones
-    # FIX the number of workers !!!!!!!!!!!!!!!!!!!!!! parallelism issues when > 0
     training_dls = [
         dl(
             FedDataset(center=i, train=True, pooled=False),
@@ -120,7 +119,7 @@ def main(args2):
         num_workers=args2.workers,
     )
     test_pooled = dl(
-        FedDataset(train=True, pooled=True),
+        FedDataset(train=False, pooled=True),
         batch_size=BATCH_SIZE,
         shuffle=False,
         num_workers=args2.workers,
@@ -204,6 +203,7 @@ def main(args2):
                 perf_lines_dicts = df.to_dict("records")
             m = copy.deepcopy(global_init)
             l = BaselineLoss()
+            print(LR)
             opt = Optimizer(m.parameters(), lr=LR)
             print("Local " + str(i))
             for e in range(NUM_EPOCHS_POOLED):
@@ -213,6 +213,7 @@ def main(args2):
                     loss = l(y_pred, y)
                     loss.backward()
                     opt.step()
+
             perf_dict = evaluate_model_on_tests(m, test_dls, metric)
             pooled_perf_dict = evaluate_model_on_tests(m, [test_pooled], metric)
             for k, v in perf_dict.items():
@@ -236,7 +237,7 @@ def main(args2):
             df.to_csv(NAME_RESULTS_FILE, index=False)
 
     # Strategies
-    for num_updates in [1, 50, 100, 500]:
+    for num_updates in [1, 10, 100, 500]:
         for sname in strategy_names:
             # Base arguments
             m = copy.deepcopy(global_init)
@@ -280,6 +281,7 @@ def main(args2):
                 s = getattr(strats, sname)(**args)
                 print("FL strategy", sname, " num_updates ", num_updates)
                 m = s.run()[0]
+
                 perf_dict = evaluate_model_on_tests(m, test_dls, metric)
                 pooled_perf_dict = evaluate_model_on_tests(m, [test_pooled], metric)
                 for k, v in perf_dict.items():
