@@ -44,7 +44,7 @@ def train_model(
 
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
-
+    model = model.to(device)
     # To draw loss and accuracy plots
     training_loss_list = []
     training_dice_list = []
@@ -71,6 +71,8 @@ def train_model(
                 inputs = sample[0].to(device)
                 labels = sample[1].to(device)
 
+                print(inputs.shape)
+                print(labels.shape)
                 optimizer.zero_grad()
                 with torch.set_grad_enabled(phase == "train"):
                     outputs = model(inputs)
