@@ -204,7 +204,7 @@ if __name__ == "__main__":
         help="Numbers of Epochs",
     )
     parser.add_argument(
-        "--seeds",
+        "--seed",
         type=int,
         default=0,
         help="Seed",
