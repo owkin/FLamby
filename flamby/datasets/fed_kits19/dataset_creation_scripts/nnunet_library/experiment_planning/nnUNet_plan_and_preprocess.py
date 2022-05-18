@@ -81,6 +81,7 @@ def main():
                              "IDENTIFIER, the correct training command would be:\n"
                              "'nnUNet_train CONFIG TRAINER TASKID FOLD -p nnUNetPlans_pretrained_IDENTIFIER "
                              "-pretrained_weights FILENAME'")
+    parser.add_argument("--debug", action="store_true", help="Specify if debug mode (True) or not (False)")
 
     args = parser.parse_args()
     task_ids = args.task_ids
@@ -109,11 +110,12 @@ def main():
 
         task_name = convert_id_to_task_name(i)
 
-        path_to_config_file = get_config_file_path("fed_kits19", True)
+        path_to_config_file = get_config_file_path("fed_kits19", debug = args.debug)
         dict = read_config(path_to_config_file)
         if not dict["download_complete"]:
             print("You have not downloaded the data: run dataset_conversion step first")
             sys.exit()
+            
 
         if args.verify_dataset_integrity:
             verify_dataset_integrity(join(nnUNet_raw_data, task_name))
