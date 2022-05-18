@@ -21,8 +21,6 @@ from flamby.datasets.fed_kits19 import (
     softmax_helper,
 )
 
-
-
 def train_model(
     model, optimizer, scheduler, dataloaders, dataset_sizes, device, lossfunc, num_epochs
 ):
