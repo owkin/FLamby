@@ -12,7 +12,7 @@ import flamby.strategies as strats
 # evaluation function is custom)
 # Still some datasets might require specific augmentation strategies or collate_fn
 # functions in the data loading part
-from flamby.datasets.fed_heart_disease import (
+from flamby.datasets.fed_tcga_brca import (
     BATCH_SIZE,
     LR,
     NUM_CLIENTS,
@@ -20,10 +20,10 @@ from flamby.datasets.fed_heart_disease import (
     Baseline,
     BaselineLoss,
 )
-from flamby.datasets.fed_heart_disease import FedHeartDisease as FedDataset
-from flamby.datasets.fed_heart_disease import Optimizer, get_nb_max_rounds, metric
+from flamby.datasets.fed_tcga_brca import FedTcgaBrca as FedDataset
+from flamby.datasets.fed_tcga_brca import Optimizer, get_nb_max_rounds, metric
 
-NAME_RESULTS_FILE = "results_benchmark_fed_heart_disease.csv"
+NAME_RESULTS_FILE = "results_benchmark_fed_tcga_brca.csv"
 
 from flamby.utils import evaluate_model_on_tests
 
