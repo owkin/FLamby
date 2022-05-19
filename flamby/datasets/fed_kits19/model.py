@@ -194,7 +194,7 @@ class Baseline(SegmentationNetwork):
                  norm_op=nn.InstanceNorm3d, norm_op_kwargs={'eps': 1e-5, 'affine': True},
                  dropout_op=nn.Dropout3d, dropout_op_kwargs={'p': 0, 'inplace': True},
                  nonlin=nn.LeakyReLU, nonlin_kwargs={'negative_slope': 1e-2, 'inplace': True}, deep_supervision=False, dropout_in_localization=False,
-                 final_nonlin=softmax_helper, weightInitializer=InitWeights_He(1e-2),
+                 final_nonlin=lambda x: x, weightInitializer=InitWeights_He(1e-2),
                  upscale_logits=False, convolutional_pooling=True, convolutional_upsampling=True,
                  max_num_features=None, basic_block=ConvDropoutNormNonlin,
                  seg_output_use_bias=False):
