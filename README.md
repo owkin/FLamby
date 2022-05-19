@@ -94,6 +94,51 @@ This will generate html pages in the folder _builds/html that can be accessed in
 ```bash
 open _builds/html/index.html
 ```
+
+## File tree
+```bash
+FLamby
+├── docs
+│   └── ...
+├── environment.yml
+├── flamby
+│   ├── datasets
+│   │   ├── fed_camelyon16
+│   │   ├── fed_dummy_dataset.py
+│   │   ├── fed_heart_disease
+│   │   ├── fed_isic2019
+│   │   ├── fed_ixi
+│   │   ├── fed_lidc_idri
+│   │   ├── fed_tcga_brca
+│   │   └── __init__.py
+│   ├── fed_benchmark.py
+│   ├── __init__.py
+│   ├── results_benchmark_fed_heart_disease.csv
+│   ├── results_benchmark_fed_tcga_brca.csv
+│   ├── strategies
+│   │   ├── cyclic.py
+│   │   ├── fed_avg.py
+│   │   ├── fed_opt.py
+│   │   ├── fed_prox.py
+│   │   ├── __init__.py
+│   │   ├── scaffold.py
+│   │   └── utils.py
+│   └── utils.py
+├── LICENSE
+├── Makefile
+├── README.md
+├── setup.py
+└── tests
+    ├── __init__.py
+    ├── strategies
+    │   ├── test_cyclic.py
+    │   ├── test_fed_adam.py
+    │   ├── test_fed_avg.py
+    │   ├── test_fed_prox.py
+    │   └── test_scaffold.py
+    └── test_fed_ixi_dataset.py
+```
+
 ## Contributing
 
 After installing the package in dev mode (``pip install -e .``)
