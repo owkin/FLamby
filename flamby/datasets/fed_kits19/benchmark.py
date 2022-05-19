@@ -87,8 +87,8 @@ def train_model(
                         dice_score = metric(preds.cpu(), labels.cpu())
                         dice_list.append(dice_score)
 
-            if phase == "train":
-                scheduler.step(epoch)
+            # if phase == "train":
+            #     scheduler.step(epoch)
 
 
         epoch_loss = running_loss / dataset_sizes[phase]
