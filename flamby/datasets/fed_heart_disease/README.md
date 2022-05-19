@@ -54,6 +54,25 @@ python benchmark.py
 This will train a logistic regression classifier (which is the strongest baseline according to [UCI ML Repository](https://archive-beta.ics.uci.edu/ml/datasets/heart+disease).
 
 
+## File tree
+
+```bash
+fed_heart_disease
+├── benchmark.py
+├── common.py
+├── dataset_creation_scripts
+│   ├── download.py
+│   ├── __init__.py
+│   └── update_config.py
+├── dataset.py
+├── __init__.py
+├── loss.py
+├── metric.py
+├── model.py
+└── README.md
+
+```
+
 ## References
 
 [1] Janosi, Andras, Steinbrunn, William, Pfisterer, Matthias, Detrano,
