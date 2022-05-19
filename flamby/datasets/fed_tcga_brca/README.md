@@ -22,3 +22,21 @@ To train and evaluate a model for the pooled dataset, run:
 ```
 python benchmark.py --GPU 0 --workers 4
 ```
+
+## File tree
+
+```bash
+fed_tcga_brca
+├── benchmark.py
+├── brca.csv
+├── centers.csv
+├── common.py
+├── dataset_creation_scripts
+│   └── train_test_split.csv
+├── dataset.py
+├── __init__.py
+├── loss.py
+├── metric.py
+├── model.py
+└── README.md
+```
