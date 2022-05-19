@@ -132,3 +132,24 @@ As a first approach, what we can do with the **IXI Tiny** dataset is to set up a
 Create a model which take T1 image as input and predict the binary mask of the brain (label). This process allows us to isolate the brain from the other head components, such as the eyes, skin, and fat.
 
 We will use a UNet model (a kind of convolution neural network architecture with few changes), very popular in biomedical segmentation. UNet is specifically used to perform semantic segmentation, meaning that each voxel of our volume will be classified. We can also refer this task as a dense prediction.
+
+## File tree
+
+```bash
+fed_ixi
+├── benchmark.py
+├── common.py
+├── create-metadata.py
+├── dataset_creation_scripts
+│   ├── download.py
+│   └── __init__.py
+├── dataset.py
+├── __init__.py
+├── loss.py
+├── metadata
+│   └── metadata_tiny.csv
+├── metric.py
+├── model.py
+├── README.md
+└── utils.py
+```
