@@ -95,5 +95,31 @@ tensorboard --logdir=./runs
 ````
 Can then be used to visualize results (use [port forwarding if necessary](https://stackoverflow.com/questions/37987839/how-can-i-run-tensorboard-on-a-remote-server)).
 
+## File tree
 
+```bash
+fed_camelyon16
+├── benchmark.py
+├── common.py
+├── dataset_creation_scripts
+│   ├── download.py
+│   ├── google_client.py
+│   ├── __init__.py
+│   ├── test_slides_links_drive.csv
+│   ├── tiling_coordinates_camelyon16.csv
+│   ├── tiling_slides.py
+│   ├── training_slides_links_drive.csv
+│   └── update_config.py
+├── dataset.py
+├── __init__.py
+├── labels.csv
+├── loss.py
+├── metadata
+│   ├── metadata.csv
+│   └── reference.csv
+├── metric.py
+├── model.py
+└── README.md
+
+```
 
