@@ -62,7 +62,7 @@ You can install the environment by running:
 git clone https://github.com/owkin/FLamby.git
 cd FLamby
 conda env create -f environment.yml
-conda conda activate flamby
+conda activate flamby
 ```
 
 
