@@ -103,3 +103,25 @@ The baseline model is a V-Net (see [V-Net: Fully Convolutional Neural Networks f
 patches containing positive voxels are randomly sampled and fed to the network during training. At test time, however, the whole 
 image is processed. The current implementation assumes access to a GPU able to process 4 (128 x 128 x 64) patches at a time.
 The code was tested on a Titan X (Pascal) GPU.
+
+## File tree
+
+```bash
+fed_lidc_idri
+├── benchmark.py
+├── common.py
+├── dataset_creation_scripts
+│   ├── download_ct_scans.py
+│   ├── __init__.py
+│   ├── process_raw.py
+│   └── tciaclient.py
+├── dataset.py
+├── data_utils.py
+├── __init__.py
+├── loss.py
+├── metadata
+│   └── metadata.csv
+├── metric.py
+├── model.py
+└── README.md
+```
