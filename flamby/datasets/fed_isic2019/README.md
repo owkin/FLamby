@@ -62,3 +62,25 @@ To train and evaluate a classification model for the pooled dataset, run:
 ```
 python benchmark.py --GPU 0 --workers 4
 ```
+
+## File tree
+
+```bash
+fed_isic2019
+├── benchmark.py
+├── common.py
+├── dataset_creation_scripts
+│   ├── color_constancy.py
+│   ├── download_isic.py
+│   ├── __init__.py
+│   ├── resize_images.py
+│   └── train_test_split
+├── dataset.py
+├── HAM10000_metadata
+├── __init__.py
+├── loss.py
+├── metric.py
+├── model.py
+└── README.md
+
+```
