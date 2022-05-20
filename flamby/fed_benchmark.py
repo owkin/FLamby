@@ -7,25 +7,19 @@ import torch
 from torch.utils.data import DataLoader as dl
 
 import flamby.strategies as strats
+from flamby.conf import check_config, get_dataset_args, get_strategies
+from flamby.utils import evaluate_model_on_tests
 
 # Only 4 lines to change to evaluate different datasets (except for LIDC where the
 # evaluation function is custom)
 # Still some datasets might require specific augmentation strategies or collate_fn
 # functions in the data loading part
-from flamby.datasets.fed_tcga_brca import (
-    BATCH_SIZE,
-    LR,
-    NUM_CLIENTS,
-    NUM_EPOCHS_POOLED,
-    Baseline,
-    BaselineLoss,
-)
-from flamby.datasets.fed_tcga_brca import FedTcgaBrca as FedDataset
-from flamby.datasets.fed_tcga_brca import Optimizer, get_nb_max_rounds, metric
+
+NUM_EPOCHS_POOLED = 0  # TODO: remove before merging
+# from flamby.datasets.fed_tcga_brca import FedTcgaBrca as FedDataset
+# from flamby.datasets.fed_tcga_brca import Optimizer, get_nb_max_rounds, metric
 
 NAME_RESULTS_FILE = "results_benchmark_fed_tcga_brca.csv"
-
-from flamby.utils import evaluate_model_on_tests
 
 
 def main(args2):
@@ -34,56 +28,44 @@ def main(args2):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args2.GPU)
     torch.use_deterministic_algorithms(False)
 
-    strategy_names = [
-        "FedAvg",
-        "FedProx",
-        "FedAdagrad",
-        "FedAdam",
-        "FedYogi",
-        "Cyclic",
-        "Scaffold",
-    ]
+    # ensure that the config is ok
+    check_config()
+    (
+        dataset_name,
+        FedDataset,
+        [
+            BATCH_SIZE,
+            LR,
+            NUM_CLIENTS,
+            NUM_EPOCHS_POOLED,  # change to 0
+            Baseline,
+            BaselineLoss,
+            Optimizer,
+            get_nb_max_rounds,
+            metric,
+        ],
+    ) = get_dataset_args(
+        [
+            "BATCH_SIZE",
+            "LR",
+            "NUM_CLIENTS",
+            "NUM_EPOCHS_POOLED",
+            "Baseline",
+            "BaselineLoss",
+            "Optimizer",
+            "get_nb_max_rounds",
+            "metric",
+        ]
+    )
 
-    # One might need to iterate on the hyperparameters to some extents if performances
+    # One might need to iterate on the hyperparameters to some extent if performances
     # are seriously degraded with default ones
-    # We can add parameters or change them on the go, in the future an argparse could
-    # be used to make the process easier
-    strategy_specific_hp_dicts = {}
-    strategy_specific_hp_dicts["FedAvg"] = {}
-    strategy_specific_hp_dicts["FedProx"] = {"learning_rate": LR / 1.0, "mu": 1e-1}
-    strategy_specific_hp_dicts["Cyclic"] = {"learning_rate": LR / 100.0}
-    strategy_specific_hp_dicts["FedAdam"] = {
-        "learning_rate": LR / 10.0,
-        "tau": 1e-8,
-        "server_learning_rate": 1e-1,
-        "beta1": 0.9,
-        "beta2": 0.999,
-        "optimizer_class": torch.optim.SGD,
-    }
-    strategy_specific_hp_dicts["FedYogi"] = {
-        "learning_rate": LR / 10.0,
-        "tau": 1e-8,
-        "server_learning_rate": 1e-1,
-        "beta1": 0.9,
-        "beta2": 0.999,
-        "optimizer_class": torch.optim.SGD,
-    }
-    strategy_specific_hp_dicts["FedAdagrad"] = {
-        "learning_rate": LR / 10.0,
-        "tau": 1e-8,
-        "server_learning_rate": 1e-1,
-        "beta1": 0.9,
-        "beta2": 0.999,
-        "optimizer_class": torch.optim.SGD,
-    }
-    strategy_specific_hp_dicts["Scaffold"] = {
-        "server_learning_rate": 1.0,
-        "optimizer_class": torch.optim.SGD,
-    }
+    strategy_specific_hp_dicts = get_strategies(learning_rate=LR)
 
     columns_names = ["Test", "Method", "Metric"]
     # We need to add strategy hyperparameters columns to the benchmark
     hp_additional_args = []
+    breakpoint()
     for _, v in strategy_specific_hp_dicts.items():
         for name, _ in v.items():
             hp_additional_args.append(name)
@@ -155,21 +137,23 @@ def main(args2):
         if len(index_of_interest) > 0:
             df.drop(index_of_interest, inplace=True)
             perf_lines_dicts = df.to_dict("records")
-
+        # TODO move the model to the GPU (if GPU is available and user wants t)
         m = copy.deepcopy(global_init)
-        l = BaselineLoss()
+        bloss = BaselineLoss()
         opt = Optimizer(m.parameters(), lr=LR)
         print("Pooled")
         for e in range(NUM_EPOCHS_POOLED):
-            for X, y in train_pooled:
+            for X, y in train_pooled:  # CUDA if GPUT X = X.cuda() (same for y)
                 opt.zero_grad()
                 y_pred = m(X)
-                loss = l(y_pred, y)
+                loss = bloss(y_pred, y)
                 loss.backward()
                 opt.step()
 
-        perf_dict = evaluate_model_on_tests(m, test_dls, metric)
-        pooled_perf_dict = evaluate_model_on_tests(m, [test_pooled], metric)
+        perf_dict = evaluate_model_on_tests(m, test_dls, metric)  # TODO: add use GPU
+        pooled_perf_dict = evaluate_model_on_tests(
+            m, [test_pooled], metric
+        )  # TODO: add use GPU
         for k, v in perf_dict.items():
             # Make sure there is no weird inplace stuff
             current_dict = copy.deepcopy(base_dict)
@@ -216,7 +200,7 @@ def main(args2):
 
         for i in range(NUM_CLIENTS):
             m = copy.deepcopy(global_init)
-            l = BaselineLoss()
+            bloss = BaselineLoss()
             print(LR)
             opt = Optimizer(m.parameters(), lr=LR)
             print("Local " + str(i))
@@ -224,7 +208,7 @@ def main(args2):
                 for X, y in training_dls[i]:
                     opt.zero_grad()
                     y_pred = m(X)
-                    loss = l(y_pred, y)
+                    loss = bloss(y_pred, y)
                     loss.backward()
                     opt.step()
 
@@ -307,14 +291,14 @@ def main(args2):
 
     # Strategies
     for num_updates in [1, 10, 100, 500]:
-        for sname in strategy_names:
+        for sname in strategy_specific_hp_dicts.keys():
             # Base arguments
             m = copy.deepcopy(global_init)
-            l = BaselineLoss()
+            bloss = BaselineLoss()
             args = {
                 "training_dataloaders": training_dls,
                 "model": m,
-                "loss": l,
+                "loss": bloss,
                 "optimizer_class": Optimizer,
                 "learning_rate": LR,
                 "num_updates": num_updates,

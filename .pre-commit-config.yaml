@@ -12,6 +12,8 @@ repos:
     - id: flake8
       args: # arguments to configure flake8
        - "--max-line-length=89"
+       - "--per-file-ignores=*/__init__.py:F401"
+
 -   repo: https://github.com/pre-commit/mirrors-isort
     rev: v5.10.1
     hooks:
