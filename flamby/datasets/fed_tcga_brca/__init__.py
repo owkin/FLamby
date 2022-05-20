@@ -9,4 +9,4 @@ from .common import (
 from .dataset import FedTcgaBrca, TcgaBrcaRaw
 from .loss import BaselineLoss
 from .metric import metric
-from .model import Baseline
+from .model import Baseline  # NOQA
