@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-import torch  # noqa:F401
+import torch  # noqa:F401  # necessary for importing optimizer
 
 CURRENT_FOLDER = Path(__file__).resolve().parent
 config = json.loads((CURRENT_FOLDER / "config.json").read_text())
