@@ -253,6 +253,7 @@ class FedKiTS19(KiTS19Raw):
             df2 = df.query("train_test_split_silo == '" + key + "' ").reset_index(drop=True)
             self.images = df2.case_ids.tolist()
             c = 0
+            self.images_path = OrderedDict()
             for i in self.images:
                 self.images_path[c] = OrderedDict()
                 self.images_path[c]['data_file'] = join(self.dataset_directory, "%s.npz" % i)
@@ -265,6 +266,24 @@ class FedKiTS19(KiTS19Raw):
 if __name__ == "__main__":
     train_dataset = FedKiTS19(5, train=False, pooled=False,)
     train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=2, shuffle=True)
+
+    pooled_training = FedKiTS19(train=True, pooled=True)
+    print(len(pooled_training))  # 74
+    local_dataset_lengths = [len(FedKiTS19(train=True, pooled=False, center=i)) for i in
+                             range(6)]  # [9, 11, 9, 9, 12, 24]
+
+    # we should have:
+    print(local_dataset_lengths)
+    assert len(pooled_training) == sum(local_dataset_lengths)
+
+    pooled_test = FedKiTS19(train=False, pooled=True)
+    print(len(pooled_test))  # 74
+    local_dataset_lengths = [len(FedKiTS19(train=False, pooled=False, center=i)) for i in
+                             range(6)]  # [3, 3, 3, 3, 4, 6]
+
+    # we should have:
+    print(local_dataset_lengths)
+    assert len(pooled_test) == sum(local_dataset_lengths)
 
     for sample in train_dataloader:
         print(sample[0].shape)
