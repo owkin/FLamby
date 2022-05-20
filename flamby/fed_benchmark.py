@@ -1,6 +1,7 @@
 import argparse
 import copy
 import os
+from xmlrpc.client import Boolean
 
 import pandas as pd
 import torch
@@ -21,11 +22,10 @@ NUM_EPOCHS_POOLED = 0  # TODO: remove before merging
 
 
 def main(args2):
-
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args2.GPU)
     torch.use_deterministic_algorithms(False)
-
+    use_gpu = args2.GPU and torch.cuda.is_available()
     # ensure that the config is ok
     check_config()
     (
@@ -72,44 +72,26 @@ def main(args2):
             if arg_names not in hp_additional_args
         ]
     columns_names += hp_additional_args
+    base_dict = {col_name: None for col_name in columns_names}
 
     # We use the same initialization for everyone in order to be fair
     torch.manual_seed(0)
     global_init = Baseline()
 
     # We instantiate all train and test dataloaders required including pooled ones
-    training_dls = [
-        dl(
-            FedDataset(center=i, train=True, pooled=False),
-            batch_size=BATCH_SIZE,
-            shuffle=True,
-            num_workers=args2.workers,
-        )
-        for i in range(NUM_CLIENTS)
-    ]
-    test_dls = [
-        dl(
-            FedDataset(center=i, train=False, pooled=False),
-            batch_size=BATCH_SIZE,
-            shuffle=False,
-            num_workers=args2.workers,
-        )
-        for i in range(NUM_CLIENTS)
-    ]
-    train_pooled = dl(
-        FedDataset(train=True, pooled=True),
+    training_dls, test_dls = init_data_loaders(
+        dataset=FedDataset,
+        pooled=False,
         batch_size=BATCH_SIZE,
-        shuffle=True,
+        num_workers=args2.workers,
+        num_clients=NUM_CLIENTS,
+    )
+    train_pooled, test_pooled = init_data_loaders(
+        dataset=FedDataset,
+        pooled=True,
+        batch_size=BATCH_SIZE,
         num_workers=args2.workers,
     )
-    test_pooled = dl(
-        FedDataset(train=False, pooled=True),
-        batch_size=BATCH_SIZE,
-        shuffle=False,
-        num_workers=args2.workers,
-    )
-
-    base_dict = {col_name: None for col_name in columns_names}
 
     # We check if some results are already computed
     if os.path.exists(results_file):
@@ -129,7 +111,7 @@ def main(args2):
 
     # Pooled Baseline
     # Throughout the experiments we only launch training if we do not have the results
-    # already. Note that pooled and local baselines do not use hyperparameters.
+    # yet. Note that pooled and local baselines do not use hyperparameters.
 
     index_of_interest = df.loc[df["Method"] == "Pooled Training"].index
     # an experiment is finished if there are num_clients + 1 rows
@@ -139,23 +121,27 @@ def main(args2):
         if len(index_of_interest) > 0:
             df.drop(index_of_interest, inplace=True)
             perf_lines_dicts = df.to_dict("records")
-        # TODO move the model to the GPU (if GPU is available and user wants t)
         m = copy.deepcopy(global_init)
+        if use_gpu:
+            m.cuda()
         bloss = BaselineLoss()
         opt = Optimizer(m.parameters(), lr=LR)
         print("Pooled")
-        for e in range(NUM_EPOCHS_POOLED):
+        for _ in range(NUM_EPOCHS_POOLED):
             for X, y in train_pooled:  # CUDA if GPUT X = X.cuda() (same for y)
+                if use_gpu:
+                    X = X.cuda()
+                    y = y.cuda()
                 opt.zero_grad()
                 y_pred = m(X)
                 loss = bloss(y_pred, y)
                 loss.backward()
                 opt.step()
 
-        perf_dict = evaluate_model_on_tests(m, test_dls, metric)  # TODO: add use GPU
+        perf_dict = evaluate_model_on_tests(m, test_dls, metric, use_gpu=use_gpu)
         pooled_perf_dict = evaluate_model_on_tests(
-            m, [test_pooled], metric
-        )  # TODO: add use GPU
+            m, [test_pooled], metric, use_gpu=use_gpu
+        )
         for k, v in perf_dict.items():
             # Make sure there is no weird inplace stuff
             current_dict = copy.deepcopy(base_dict)
@@ -364,13 +350,58 @@ def main(args2):
                 df.to_csv(results_file, index=False)
 
 
+def init_data_loaders(
+    dataset, pooled=False, batch_size=1, num_workers=1, num_clients=None
+):
+    """
+    Initializes the data loaders for the training and test datasets.
+    """
+    if (not pooled) and num_clients is None:
+        raise ValueError("num_clients must be specified for the non-pooled data")
+
+    if not pooled:
+        training_dls = [
+            dl(
+                dataset(center=i, train=True, pooled=False),
+                batch_size=batch_size,
+                shuffle=True,
+                num_workers=num_workers,
+            )
+            for i in range(num_clients)
+        ]
+        test_dls = [
+            dl(
+                dataset(center=i, train=False, pooled=False),
+                batch_size=batch_size,
+                shuffle=False,
+                num_workers=num_workers,
+            )
+            for i in range(num_clients)
+        ]
+        return training_dls, test_dls
+    else:
+        train_pooled = dl(
+            dataset(train=True, pooled=True),
+            batch_size=batch_size,
+            shuffle=True,
+            num_workers=num_workers,
+        )
+        test_pooled = dl(
+            dataset(train=False, pooled=True),
+            batch_size=batch_size,
+            shuffle=False,
+            num_workers=num_workers,
+        )
+        return train_pooled, test_pooled
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--GPU",
-        type=int,
-        default=0,
+        type=Boolean,
+        default=False,
         help="GPU to run the training on (if available)",
     )
     parser.add_argument(
