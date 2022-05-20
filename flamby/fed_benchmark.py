@@ -7,7 +7,7 @@ import torch
 from torch.utils.data import DataLoader as dl
 
 import flamby.strategies as strats
-from flamby.conf import check_config, get_dataset_args, get_strategies
+from flamby.conf import check_config, get_dataset_args, get_results_file, get_strategies
 from flamby.utils import evaluate_model_on_tests
 
 # Only 4 lines to change to evaluate different datasets (except for LIDC where the
@@ -18,8 +18,6 @@ from flamby.utils import evaluate_model_on_tests
 NUM_EPOCHS_POOLED = 0  # TODO: remove before merging
 # from flamby.datasets.fed_tcga_brca import FedTcgaBrca as FedDataset
 # from flamby.datasets.fed_tcga_brca import Optimizer, get_nb_max_rounds, metric
-
-NAME_RESULTS_FILE = "results_benchmark_fed_tcga_brca.csv"
 
 
 def main(args2):
@@ -57,6 +55,7 @@ def main(args2):
             "metric",
         ]
     )
+    results_file = get_results_file()
 
     # One might need to iterate on the hyperparameters to some extent if performances
     # are seriously degraded with default ones
@@ -65,10 +64,13 @@ def main(args2):
     columns_names = ["Test", "Method", "Metric"]
     # We need to add strategy hyperparameters columns to the benchmark
     hp_additional_args = []
-    breakpoint()
-    for _, v in strategy_specific_hp_dicts.items():
-        for name, _ in v.items():
-            hp_additional_args.append(name)
+
+    for strategy in strategy_specific_hp_dicts.values():
+        hp_additional_args += [
+            arg_names
+            for arg_names in strategy.keys()
+            if arg_names not in hp_additional_args
+        ]
     columns_names += hp_additional_args
 
     # We use the same initialization for everyone in order to be fair
@@ -110,8 +112,8 @@ def main(args2):
     base_dict = {col_name: None for col_name in columns_names}
 
     # We check if some results are already computed
-    if os.path.exists(NAME_RESULTS_FILE):
-        df = pd.read_csv(NAME_RESULTS_FILE)
+    if os.path.exists(results_file):
+        df = pd.read_csv(results_file)
         # If we added additional hyperparameters we update the df
         for col_name in columns_names:
             if col_name not in df.columns:
@@ -172,7 +174,7 @@ def main(args2):
         perf_lines_dicts.append(current_dict)
         # We update csv and save it when the results are there
         df = pd.DataFrame.from_dict(perf_lines_dicts)
-        df.to_csv(NAME_RESULTS_FILE, index=False)
+        df.to_csv(results_file, index=False)
 
     # Local baselines and ensemble
 
@@ -287,7 +289,7 @@ def main(args2):
 
         # We update csv and save it when the results are there
         df = pd.DataFrame.from_dict(perf_lines_dicts)
-        df.to_csv(NAME_RESULTS_FILE, index=False)
+        df.to_csv(results_file, index=False)
 
     # Strategies
     for num_updates in [1, 10, 100, 500]:
@@ -359,7 +361,7 @@ def main(args2):
                 perf_lines_dicts.append(current_dict)
                 # We update csv and save it when the results are there
                 df = pd.DataFrame.from_dict(perf_lines_dicts)
-                df.to_csv(NAME_RESULTS_FILE, index=False)
+                df.to_csv(results_file, index=False)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+import torch  # noqa:F401
+
 CURRENT_FOLDER = Path(__file__).resolve().parent
 config = json.loads((CURRENT_FOLDER / "config.json").read_text())
 
@@ -93,6 +95,10 @@ def get_strategies(learning_rate=None):
             strategies[strategy].pop("learning_rate_scaler")
 
     return strategies
+
+
+def get_results_file():
+    return Path(config["results_file"])
 
 
 if __name__ == "__main__":
