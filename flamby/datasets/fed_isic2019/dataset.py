@@ -103,8 +103,28 @@ class FedIsic2019(Isic2019Raw):
         debug=False,
         X_dtype=torch.float32,
         y_dtype=torch.int64,
-        augmentations=None,
     ):
+        sz = 200
+        if train:
+            augmentations = albumentations.Compose(
+                [
+                    albumentations.RandomScale(0.07),
+                    albumentations.Rotate(50),
+                    albumentations.RandomBrightnessContrast(0.15, 0.1),
+                    albumentations.Flip(p=0.5),
+                    albumentations.Affine(shear=0.1),
+                    albumentations.RandomCrop(sz, sz),
+                    albumentations.CoarseDropout(random.randint(1, 8), 16, 16),
+                    albumentations.Normalize(always_apply=True),
+                ]
+            )
+        else:
+            augmentations = albumentations.Compose(
+                [
+                    albumentations.CenterCrop(sz, sz),
+                    albumentations.Normalize(always_apply=True),
+                ]
+            )
 
         super().__init__(
             train,
@@ -131,27 +151,7 @@ class FedIsic2019(Isic2019Raw):
 
 if __name__ == "__main__":
 
-    sz = 200
-    train_aug = albumentations.Compose(
-        [
-            albumentations.RandomScale(0.07),
-            albumentations.Rotate(50),
-            albumentations.RandomBrightnessContrast(0.15, 0.1),
-            albumentations.Flip(p=0.5),
-            albumentations.Affine(shear=0.1),
-            albumentations.RandomCrop(sz, sz) if sz else albumentations.NoOp(),
-            albumentations.CoarseDropout(random.randint(1, 8), 16, 16),
-            albumentations.Normalize(always_apply=True),
-        ]
-    )
-    test_aug = albumentations.Compose(
-        [
-            albumentations.CenterCrop(sz, sz),
-            albumentations.Normalize(always_apply=True),
-        ]
-    )
-
-    mydataset = FedIsic2019(5, train=False, pooled=True, augmentations=test_aug)
+    mydataset = FedIsic2019(5, train=False, pooled=True)
 
     print("Example of dataset record: ", mydataset[0])
     print(f"The dataset has {len(mydataset)} elements")
