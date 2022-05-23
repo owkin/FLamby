@@ -6,6 +6,7 @@ from xmlrpc.client import Boolean
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader as dl
+from tqdm import tqdm
 
 import flamby.strategies as strats
 from flamby.conf import check_config, get_dataset_args, get_results_file, get_strategies
@@ -126,7 +127,7 @@ def main(args):
         bloss = BaselineLoss()
         opt = Optimizer(model.parameters(), lr=LR)
         print("Pooled")
-        for _ in range(NUM_EPOCHS_POOLED):
+        for _ in tqdm(range(NUM_EPOCHS_POOLED)):
             for X, y in train_pooled:
                 if use_gpu:
                     # use GPU if requested and available
@@ -198,7 +199,7 @@ def main(args):
             print(LR)
             opt = Optimizer(m.parameters(), lr=LR)
             print("Local " + str(i))
-            for e in range(NUM_EPOCHS_POOLED):
+            for e in tqdm(range(NUM_EPOCHS_POOLED)):
                 for X, y in training_dls[i]:
                     opt.zero_grad()
                     y_pred = m(X)
