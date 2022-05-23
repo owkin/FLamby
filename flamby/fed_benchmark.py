@@ -11,23 +11,21 @@ import flamby.strategies as strats
 from flamby.conf import check_config, get_dataset_args, get_results_file, get_strategies
 from flamby.utils import evaluate_model_on_tests
 
+
 # Only 4 lines to change to evaluate different datasets (except for LIDC where the
 # evaluation function is custom)
 # Still some datasets might require specific augmentation strategies or collate_fn
 # functions in the data loading part
-
-NUM_EPOCHS_POOLED = 0  # TODO: remove before merging
-# from flamby.datasets.fed_tcga_brca import FedTcgaBrca as FedDataset
-# from flamby.datasets.fed_tcga_brca import Optimizer, get_nb_max_rounds, metric
-
-
 def main(args2):
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args2.GPU)
     torch.use_deterministic_algorithms(False)
     use_gpu = args2.GPU and torch.cuda.is_available()
+    run_num_updates = [1, 10, 100, 500]
+
     # ensure that the config is ok
     check_config()
+    # get all the dataset args
     (
         dataset_name,
         FedDataset,
@@ -35,7 +33,7 @@ def main(args2):
             BATCH_SIZE,
             LR,
             NUM_CLIENTS,
-            NUM_EPOCHS_POOLED,  # change to 0
+            NUM_EPOCHS_POOLED,
             Baseline,
             BaselineLoss,
             Optimizer,
@@ -61,24 +59,25 @@ def main(args2):
     # are seriously degraded with default ones
     strategy_specific_hp_dicts = get_strategies(learning_rate=LR)
 
-    columns_names = ["Test", "Method", "Metric"]
+    init_hp_additional_args = ["Test", "Method", "Score"]
     # We need to add strategy hyperparameters columns to the benchmark
     hp_additional_args = []
 
+    # get all hparam names from all the strategies used
     for strategy in strategy_specific_hp_dicts.values():
         hp_additional_args += [
             arg_names
             for arg_names in strategy.keys()
             if arg_names not in hp_additional_args
         ]
-    columns_names += hp_additional_args
-    base_dict = {col_name: None for col_name in columns_names}
+    # column names used for the results file
+    columns_names = init_hp_additional_args + hp_additional_args
 
-    # We use the same initialization for everyone in order to be fair
+    # Use the same initialization for everyone in order to be fair
     torch.manual_seed(0)
     global_init = Baseline()
 
-    # We instantiate all train and test dataloaders required including pooled ones
+    # Instantiate all train and test dataloaders required including pooled ones
     training_dls, test_dls = init_data_loaders(
         dataset=FedDataset,
         pooled=False,
@@ -93,16 +92,17 @@ def main(args2):
         num_workers=args2.workers,
     )
 
-    # We check if some results are already computed
-    if os.path.exists(results_file):
+    # Check if some results are already computed
+    if results_file.exists():
         df = pd.read_csv(results_file)
-        # If we added additional hyperparameters we update the df
-        for col_name in columns_names:
-            if col_name not in df.columns:
-                df[col_name] = None
+        # Update df if new hyperparameters added
+        df = df.reindex(
+            df.columns.union(columns_names, sort=False), axis="columns", fill_value=None
+        )
         perf_lines_dicts = df.to_dict("records")
     else:
-        df = pd.DataFrame({k: [v] for k, v in base_dict.items()})
+        # initialize data frame with the column_names and no data
+        df = pd.DataFrame(columns=columns_names)
         perf_lines_dicts = []
 
     # Single client baseline computation
@@ -112,7 +112,6 @@ def main(args2):
     # Pooled Baseline
     # Throughout the experiments we only launch training if we do not have the results
     # yet. Note that pooled and local baselines do not use hyperparameters.
-
     index_of_interest = df.loc[df["Method"] == "Pooled Training"].index
     # an experiment is finished if there are num_clients + 1 rows
     if len(index_of_interest) < (NUM_CLIENTS + 1):
@@ -121,49 +120,56 @@ def main(args2):
         if len(index_of_interest) > 0:
             df.drop(index_of_interest, inplace=True)
             perf_lines_dicts = df.to_dict("records")
-        m = copy.deepcopy(global_init)
+        model = copy.deepcopy(global_init)
         if use_gpu:
-            m.cuda()
+            model.cuda()
         bloss = BaselineLoss()
-        opt = Optimizer(m.parameters(), lr=LR)
+        opt = Optimizer(model.parameters(), lr=LR)
         print("Pooled")
         for _ in range(NUM_EPOCHS_POOLED):
-            for X, y in train_pooled:  # CUDA if GPUT X = X.cuda() (same for y)
+            for X, y in train_pooled:
                 if use_gpu:
+                    # use GPU if requested and available
                     X = X.cuda()
                     y = y.cuda()
                 opt.zero_grad()
-                y_pred = m(X)
+                y_pred = model(X)
                 loss = bloss(y_pred, y)
                 loss.backward()
                 opt.step()
 
-        perf_dict = evaluate_model_on_tests(m, test_dls, metric, use_gpu=use_gpu)
+        perf_dict = evaluate_model_on_tests(model, test_dls, metric, use_gpu=use_gpu)
         pooled_perf_dict = evaluate_model_on_tests(
-            m, [test_pooled], metric, use_gpu=use_gpu
+            model, [test_pooled], metric, use_gpu=use_gpu
         )
+        method = "Pooled Training"
         for k, v in perf_dict.items():
-            # Make sure there is no weird inplace stuff
-            current_dict = copy.deepcopy(base_dict)
-            current_dict["Test"] = k
-            current_dict["Metric"] = v
-            current_dict["Method"] = "Pooled Training"
-            current_dict["learning_rate"] = str(LR)
-            current_dict["optimizer_class"] = Optimizer
-            perf_lines_dicts.append(current_dict)
-        current_dict = copy.deepcopy(base_dict)
-        current_dict["Test"] = "Pooled Test"
-        current_dict["Metric"] = pooled_perf_dict["client_test_0"]
-        current_dict["Method"] = "Pooled Training"
-        current_dict["learning_rate"] = str(LR)
-        current_dict["optimizer_class"] = Optimizer
-        perf_lines_dicts.append(current_dict)
+            perf_lines_dicts.append(
+                prepare_dict(
+                    keys=columns_names,
+                    Test=k,
+                    Metric=v,
+                    Method=method,
+                    learning_rate=str(LR),
+                    optimizer_class=Optimizer,
+                )
+            )
+
+        perf_lines_dicts.append(
+            prepare_dict(
+                keys=columns_names,
+                Test="Pooled Test",
+                Metric=pooled_perf_dict["client_test_0"],
+                Method=method,
+                learning_rate=str(LR),
+                optimizer_class=Optimizer,
+            )
+        )
         # We update csv and save it when the results are there
         df = pd.DataFrame.from_dict(perf_lines_dicts)
         df.to_csv(results_file, index=False)
 
     # Local baselines and ensemble
-
     y_true_dicts = {}
     y_pred_dicts = {}
     pooled_y_true_dicts = {}
@@ -213,20 +219,26 @@ def main(args2):
 
             for k, v in perf_dict.items():
                 # Make sure there is no weird inplace stuff
-                current_dict = copy.deepcopy(base_dict)
-                current_dict["Test"] = k
-                current_dict["Metric"] = v
-                current_dict["Method"] = f"Local {i}"
-                current_dict["learning_rate"] = str(LR)
-                current_dict["optimizer_class"] = Optimizer
-                perf_lines_dicts.append(current_dict)
-            current_dict = copy.deepcopy(base_dict)
-            current_dict["Test"] = "Pooled Test"
-            current_dict["Metric"] = pooled_perf_dict["client_test_0"]
-            current_dict["Method"] = f"Local {i}"
-            current_dict["learning_rate"] = str(LR)
-            current_dict["optimizer_class"] = Optimizer
-            perf_lines_dicts.append(current_dict)
+                perf_lines_dicts.append(
+                    prepare_dict(
+                        keys=columns_names,
+                        Test=k,
+                        Metric=v,
+                        Method=f"Local {i}",
+                        learning_rate=str(LR),
+                        optimizer_class=Optimizer,
+                    )
+                )
+            perf_lines_dicts.append(
+                prepare_dict(
+                    keys=columns_names,
+                    Test="Pooled Test",
+                    Metric=pooled_perf_dict["client_test_0"],
+                    Method=f"Local {i}",
+                    learning_rate=str(LR),
+                    optimizer_class=Optimizer,
+                )
+            )
 
         for testset in range(NUM_CLIENTS):
             for model in range(1, NUM_CLIENTS):
@@ -242,13 +254,16 @@ def main(args2):
                 ensemble_pred += y_pred_dicts[f"Local {model}"][f"client_test_{testset}"]
             ensemble_pred /= NUM_CLIENTS
 
-            current_dict = copy.deepcopy(base_dict)
-            current_dict["Test"] = f"client_test_{testset}"
-            current_dict["Metric"] = metric(ensemble_true, ensemble_pred)
-            current_dict["Method"] = "Ensemble"
-            current_dict["learning_rate"] = str(LR)
-            current_dict["optimizer_class"] = Optimizer
-            perf_lines_dicts.append(current_dict)
+            perf_lines_dicts.append(
+                prepare_dict(
+                    keys=columns_names,
+                    Test=f"client_test_{testset}",
+                    Metric=metric(ensemble_true, ensemble_pred),
+                    Method="Ensemble",
+                    learning_rate=str(LR),
+                    optimizer_class=Optimizer,
+                )
+            )
 
         for model in range(1, NUM_CLIENTS):
             assert (
@@ -265,20 +280,23 @@ def main(args2):
             ]
         pooled_ensemble_pred /= NUM_CLIENTS
 
-        current_dict = copy.deepcopy(base_dict)
-        current_dict["Test"] = "Pooled Test"
-        current_dict["Metric"] = metric(pooled_ensemble_true, pooled_ensemble_pred)
-        current_dict["Method"] = "Ensemble"
-        current_dict["learning_rate"] = str(LR)
-        current_dict["optimizer_class"] = Optimizer
-        perf_lines_dicts.append(current_dict)
+        perf_lines_dicts.append(
+            prepare_dict(
+                keys=columns_names,
+                Test="Pooled Test",
+                Metric=metric(pooled_ensemble_true, pooled_ensemble_pred),
+                Method="Ensemble",
+                learning_rate=str(LR),
+                optimizer_class=Optimizer,
+            )
+        )
 
         # We update csv and save it when the results are there
         df = pd.DataFrame.from_dict(perf_lines_dicts)
         df.to_csv(results_file, index=False)
 
     # Strategies
-    for num_updates in [1, 10, 100, 500]:
+    for num_updates in run_num_updates:
         for sname in strategy_specific_hp_dicts.keys():
             # Base arguments
             m = copy.deepcopy(global_init)
@@ -325,26 +343,35 @@ def main(args2):
 
                 perf_dict = evaluate_model_on_tests(m, test_dls, metric)
                 pooled_perf_dict = evaluate_model_on_tests(m, [test_pooled], metric)
+                hyperparams_save = {
+                    k: v
+                    for k, v in hyperparameters.items()
+                    if k not in init_hp_additional_args
+                }
                 for k, v in perf_dict.items():
-                    # Make sure there is no weird inplace stuff
-                    current_dict = copy.deepcopy(base_dict)
-                    current_dict["Test"] = k
-                    current_dict["Metric"] = v
-                    current_dict["Method"] = sname + str(num_updates)
-                    # We add the hyperparameters used
-                    for k2, v2 in hyperparameters.items():
-                        if k2 not in ["Test", "Metric", "Method"]:
-                            current_dict[k2] = v2
-                    perf_lines_dicts.append(current_dict)
-                current_dict = copy.deepcopy(base_dict)
-                current_dict["Test"] = "Pooled Test"
-                current_dict["Metric"] = pooled_perf_dict["client_test_0"]
-                current_dict["Method"] = sname + str(num_updates)
-                # We add the hyperparamters used
-                for k2, v2 in hyperparameters.items():
-                    if k2 not in ["Test", "Metric", "Method"]:
-                        current_dict[k2] = v2
-                perf_lines_dicts.append(current_dict)
+                    perf_lines_dicts.append(
+                        prepare_dict(
+                            keys=columns_names,
+                            allow_new=True,
+                            Test=k,
+                            Metric=v,
+                            Method=sname + str(num_updates),
+                            # We add the hyperparameters used
+                            **hyperparams_save,
+                        )
+                    )
+                perf_lines_dicts.append(
+                    prepare_dict(
+                        keys=columns_names,
+                        allow_new=True,
+                        Test="Pooled Test",
+                        Metric=pooled_perf_dict["client_test_0"],
+                        Method=sname + str(num_updates),
+                        # We add the hyperparamters used
+                        **hyperparams_save,
+                    )
+                )
+
                 # We update csv and save it when the results are there
                 df = pd.DataFrame.from_dict(perf_lines_dicts)
                 df.to_csv(results_file, index=False)
@@ -393,6 +420,24 @@ def init_data_loaders(
             num_workers=num_workers,
         )
         return train_pooled, test_pooled
+
+
+def prepare_dict(keys, allow_new=False, **kwargs):
+    """
+    Prepares the dictionary with the given keys and fills them with the kwargs.
+    If allow_new is set to False (default)
+    Kwargs must be one of the keys. If
+    kwarg is not given for a key the value of that key will be None
+    """
+    if not allow_new:
+        # ensure all the kwargs are in the columns
+        assert sum([not (key in keys) for key in kwargs.keys()]) == 0, (
+            "Some of the keys given were not found in the existsing columns;"
+            f"keys: {kwargs.keys()}, columns: {keys}"
+        )
+
+    # create the dictionary from the given keys and fill when appropriate with the kwargs
+    return {**dict.fromkeys(keys), **kwargs}
 
 
 if __name__ == "__main__":
