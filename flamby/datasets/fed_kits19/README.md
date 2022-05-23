@@ -31,7 +31,7 @@ See below the full citations:
 | ----------------- | -----------------------------------------------
 | Description       | This is the dataset from KiTS19 Challenge.
 | Dataset           | 210 CT scans with segmentation masks as Train Data and 90 CT scans with no segmentations as Test Data. Since Test data does not have ground truth segmentation masks, we cannot use it for training/testing. Therefore, we will use only 210 CT scans in our exploration of this dataset. 
-| Centers           | Data comes from 87 different centers. The sites information can be found in fed_kits19/dataset_creation_scripts/anony_sites.csv file. Since most the sites have small amount of data, we set a threshold of 10 on the amount of data a silo should have, and include only those silos (total 6) that meet this threshold for the Training. This leaves us with 96 patients data.
+| Centers           | Data comes from 87 different centers. The sites information can be found in fed_kits19/dataset_creation_scripts/anony_sites.csv file. We include only those silos (total of 6) that have minimum of 10 data samples (images), which leaves us with 96 patients data samples.
 | Task              | Supervised Segmentation
 
 
