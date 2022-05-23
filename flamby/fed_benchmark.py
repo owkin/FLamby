@@ -16,12 +16,12 @@ from flamby.utils import evaluate_model_on_tests
 # evaluation function is custom)
 # Still some datasets might require specific augmentation strategies or collate_fn
 # functions in the data loading part
-def main(args2):
+def main(args):
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    os.environ["CUDA_VISIBLE_DEVICES"] = str(args2.GPU)
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
     torch.use_deterministic_algorithms(False)
-    use_gpu = args2.GPU and torch.cuda.is_available()
-    run_num_updates = [1, 10, 100, 500]
+    use_gpu = args.GPU and torch.cuda.is_available()
+    run_num_updates = [100, 500]
 
     # ensure that the config is ok
     check_config()
@@ -57,7 +57,7 @@ def main(args2):
 
     # One might need to iterate on the hyperparameters to some extent if performances
     # are seriously degraded with default ones
-    strategy_specific_hp_dicts = get_strategies(learning_rate=LR)
+    strategy_specific_hp_dicts = get_strategies(learning_rate=LR, args=vars(args))
 
     init_hp_additional_args = ["Test", "Method", "Score"]
     # We need to add strategy hyperparameters columns to the benchmark
@@ -82,14 +82,14 @@ def main(args2):
         dataset=FedDataset,
         pooled=False,
         batch_size=BATCH_SIZE,
-        num_workers=args2.workers,
+        num_workers=args.workers,
         num_clients=NUM_CLIENTS,
     )
     train_pooled, test_pooled = init_data_loaders(
         dataset=FedDataset,
         pooled=True,
         batch_size=BATCH_SIZE,
-        num_workers=args2.workers,
+        num_workers=args.workers,
     )
 
     # Check if some results are already computed
@@ -455,6 +455,41 @@ if __name__ == "__main__":
         default=0,
         help="Numbers of workers for the dataloader",
     )
-    args2 = parser.parse_args()
+    parser.add_argument(
+        "--learning_rate",
+        "-lr",
+        type=float,
+        default=None,
+        help="Client side learning rate if strategy is given",
+    )
+    parser.add_argument(
+        "--server_learning_rate",
+        "-slr",
+        type=float,
+        default=None,
+        help="Server side learning rate if strategy is given",
+    )
+    parser.add_argument(
+        "--mu",
+        "-mu",
+        type=float,
+        default=None,
+        help="FedProx mu parameter if strategy is given and that it is FedProx",
+    )
+    parser.add_argument(
+        "--strategy",
+        "-s",
+        type=str,
+        default=None,
+        help="If this parameter is chosen will only run this specific strategy",
+    )
+    parser.add_argument(
+        "--optimizer-class",
+        "-opt",
+        type=str,
+        default="torch.optim.SGD",
+        help="The optimizer class to use if strategy is given",
+    )
+    args = parser.parse_args()
 
-    main(args2)
+    main(args)
