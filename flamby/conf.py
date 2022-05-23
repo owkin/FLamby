@@ -75,9 +75,30 @@ def get_dataset_args(
     return config["dataset"], fed_dataset, param_list
 
 
-def get_strategies(learning_rate=None):
+def get_strategies(learning_rate=None, args={}):
 
     strategies = config["strategies"]
+    if args and any([v is not None for k, v in args.items()]):
+        if args["strategy"] is not None:
+            strategies = {
+                args["strategy"]: {
+                    "optimizer_class": args["optimizer_class"],
+                    "learning_rate": args["learning_rate"],
+                }
+            }
+            if args["mu"] is not None:
+                assert args["strategy"] == "FedProx"
+                strategies["FedProx"]["mu"] = args["mu"]
+            if args["server_learning_rate"] is not None:
+                assert args["strategy"] in [
+                    "Scaffold",
+                    "FedAdam",
+                    "FedYogi",
+                    "FedAdagrad",
+                ]
+                strategies[args["strategy"]]["server_learning_rate"] = args[
+                    "server_learning_rate"
+                ]
 
     for strategy in strategies.keys():
         if "optimizer_class" in strategies[strategy].keys():
