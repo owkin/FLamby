@@ -54,7 +54,7 @@ python3 -m starter_code.get_imaging
 These commands will populate the data folder (given in the kits19 repository) with the imaging data. 
 
 3. Move the downloaded dataset to the data directory you want to keep it in.
-4. To store the data path (path to the data folder given by KiTS19), run the following command in the directory 'fed_kits19/dataset_creation_scripts/nnunet_library/dataset_conversion',
+4. To store the data path (path to the data folder given by KiTS19), run the following command in the directory 'flamby/datasets/fed_kits19/dataset_creation_scripts/nnunet_library/dataset_conversion',
 ```bash
 python3 create_config.py --output_folder "data_folder_path" 
 ```
