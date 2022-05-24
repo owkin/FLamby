@@ -351,7 +351,8 @@ def compute_dot_product(model: torch.nn.Module, params):
     params : List containing model parameters
     """
     model_p = list(model.parameters())
-    dot_prod = sum([torch.sum(m * p) for m, p in zip(model_p, params)])
+    device = model_p[0].device
+    dot_prod = sum([torch.sum(m * p.to(device)) for m, p in zip(model_p, params)])
     return dot_prod
 
 
