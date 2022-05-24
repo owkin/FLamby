@@ -22,10 +22,9 @@ from flamby.datasets.fed_tcga_brca import (
 )
 from flamby.datasets.fed_tcga_brca import FedTcgaBrca as FedDataset
 from flamby.datasets.fed_tcga_brca import Optimizer, get_nb_max_rounds, metric
+from flamby.utils import evaluate_model_on_tests
 
 NAME_RESULTS_FILE = "results_benchmark_fed_tcga_brca.csv"
-
-from flamby.utils import evaluate_model_on_tests
 
 
 def main(args2):
@@ -157,14 +156,14 @@ def main(args2):
             perf_lines_dicts = df.to_dict("records")
 
         m = copy.deepcopy(global_init)
-        l = BaselineLoss()
+        loss_ = BaselineLoss()
         opt = Optimizer(m.parameters(), lr=LR)
         print("Pooled")
         for e in range(NUM_EPOCHS_POOLED):
             for X, y in train_pooled:
                 opt.zero_grad()
                 y_pred = m(X)
-                loss = l(y_pred, y)
+                loss = loss_(y_pred, y)
                 loss.backward()
                 opt.step()
 
@@ -216,7 +215,7 @@ def main(args2):
 
         for i in range(NUM_CLIENTS):
             m = copy.deepcopy(global_init)
-            l = BaselineLoss()
+            loss_ = BaselineLoss()
             print(LR)
             opt = Optimizer(m.parameters(), lr=LR)
             print("Local " + str(i))
@@ -224,7 +223,7 @@ def main(args2):
                 for X, y in training_dls[i]:
                     opt.zero_grad()
                     y_pred = m(X)
-                    loss = l(y_pred, y)
+                    loss = loss_(y_pred, y)
                     loss.backward()
                     opt.step()
 
@@ -310,11 +309,11 @@ def main(args2):
         for sname in strategy_names:
             # Base arguments
             m = copy.deepcopy(global_init)
-            l = BaselineLoss()
+            loss_ = BaselineLoss()
             args = {
                 "training_dataloaders": training_dls,
                 "model": m,
-                "loss": l,
+                "loss": loss_,
                 "optimizer_class": Optimizer,
                 "learning_rate": LR,
                 "num_updates": num_updates,

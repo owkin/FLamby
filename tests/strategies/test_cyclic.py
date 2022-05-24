@@ -61,7 +61,7 @@ def test_cyclic(n_clients):
     # tests if fed_avg is not failing on the MNIST dataset
     # with different number of clients
     num_updates = 100
-    nrounds = 50
+    nrounds = 50 * n_clients
     lr = 0.001
     batch_size = 100
 

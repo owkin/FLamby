@@ -1,9 +1,13 @@
+from datetime import datetime
 from typing import List
 
 import torch
 from tqdm import tqdm
 
 from flamby.strategies.utils import DataLoaderWithMemory, _Model
+
+DATE_NOW = datetime.now().strftime("%b%d_%H-%M-%S")
+LOG_DIR = f"./runs/fedavg-{DATE_NOW}"
 
 
 class FedAvg:
@@ -30,6 +34,7 @@ class FedAvg:
         num_updates: int,
         nrounds: int,
         log: bool = False,
+        log_dir: str = LOG_DIR,
         log_period: int = 100,
         bits_counting_function: callable = None,
     ):
@@ -54,6 +59,8 @@ class FedAvg:
             The number of communication rounds to do.
         log: bool
             Whether or not to store logs in tensorboard. Defaults to False.
+        log_dir: str
+            Save directory location. Default is runs/fedavg-**DATE_NOW**
         log_period: int
             If log is True then log the loss every log_period batch updates.
             Defauts to 100.
@@ -70,6 +77,7 @@ class FedAvg:
         self.total_number_of_samples = sum(self.training_sizes)
         self.log = log
         self.log_period = log_period
+
         self.models_list = [
             _Model(
                 model=model,
@@ -77,6 +85,7 @@ class FedAvg:
                 lr=learning_rate,
                 loss=loss,
                 log=self.log,
+                log_dir=log_dir,
                 client_id=i,
                 log_period=self.log_period,
             )
@@ -94,7 +103,7 @@ class FedAvg:
         ----------
         _model: _Model
             The model on the local device used by the optimization step.
-        dataloader_with_memory : dataloaderwithmemory
+        dataloader_with_memory : DataLoaderWithMemory
             A dataloader that can be called infinitely using its get_samples()
             method.
         """

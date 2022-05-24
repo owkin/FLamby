@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 import numpy as np
@@ -26,6 +27,7 @@ class FedOpt:
         num_updates: int,
         nrounds: int,
         log: bool = False,
+        log_dir: str = None,
         log_period: int = 100,
         bits_counting_function: callable = None,
         tau: float = 1e-8,
@@ -45,7 +47,7 @@ class FedOpt:
             The loss to minimize between the predictions of the model and the
             ground truth.
         optimizer_class : torch.optim.Optimizer
-            This is the client optimizer, it has to be SGD is FedAdam is chosen
+            This is the client optimizer, it has to be SGD if FedAdam is chosen
             for the server optimizer. The adaptive logic sits with the server
             optimizer and is coded below with the aggregation.
         learning_rate : float
@@ -59,7 +61,8 @@ class FedOpt:
         bits_counting_function : callable
             A function making sure exchanges respect the rules, this function
             can be obtained by decorating check_exchange_compliance in
-            flamby.utils. Should have the signature List[Tensor] -> int. Defaults to None.
+            flamby.utils. Should have the signature List[Tensor] -> int.
+            Defaults to None.
         tau: float
             adaptivity hyperparameter for the Adam/Yogi optimizer. Defaults to 1e-8.
         server_learning_rate : float
@@ -81,6 +84,11 @@ class FedOpt:
         self.total_number_of_samples = sum(self.training_sizes)
         self.log = log
         self.log_period = log_period
+
+        if log_dir is None:
+            date_now = datetime.now().strftime("%b%d_%H-%M-%S")
+            log_dir = f"./runs/{date_now}"
+
         self.models_list = [
             _Model(
                 model=model,
@@ -89,6 +97,7 @@ class FedOpt:
                 loss=loss,
                 log=self.log,
                 client_id=i,
+                log_dir=log_dir,
                 log_period=self.log_period,
             )
             for i in range(len(training_dataloaders))
@@ -172,6 +181,9 @@ class FedAdam(FedOpt):
 
     """
 
+    DATE_NOW = datetime.now().strftime("%b%d_%H-%M-%S")
+    LOG_DIR = f"./runs/fedadam-{DATE_NOW}"
+
     def __init__(
         self,
         training_dataloaders: List,
@@ -182,6 +194,7 @@ class FedAdam(FedOpt):
         num_updates: int,
         nrounds: int,
         log: bool = False,
+        log_dir: str = LOG_DIR,
         log_period: int = 100,
         bits_counting_function: callable = None,
         tau: float = 1e-3,
@@ -191,20 +204,21 @@ class FedAdam(FedOpt):
     ):
 
         super().__init__(
-            training_dataloaders,
-            model,
-            loss,
-            optimizer_class,
-            learning_rate,
-            num_updates,
-            nrounds,
-            log,
-            log_period,
-            bits_counting_function,
-            tau,
-            server_learning_rate,
-            beta1,
-            beta2,
+            training_dataloaders=training_dataloaders,
+            model=model,
+            loss=loss,
+            optimizer_class=optimizer_class,
+            learning_rate=learning_rate,
+            num_updates=num_updates,
+            nrounds=nrounds,
+            log=log,
+            log_dir=log_dir,
+            log_period=log_period,
+            bits_counting_function=bits_counting_function,
+            tau=tau,
+            server_learning_rate=server_learning_rate,
+            beta1=beta1,
+            beta2=beta2,
         )
 
     def perform_round(self):
@@ -255,6 +269,9 @@ class FedYogi(FedOpt):
 
     """
 
+    DATE_NOW = datetime.now().strftime("%b%d_%H-%M-%S")
+    LOG_DIR = f"./runs/fedyogi-{DATE_NOW}"
+
     def __init__(
         self,
         training_dataloaders: List,
@@ -265,6 +282,7 @@ class FedYogi(FedOpt):
         num_updates: int,
         nrounds: int,
         log: bool = False,
+        log_dir: str = LOG_DIR,
         log_period: int = 100,
         bits_counting_function: callable = None,
         tau: float = 1e-3,
@@ -274,20 +292,21 @@ class FedYogi(FedOpt):
     ):
 
         super().__init__(
-            training_dataloaders,
-            model,
-            loss,
-            optimizer_class,
-            learning_rate,
-            num_updates,
-            nrounds,
-            log,
-            log_period,
-            bits_counting_function,
-            tau,
-            server_learning_rate,
-            beta1,
-            beta2,
+            training_dataloaders=training_dataloaders,
+            model=model,
+            loss=loss,
+            optimizer_class=optimizer_class,
+            learning_rate=learning_rate,
+            num_updates=num_updates,
+            nrounds=nrounds,
+            log=log,
+            log_dir=log_dir,
+            log_period=log_period,
+            bits_counting_function=bits_counting_function,
+            tau=tau,
+            server_learning_rate=server_learning_rate,
+            beta1=beta1,
+            beta2=beta2,
         )
 
     def perform_round(self):
@@ -337,13 +356,16 @@ class FedYogi(FedOpt):
 
 
 class FedAdagrad(FedOpt):
-    """FedYogi Strategy class
+    """FedAdagrad Strategy class
 
     References
     ----------
     https://arxiv.org/abs/2003.00295
 
     """
+
+    DATE_NOW = datetime.now().strftime("%b%d_%H-%M-%S")
+    LOG_DIR = f"./runs/fedadagrad-{DATE_NOW}"
 
     def __init__(
         self,
@@ -355,6 +377,7 @@ class FedAdagrad(FedOpt):
         num_updates: int,
         nrounds: int,
         log: bool = False,
+        log_dir: str = LOG_DIR,
         log_period: int = 100,
         bits_counting_function: callable = None,
         tau: float = 1e-3,
@@ -364,20 +387,21 @@ class FedAdagrad(FedOpt):
     ):
 
         super().__init__(
-            training_dataloaders,
-            model,
-            loss,
-            optimizer_class,
-            learning_rate,
-            num_updates,
-            nrounds,
-            log,
-            log_period,
-            bits_counting_function,
-            tau,
-            server_learning_rate,
-            beta1,
-            beta2,
+            training_dataloaders=training_dataloaders,
+            model=model,
+            loss=loss,
+            optimizer_class=optimizer_class,
+            learning_rate=learning_rate,
+            num_updates=num_updates,
+            nrounds=nrounds,
+            log=log,
+            log_dir=log_dir,
+            log_period=log_period,
+            bits_counting_function=bits_counting_function,
+            tau=tau,
+            server_learning_rate=server_learning_rate,
+            beta1=beta1,
+            beta2=beta2,
         )
 
     def perform_round(self):

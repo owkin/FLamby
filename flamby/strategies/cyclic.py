@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 from typing import List
 
 import numpy as np
@@ -6,6 +7,9 @@ import torch
 from tqdm import tqdm
 
 from .utils import DataLoaderWithMemory, _Model
+
+DATE_NOW = datetime.now().strftime("%b%d_%H-%M-%S")
+LOG_DIR = f"./runs/cyclic-{DATE_NOW}"
 
 
 class Cyclic:
@@ -68,6 +72,7 @@ class Cyclic:
         num_updates: int,
         nrounds: int,
         log: bool = False,
+        log_dir: str = LOG_DIR,
         log_period: int = 100,
         bits_counting_function: callable = None,
         deterministic_cycle: bool = True,
@@ -102,6 +107,9 @@ class Cyclic:
         log: bool
             Whether or not to store logs in tensorboard.
 
+        log_dir: str
+            Save directory location. Default is runs/cyclic-**DATE_NOW**
+
         log_period: int
 
         bits_counting_function: callable
@@ -134,6 +142,7 @@ class Cyclic:
                 lr=learning_rate,
                 loss=loss,
                 log=self.log,
+                log_dir=log_dir,
                 client_id=i,
                 log_period=self.log_period,
             )

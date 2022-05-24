@@ -1,9 +1,13 @@
+from datetime import datetime
 from typing import List
 
 import torch
 
 from flamby.strategies.fed_avg import FedAvg
 from flamby.strategies.utils import _Model
+
+DATE_NOW = datetime.now().strftime("%b%d_%H-%M-%S")
+LOG_DIR = f"./runs/scaffold-{DATE_NOW}"
 
 
 class Scaffold(FedAvg):
@@ -37,6 +41,7 @@ class Scaffold(FedAvg):
         nrounds: int,
         server_learning_rate: float = 1,
         log: bool = False,
+        log_dir: str = LOG_DIR,
         log_period: int = 100,
         bits_counting_function: callable = None,
     ):
@@ -65,6 +70,8 @@ class Scaffold(FedAvg):
             Defaults to 1.
         log: bool
             Whether or not to store logs in tensorboard. Defaults to False.
+        log_dir: str
+            Save directory location. Default is runs/scaffold-**DATE_NOW**
         log_period: int
             If log is True then log the loss every log_period batch updates.
             Defauts to 100.
@@ -80,16 +87,17 @@ class Scaffold(FedAvg):
         ), "Only SGD for client optimizer with Scaffold"
 
         super().__init__(
-            training_dataloaders,
-            model,
-            loss,
-            optimizer_class,
-            learning_rate,
-            num_updates,
-            nrounds,
-            log,
-            log_period,
-            bits_counting_function,
+            training_dataloaders=training_dataloaders,
+            model=model,
+            loss=loss,
+            optimizer_class=optimizer_class,
+            learning_rate=learning_rate,
+            num_updates=num_updates,
+            nrounds=nrounds,
+            log=log,
+            log_dir=log_dir,
+            log_period=log_period,
+            bits_counting_function=bits_counting_function,
         )
 
         # initialize the previous state of each client
@@ -116,7 +124,7 @@ class Scaffold(FedAvg):
         ----------
         _model: _Model
             The model on the local device used by the optimization step.
-        dataloader_with_memory : dataloaderwithmemory
+        dataloader_with_memory : DataLoaderWithMemory
             A dataloader that can be called infinitely using its get_samples()
             method.
         correction_state: List

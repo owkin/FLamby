@@ -1,5 +1,4 @@
 import copy
-from datetime import datetime
 
 import numpy as np
 import torch
@@ -58,7 +57,15 @@ class _Model:
     """
 
     def __init__(
-        self, model, optimizer_class, lr, loss, client_id=0, log=False, log_period=100
+        self,
+        model,
+        optimizer_class,
+        lr,
+        loss,
+        client_id=0,
+        log=False,
+        log_dir=None,
+        log_period=100,
     ):
         """_summary_
 
@@ -72,9 +79,12 @@ class _Model:
         lr : float
             The learning rate to use with th optimizer class.
         loss : torch.nn.modules.loss._loss
-            an instantiated torch loss.
+            An instantiated torch loss.
         log: bool
             Whether or not to log quantities with tensorboard. Defaults to False.
+        log_dir: str
+            Save directory location. Default is runs/**CURRENT_DATETIME_HOSTNAME**,
+            which changes after each run.
         client_id: int
             The id of the client for logging purposes. Default to 0.
         log_period: int
@@ -87,11 +97,11 @@ class _Model:
         self.model = self.model.to(self._device)
         self.num_batches_seen = 0
         self.log = log
+        self.log_dir = log_dir
         self.log_period = log_period
         self.client_id = client_id
         if self.log:
-            date_now = str(datetime.now())
-            self.writer = SummaryWriter(log_dir=f"./runs/fed_avg-{date_now}")
+            self.writer = SummaryWriter(log_dir=log_dir)
         self.current_epoch = 0
         self.batch_size = None
         self.num_batches_per_epoch = None
@@ -163,7 +173,7 @@ class _Model:
 
         Parameters
         ----------
-        dataloader_with_memory : dataloaderwithmemory
+        dataloader_with_memory : DataLoaderWithMemory
             A dataloader that can be called infinitely using its get_samples()
             method.
         num_updates : int

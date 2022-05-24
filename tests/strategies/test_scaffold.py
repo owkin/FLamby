@@ -69,7 +69,9 @@ def test_scaffold_integration(n_clients):
     lr = 0.1
     optimizer_class = torch.optim.SGD
 
-    s = Scaffold(train_dataloader, m, loss, optimizer_class, lr, num_updates, nrounds)
+    s = Scaffold(
+        train_dataloader, m, loss, optimizer_class, lr, num_updates, nrounds, log=True
+    )
     m = s.run()
 
     def accuracy(y_true, y_pred):

@@ -61,7 +61,9 @@ def test_fed_avg(n_clients):
     lr = 0.001
     optimizer_class = torch.optim.Adam
 
-    s = FedAvg(train_dataloader, m, loss, optimizer_class, lr, num_updates, nrounds)
+    s = FedAvg(
+        train_dataloader, m, loss, optimizer_class, lr, num_updates, nrounds, log=True
+    )
     m = s.run()
 
     res = evaluate_model_on_tests(m[0], [test_dataloader], accuracy)
