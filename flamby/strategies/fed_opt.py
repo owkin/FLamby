@@ -32,42 +32,49 @@ class FedOpt:
         server_learning_rate: float = 1e-2,
         beta1=0.9,
         beta2=0.999,
+        logdir="./runs",
+        log_basename="fed_opt",
     ):
         """_summary_
 
-        Parameters
-        ----------
-        training_dataloaders : List
-            The list of training dataloaders from multiple training centers.
-        model : torch.nn.Module
-            An initialized torch model.
-        loss : torch.nn.modules.loss._Loss
-            The loss to minimize between the predictions of the model and the
-            ground truth.
-        optimizer_class : torch.optim.Optimizer
-            This is the client optimizer, it has to be SGD is FedAdam is chosen
-            for the server optimizer. The adaptive logic sits with the server
-            optimizer and is coded below with the aggregation.
-        learning_rate : float
-            The learning rate to be given to the client optimizer_class.
-        num_updates : int
-            The number of updates to do on each client at each round.
-        nrounds : int
-            The number of communication rounds to do.
-        log: bool
-            Whether or not to store logs in tensorboard. Defaults to False.
-        bits_counting_function : callable
-            A function making sure exchanges respect the rules, this function
-            can be obtained by decorating check_exchange_compliance in
-            flamby.utils. Should have the signature List[Tensor] -> int. Defaults to None.
-        tau: float
-            adaptivity hyperparameter for the Adam/Yogi optimizer. Defaults to 1e-8.
-        server_learning_rate : float
-            The learning rate used by the server optimizer. Defaults to 1.
-        beta1: float
-            between 0 and 1, momentum parameter. Defaults to 0.9.
-        beta2: float
-            between 0 and 1, second moment parameter. Defaults to 0.999.
+         Parameters
+         ----------
+         training_dataloaders : List
+             The list of training dataloaders from multiple training centers.
+         model : torch.nn.Module
+             An initialized torch model.
+         loss : torch.nn.modules.loss._Loss
+             The loss to minimize between the predictions of the model and the
+             ground truth.
+         optimizer_class : torch.optim.Optimizer
+             This is the client optimizer, it has to be SGD is FedAdam is chosen
+             for the server optimizer. The adaptive logic sits with the server
+             optimizer and is coded below with the aggregation.
+         learning_rate : float
+             The learning rate to be given to the client optimizer_class.
+         num_updates : int
+             The number of updates to do on each client at each round.
+         nrounds : int
+             The number of communication rounds to do.
+         log: bool
+             Whether or not to store logs in tensorboard. Defaults to False.
+         bits_counting_function : callable
+             A function making sure exchanges respect the rules, this function
+             can be obtained by decorating check_exchange_compliance in
+             flamby.utils. Should have the signature List[Tensor] -> int.
+             Defaults to None.
+         tau: float
+             adaptivity hyperparameter for the Adam/Yogi optimizer. Defaults to 1e-8.
+         server_learning_rate : float
+             The learning rate used by the server optimizer. Defaults to 1.
+         beta1: float
+             between 0 and 1, momentum parameter. Defaults to 0.9.
+         beta2: float
+             between 0 and 1, second moment parameter. Defaults to 0.999.
+        logdir: str
+             The path where to store the logs. Defaults to ./runs.
+        log_basename: str
+             The basename of the logs that are created. Defaults to fed_opt.
         """
 
         assert (
@@ -81,6 +88,8 @@ class FedOpt:
         self.total_number_of_samples = sum(self.training_sizes)
         self.log = log
         self.log_period = log_period
+        self.log_basename = log_basename
+        self.logdir = logdir
         self.models_list = [
             _Model(
                 model=model,
@@ -90,6 +99,8 @@ class FedOpt:
                 log=self.log,
                 client_id=i,
                 log_period=self.log_period,
+                log_basename=self.log_basename,
+                logdir=self.logdir,
             )
             for i in range(len(training_dataloaders))
         ]
@@ -188,6 +199,8 @@ class FedAdam(FedOpt):
         server_learning_rate: float = 1e-2,
         beta1=0.9,
         beta2=0.999,
+        logdir="./runs",
+        log_basename="fed_adam",
     ):
 
         super().__init__(
@@ -205,6 +218,8 @@ class FedAdam(FedOpt):
             server_learning_rate,
             beta1,
             beta2,
+            log_basename=log_basename,
+            logdir=logdir,
         )
 
     def perform_round(self):
@@ -271,6 +286,8 @@ class FedYogi(FedOpt):
         server_learning_rate: float = 1e-2,
         beta1: float = 0.9,
         beta2: float = 0.999,
+        logdir: str = "./runs",
+        log_basename: str = "fed_yogi",
     ):
 
         super().__init__(
@@ -288,6 +305,8 @@ class FedYogi(FedOpt):
             server_learning_rate,
             beta1,
             beta2,
+            log_basename=log_basename,
+            logdir=logdir,
         )
 
     def perform_round(self):
@@ -361,6 +380,8 @@ class FedAdagrad(FedOpt):
         server_learning_rate: float = 1e-2,
         beta1: float = 0.9,
         beta2: float = 0.999,
+        logdir: str = "./runs",
+        log_basename: str = "fed_adagrad",
     ):
 
         super().__init__(
@@ -378,6 +399,8 @@ class FedAdagrad(FedOpt):
             server_learning_rate,
             beta1,
             beta2,
+            logdir=logdir,
+            log_basename=log_basename,
         )
 
     def perform_round(self):

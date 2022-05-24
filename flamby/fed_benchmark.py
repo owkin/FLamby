@@ -1,7 +1,6 @@
 import argparse
 import copy
 import os
-from xmlrpc.client import Boolean
 
 import pandas as pd
 import torch
@@ -338,7 +337,7 @@ def main(args):
                     df.drop(index_of_interest, inplace=True)
                     perf_lines_dicts = df.to_dict("records")
                 # We run the FL strategy
-                s = getattr(strats, sname)(**args)
+                s = getattr(strats, sname)(**args, log=True)
                 print("FL strategy", sname, " num_updates ", num_updates)
                 m = s.run()[0]
 
@@ -446,8 +445,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--GPU",
-        type=Boolean,
-        default=False,
+        type=str,
+        default="0",
         help="GPU to run the training on (if available)",
     )
     parser.add_argument(
