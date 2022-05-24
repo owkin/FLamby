@@ -8,5 +8,5 @@ SEEDS = [0, 10, 20, 30, 40]
 Optimizer = torch.optim.Adam
 
 
-def get_nb_max_rounds(num_updates):
-    return (72 // NUM_CLIENTS // BATCH_SIZE) * NUM_EPOCHS_POOLED // num_updates
+def get_nb_max_rounds(num_updates, batch_size=BATCH_SIZE):
+    return (72 // NUM_CLIENTS // batch_size) * NUM_EPOCHS_POOLED // num_updates
