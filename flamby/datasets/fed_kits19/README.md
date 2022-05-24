@@ -93,7 +93,7 @@ python3 benchmark.py
 ```
 Note that estimated memory requirement for this training is around 14.5 GB.
 
-#Citation:
+# Citation:
 ```bash
 @article{isensee2018nnu,
   title={nnu-net: Self-adapting framework for u-net-based medical image segmentation},
