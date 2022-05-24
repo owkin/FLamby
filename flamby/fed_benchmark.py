@@ -482,6 +482,15 @@ if __name__ == "__main__":
         type=str,
         default=None,
         help="If this parameter is chosen will only run this specific strategy",
+        choices=[
+            None,
+            "FedAdam",
+            "FedYogi",
+            "FedAdagrad",
+            "Scaffold",
+            "FedAvg",
+            "Cyclic",
+        ],
     )
     parser.add_argument(
         "--optimizer-class",
@@ -489,6 +498,13 @@ if __name__ == "__main__":
         type=str,
         default="torch.optim.SGD",
         help="The optimizer class to use if strategy is given",
+    )
+    parser.add_argument(
+        "--deterministic",
+        "-d",
+        action="store_true",
+        default=False,
+        help="whether or not to use deterministic cycling for the cyclic strategy",
     )
     args = parser.parse_args()
 
