@@ -95,7 +95,7 @@ Note that estimated memory requirement for this training is around 14.5 GB.
 
 #Citation:
 ```bash
-   @article{isensee2018nnu,
+@article{isensee2018nnu,
   title={nnu-net: Self-adapting framework for u-net-based medical image segmentation},
   author={Isensee, Fabian and Petersen, Jens and Klein, Andre and Zimmerer, David and Jaeger, Paul F and Kohl, Simon and Wasserthal, Jakob and Koehler, Gregor and Norajitra, Tobias and Wirkert, Sebastian and others},
   journal={arXiv preprint arXiv:1809.10486},
