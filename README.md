@@ -75,6 +75,7 @@ all the datasets you are interested in by following the instructions provided in
 - [Fed-TCGA-BRCA](./flamby/datasets/fed_tcga_brca/README.md)
 - [Fed-Heart-Disease](./flamby/datasets/fed_heart_disease/README.md)
 - [Fed-IXITiny](./flamby/datasets/fed_ixi/README.md)
+- [Fed-KITS2019](./flamby/datasets/fed_kits19/README.md)
 
 ## Usage
 
