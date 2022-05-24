@@ -114,8 +114,7 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
 
                 optimizer.zero_grad()
                 y_pred = m(X)
-                probabilities = F.softmax(y_pred, dim=CHANNELS_DIMENSION)
-                lm = loss(probabilities, y)
+                lm = loss(y_pred, y)
                 lm.backward()
                 optimizer.step()
 
