@@ -101,6 +101,8 @@ def get_strategies(learning_rate=None, args={}):
                 strategies[args["strategy"]]["server_learning_rate"] = args[
                     "server_learning_rate"
                 ]
+            if args["strategy"] == "Cyclic":
+                strategies[args["strategy"]]["deterministic_cycle"] = args.deterministic
 
     for strategy in strategies.keys():
         if "optimizer_class" in strategies[strategy].keys():
