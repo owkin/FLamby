@@ -34,6 +34,8 @@ class FedProx(FedAvg):
         log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
+        log_basename: str = "fed_prox",
+        logdir: str = "./runs",
     ):
         """_summary_
 
@@ -68,6 +70,10 @@ class FedProx(FedAvg):
             can be obtained by decorating check_exchange_compliance in
             flamby.utils. Should have the signature List[Tensor] -> int.
             Defaults to None.
+        log_basename: str
+            The basename of the created log file. Defaults to fed_prox.
+        logdir: str
+            The directory where to store the logs. Defaults to ./runs.
         """
         super().__init__(
             training_dataloaders,
@@ -80,6 +86,8 @@ class FedProx(FedAvg):
             log,
             log_period,
             bits_counting_function,
+            log_basename=log_basename,
+            logdir=logdir,
         )
         self.mu = mu
 

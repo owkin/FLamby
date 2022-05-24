@@ -1,4 +1,5 @@
 import copy
+import os
 from datetime import datetime
 
 import numpy as np
@@ -58,7 +59,16 @@ class _Model:
     """
 
     def __init__(
-        self, model, optimizer_class, lr, loss, client_id=0, log=False, log_period=100
+        self,
+        model,
+        optimizer_class,
+        lr,
+        loss,
+        client_id=0,
+        log=False,
+        log_period=100,
+        log_basename="local_model",
+        logdir="./runs",
     ):
         """_summary_
 
@@ -79,6 +89,10 @@ class _Model:
             The id of the client for logging purposes. Default to 0.
         log_period: int
             The period at which to log quantities. Defaults to 100.
+        log_basename: str
+            The basename of the created log file if log=True. Defaults to fed_avg.
+        logdir: str
+            Where to create the log file. Defaults to ./runs.
         """
         self.model = copy.deepcopy(model)
         self._optimizer = optimizer_class(self.model.parameters(), lr)
@@ -90,8 +104,11 @@ class _Model:
         self.log_period = log_period
         self.client_id = client_id
         if self.log:
+            os.makedirs(logdir, exist_ok=True)
             date_now = str(datetime.now())
-            self.writer = SummaryWriter(log_dir=f"./runs/fed_avg-{date_now}")
+            self.writer = SummaryWriter(
+                log_dir=os.path.join(logdir, f"{log_basename}-{date_now}")
+            )
         self.current_epoch = 0
         self.batch_size = None
         self.num_batches_per_epoch = None

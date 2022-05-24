@@ -83,7 +83,9 @@ def get_strategies(learning_rate=None, args={}):
             strategies = {
                 args["strategy"]: {
                     "optimizer_class": args["optimizer_class"],
-                    "learning_rate": args["learning_rate"],
+                    "learning_rate": args["learning_rate"]
+                    if args["learning_rate"] is not None
+                    else learning_rate,
                 }
             }
             if args["mu"] is not None:
@@ -114,7 +116,6 @@ def get_strategies(learning_rate=None, args={}):
                 learning_rate / strategies[strategy]["learning_rate_scaler"]
             )
             strategies[strategy].pop("learning_rate_scaler")
-
     return strategies
 
 
