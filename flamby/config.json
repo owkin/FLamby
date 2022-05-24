@@ -1,6 +1,6 @@
 {
-  "results_file": "results/results_benchmark_fed_tcga_brca.csv",
-  "dataset": "fed_tcga_brca",
+  "results_file": "results_isic2019.csv",
+  "dataset": "fed_isic2019",
   "strategies": {
     "FedAvg": {},
     "FedProx": {

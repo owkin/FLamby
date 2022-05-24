@@ -72,49 +72,56 @@ class Cyclic:
         bits_counting_function: callable = None,
         deterministic_cycle: bool = True,
         rng: np.random._generator.Generator = None,
+        log_basename: str = "cyclic",
+        logdir: str = "./runs",
     ):
         """_summary_
 
-        Parameters
-        ----------
-        training_dataloaders: List[torch.utils.data.DataLoader]
-             The list of training dataloaders from multiple training centers.
+         Parameters
+         ----------
+         training_dataloaders: List[torch.utils.data.DataLoader]
+              The list of training dataloaders from multiple training centers.
 
-        model: torch.nn.Module
-             An initialized torch model.
+         model: torch.nn.Module
+              An initialized torch model.
 
-        loss: torch.nn.modules.loss._Loss
-            The loss to minimize between the predictions of the model and the
-            ground truth.
+         loss: torch.nn.modules.loss._Loss
+             The loss to minimize between the predictions of the model and the
+             ground truth.
 
-        optimizer_class: callable torch.optim.Optimizer
-            The class of the torch model optimizer to use at each step.
+         optimizer_class: callable torch.optim.Optimizer
+             The class of the torch model optimizer to use at each step.
 
-        learning_rate: float
-            The learning rate to be given to the optimizer_class.
+         learning_rate: float
+             The learning rate to be given to the optimizer_class.
 
-        num_updates: int
-            The number of epochs to do on each client at each round.
+         num_updates: int
+             The number of epochs to do on each client at each round.
 
-        nrounds: int
-             The number of communication rounds to do.
+         nrounds: int
+              The number of communication rounds to do.
 
-        log: bool
-            Whether or not to store logs in tensorboard.
+         log: bool
+             Whether or not to store logs in tensorboard.
 
-        log_period: int
+         log_period: int
 
-        bits_counting_function: callable
-            A function making sure exchanges respect the rules, this function
-            can be obtained by decorating check_exchange_compliance in
-            flamby.utils. Should have the signature List[Tensor] -> int
+         bits_counting_function: callable
+             A function making sure exchanges respect the rules, this function
+             can be obtained by decorating check_exchange_compliance in
+             flamby.utils. Should have the signature List[Tensor] -> int
 
-        deterministic_cycle: bool
-            if True, we cycle through clients in their original order,
-            otherwise, the clients are reshuffled at the beginning of every cycle.
+         deterministic_cycle: bool
+             if True, we cycle through clients in their original order,
+             otherwise, the clients are reshuffled at the beginning of every cycle.
 
-        rng: np.random._generator.Generator
-            used to reshuffle the clients
+         rng: np.random._generator.Generator
+             used to reshuffle the clients
+
+        logdir: str
+            The path where to store the logs if there are some. Defaults to ./runs.
+        log_basename: str
+            The basename of the created log file. Defaults to cyclic.
 
         """
 
@@ -126,6 +133,8 @@ class Cyclic:
 
         self.log = log
         self.log_period = log_period
+        self.log_basename = log_basename + f"-deterministic{deterministic_cycle}"
+        self.logdir = logdir
 
         self.models_list = [
             _Model(
@@ -136,6 +145,8 @@ class Cyclic:
                 log=self.log,
                 client_id=i,
                 log_period=self.log_period,
+                log_basename=self.log_basename,
+                logdir=self.logdir,
             )
             for i in range(len(training_dataloaders))
         ]

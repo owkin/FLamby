@@ -39,6 +39,8 @@ class Scaffold(FedAvg):
         log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
+        logdir: str = "./runs",
+        log_basename: str = "scaffold",
     ):
         """_summary_
 
@@ -73,6 +75,10 @@ class Scaffold(FedAvg):
             can be obtained by decorating check_exchange_compliance in
             flamby.utils. Should have the signature List[Tensor] -> int.
             Defaults to None.
+        logdir: str
+            Where to store the logs. Defaulst to ./runs.
+        log_basename: str
+            The basename of the created logfile. Defaulst to scaffold.
         """
 
         assert (
@@ -90,6 +96,8 @@ class Scaffold(FedAvg):
             log,
             log_period,
             bits_counting_function,
+            log_basename=log_basename,
+            logdir=logdir,
         )
 
         # initialize the previous state of each client

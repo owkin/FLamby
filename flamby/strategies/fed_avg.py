@@ -32,6 +32,8 @@ class FedAvg:
         log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
+        logdir: str = "./runs",
+        log_basename: str = "fed_avg",
     ):
         """_summary_
 
@@ -62,6 +64,10 @@ class FedAvg:
             can be obtained by decorating check_exchange_compliance in
             flamby.utils. Should have the signature List[Tensor] -> int.
             Defaults to None.
+        logdir: str
+            Where logs are stored. Defaults to ./runs.
+        log_basename: str
+            The basename of the created log_file. Defaults to fed_avg.
         """
         self.training_dataloaders_with_memory = [
             DataLoaderWithMemory(e) for e in training_dataloaders
@@ -70,6 +76,8 @@ class FedAvg:
         self.total_number_of_samples = sum(self.training_sizes)
         self.log = log
         self.log_period = log_period
+        self.log_basename = log_basename
+        self.logdir = logdir
         self.models_list = [
             _Model(
                 model=model,
@@ -79,6 +87,8 @@ class FedAvg:
                 log=self.log,
                 client_id=i,
                 log_period=self.log_period,
+                log_basename=self.log_basename,
+                logdir=self.logdir,
             )
             for i in range(len(training_dataloaders))
         ]
