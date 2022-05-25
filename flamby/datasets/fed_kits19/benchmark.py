@@ -164,7 +164,9 @@ def main(args):
                                                        verbose=True, threshold=1e-3,
                                                        threshold_mode="abs")
 
+    #TODO: Add 5 seeds
     torch.manual_seed(args.seed)
+    #TODO: Test train model on lambda 5 (Preprocessing running)
     model = train_model(
         model,
         optimizer,
