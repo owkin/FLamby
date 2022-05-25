@@ -111,6 +111,12 @@ class SyntheticRaw(Dataset):
                 else:
                     self.sets.append("train")
 
+        self.features = [
+            torch.from_numpy(self.features.loc[i].values.astype(np.float32)).to(
+                self.X_dtype
+            )
+            for i in range(len(self.features))
+        ]
         # keep 0 (no disease) and put 1 for all other values (disease)
         self.labels = torch.from_numpy(self.labels.values).to(self.X_dtype)
 
@@ -185,10 +191,11 @@ class FedSynthetic(SyntheticRaw):
         to_select = [
             (self.sets[idx] in self.chosen_sets)
             and (self.centers[idx] in self.chosen_centers)
-            for idx, _ in enumerate(self.features.index)
+            for idx, _ in enumerate(self.features)
         ]
 
         self.features = [fp for idx, fp in enumerate(self.features) if to_select[idx]]
+
         self.sets = [fp for idx, fp in enumerate(self.sets) if to_select[idx]]
         self.labels = [fp for idx, fp in enumerate(self.labels) if to_select[idx]]
         self.centers = [fp for idx, fp in enumerate(self.centers) if to_select[idx]]
