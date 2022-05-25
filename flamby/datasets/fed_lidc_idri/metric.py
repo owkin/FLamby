@@ -41,7 +41,7 @@ def evaluate_dice_on_tests_by_chunks(model, test_dataloaders, use_gpu=True, nchu
         client_test_{len(test_dataloaders) - 1} and associated dice as leaves.
     """
     results_dict = {}
-    with torch.inference_mode():
+    with torch.no_grad():
         model.eval()
         for i in tqdm(range(len(test_dataloaders))):
             test_dataloader_iterator = iter(test_dataloaders[i])

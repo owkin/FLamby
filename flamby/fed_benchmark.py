@@ -16,15 +16,18 @@ from flamby.utils import evaluate_model_on_tests
 # evaluation function is custom)
 # Still some datasets might require specific augmentation strategies or collate_fn
 # functions in the data loading part
-def main(args):
+def main(args_cli):
+    n_gpus = torch.cuda.device_count()
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
-    torch.use_deterministic_algorithms(False)
-    use_gpu = args.GPU and torch.cuda.is_available()
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(args_cli.GPU)
+    #torch.use_deterministic_algorithms(False)
+    use_gpu = (args_cli.GPU in [str(i) for i in range(n_gpus)]) and torch.cuda.is_available()
     run_num_updates = [100, 500]
 
     # ensure that the config is ok
     check_config()
+
+    params_list = ["BATCH_SIZE", "LR", "NUM_CLIENTS", "NUM_EPOCHS_POOLED", "Baseline", "BaselineLoss", "Optimizer", "get_nb_max_rounds", "metric", "collate_fn"]
     # get all the dataset args
     (
         dataset_name,
@@ -39,27 +42,18 @@ def main(args):
             Optimizer,
             get_nb_max_rounds,
             metric,
+            collate_fn,
         ],
     ) = get_dataset_args(
-        [
-            "BATCH_SIZE",
-            "LR",
-            "NUM_CLIENTS",
-            "NUM_EPOCHS_POOLED",
-            "Baseline",
-            "BaselineLoss",
-            "Optimizer",
-            "get_nb_max_rounds",
-            "metric",
-        ]
+        params_list
     )
     results_file = get_results_file()
 
     # One might need to iterate on the hyperparameters to some extent if performances
     # are seriously degraded with default ones
-    strategy_specific_hp_dicts = get_strategies(learning_rate=LR, args=vars(args))
+    strategy_specific_hp_dicts = get_strategies(learning_rate=LR, args=vars(args_cli))
 
-    init_hp_additional_args = ["Test", "Method", "Score"]
+    init_hp_additional_args = ["Test", "Method", "Metric"]
     # We need to add strategy hyperparameters columns to the benchmark
     hp_additional_args = []
 
@@ -76,20 +70,40 @@ def main(args):
     # Use the same initialization for everyone in order to be fair
     torch.manual_seed(0)
     global_init = Baseline()
-
     # Instantiate all train and test dataloaders required including pooled ones
+    if dataset_name == "fed_lidc_idri":
+        batch_size_test = 1
+        from flamby.datasets.fed_lidc_idri import evaluate_dice_on_tests_by_chunks
+        def evaluate_func(m, test_dls, metric, use_gpu=False, return_pred=False):
+            #dice_dict = evaluate_dice_on_tests_by_chunks(m, test_dls, use_gpu)
+            dice_dict = {f"client_test_{i}": 0.5 for i in range(NUM_CLIENTS)}
+            if return_pred:
+                return dice_dict, None, None
+            return dice_dict
+        compute_ensemble_perf = False
+    else:
+       batch_size_test = None
+       evaluate_func = evaluate_model_on_tests
+       compute_ensemble_perf = True
+
+    nb_local_and_ensemble_xps = (NUM_CLIENTS + int(compute_ensemble_perf)) * (NUM_CLIENTS + 1)
+
     training_dls, test_dls = init_data_loaders(
         dataset=FedDataset,
         pooled=False,
         batch_size=BATCH_SIZE,
-        num_workers=args.workers,
+        num_workers=args_cli.workers,
         num_clients=NUM_CLIENTS,
+        batch_size_test=batch_size_test,
+        collate_fn=collate_fn,
     )
     train_pooled, test_pooled = init_data_loaders(
         dataset=FedDataset,
         pooled=True,
         batch_size=BATCH_SIZE,
-        num_workers=args.workers,
+        num_workers=args_cli.workers,
+        batch_size_test=batch_size_test,
+        collate_fn=collate_fn,
     )
 
     # Check if some results are already computed
@@ -108,7 +122,7 @@ def main(args):
     # Single client baseline computation
     # We use the same set of parameters as found in the corresponding
     # flamby/datasets/fed_mydataset/benchmark.py
-
+    NUM_EPOCHS_POOLED = 0
     # Pooled Baseline
     # Throughout the experiments we only launch training if we do not have the results
     # yet. Note that pooled and local baselines do not use hyperparameters.
@@ -138,10 +152,14 @@ def main(args):
                 loss.backward()
                 opt.step()
 
-        perf_dict = evaluate_model_on_tests(model, test_dls, metric, use_gpu=use_gpu)
-        pooled_perf_dict = evaluate_model_on_tests(
+        perf_dict = evaluate_func(model, test_dls, metric, use_gpu=use_gpu)
+        pooled_perf_dict = evaluate_func(
             model, [test_pooled], metric, use_gpu=use_gpu
         )
+        print("Per-center performance:")
+        print(perf_dict)
+        print("Performance on pooled test set:")
+        print(pooled_perf_dict)
         method = "Pooled Training"
         for k, v in perf_dict.items():
             perf_lines_dicts.append(
@@ -185,115 +203,127 @@ def main(args):
     # This experiment is finished if there are num_clients + 1 rows in each local
     # training and the ensemble training
 
-    if len(index_of_interest) < (NUM_CLIENTS + 1) ** 2:
+    if len(index_of_interest) < nb_local_and_ensemble_xps:
         # Dealing with edge case that shouldn't happen.
         # If some of the rows are there but not all of them we redo the experiments.
-        if len(index_of_interest) > 0:
-            df.drop(index_of_interest, inplace=True)
-            perf_lines_dicts = df.to_dict("records")
-
         for i in range(NUM_CLIENTS):
             m = copy.deepcopy(global_init)
             bloss = BaselineLoss()
-            print(LR)
             opt = Optimizer(m.parameters(), lr=LR)
-            print("Local " + str(i))
-            for e in tqdm(range(NUM_EPOCHS_POOLED)):
-                for X, y in training_dls[i]:
-                    opt.zero_grad()
-                    y_pred = m(X)
-                    loss = bloss(y_pred, y)
-                    loss.backward()
-                    opt.step()
+            index_of_interest = df.loc[df["Method"] == f"Local {i}"].index
 
-            (
-                perf_dict,
-                y_true_dicts[f"Local {i}"],
-                y_pred_dicts[f"Local {i}"],
-            ) = evaluate_model_on_tests(m, test_dls, metric, return_pred=True)
-            (
-                pooled_perf_dict,
-                pooled_y_true_dicts[f"Local {i}"],
-                pooled_y_pred_dicts[f"Local {i}"],
-            ) = evaluate_model_on_tests(m, [test_pooled], metric, return_pred=True)
+            if (len(index_of_interest) < (NUM_CLIENTS + 1)) or compute_ensemble_perf:
+                if len(index_of_interest) > 0:
+                    df.drop(index_of_interest, inplace=True)
+                    perf_lines_dicts = df.to_dict("records")
+                print("Local " + str(i))
+                for e in tqdm(range(NUM_EPOCHS_POOLED)):
+                    for X, y in training_dls[i]:
+                        opt.zero_grad()
+                        y_pred = m(X)
+                        loss = bloss(y_pred, y)
+                        loss.backward()
+                        opt.step()
 
-            for k, v in perf_dict.items():
-                # Make sure there is no weird inplace stuff
+                (
+                    perf_dict,
+                    y_true_dicts[f"Local {i}"],
+                    y_pred_dicts[f"Local {i}"],
+                ) = evaluate_func(m, test_dls, metric, return_pred=True)
+                (
+                    pooled_perf_dict,
+                    pooled_y_true_dicts[f"Local {i}"],
+                    pooled_y_pred_dicts[f"Local {i}"],
+                ) = evaluate_func(m, [test_pooled], metric, return_pred=True)
+                print("Per-center performance:")
+                print(perf_dict)
+                print("Performance on pooled test set:")
+                print(pooled_perf_dict)
+                for k, v in perf_dict.items():
+                    # Make sure there is no weird inplace stuff
+                    perf_lines_dicts.append(
+                        prepare_dict(
+                           keys=columns_names,
+                           Test=k,
+                           Metric=v,
+                           Method=f"Local {i}",
+                           learning_rate=str(LR),
+                           optimizer_class=Optimizer,
+                        )
+                    )
                 perf_lines_dicts.append(
                     prepare_dict(
                         keys=columns_names,
-                        Test=k,
-                        Metric=v,
+                        Test="Pooled Test",
+                        Metric=pooled_perf_dict["client_test_0"],
                         Method=f"Local {i}",
                         learning_rate=str(LR),
                         optimizer_class=Optimizer,
                     )
                 )
+                # We update csv and save it when the results are there
+                df = pd.DataFrame.from_dict(perf_lines_dicts)
+                df.to_csv(results_file, index=False)
+        
+        if compute_ensemble_perf:
+            print("Computing ensemble performance")
+            for testset in range(NUM_CLIENTS):
+                for model in range(1, NUM_CLIENTS):
+                    assert (
+                    y_true_dicts[f"Local {0}"][f"client_test_{testset}"]
+                    == y_true_dicts[f"Local {model}"][f"client_test_{testset}"]
+                    ).all(), (
+                    "Models in the ensemble do not make predictions in the same x order"
+                    )
+                ensemble_true = y_true_dicts["Local 0"][f"client_test_{testset}"]
+                ensemble_pred = y_pred_dicts["Local 0"][f"client_test_{testset}"]
+                for model in range(1, NUM_CLIENTS):
+                     ensemble_pred += y_pred_dicts[f"Local {model}"][f"client_test_{testset}"]
+                ensemble_pred /= NUM_CLIENTS
+
+                perf_lines_dicts.append(
+                    prepare_dict(
+                        keys=columns_names,
+                        Test=f"client_test_{testset}",
+                        Metric=metric(ensemble_true, ensemble_pred),
+                        Method="Ensemble",
+                        learning_rate=str(LR),
+                        optimizer_class=Optimizer,
+                    )
+                )
+                # We update csv and save it when the results are there
+                df = pd.DataFrame.from_dict(perf_lines_dicts)
+                df.to_csv(results_file, index=False)
+            # Computing ensemble performance in the pooled case
+            for model in range(1, NUM_CLIENTS):
+                assert (
+                    pooled_y_true_dicts["Local 0"]["client_test_0"]
+                    == pooled_y_true_dicts[f"Local {model}"]["client_test_0"]
+                ).all(), (
+                    "Models in the ensemble do not make predictions in the same x order"
+                )
+            pooled_ensemble_true = pooled_y_true_dicts["Local 0"]["client_test_0"]
+            pooled_ensemble_pred = pooled_y_pred_dicts["Local 0"]["client_test_0"]
+            for model in range(1, NUM_CLIENTS):
+                pooled_ensemble_pred += pooled_y_pred_dicts[f"Local {model}"][
+                    "client_test_0"
+                ]
+            pooled_ensemble_pred /= NUM_CLIENTS
+
             perf_lines_dicts.append(
                 prepare_dict(
                     keys=columns_names,
                     Test="Pooled Test",
-                    Metric=pooled_perf_dict["client_test_0"],
-                    Method=f"Local {i}",
-                    learning_rate=str(LR),
-                    optimizer_class=Optimizer,
-                )
-            )
-
-        for testset in range(NUM_CLIENTS):
-            for model in range(1, NUM_CLIENTS):
-                assert (
-                    y_true_dicts[f"Local {0}"][f"client_test_{testset}"]
-                    == y_true_dicts[f"Local {model}"][f"client_test_{testset}"]
-                ).all(), (
-                    "Models in the ensemmble do not make predictions in the same x order"
-                )
-            ensemble_true = y_true_dicts["Local 0"][f"client_test_{testset}"]
-            ensemble_pred = y_pred_dicts["Local 0"][f"client_test_{testset}"]
-            for model in range(1, NUM_CLIENTS):
-                ensemble_pred += y_pred_dicts[f"Local {model}"][f"client_test_{testset}"]
-            ensemble_pred /= NUM_CLIENTS
-
-            perf_lines_dicts.append(
-                prepare_dict(
-                    keys=columns_names,
-                    Test=f"client_test_{testset}",
-                    Metric=metric(ensemble_true, ensemble_pred),
+                    Metric=metric(pooled_ensemble_true, pooled_ensemble_pred),
                     Method="Ensemble",
                     learning_rate=str(LR),
                     optimizer_class=Optimizer,
                 )
             )
 
-        for model in range(1, NUM_CLIENTS):
-            assert (
-                pooled_y_true_dicts["Local 0"]["client_test_0"]
-                == pooled_y_true_dicts[f"Local {model}"]["client_test_0"]
-            ).all(), (
-                "Models in the ensemmble do not make predictions in the same x order"
-            )
-        pooled_ensemble_true = pooled_y_true_dicts["Local 0"]["client_test_0"]
-        pooled_ensemble_pred = pooled_y_pred_dicts["Local 0"]["client_test_0"]
-        for model in range(1, NUM_CLIENTS):
-            pooled_ensemble_pred += pooled_y_pred_dicts[f"Local {model}"][
-                "client_test_0"
-            ]
-        pooled_ensemble_pred /= NUM_CLIENTS
-
-        perf_lines_dicts.append(
-            prepare_dict(
-                keys=columns_names,
-                Test="Pooled Test",
-                Metric=metric(pooled_ensemble_true, pooled_ensemble_pred),
-                Method="Ensemble",
-                learning_rate=str(LR),
-                optimizer_class=Optimizer,
-            )
-        )
-
-        # We update csv and save it when the results are there
-        df = pd.DataFrame.from_dict(perf_lines_dicts)
-        df.to_csv(results_file, index=False)
+            # We update csv and save it when the results are there
+            df = pd.DataFrame.from_dict(perf_lines_dicts)
+            df.to_csv(results_file, index=False)
 
     # Strategies
     for num_updates in run_num_updates:
@@ -308,7 +338,7 @@ def main(args):
                 "optimizer_class": Optimizer,
                 "learning_rate": LR,
                 "num_updates": num_updates,
-                "nrounds": get_nb_max_rounds(num_updates),
+                "nrounds": 0, #get_nb_max_rounds(num_updates),
             }
             strategy_specific_hp_dict = strategy_specific_hp_dicts[sname]
             # Overwriting arguments with strategy specific arguments
@@ -333,16 +363,28 @@ def main(args):
                 # Dealing with edge case that shouldn't happen
                 # If some of the rows are there but not all of them we redo the
                 # experiments
+                import pdb; pdb.set_trace()
                 if len(index_of_interest) > 0:
                     df.drop(index_of_interest, inplace=True)
                     perf_lines_dicts = df.to_dict("records")
+                basename = dataset_name + "-" +sname + f"-num-updates{num_updates}"
+                for k, v in args.items():
+                   if  k in ["learning_rate", "server_learning_rate"]:
+                       basename += ("-" + ''.join([e[0] for e in str(k).split("_")]) + str(v))
+                   if k in ["mu", "deterministic_cycle"]:
+                       basename += ("-" + str(k) + str(v)) 
+                
                 # We run the FL strategy
-                s = getattr(strats, sname)(**args, log=True)
+                s = getattr(strats, sname)(**args, log=args_cli.log, log_basename=basename)
                 print("FL strategy", sname, " num_updates ", num_updates)
                 m = s.run()[0]
 
-                perf_dict = evaluate_model_on_tests(m, test_dls, metric)
-                pooled_perf_dict = evaluate_model_on_tests(m, [test_pooled], metric)
+                perf_dict = evaluate_func(m, test_dls, metric)
+                pooled_perf_dict = evaluate_func(m, [test_pooled], metric)
+                print("Per-center performance:")
+                print(perf_dict)
+                print("Performance on pooled test set:")
+                print(pooled_perf_dict)
                 hyperparams_save = {
                     k: v
                     for k, v in hyperparameters.items()
@@ -379,13 +421,13 @@ def main(args):
 
 def init_data_loaders(
     dataset, pooled=False, batch_size=1, num_workers=1, num_clients=None
-):
+, batch_size_test=None, collate_fn=None):
     """
     Initializes the data loaders for the training and test datasets.
     """
     if (not pooled) and num_clients is None:
         raise ValueError("num_clients must be specified for the non-pooled data")
-
+    batch_size_test = batch_size if batch_size_test is None else batch_size_test
     if not pooled:
         training_dls = [
             dl(
@@ -393,15 +435,17 @@ def init_data_loaders(
                 batch_size=batch_size,
                 shuffle=True,
                 num_workers=num_workers,
+                collate_fn=collate_fn,
             )
             for i in range(num_clients)
         ]
         test_dls = [
             dl(
                 dataset(center=i, train=False, pooled=False),
-                batch_size=batch_size,
+                batch_size=batch_size_test,
                 shuffle=False,
                 num_workers=num_workers,
+                collate_fn=collate_fn,
             )
             for i in range(num_clients)
         ]
@@ -412,12 +456,14 @@ def init_data_loaders(
             batch_size=batch_size,
             shuffle=True,
             num_workers=num_workers,
+            collate_fn=collate_fn,
         )
         test_pooled = dl(
             dataset(train=False, pooled=True),
-            batch_size=batch_size,
+            batch_size=batch_size_test,
             shuffle=False,
             num_workers=num_workers,
+            collate_fn=collate_fn,
         )
         return train_pooled, test_pooled
 
@@ -452,7 +498,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--workers",
         type=int,
-        default=0,
+        default=10,
         help="Numbers of workers for the dataloader",
     )
     parser.add_argument(
@@ -506,6 +552,7 @@ if __name__ == "__main__":
         default=False,
         help="whether or not to use deterministic cycling for the cyclic strategy",
     )
+    parser.add_argument("--log", "-l", action="store_true", default=False, help="Whether or not to log the strategies")
     args = parser.parse_args()
 
     main(args)

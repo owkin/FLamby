@@ -1,3 +1,4 @@
+
 import torch
 import torch.nn.functional as F
 from torch.nn.modules.loss import _Loss
@@ -84,18 +85,18 @@ def dice_coeff(y_pred, y_true, alpha=0.5, beta=0.5, squared=False):
     dice : float
         Similarity coefficient in [0, 1].
     """
-    intersection = torch.sum(y_pred * y_true, dim=tuple(range(1, y_true.ndim)))
+    intersection = torch.sum(y_pred * y_true.type(torch.FloatTensor).cuda(), dim=tuple(range(1, y_true.ndim)))
 
     if squared:
         union = 0.5 * torch.sum(
-            y_pred * y_pred + y_true * y_true,
+            y_pred * y_pred + y_true.type(torch.FloatTensor).cuda() * y_true.type(torch.FloatTensor).cuda(),
             dim=tuple(range(1, y_true.ndim)),
         )
     else:
         union = torch.sum(
-            y_pred * y_true
-            + alpha * y_pred * (1 - y_true)
-            + beta * (1 - y_pred) * y_true,
+            y_pred * y_true.type(torch.FloatTensor).cuda()
+            + alpha * y_pred * (1 - y_true.type(torch.FloatTensor).cuda())
+            + beta * (1 - y_pred) * y_true.type(torch.FloatTensor).cuda(),
             dim=tuple(range(1, y_true.ndim)),
         )
 
@@ -131,7 +132,7 @@ def balanced_xent(y_pred, y_true, W=None):
         w = float(W)
 
     loss = -torch.mean(
-        w * y_true * torch.log(y_pred) + (1 - y_true) * torch.log(1 - y_pred)
+        w * y_true.type(torch.FloatTensor).cuda() * torch.log(y_pred) + (1 - y_true.type(torch.FloatTensor).cuda()) * torch.log(1 - y_pred)
     )
 
     return loss

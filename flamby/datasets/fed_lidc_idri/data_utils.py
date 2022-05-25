@@ -136,15 +136,15 @@ def resize_by_crop_or_pad(X, output_shape=(384, 384, 384)):
 
     # Pad missing dimensions
     missing_dims = torch.clamp(output_shape - input_shape, min=0)
-    pad_begin = missing_dims.div(2, rounding_mode="floor")
-    pad_last = torch.maximum(output_shape, input_shape) - pad_begin - input_shape
+    pad_begin = missing_dims.div(2)
+    pad_last = torch.max(output_shape, input_shape) - pad_begin - input_shape
     # Inverting order because of pytorch padding conventions
     padding = tuple(torch.stack([pad_begin, pad_last], dim=-1).flatten())[::-1]
     X = F.pad(X, padding, mode="constant", value=X.min())
 
     # Crop extra
     extra = torch.clamp(torch.tensor(X.shape) - output_shape, min=0).div(
-        2, rounding_mode="floor"
+        2
     )
 
     for d, start in enumerate(extra):
@@ -182,7 +182,6 @@ def random_sampler(image, label, patch_shape=(128, 128, 128), n_samples=2):
     image = F.pad(
         image[None, None, :, :, :],  # reflect mode requires batch and channel dims
         paddings,
-        mode="reflect",
     ).squeeze()
     label = F.pad(
         label,
@@ -275,9 +274,9 @@ def fast_sampler(
     # the patch:
     if not center:
         noise = (torch.rand(centroids_1.shape[0], 3) * torch.max(patch_shape)).long() % (
-            patch_shape.div(2, rounding_mode="floor")[None, ...]
+            patch_shape.div(2)[None, ...].long()
         )
-        centroids_1 += noise - patch_shape.div(4, rounding_mode="floor")
+        centroids_1 += noise - patch_shape.div(4).long()
 
     # Sample random centroids
     centroids_0 = sample_centroids(X, n_patches - n_patches_with)
@@ -289,10 +288,10 @@ def fast_sampler(
     centroids = torch.cat([centroids_0, centroids_1])
 
     # Check that centroids are not too close to the image border
-    centroids = torch.maximum(centroids, patch_shape[None, ...])
-    centroids = torch.minimum(
-        centroids,
-        (torch.tensor(X.shape) - patch_shape.div(2, rounding_mode="floor"))[None, ...],
+    centroids = torch.max(centroids, patch_shape[None, ...].long())
+    centroids = torch.min(
+        centroids.long(),
+        (torch.tensor(X.shape).long() - patch_shape.div(2).long())[None, ...],
     )
 
     paddings = tuple(torch.stack([patch_shape, patch_shape], dim=-1).flatten())[::-1]
@@ -300,7 +299,6 @@ def fast_sampler(
     X = F.pad(
         X[None, None, :, :, :],
         paddings,
-        mode="reflect",
     ).squeeze()
     y = F.pad(
         y,
@@ -309,8 +307,8 @@ def fast_sampler(
     )
 
     # Extract patches, taking into account the shift in coordinates due to padding
-    image_patches = extract_patches(X, centroids + patch_shape, patch_shape)
-    label_patches = extract_patches(y, centroids + patch_shape, patch_shape)
+    image_patches = extract_patches(X, centroids + patch_shape.long(), patch_shape)
+    label_patches = extract_patches(y, centroids + patch_shape.long(), patch_shape)
 
     return image_patches, label_patches
 
@@ -333,8 +331,8 @@ def extract_patches(image, centroids, patch_shape):
     slices = [
         [
             slice(
-                (centroids[ii] - patch_shape.div(2, rounding_mode="floor"))[i],
-                (centroids[ii] + patch_shape.div(2, rounding_mode="floor"))[i],
+                (centroids[ii].long() - patch_shape.div(2).long())[i],
+                (centroids[ii].long() + patch_shape.div(2).long())[i],
             )
             for i in range(len(patch_shape))
         ]
@@ -357,8 +355,8 @@ def sample_centroids(X, n_samples):
     torch.Tensor
         tensor of n_samples centroid candidates
     """
-    means = torch.tensor(X.shape).div(2, rounding_mode="floor").float()
-    sigmas = torch.tensor(X.shape).div(2, rounding_mode="floor").float() / (3 * 2)
+    means = torch.tensor(X.shape).div(2).float()
+    sigmas = torch.tensor(X.shape).div(2).float() / (3 * 2)
 
     # Sample centroids at random
     centroids = torch.randn((n_samples, X.ndim)) * sigmas + means

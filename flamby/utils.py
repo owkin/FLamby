@@ -41,7 +41,7 @@ def evaluate_model_on_tests(
     if torch.cuda.is_available() and use_gpu:
         model = model.cuda()
     model.eval()
-    with torch.inference_mode():
+    with torch.no_grad():
         for i in tqdm(range(len(test_dataloaders))):
             test_dataloader_iterator = iter(test_dataloaders[i])
             y_pred_final = []
