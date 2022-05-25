@@ -3,10 +3,8 @@ import copy
 import os
 import time
 
-import torch
 import numpy as np
-
-from flamby.utils import check_dataset_from_config
+import torch
 from torch.optim import lr_scheduler
 
 from flamby.datasets.fed_kits19 import (
@@ -15,11 +13,13 @@ from flamby.datasets.fed_kits19 import (
     NUM_EPOCHS_POOLED,
     Baseline,
     BaselineLoss,
-    FedKiTS19,
+    FedKits19,
     evaluate_dice_on_tests,
     metric,
     softmax_helper,
 )
+from flamby.utils import check_dataset_from_config
+
 
 def train_model(
     model, optimizer, scheduler, dataloaders, dataset_sizes, device, lossfunc, num_epochs
@@ -48,7 +48,7 @@ def train_model(
     # To draw loss and accuracy plots
     training_loss_list = []
     training_dice_list = []
-    print(" Train Data Size "+str(dataset_sizes["train"]))
+    print(" Train Data Size " + str(dataset_sizes["train"]))
     print(" Test Data Size " + str(dataset_sizes["test"]))
     for epoch in range(num_epochs):
         print("Epoch {}/{}".format(epoch, num_epochs - 1))
@@ -90,25 +90,29 @@ def train_model(
             # if phase == "train":
             #     scheduler.step(epoch)
 
-
         epoch_loss = running_loss / dataset_sizes[phase]
-        epoch_acc = (np.mean(dice_list)) # average dice
+        epoch_acc = np.mean(dice_list)  # average dice
 
         if epoch_acc > best_acc:
             best_acc = epoch_acc
             best_model_wts = copy.deepcopy(model.state_dict())
 
-        print("Training Loss: {:.4f} Validation Acc: {:.4f} ".format(epoch_loss, epoch_acc))
+        print(
+            "Training Loss: {:.4f} Validation Acc: {:.4f} ".format(epoch_loss, epoch_acc)
+        )
         training_loss_list.append(epoch_loss)
         training_dice_list.append(epoch_acc)
 
-
     time_elapsed = time.time() - since
-    print("Training complete in {:.0f}m {:.0f}s".format(time_elapsed // 60, time_elapsed % 60))
+    print(
+        "Training complete in {:.0f}m {:.0f}s".format(
+            time_elapsed // 60, time_elapsed % 60
+        )
+    )
     print("Best test Balanced acc: {:4f}".format(best_acc))
-    print('----- Training Loss ---------')
+    print("----- Training Loss ---------")
     print(training_loss_list)
-    print('------Validation Accuracy ------')
+    print("------Validation Accuracy ------")
     print(training_dice_list)
     # load best model weights
     model.load_state_dict(best_model_wts)
@@ -121,14 +125,13 @@ def main(args):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
     torch.use_deterministic_algorithms(False)
 
-
     dict = check_dataset_from_config(dataset_name="fed_kits19", debug=False)
 
-    train_dataset = FedKiTS19(train=True, pooled=True)
+    train_dataset = FedKits19(train=True, pooled=True)
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=args.workers
     )
-    test_dataset = FedKiTS19(train=False, pooled=True)
+    test_dataset = FedKits19(train=False, pooled=True)
     test_dataloader = torch.utils.data.DataLoader(
         test_dataset,
         batch_size=BATCH_SIZE,
@@ -144,8 +147,6 @@ def main(args):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("device", device)
 
-
-
     model = Baseline()
     # data = torch.full([2, 1, 64, 192, 192], 0, dtype=torch.float32)
 
@@ -157,16 +158,20 @@ def main(args):
 
     lossfunc = BaselineLoss()
 
-    optimizer = torch.optim.Adam(model.parameters(), LR, weight_decay=3e-5,
-                                      amsgrad=True)
-    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.2,
-                                                       patience=30,
-                                                       verbose=True, threshold=1e-3,
-                                                       threshold_mode="abs")
+    optimizer = torch.optim.Adam(model.parameters(), LR, weight_decay=3e-5, amsgrad=True)
+    scheduler = lr_scheduler.ReduceLROnPlateau(
+        optimizer,
+        mode="min",
+        factor=0.2,
+        patience=30,
+        verbose=True,
+        threshold=1e-3,
+        threshold_mode="abs",
+    )
 
-    #TODO: Add 5 seeds
+    # TODO: Add 5 seeds
     torch.manual_seed(args.seed)
-    #TODO: Test train model on lambda 5 (Preprocessing running)
+    # TODO: Test train model on lambda 5 (Preprocessing running)
     model = train_model(
         model,
         optimizer,
@@ -175,11 +180,10 @@ def main(args):
         dataset_sizes,
         device,
         lossfunc,
-        args.epochs, # for easier debug
+        args.epochs,  # for easier debug
     )
-    print('----- Test Accuracy ----------')
+    print("----- Test Accuracy ----------")
     print(evaluate_dice_on_tests(model, [test_dataloader], metric, use_gpu=True))
-
 
 
 if __name__ == "__main__":
@@ -212,5 +216,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     main(args)
-
-
