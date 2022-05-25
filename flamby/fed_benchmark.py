@@ -1,7 +1,7 @@
 import argparse
 import copy
 import os
-
+import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader as dl
@@ -75,8 +75,8 @@ def main(args_cli):
         batch_size_test = 1
         from flamby.datasets.fed_lidc_idri import evaluate_dice_on_tests_by_chunks
         def evaluate_func(m, test_dls, metric, use_gpu=False, return_pred=False):
-            #dice_dict = evaluate_dice_on_tests_by_chunks(m, test_dls, use_gpu)
-            dice_dict = {f"client_test_{i}": 0.5 for i in range(NUM_CLIENTS)}
+            dice_dict = evaluate_dice_on_tests_by_chunks(m, test_dls, use_gpu)
+            #dice_dict = {f"client_test_{i}": 0.5 for i in range(NUM_CLIENTS)}
             if return_pred:
                 return dice_dict, None, None
             return dice_dict
@@ -122,7 +122,6 @@ def main(args_cli):
     # Single client baseline computation
     # We use the same set of parameters as found in the corresponding
     # flamby/datasets/fed_mydataset/benchmark.py
-    NUM_EPOCHS_POOLED = 0
     # Pooled Baseline
     # Throughout the experiments we only launch training if we do not have the results
     # yet. Note that pooled and local baselines do not use hyperparameters.
@@ -349,21 +348,37 @@ def main(args_cli):
             hyperparameters = {}
             for k in hp_additional_args:  # columns_names:
                 if k in args:
-                    hyperparameters[k] = str(args[k])
+                    hyperparameters[k] = args[k]
                 else:
-                    hyperparameters[k] = "nan"
-            index_of_interest = df.loc[
-                (df["Method"] == (sname + str(num_updates)))
-                & (
-                    df[list(hyperparameters)].astype(str) == pd.Series(hyperparameters)
-                ).all(axis=1)
-            ].index
+                    hyperparameters[k] = np.nan
+            # This is very verbose but this is the only way I found to accomodate float and objects equality in a robust fashion
+            found_xps = df[list(hyperparameters)]
+            found_xps_numerical = found_xps.select_dtypes(exclude=[object])
+            col_numericals = found_xps_numerical.columns
+            col_objects = [c for c in found_xps.columns if not(c in col_numericals)]
+
+            if len(col_numericals) > 0:
+                bool_numerical = np.all(np.isclose(found_xps_numerical, pd.Series({k: hyperparameters[k] for k in list(hyperparameters.keys()) if k in col_numericals}), equal_nan=True),axis=1)
+            else:
+                bool_numerical = np.ones((len(df.index), 1)).astype("bool")
+            if len(col_objects):
+                bool_objects = found_xps[col_objects].astype(str) == pd.Series({k:str(hyperparameters[k]) for k in list(hyperparameters.keys()) if k in col_objects})
+            else:
+                bool_objects = np.ones((len(df.index), 1)).astype("bool")
+            bool_method = df["Method"] == (sname + str(num_updates))
+            index_of_interest = df.loc[bool_numerical.squeeze() & bool_objects.squeeze() & bool_method.squeeze()].index 
+            #non-robust version
+            #index_of_interest = df.loc[
+            #    (df["Method"] == (sname + str(num_updates)))
+            #    & (
+            #        df[list(hyperparameters)] == pd.Series(hyperparameters)
+            #    ).all(axis=1)
+            #].index
             # An experiment is finished if there are num_clients + 1 rows
             if len(index_of_interest) < (NUM_CLIENTS + 1):
                 # Dealing with edge case that shouldn't happen
                 # If some of the rows are there but not all of them we redo the
                 # experiments
-                import pdb; pdb.set_trace()
                 if len(index_of_interest) > 0:
                     df.drop(index_of_interest, inplace=True)
                     perf_lines_dicts = df.to_dict("records")
