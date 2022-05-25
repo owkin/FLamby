@@ -1,6 +1,7 @@
 import argparse
 import copy
 import os
+
 import numpy as np
 import pandas as pd
 import torch
@@ -20,14 +21,27 @@ def main(args_cli):
     n_gpus = torch.cuda.device_count()
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args_cli.GPU)
-    #torch.use_deterministic_algorithms(False)
-    use_gpu = (args_cli.GPU in [str(i) for i in range(n_gpus)]) and torch.cuda.is_available()
+    # torch.use_deterministic_algorithms(False)
+    use_gpu = (
+        args_cli.GPU in [str(i) for i in range(n_gpus)]
+    ) and torch.cuda.is_available()
     run_num_updates = [100, 500]
 
     # ensure that the config is ok
-    check_config()
+    config = check_config(args_cli.config_file_path)
 
-    params_list = ["BATCH_SIZE", "LR", "NUM_CLIENTS", "NUM_EPOCHS_POOLED", "Baseline", "BaselineLoss", "Optimizer", "get_nb_max_rounds", "metric", "collate_fn"]
+    params_list = [
+        "BATCH_SIZE",
+        "LR",
+        "NUM_CLIENTS",
+        "NUM_EPOCHS_POOLED",
+        "Baseline",
+        "BaselineLoss",
+        "Optimizer",
+        "get_nb_max_rounds",
+        "metric",
+        "collate_fn",
+    ]
     # get all the dataset args
     (
         dataset_name,
@@ -44,14 +58,14 @@ def main(args_cli):
             metric,
             collate_fn,
         ],
-    ) = get_dataset_args(
-        params_list
-    )
-    results_file = get_results_file()
+    ) = get_dataset_args(config, params_list)
+    results_file = get_results_file(config)
 
     # One might need to iterate on the hyperparameters to some extent if performances
     # are seriously degraded with default ones
-    strategy_specific_hp_dicts = get_strategies(learning_rate=LR, args=vars(args_cli))
+    strategy_specific_hp_dicts = get_strategies(
+        config, learning_rate=LR, args=vars(args_cli)
+    )
 
     init_hp_additional_args = ["Test", "Method", "Metric"]
     # We need to add strategy hyperparameters columns to the benchmark
@@ -74,19 +88,23 @@ def main(args_cli):
     if dataset_name == "fed_lidc_idri":
         batch_size_test = 1
         from flamby.datasets.fed_lidc_idri import evaluate_dice_on_tests_by_chunks
+
         def evaluate_func(m, test_dls, metric, use_gpu=False, return_pred=False):
             dice_dict = evaluate_dice_on_tests_by_chunks(m, test_dls, use_gpu)
-            #dice_dict = {f"client_test_{i}": 0.5 for i in range(NUM_CLIENTS)}
+            # dice_dict = {f"client_test_{i}": 0.5 for i in range(NUM_CLIENTS)}
             if return_pred:
                 return dice_dict, None, None
             return dice_dict
+
         compute_ensemble_perf = False
     else:
-       batch_size_test = None
-       evaluate_func = evaluate_model_on_tests
-       compute_ensemble_perf = True
+        batch_size_test = None
+        evaluate_func = evaluate_model_on_tests
+        compute_ensemble_perf = True
 
-    nb_local_and_ensemble_xps = (NUM_CLIENTS + int(compute_ensemble_perf)) * (NUM_CLIENTS + 1)
+    nb_local_and_ensemble_xps = (NUM_CLIENTS + int(compute_ensemble_perf)) * (
+        NUM_CLIENTS + 1
+    )
 
     training_dls, test_dls = init_data_loaders(
         dataset=FedDataset,
@@ -152,9 +170,7 @@ def main(args_cli):
                 opt.step()
 
         perf_dict = evaluate_func(model, test_dls, metric, use_gpu=use_gpu)
-        pooled_perf_dict = evaluate_func(
-            model, [test_pooled], metric, use_gpu=use_gpu
-        )
+        pooled_perf_dict = evaluate_func(model, [test_pooled], metric, use_gpu=use_gpu)
         print("Per-center performance:")
         print(perf_dict)
         print("Performance on pooled test set:")
@@ -242,12 +258,12 @@ def main(args_cli):
                     # Make sure there is no weird inplace stuff
                     perf_lines_dicts.append(
                         prepare_dict(
-                           keys=columns_names,
-                           Test=k,
-                           Metric=v,
-                           Method=f"Local {i}",
-                           learning_rate=str(LR),
-                           optimizer_class=Optimizer,
+                            keys=columns_names,
+                            Test=k,
+                            Metric=v,
+                            Method=f"Local {i}",
+                            learning_rate=str(LR),
+                            optimizer_class=Optimizer,
                         )
                     )
                 perf_lines_dicts.append(
@@ -263,21 +279,21 @@ def main(args_cli):
                 # We update csv and save it when the results are there
                 df = pd.DataFrame.from_dict(perf_lines_dicts)
                 df.to_csv(results_file, index=False)
-        
+
         if compute_ensemble_perf:
             print("Computing ensemble performance")
             for testset in range(NUM_CLIENTS):
                 for model in range(1, NUM_CLIENTS):
                     assert (
-                    y_true_dicts[f"Local {0}"][f"client_test_{testset}"]
-                    == y_true_dicts[f"Local {model}"][f"client_test_{testset}"]
-                    ).all(), (
-                    "Models in the ensemble do not make predictions in the same x order"
-                    )
+                        y_true_dicts[f"Local {0}"][f"client_test_{testset}"]
+                        == y_true_dicts[f"Local {model}"][f"client_test_{testset}"]
+                    ).all(), "Models in the ensemble have different ground truths"
                 ensemble_true = y_true_dicts["Local 0"][f"client_test_{testset}"]
                 ensemble_pred = y_pred_dicts["Local 0"][f"client_test_{testset}"]
                 for model in range(1, NUM_CLIENTS):
-                     ensemble_pred += y_pred_dicts[f"Local {model}"][f"client_test_{testset}"]
+                    ensemble_pred += y_pred_dicts[f"Local {model}"][
+                        f"client_test_{testset}"
+                    ]
                 ensemble_pred /= NUM_CLIENTS
 
                 perf_lines_dicts.append(
@@ -337,7 +353,7 @@ def main(args_cli):
                 "optimizer_class": Optimizer,
                 "learning_rate": LR,
                 "num_updates": num_updates,
-                "nrounds": 0, #get_nb_max_rounds(num_updates),
+                "nrounds": get_nb_max_rounds(num_updates),
             }
             strategy_specific_hp_dict = strategy_specific_hp_dicts[sname]
             # Overwriting arguments with strategy specific arguments
@@ -351,29 +367,51 @@ def main(args_cli):
                     hyperparameters[k] = args[k]
                 else:
                     hyperparameters[k] = np.nan
-            # This is very verbose but this is the only way I found to accomodate float and objects equality in a robust fashion
+            # This is very ugly but this is the only way I found to accomodate float
+            # and objects equality in a robust fashion
             found_xps = df[list(hyperparameters)]
             found_xps_numerical = found_xps.select_dtypes(exclude=[object])
             col_numericals = found_xps_numerical.columns
-            col_objects = [c for c in found_xps.columns if not(c in col_numericals)]
+            col_objects = [c for c in found_xps.columns if not (c in col_numericals)]
 
             if len(col_numericals) > 0:
-                bool_numerical = np.all(np.isclose(found_xps_numerical, pd.Series({k: hyperparameters[k] for k in list(hyperparameters.keys()) if k in col_numericals}), equal_nan=True),axis=1)
+                bool_numerical = np.all(
+                    np.isclose(
+                        found_xps_numerical,
+                        pd.Series(
+                            {
+                                k: hyperparameters[k]
+                                for k in list(hyperparameters.keys())
+                                if k in col_numericals
+                            }
+                        ),
+                        equal_nan=True,
+                    ),
+                    axis=1,
+                )
             else:
                 bool_numerical = np.ones((len(df.index), 1)).astype("bool")
             if len(col_objects):
-                bool_objects = found_xps[col_objects].astype(str) == pd.Series({k:str(hyperparameters[k]) for k in list(hyperparameters.keys()) if k in col_objects})
+                bool_objects = found_xps[col_objects].astype(str) == pd.Series(
+                    {
+                        k: str(hyperparameters[k])
+                        for k in list(hyperparameters.keys())
+                        if k in col_objects
+                    }
+                )
             else:
                 bool_objects = np.ones((len(df.index), 1)).astype("bool")
             bool_method = df["Method"] == (sname + str(num_updates))
-            index_of_interest = df.loc[bool_numerical.squeeze() & bool_objects.squeeze() & bool_method.squeeze()].index 
-            #non-robust version
-            #index_of_interest = df.loc[
+            index_of_interest = df.loc[
+                bool_numerical.squeeze() & bool_objects.squeeze() & bool_method.squeeze()
+            ].index
+            # non-robust version
+            # index_of_interest = df.loc[
             #    (df["Method"] == (sname + str(num_updates)))
             #    & (
             #        df[list(hyperparameters)] == pd.Series(hyperparameters)
             #    ).all(axis=1)
-            #].index
+            # ].index
             # An experiment is finished if there are num_clients + 1 rows
             if len(index_of_interest) < (NUM_CLIENTS + 1):
                 # Dealing with edge case that shouldn't happen
@@ -382,15 +420,19 @@ def main(args_cli):
                 if len(index_of_interest) > 0:
                     df.drop(index_of_interest, inplace=True)
                     perf_lines_dicts = df.to_dict("records")
-                basename = dataset_name + "-" +sname + f"-num-updates{num_updates}"
+                basename = dataset_name + "-" + sname + f"-num-updates{num_updates}"
                 for k, v in args.items():
-                   if  k in ["learning_rate", "server_learning_rate"]:
-                       basename += ("-" + ''.join([e[0] for e in str(k).split("_")]) + str(v))
-                   if k in ["mu", "deterministic_cycle"]:
-                       basename += ("-" + str(k) + str(v)) 
-                
+                    if k in ["learning_rate", "server_learning_rate"]:
+                        basename += (
+                            "-" + "".join([e[0] for e in str(k).split("_")]) + str(v)
+                        )
+                    if k in ["mu", "deterministic_cycle"]:
+                        basename += "-" + str(k) + str(v)
+
                 # We run the FL strategy
-                s = getattr(strats, sname)(**args, log=args_cli.log, log_basename=basename)
+                s = getattr(strats, sname)(
+                    **args, log=args_cli.log, log_basename=basename
+                )
                 print("FL strategy", sname, " num_updates ", num_updates)
                 m = s.run()[0]
 
@@ -435,8 +477,14 @@ def main(args_cli):
 
 
 def init_data_loaders(
-    dataset, pooled=False, batch_size=1, num_workers=1, num_clients=None
-, batch_size_test=None, collate_fn=None):
+    dataset,
+    pooled=False,
+    batch_size=1,
+    num_workers=1,
+    num_clients=None,
+    batch_size_test=None,
+    collate_fn=None,
+):
     """
     Initializes the data loaders for the training and test datasets.
     """
@@ -567,7 +615,20 @@ if __name__ == "__main__":
         default=False,
         help="whether or not to use deterministic cycling for the cyclic strategy",
     )
-    parser.add_argument("--log", "-l", action="store_true", default=False, help="Whether or not to log the strategies")
+    parser.add_argument(
+        "--log",
+        "-l",
+        action="store_true",
+        default=False,
+        help="Whether or not to log the strategies",
+    )
+    parser.add_argument(
+        "--config-file-path",
+        "-cfgp",
+        default="./config.json",
+        type=str,
+        help="Which config file to use.",
+    )
     args = parser.parse_args()
 
     main(args)
