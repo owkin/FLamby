@@ -223,6 +223,8 @@ def main(args_cli):
         # If some of the rows are there but not all of them we redo the experiments.
         for i in range(NUM_CLIENTS):
             m = copy.deepcopy(global_init)
+            if use_gpu:
+                m = m.cuda()
             bloss = BaselineLoss()
             opt = Optimizer(m.parameters(), lr=LR)
             index_of_interest = df.loc[df["Method"] == f"Local {i}"].index
@@ -234,6 +236,9 @@ def main(args_cli):
                 print("Local " + str(i))
                 for e in tqdm(range(NUM_EPOCHS_POOLED)):
                     for X, y in training_dls[i]:
+                        if use_gpu:
+                            X = X.cuda()
+                            y = y.cuda()
                         opt.zero_grad()
                         y_pred = m(X)
                         loss = bloss(y_pred, y)
