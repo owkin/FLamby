@@ -112,7 +112,6 @@ class SyntheticRaw(Dataset):
                     self.sets.append("train")
 
         # keep 0 (no disease) and put 1 for all other values (disease)
-        self.labels.where(self.labels == 0, 1, inplace=True)
         self.labels = torch.from_numpy(self.labels.values).to(self.X_dtype)
 
     def __len__(self):
