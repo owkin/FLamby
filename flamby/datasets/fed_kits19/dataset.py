@@ -21,6 +21,10 @@ from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.data_aug
 from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.paths import *
 from flamby.utils import check_dataset_from_config
 
+from batchgenerators.utilities.file_and_folder_operations import *
+from nnunet.training.data_augmentation.default_data_augmentation import default_3D_augmentation_params, get_patch_size
+from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.data_augmentations import transformations
+
 
 
 class KiTS19Raw(Dataset):
@@ -87,10 +91,10 @@ class KiTS19Raw(Dataset):
 
         print(self.train_test)
 
-        df = pd.read_csv("./metadata/thresholded_sites.csv")
-        df2 = df.query("train_test_split == '" + self.train_test + "' ").reset_index(
-            drop=True
-        )
+
+
+        df = pd.read_csv('./metadata/thresholded_sites.csv')
+        df2 = df.query("train_test_split == '" + self.train_test + "' ").reset_index(drop=True)
         self.images = df2.case_ids.tolist()
 
         # Load image paths and properties files
@@ -314,10 +318,9 @@ class FedKiTS19(KiTS19Raw):
         print(key)
         if not pooled:
             assert center in range(6)
-            df = pd.read_csv("./metadata/thresholded_sites.csv")
-            df2 = df.query("train_test_split_silo == '" + key + "' ").reset_index(
-                drop=True
-            )
+
+            df = pd.read_csv('./metadata/thresholded_sites.csv')
+            df2 = df.query("train_test_split_silo == '" + key + "' ").reset_index(drop=True)
             self.images = df2.case_ids.tolist()
             c = 0
             self.images_path = OrderedDict()

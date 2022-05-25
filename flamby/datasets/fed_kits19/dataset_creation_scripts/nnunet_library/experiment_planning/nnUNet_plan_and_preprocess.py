@@ -25,7 +25,6 @@ from nnunet.preprocessing.sanity_checks import verify_dataset_integrity
 from nnunet.training.model_restore import recursive_find_python_class
 from nnunet.experiment_planning.DatasetAnalyzer import DatasetAnalyzer
 from flamby.utils import read_config, write_value_in_config, get_config_file_path
-# from nnunet.experiment_planning.utils import crop
 
 
 def main():
