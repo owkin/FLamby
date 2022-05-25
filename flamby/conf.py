@@ -3,11 +3,9 @@ from pathlib import Path
 
 import torch  # noqa:F401  # necessary for importing optimizer
 
-CURRENT_FOLDER = Path(__file__).resolve().parent
-config = json.loads((CURRENT_FOLDER / "config.json").read_text())
 
-
-def check_config():
+def check_config(config_path):
+    config = json.loads(Path(config_path).read_text())
     # ensure that dataset exists
     try:
         # try importing the dataset from the config file
@@ -44,9 +42,11 @@ def check_config():
     if not results_file.suffix == ".csv":
         results_file.with_suffix(".csv")
     results_file.parent.mkdir(parents=True, exist_ok=True)
+    return config
 
 
 def get_dataset_args(
+    config,
     params=[
         "BATCH_SIZE",
         "LR",
@@ -54,16 +54,18 @@ def get_dataset_args(
         "NUM_EPOCHS_POOLED",
         "Baseline",
         "BaselineLoss",
-    ]
+    ],
 ):
     param_list = []
     for param in params:
-        param_list.append(
-            getattr(
+        try:
+            p = getattr(
                 __import__(f"flamby.datasets.{config['dataset']}", fromlist=param),
                 param,
             )
-        )
+        except AttributeError:
+            p = None
+        param_list.append(p)
 
     fed_dataset_name = config["dataset"].split("_")
     fed_dataset_name = "".join([name.capitalize() for name in fed_dataset_name])
@@ -75,7 +77,7 @@ def get_dataset_args(
     return config["dataset"], fed_dataset, param_list
 
 
-def get_strategies(learning_rate=None, args={}):
+def get_strategies(config, learning_rate=None, args={}):
 
     strategies = config["strategies"]
     if args and any([v is not None for k, v in args.items()]):
@@ -121,7 +123,7 @@ def get_strategies(learning_rate=None, args={}):
     return strategies
 
 
-def get_results_file():
+def get_results_file(config):
     return Path(config["results_file"])
 
 
