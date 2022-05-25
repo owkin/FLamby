@@ -1,4 +1,4 @@
-#    nnunet Library
+#    The same model as given in nnunet Library with the name of Generic UNET with the change of default parameters for KiTS19.
 #    Copyright 2020 Division of Medical Image Computing, German Cancer Research Center (DKFZ), Heidelberg, Germany
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");

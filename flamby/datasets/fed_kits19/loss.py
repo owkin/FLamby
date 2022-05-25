@@ -1,4 +1,4 @@
-#    nnunet Library
+#    This loss has been taken from the nnunet Library with the change of default hyper-parameters for DC_and_CE_loss loss.
 #    Copyright 2020 Division of Medical Image Computing, German Cancer Research Center (DKFZ), Heidelberg, Germany
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");

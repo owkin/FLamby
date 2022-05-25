@@ -94,6 +94,8 @@ python3 benchmark.py
 Note that estimated memory requirement for this training is around 14.5 GB.
 
 # Citation:
+Find attached the link to [the full license](http://www.apache.org/licenses/LICENSE-2.0) for the nnunet library.
+
 ```bash
 @article{isensee2018nnu,
   title={nnu-net: Self-adapting framework for u-net-based medical image segmentation},
