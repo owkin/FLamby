@@ -69,6 +69,8 @@ def get_dataset_args(
 
     fed_dataset_name = config["dataset"].split("_")
     fed_dataset_name = "".join([name.capitalize() for name in fed_dataset_name])
+    if fed_dataset_name == "FedIxi":
+        fed_dataset_name = "FedIXITiny"
 
     fed_dataset = getattr(
         __import__(f"flamby.datasets.{config['dataset']}", fromlist=fed_dataset_name),
