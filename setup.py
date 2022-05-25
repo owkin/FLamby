@@ -43,7 +43,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="flamby",
     version="0.0.1",
-    python_requires=">=3.8.0",
+    python_requires=">=3.7.0",
     license="MIT",
     classifiers=[
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
@@ -66,8 +66,8 @@ setup(
         "pre-commit",
         "scikit-learn",
         "scipy",
-        "torch",
-        "torchvision",
+        "torch==1.2.0",
+        "torchvision==0.4.0",
         "tqdm",
         "pydrive",
         "openslide-python",
