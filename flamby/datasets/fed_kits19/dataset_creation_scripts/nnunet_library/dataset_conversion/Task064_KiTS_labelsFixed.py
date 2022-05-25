@@ -23,10 +23,7 @@ from itertools import groupby
 import os
 import csv
 from collections import defaultdict
-sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "../../")))
-sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "../")))
-sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "")))
-from nnunet_library.paths import nnUNet_raw_data, base
+from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.paths import nnUNet_raw_data, base
 from flamby.utils import read_config, write_value_in_config, get_config_file_path
 
 

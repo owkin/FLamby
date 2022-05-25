@@ -16,8 +16,7 @@ from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.paths im
 from batchgenerators.utilities.file_and_folder_operations import *
 from nnunet.training.data_augmentation.default_data_augmentation import default_3D_augmentation_params, get_patch_size
 from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.data_augmentations import transformations
-# sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "../")))
-sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "")))
+
 
 
 class KiTS19Raw(Dataset):
@@ -69,7 +68,7 @@ class KiTS19Raw(Dataset):
 
         print(self.train_test)
 
-        df = pd.read_csv('metadata/thresholded_sites.csv')
+        df = pd.read_csv('./metadata/thresholded_sites.csv')
         df2 = df.query("train_test_split == '" + self.train_test + "' ").reset_index(drop=True)
         self.images = df2.case_ids.tolist()
 
@@ -249,7 +248,7 @@ class FedKiTS19(KiTS19Raw):
         print(key)
         if not pooled:
             assert center in range(6)
-            df = pd.read_csv('metadata/thresholded_sites.csv')
+            df = pd.read_csv('./metadata/thresholded_sites.csv')
             df2 = df.query("train_test_split_silo == '" + key + "' ").reset_index(drop=True)
             self.images = df2.case_ids.tolist()
             c = 0
