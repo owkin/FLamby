@@ -1,5 +1,6 @@
 # FLamby
- PLACEHOLDER LOGO
+![Alt text](/docs/logo.jpeg "Optional Title")
+
 
 ## Table of Contents
 - [Overview](#overview)
