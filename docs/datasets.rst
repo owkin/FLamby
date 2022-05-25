@@ -52,10 +52,10 @@ Fed-IXITiny
    :undoc-members:
    :private-members:
 
-Fed-KITS19
+Fed-Kits19
 -----------------
 
-.. autoclass:: flamby.datasets.fed_kits19.FedKiTS19
+.. autoclass:: flamby.datasets.fed_kits19.FedKits19
    :members:
    :undoc-members:
    :private-members:
