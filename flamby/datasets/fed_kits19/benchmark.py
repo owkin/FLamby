@@ -170,7 +170,9 @@ def main(args):
     )
 
 
+    #TODO: Add 5 seeds
     torch.manual_seed(args.seed)
+    #TODO: Test train model on lambda 5 (Preprocessing running)
     model = train_model(
         model,
         optimizer,
