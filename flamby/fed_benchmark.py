@@ -97,6 +97,15 @@ def main(args_cli):
             return dice_dict
 
         compute_ensemble_perf = False
+    elif dataset_name == "fed_kits19":
+        from flamby.datasets.fed_kits19 import evaluate_dice_on_tests
+        def evaluate_func(m, test_dls, metric, use_gpu=False, return_pred=False):
+            dice_dict = evaluate_dice_on_tests(m, test_dls, metric, use_gpu)
+            # dice_dict = {f"client_test_{i}": 0.5 for i in range(NUM_CLIENTS)}
+            if return_pred:
+                return dice_dict, None, None
+            return dice_dict
+
     else:
         batch_size_test = None
         evaluate_func = evaluate_model_on_tests
@@ -566,7 +575,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--workers",
         type=int,
-        default=10,
+        default=1,
         help="Numbers of workers for the dataloader",
     )
     parser.add_argument(

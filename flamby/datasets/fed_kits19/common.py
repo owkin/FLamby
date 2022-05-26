@@ -2,7 +2,7 @@ import torch
 
 NUM_CLIENTS = 6
 BATCH_SIZE = 2
-NUM_EPOCHS_POOLED = 2000
+NUM_EPOCHS_POOLED = 2
 LR = 3e-4
 SEEDS = [0, 10, 20, 30, 40]
 Optimizer = torch.optim.Adam
