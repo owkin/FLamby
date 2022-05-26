@@ -106,6 +106,8 @@ def main(args_cli):
                 return dice_dict, None, None
             return dice_dict
 
+        compute_ensemble_perf = False
+
     else:
         batch_size_test = None
         evaluate_func = evaluate_model_on_tests
