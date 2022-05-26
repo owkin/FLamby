@@ -21,13 +21,9 @@ from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.data_aug
 from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.paths import *
 from flamby.utils import check_dataset_from_config
 
-from batchgenerators.utilities.file_and_folder_operations import *
-from nnunet.training.data_augmentation.default_data_augmentation import default_3D_augmentation_params, get_patch_size
-from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.data_augmentations import transformations
-
-
 
 class KiTS19Raw(Dataset):
+
     """Pytorch dataset containing all the images, and segmentations for KiTS19
     Attributes
     ----------
@@ -90,7 +86,6 @@ class KiTS19Raw(Dataset):
         self.train_test = "train" if train else "test"
 
         print(self.train_test)
-
 
         df = pd.read_csv('./metadata/thresholded_sites.csv')
         df2 = df.query("train_test_split == '" + self.train_test + "' ").reset_index(drop=True)
@@ -279,6 +274,7 @@ class KiTS19Raw(Dataset):
         return {"data": data, "seg": seg}
 
 
+
 class FedKiTS19(KiTS19Raw):
     """
     Pytorch dataset containing for each center the features and associated labels
@@ -350,6 +346,7 @@ if __name__ == "__main__":
         train_dataset, batch_size=2, shuffle=True
     )
 
+
     pooled_training = FedKiTS19(train=True, pooled=True)
     print(len(pooled_training))  # 74
     local_dataset_lengths = [
@@ -359,6 +356,7 @@ if __name__ == "__main__":
     # we should have:
     print(local_dataset_lengths)
     assert len(pooled_training) == sum(local_dataset_lengths)
+
 
     pooled_test = FedKiTS19(train=False, pooled=True)
     print(len(pooled_test))  # 74

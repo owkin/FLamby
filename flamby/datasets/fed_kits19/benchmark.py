@@ -127,6 +127,7 @@ def main(args):
 
     dict = check_dataset_from_config(dataset_name="fed_kits19", debug=False)
 
+
     train_dataset = FedKiTS19(train=True, pooled=True)
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=args.workers
@@ -170,9 +171,8 @@ def main(args):
     )
 
 
-    #TODO: Add 5 seeds
     torch.manual_seed(args.seed)
-    #TODO: Test train model on lambda 5 (Preprocessing running)
+
     model = train_model(
         model,
         optimizer,

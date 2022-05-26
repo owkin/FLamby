@@ -1,3 +1,4 @@
+
 #    The loss is taken from the nnunet Library with the title of DC_and_CE_loss and have its default parameters modified in its definition as BaselineLoss.
 
 #    Copyright 2020 Division of Medical Image Computing, German Cancer Research Center (DKFZ), Heidelberg, Germany
