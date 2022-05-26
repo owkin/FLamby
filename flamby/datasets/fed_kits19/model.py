@@ -1,4 +1,4 @@
-#    nnunet Library
+#    The model is taken from the nnunet Library with the to the Generic Unet and have its default parameters modified in its definition as Baseline.
 #    Copyright 2020 Division of Medical Image Computing, German Cancer Research Center (DKFZ), Heidelberg, Germany
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
