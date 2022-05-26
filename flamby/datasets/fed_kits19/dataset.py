@@ -91,8 +91,10 @@ class KiTS19Raw(Dataset):
 
         print(self.train_test)
 
+
         df = pd.read_csv('./metadata/thresholded_sites.csv')
         df2 = df.query("train_test_split == '" + self.train_test + "' ").reset_index(drop=True)
+
         self.images = df2.case_ids.tolist()
 
         # Load image paths and properties files
@@ -318,6 +320,7 @@ class FedKiTS19(KiTS19Raw):
             assert center in range(6)
             df = pd.read_csv('./metadata/thresholded_sites.csv')
             df2 = df.query("train_test_split_silo == '" + key + "' ").reset_index(drop=True)
+
             self.images = df2.case_ids.tolist()
             c = 0
             self.images_path = OrderedDict()
