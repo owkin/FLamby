@@ -13,7 +13,7 @@ from flamby.datasets.fed_kits19 import (
     NUM_EPOCHS_POOLED,
     Baseline,
     BaselineLoss,
-    FedKiTS19,
+    FedKits19,
     evaluate_dice_on_tests,
     metric,
     softmax_helper,
@@ -128,11 +128,11 @@ def main(args):
     dict = check_dataset_from_config(dataset_name="fed_kits19", debug=False)
 
 
-    train_dataset = FedKiTS19(train=True, pooled=True)
+    train_dataset = FedKits19(train=True, pooled=True)
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=args.workers
     )
-    test_dataset = FedKiTS19(train=False, pooled=True)
+    test_dataset = FedKits19(train=False, pooled=True)
     test_dataloader = torch.utils.data.DataLoader(
         test_dataset,
         batch_size=BATCH_SIZE,

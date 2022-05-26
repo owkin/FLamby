@@ -85,9 +85,10 @@ class KiTS19Raw(Dataset):
         self.debug = debug
         self.train_test = "train" if train else "test"
 
-        print(self.train_test)
 
-        df = pd.read_csv('./metadata/thresholded_sites.csv')
+        df = pd.read_csv(Path(os.path.dirname(flamby.datasets.fed_kits19.__file__))
+        / Path("metadata")
+        / Path("thresholded_sites.csv"))
         df2 = df.query("train_test_split == '" + self.train_test + "' ").reset_index(drop=True)
 
         self.images = df2.case_ids.tolist()
@@ -275,7 +276,7 @@ class KiTS19Raw(Dataset):
 
 
 
-class FedKiTS19(KiTS19Raw):
+class FedKits19(KiTS19Raw):
     """
     Pytorch dataset containing for each center the features and associated labels
     for Camelyon16 federated classification.
@@ -314,7 +315,10 @@ class FedKiTS19(KiTS19Raw):
         print(key)
         if not pooled:
             assert center in range(6)
-            df = pd.read_csv('./metadata/thresholded_sites.csv')
+            df = pd.read_csv(Path(os.path.dirname(flamby.datasets.fed_kits19.__file__))
+                             / Path("metadata")
+                             / Path("thresholded_sites.csv"))
+            # df = pd.read_csv('./metadata/thresholded_sites.csv')
             df2 = df.query("train_test_split_silo == '" + key + "' ").reset_index(drop=True)
 
             self.images = df2.case_ids.tolist()
@@ -337,7 +341,7 @@ class FedKiTS19(KiTS19Raw):
 
 
 if __name__ == "__main__":
-    train_dataset = FedKiTS19(
+    train_dataset = FedKits19(
         5,
         train=False,
         pooled=False,
@@ -347,10 +351,10 @@ if __name__ == "__main__":
     )
 
 
-    pooled_training = FedKiTS19(train=True, pooled=True)
+    pooled_training = FedKits19(train=True, pooled=True)
     print(len(pooled_training))  # 74
     local_dataset_lengths = [
-        len(FedKiTS19(train=True, pooled=False, center=i)) for i in range(6)
+        len(FedKits19(train=True, pooled=False, center=i)) for i in range(6)
     ]  # [9, 11, 9, 9, 12, 24]
 
     # we should have:
@@ -358,10 +362,10 @@ if __name__ == "__main__":
     assert len(pooled_training) == sum(local_dataset_lengths)
 
 
-    pooled_test = FedKiTS19(train=False, pooled=True)
+    pooled_test = FedKits19(train=False, pooled=True)
     print(len(pooled_test))  # 74
     local_dataset_lengths = [
-        len(FedKiTS19(train=False, pooled=False, center=i)) for i in range(6)
+        len(FedKits19(train=False, pooled=False, center=i)) for i in range(6)
     ]  # [3, 3, 3, 3, 4, 6]
 
     # we should have:
