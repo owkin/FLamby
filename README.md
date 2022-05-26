@@ -1,5 +1,5 @@
 # FLamby
-![Alt text](/docs/logo.jpeg "Optional Title")
+<img src="/docs/logo.png" width="600">
 
 
 ## Table of Contents
