@@ -21,7 +21,6 @@ from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.data_aug
 from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.paths import *
 from flamby.utils import check_dataset_from_config
 
-# sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "../")))
 sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "")))
 
 
@@ -89,9 +88,11 @@ class Kits19Raw(Dataset):
 
         print(self.train_test)
 
-        df = pd.read_csv(Path(os.path.dirname(flamby.datasets.fed_kits19.__file__))
+        df = pd.read_csv(
+            Path(os.path.dirname(flamby.datasets.fed_kits19.__file__))
             / Path("metadata")
-            / Path("thresholded_sites.csv"))
+            / Path("thresholded_sites.csv")
+        )
         df2 = df.query("train_test_split == '" + self.train_test + "' ").reset_index(
             drop=True
         )
@@ -318,9 +319,11 @@ class FedKits19(Kits19Raw):
         print(key)
         if not pooled:
             assert center in range(6)
-            df = pd.read_csv(Path(os.path.dirname(flamby.datasets.fed_kits19.__file__))
-            / Path("metadata")
-            / Path("thresholded_sites.csv"))
+            df = pd.read_csv(
+                Path(os.path.dirname(flamby.datasets.fed_kits19.__file__))
+                / Path("metadata")
+                / Path("thresholded_sites.csv")
+            )
             df2 = df.query("train_test_split_silo == '" + key + "' ").reset_index(
                 drop=True
             )

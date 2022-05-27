@@ -1,6 +1,6 @@
 import argparse
 
-from flamby.utils import get_config_file_path, write_value_in_config, create_config
+from flamby.utils import create_config, get_config_file_path, write_value_in_config
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -17,7 +17,4 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    dict, config_file = create_config(args.output_folder, args.debug, "fed_kits19")
-    #
-    # path_to_config_file = get_config_file_path("fed_camelyon16", args.debug)
-    # write_value_in_config(path_to_config_file, "dataset_path", args.new_path)
+    create_config(args.output_folder, args.debug, "fed_kits19")
