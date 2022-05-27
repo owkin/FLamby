@@ -428,7 +428,7 @@ def main(args_cli):
             #   & (
             #       df[list(hyperparameters)] == pd.Series(hyperparameters)
             #   ).all(axis=1)
-            ].index
+            #].index
             # An experiment is finished if there are num_clients + 1 rows
             if len(index_of_interest) < (NUM_CLIENTS + 1):
                 # Dealing with edge case that shouldn't happen
