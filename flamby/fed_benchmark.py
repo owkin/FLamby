@@ -419,15 +419,15 @@ def main(args_cli):
             else:
                 bool_objects = np.ones((len(df.index), 1)).astype("bool")
             bool_method = df["Method"] == (sname + str(num_updates))
-            # index_of_interest = df.loc[
-            #     bool_numerical.squeeze() & bool_objects.squeeze() & bool_method.squeeze()
-            # ].index
-            # non-robust version
             index_of_interest = df.loc[
-               (df["Method"] == (sname + str(num_updates)))
-               & (
-                   df[list(hyperparameters)] == pd.Series(hyperparameters)
-               ).all(axis=1)
+                 bool_numerical.squeeze() & bool_objects.squeeze() & bool_method.squeeze()
+             ].index
+            # non-robust version
+            #index_of_interest = df.loc[
+            #   (df["Method"] == (sname + str(num_updates)))
+            #   & (
+            #       df[list(hyperparameters)] == pd.Series(hyperparameters)
+            #   ).all(axis=1)
             ].index
             # An experiment is finished if there are num_clients + 1 rows
             if len(index_of_interest) < (NUM_CLIENTS + 1):
