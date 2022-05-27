@@ -9,10 +9,11 @@ from tqdm import tqdm
 import flamby.datasets as datasets
 
 torch.manual_seed(42)
-torch.use_deterministic_algorithms(True)
 
 
-def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
+def evaluate_model_on_tests(
+    model, test_dataloaders, metric, use_gpu=True, return_pred=False
+):
     """This function takes a pytorch model and evaluate it on a list of\
     dataloaders using the provided metric function.
     Parameters
@@ -35,10 +36,12 @@ def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
         as leaves.
     """
     results_dict = {}
+    y_true_dict = {}
+    y_pred_dict = {}
     if torch.cuda.is_available() and use_gpu:
         model = model.cuda()
     model.eval()
-    with torch.inference_mode():
+    with torch.no_grad():
         for i in tqdm(range(len(test_dataloaders))):
             test_dataloader_iterator = iter(test_dataloaders[i])
             y_pred_final = []
@@ -51,20 +54,24 @@ def evaluate_model_on_tests(model, test_dataloaders, metric, use_gpu=True):
                 y = y.detach().cpu()
                 y_pred_final.append(y_pred.numpy())
                 y_true_final.append(y.numpy())
-            y_true_final = np.vstack(y_true_final)
-            y_pred_final = np.vstack(y_pred_final)
+
+            y_true_final = np.concatenate(y_true_final)
+            y_pred_final = np.concatenate(y_pred_final)
             results_dict[f"client_test_{i}"] = metric(y_true_final, y_pred_final)
-    return results_dict
+            y_true_dict[f"client_test_{i}"] = y_true_final
+            y_pred_dict[f"client_test_{i}"] = y_pred_final
+    if return_pred:
+        return results_dict, y_true_dict, y_pred_dict
+    else:
+        return results_dict
 
 
 def read_config(config_file):
     """Read a config file in YAML.
-
     Parameters
     ----------
     config_file : str
         Path towards the con fig file in YAML.
-
     Returns
     -------
     dict
@@ -83,14 +90,12 @@ def read_config(config_file):
 
 def get_config_file_path(dataset_name, debug):
     """Get the config_file path in real or debug mode.
-
     Parameters
     ----------
     dataset_name: str
         The name of the dataset to get the config from.
     debug : bool
        The mode in which we download the dataset.
-
     Returns
     -------
     str
@@ -98,9 +103,11 @@ def get_config_file_path(dataset_name, debug):
     """
     assert dataset_name in [
         "fed_camelyon16",
+        "fed_heart_disease",
         "fed_isic2019",
         "fed_lidc_idri",
         "fed_ixi",
+        "fed_kits19",
     ], f"Dataset name {dataset_name} not valid."
     config_file_name = (
         "dataset_location_debug.yaml" if debug else "dataset_location.yaml"
@@ -116,7 +123,6 @@ def get_config_file_path(dataset_name, debug):
 def create_config(output_folder, debug, dataset_name="fed_camelyon16"):
     """Create or modify config file by writing the absolute path of \
         output_folder in its dataset_path key.
-
     Parameters
     ----------
     output_folder : str
@@ -125,7 +131,6 @@ def create_config(output_folder, debug, dataset_name="fed_camelyon16"):
         Whether or not we are in debug mode.
     dataset_name: str
         The name of the dataset to get the config from.
-
     Returns
     -------
     Tuple(dict, str)
@@ -158,7 +163,6 @@ def create_config(output_folder, debug, dataset_name="fed_camelyon16"):
 
 def write_value_in_config(config_file, key, value):
     """Update config_file by modifying one of its key with its new value.
-
     Parameters
     ----------
     config_file : str
@@ -186,7 +190,6 @@ def write_value_in_config(config_file, key, value):
 def check_dataset_from_config(dataset_name, debug):
     """Verify that the dataset is ready to be used by reading info from the config
     files.
-
     Parameters
     ----------
     dataset_name: str
@@ -207,33 +210,35 @@ def check_dataset_from_config(dataset_name, debug):
     except FileNotFoundError:
         if debug:
             raise ValueError(
-                f"The dataset was not downloaded, config file \
-                not found for debug mode. Please refer to \
-                the download instructions inside \
-                FLamby/flamby/datasets/{dataset_name}/README.md"
+                f"The dataset was not downloaded, config file "
+                "not found for debug mode. Please refer to "
+                "the download instructions inside "
+                f"FLamby/flamby/datasets/{dataset_name}/README.md"
             )
         else:
             debug = True
             print(
-                "WARNING USING DEBUG MODE DATASET EVEN THOUGH DEBUG WAS \
-                SET TO FALSE, COULD NOT FIND NON DEBUG DATASET CONFIG FILE"
+                "WARNING USING DEBUG MODE DATASET EVEN THOUGH DEBUG WAS "
+                "SET TO FALSE, COULD NOT FIND NON DEBUG DATASET CONFIG FILE"
             )
             try:
                 dict = read_config(get_config_file_path(dataset_name, debug))
             except FileNotFoundError:
                 raise ValueError(
-                    f"It seems the dataset {dataset_name} was not downloaded as the config file \
-                is not found for either normal or debug mode. Please refer to \
-                the download instructions inside FLamby/flamby/datasets/{dataset_name}/README.md"
+                    f"It seems the dataset {dataset_name} was not downloaded as "
+                    "the config file is not found for either normal or debug "
+                    "mode. Please refer to the download instructions inside "
+                    f"FLamby/flamby/datasets/{dataset_name}/README.md"
                 )
     if not (dict["download_complete"]):
         raise ValueError(
-            f"It seems the dataset {dataset_name} was only partially downloaded, \
-            please restart the download script to finish the download."
+            f"It seems the dataset {dataset_name} was only partially downloaded"
+            "please restart the download script to finish the download."
         )
     if not (dict["preprocessing_complete"]):
         raise ValueError(
-            f"It seems the preprocessing for dataset {dataset_name} is not \
-             yet finished please run the appropriate preprocessing scripts before use"
+            f"It seems the preprocessing for dataset {dataset_name} is not "
+            "yet finished please run the appropriate preprocessing scripts "
+            "before use"
         )
     return dict
