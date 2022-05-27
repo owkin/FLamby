@@ -1,0 +1,43 @@
+{
+  "results_file": "results_heart_disease.csv",
+  "dataset": "fed_heart_disease",
+  "strategies": {
+    "FedAvg": {},
+    "FedProx": {
+      "learning_rate_scaler": 1.0,
+      "mu": 1e-1
+    },
+    "FedAdagrad": {
+      "learning_rate_scaler": 10.0,
+      "tau": 1e-8,
+      "server_learning_rate": 1e-2,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "optimizer_class": "torch.optim.SGD"
+    },
+    "FedAdam": {
+      "learning_rate_scaler": 10.0,
+      "tau": 1e-8,
+      "server_learning_rate": 1e-2,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "optimizer_class": "torch.optim.SGD"
+    },
+    "FedYogi": {
+      "learning_rate_scaler": 10.0,
+      "tau": 1e-8,
+      "server_learning_rate": 1e-2,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "optimizer_class": "torch.optim.SGD"
+    },
+    "Cyclic": {
+      "learning_rate_scaler": 1.0
+    },
+    "Scaffold": {
+      "learning_rate_scaler": 1e-1,
+      "server_learning_rate": 1e-2,
+      "optimizer_class": "torch.optim.SGD"
+    }
+  }
+}
