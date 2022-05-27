@@ -18,6 +18,7 @@ from flamby.datasets.fed_camelyon16 import (
     Baseline,
     BaselineLoss,
     FedCamelyon16,
+    collate_fn,
     get_nb_max_rounds,
     metric,
 )
@@ -119,6 +120,7 @@ def test_cyclic_camelyon():
             batch_size=BATCH_SIZE,
             shuffle=True,
             num_workers=10,
+            collate_fn=collate_fn,
         )
         for i in range(NUM_CLIENTS)
     ]
@@ -129,6 +131,7 @@ def test_cyclic_camelyon():
             batch_size=BATCH_SIZE,
             shuffle=False,
             num_workers=10,
+            collate_fn=collate_fn,
         )
         for i in range(NUM_CLIENTS)
     ]
