@@ -27,9 +27,9 @@ class BaselineLoss(_Loss):
     examples"
     """
 
-    def __init__(self, alpha=torch.tensor([1, 1, 1, 1, 1, 1, 1, 1]), gamma=2):
+    def __init__(self, alpha=torch.tensor([1., 1., 1., 1., 1., 1., 1., 1.]), gamma=2.):
         super(BaselineLoss, self).__init__()
-        self.alpha = alpha
+        self.alpha = alpha.to(torch.float)
         self.gamma = gamma
 
     def forward(self, inputs, targets):
