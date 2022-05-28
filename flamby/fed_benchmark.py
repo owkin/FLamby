@@ -89,7 +89,7 @@ def main(args_cli):
         batch_size_test = 1
         from flamby.datasets.fed_lidc_idri import evaluate_dice_on_tests_by_chunks
 
-        def evaluate_func(m, test_dls, metric, use_gpu=False, return_pred=False):
+        def evaluate_func(m, test_dls, metric, use_gpu=use_gpu, return_pred=False):
             dice_dict = evaluate_dice_on_tests_by_chunks(m, test_dls, use_gpu)
             # dice_dict = {f"client_test_{i}": 0.5 for i in range(NUM_CLIENTS)}
             if return_pred:
@@ -100,7 +100,7 @@ def main(args_cli):
     elif dataset_name == "fed_kits19":
         from flamby.datasets.fed_kits19 import evaluate_dice_on_tests
         batch_size_test = 2
-        def evaluate_func(m, test_dls, metric, use_gpu=True, return_pred=False):
+        def evaluate_func(m, test_dls, metric, use_gpu=use_gpu, return_pred=False):
             dice_dict = evaluate_dice_on_tests(m, test_dls, metric, use_gpu)
             # dice_dict = {f"client_test_{i}": 0.5 for i in range(NUM_CLIENTS)}
             if return_pred:
