@@ -4,6 +4,7 @@ from zipfile import ZipFile
 from typing import Union, Tuple, Dict
 from tqdm import tqdm
 
+import torch
 import numpy as np
 import pandas as pd
 import os
@@ -114,7 +115,7 @@ class IXITinyRaw(Dataset):
 
         if self.transform:
             img = self.transform(img)
-        return img, label
+        return img.to(torch.float32), label
 
     def __len__(self) -> int:
         return len(self.images_paths)
