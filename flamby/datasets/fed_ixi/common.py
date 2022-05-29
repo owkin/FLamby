@@ -2,7 +2,7 @@ import torch
 
 NUM_CLIENTS = 3
 BATCH_SIZE = 16
-SEEDS = [42]
+SEEDS = [0, 10, 20, 30, 40]
 NUM_EPOCHS_POOLED = 10
 LR = 0.001
 
