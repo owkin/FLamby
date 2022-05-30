@@ -59,7 +59,7 @@ def main(args_cli):
             collate_fn,
         ],
     ) = get_dataset_args(config, params_list)
-    results_file = get_results_file(config, path=args_cli.resuts_file_path)
+    results_file = get_results_file(config, path=args_cli.results_file_path)
 
     # One might need to iterate on the hyperparameters to some extent if performances
     # are seriously degraded with default ones
@@ -156,17 +156,17 @@ def main(args_cli):
     for i in range(NUM_CLIENTS):
         do_baseline[f"Local {i}"] = True
     # Single client baseline computation
-    if args_cli.singe_centric_baseline is not None:
+    if args_cli.single_centric_baseline is not None:
         do_baseline = {"Pooled": False}
         for i in range(NUM_CLIENTS):
             do_baseline[f"Local {i}"] = False
         assert (
-            args_cli.singe_centric_baseline in do_baseline
-        ), f"{args_cli.singe_centric_baseline} not in Pooled or Local 0,...,n-1"
+            args_cli.single_centric_baseline in do_baseline
+        ), f"{args_cli.single_centric_baseline} not in Pooled or Local 0,...,n-1"
         assert args_cli.num_local in range(
             NUM_CLIENTS
         ), "The client you chose does not exist"
-        do_baseline[args_cli.singe_centric_baseline] = True
+        do_baseline[args_cli.single_centric_baseline] = True
         # If we do a single-centric baseline we don't do the strategies
         do_strategy = False
 
