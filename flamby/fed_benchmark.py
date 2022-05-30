@@ -59,7 +59,7 @@ def main(args_cli):
             collate_fn,
         ],
     ) = get_dataset_args(config, params_list)
-    results_file = get_results_file(config)
+    results_file = get_results_file(config, path=args_cli.resuts_file_path)
 
     # One might need to iterate on the hyperparameters to some extent if performances
     # are seriously degraded with default ones
@@ -99,7 +99,9 @@ def main(args_cli):
         compute_ensemble_perf = False
     elif dataset_name == "fed_kits19":
         from flamby.datasets.fed_kits19 import evaluate_dice_on_tests
+
         batch_size_test = 2
+
         def evaluate_func(m, test_dls, metric, use_gpu=use_gpu, return_pred=False):
             dice_dict = evaluate_dice_on_tests(m, test_dls, metric, use_gpu)
             # dice_dict = {f"client_test_{i}": 0.5 for i in range(NUM_CLIENTS)}
@@ -422,14 +424,16 @@ def main(args_cli):
             index_of_interest_1 = df.loc[pd.DataFrame(bool_numerical).all(axis=1)].index
             index_of_interest_2 = df.loc[pd.DataFrame(bool_objects).all(axis=1)].index
             index_of_interest_3 = df.loc[pd.DataFrame(bool_method).all(axis=1)].index
-            index_of_interest = index_of_interest_1.intersection(index_of_interest_2).intersection(index_of_interest_3)
+            index_of_interest = index_of_interest_1.intersection(
+                index_of_interest_2
+            ).intersection(index_of_interest_3)
             # non-robust version
-            #index_of_interest = df.loc[
+            # index_of_interest = df.loc[
             #   (df["Method"] == (sname + str(num_updates)))
             #   & (
             #       df[list(hyperparameters)] == pd.Series(hyperparameters)
             #   ).all(axis=1)
-            #].index
+            # ].index
             # An experiment is finished if there are num_clients + 1 rows
             if len(index_of_interest) < (NUM_CLIENTS + 1):
                 # Dealing with edge case that shouldn't happen
@@ -617,6 +621,7 @@ if __name__ == "__main__":
             "Scaffold",
             "FedAvg",
             "Cyclic",
+            "FedProx",
         ],
     )
     parser.add_argument(
@@ -646,6 +651,13 @@ if __name__ == "__main__":
         default="./config.json",
         type=str,
         help="Which config file to use.",
+    )
+    parser.add_argument(
+        "--results-file-path",
+        "-rfp",
+        default="./results.csv",
+        type=str,
+        help="The path to the created results (overwrite the config path)",
     )
     args = parser.parse_args()
 
