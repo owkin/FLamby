@@ -160,13 +160,15 @@ def main(args_cli):
         do_baseline = {"Pooled": False}
         for i in range(NUM_CLIENTS):
             do_baseline[f"Local {i}"] = False
-        assert (
-            args_cli.single_centric_baseline in do_baseline
-        ), f"{args_cli.single_centric_baseline} not in Pooled or Local 0,...,n-1"
-        assert args_cli.num_local in range(
-            NUM_CLIENTS
-        ), "The client you chose does not exist"
-        do_baseline[args_cli.single_centric_baseline] = True
+        if args_cli.single_centric_baseline == "Pooled":
+            do_baseline[args_cli.single_centric_baseline] = True
+        elif args_cli.single_centric_baseline == "Local":
+            assert args_cli.nlocal in range(
+                NUM_CLIENTS
+            ), "The client you chose does not exist"
+            do_baseline[
+                args_cli.single_centric_baseline + " " + str(args_cli.nlocal)
+            ] = True
         # If we do a single-centric baseline we don't do the strategies
         do_strategy = False
 
