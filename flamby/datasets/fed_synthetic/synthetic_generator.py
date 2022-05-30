@@ -64,7 +64,7 @@ def generate_synthetic_dataset(
     elif type(sample_repartition) == float:
         assert sample_repartition > 1
 
-        weights = [(i+1) ** (-sample_repartition+1) for i in range(n_centers)]
+        weights = [(i + 1) ** (-sample_repartition + 1) for i in range(n_centers)]
         prob = weights / np.sum(weights)
 
         positions = np.random.choice(
@@ -81,17 +81,19 @@ def generate_synthetic_dataset(
             "Incorrect value sample repartition. It must be either a list of\
             weights, or a float, or None."
         )
-    
+
     if features_heterogeneity is None:
         features_locs = np.zeros((n_centers, n_features))
     elif type(features_heterogeneity) == float:
         # TODO: discuss about what does we really want here with the other
-        features_locs = np.random.random((n_centers, n_features)) * features_heterogeneity
+        features_locs = (
+            np.random.random((n_centers, n_features)) * features_heterogeneity
+        )
     else:
         raise ValueError(
             "Incorrect value features_heterogeneity. It must be either a float, or None."
         )
-    
+
     if noise_heterogeneity is None:
         snr_locs = np.ones(n_centers) * snr
     elif type(noise_heterogeneity) in [list, np.array]:
@@ -99,7 +101,8 @@ def generate_synthetic_dataset(
         snr_locs = np.array(noise_heterogeneity)
     else:
         raise ValueError(
-            "Incorrect value noise_heterogeneity. It must be either a list of signal to noise ratio, or None for a constant signal to noise ratio."
+            "Incorrect value noise_heterogeneity. It must be either a list of\
+            signal to noise ratio, or None for a constant signal to noise ratio."
         )
 
     indices = []
@@ -136,34 +139,49 @@ def generate_synthetic_dataset(
 
 if __name__ == "__main__":
     df_full, indices = generate_synthetic_dataset(
-        n_centers=6, n_samples=100, seed=42, snr=3,
-        features_heterogeneity=3.0,
-        sample_repartition=2.0
-    )
-
-    df_full, indices = generate_synthetic_dataset(
-        n_centers=6, n_samples=100, seed=42, snr=3,
-        features_heterogeneity=3.0,
-        sample_repartition=[3.0, np.pi, np.pi**2/6, 42, 1, 0]
-    )
-
-    df_full, indices = generate_synthetic_dataset(
-        n_centers=6, n_samples=100, seed=42, snr=3,
-        features_heterogeneity=3.0,
-        sample_repartition=None
-    )
-
-    df_full, indices = generate_synthetic_dataset(
-        n_centers=6, n_samples=100, seed=42, snr=3,
+        n_centers=6,
+        n_samples=100,
+        seed=42,
+        snr=3,
         features_heterogeneity=3.0,
         sample_repartition=2.0,
-        noise_heterogeneity=[3.0, np.pi, np.pi**2/6, 42, 1, 9]
     )
 
     df_full, indices = generate_synthetic_dataset(
-        n_centers=6, n_samples=100, seed=42, snr=3,
+        n_centers=6,
+        n_samples=100,
+        seed=42,
+        snr=3,
+        features_heterogeneity=3.0,
+        sample_repartition=[3.0, np.pi, np.pi**2 / 6, 42, 1, 0],
+    )
+
+    df_full, indices = generate_synthetic_dataset(
+        n_centers=6,
+        n_samples=100,
+        seed=42,
+        snr=3,
+        features_heterogeneity=3.0,
+        sample_repartition=None,
+    )
+
+    df_full, indices = generate_synthetic_dataset(
+        n_centers=6,
+        n_samples=100,
+        seed=42,
+        snr=3,
+        features_heterogeneity=3.0,
         sample_repartition=2.0,
-        noise_heterogeneity=[3.0, np.pi, np.pi**2/6, 42, 1, 9]
+        noise_heterogeneity=[3.0, np.pi, np.pi**2 / 6, 42, 1, 9],
+    )
+
+    df_full, indices = generate_synthetic_dataset(
+        n_centers=6,
+        n_samples=100,
+        seed=42,
+        snr=3,
+        sample_repartition=2.0,
+        noise_heterogeneity=[3.0, np.pi, np.pi**2 / 6, 42, 1, 9],
     )
     print(type(df_full))
 
