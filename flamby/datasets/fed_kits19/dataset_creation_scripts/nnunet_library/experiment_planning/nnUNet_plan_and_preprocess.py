@@ -175,7 +175,6 @@ def main():
             verify_dataset_integrity(join(nnUNet_raw_data, task_name))
 
         crop(task_name, False, tf)
-
         tasks.append(task_name)
 
     search_in = join(nnunet.__path__[0], "experiment_planning")
@@ -217,29 +216,17 @@ def main():
         shutil.copy(
             join(nnUNet_raw_data, t, "dataset.json"), preprocessing_output_dir_this_task
         )
-
         threads = (tl, tf)
 
         print("number of threads: ", threads, "\n")
-
         if planner_3d is not None:
-            if args.overwrite_plans is not None:
-                assert (
-                    args.overwrite_plans_identifier is not None
-                ), "You need to specify -overwrite_plans_identifier"
-                exp_planner = planner_3d(
-                    cropped_out_dir,
-                    preprocessing_output_dir_this_task,
-                    args.overwrite_plans,
-                    args.overwrite_plans_identifier,
-                )
-            else:
-                exp_planner = planner_3d(
-                    cropped_out_dir, preprocessing_output_dir_this_task
-                )
+            exp_planner = planner_3d(
+                cropped_out_dir, preprocessing_output_dir_this_task
+            )
             exp_planner.plan_experiment()
-            if not dont_run_preprocessing:  # double negative, yooo
-                exp_planner.run_preprocessing(threads)
+            if not dont_run_preprocessing:  # T: this condition is true
+                import pdb; pdb.set_trace()
+                exp_planner.run_preprocessing(threads)  #
         write_value_in_config(path_to_config_file, "preprocessing_complete", True)
 
 

@@ -97,7 +97,6 @@ def crop(task_string, override=False, num_threads=default_num_threads):
 
     splitted_4d_output_dir_task = join(nnUNet_raw_data, task_string)
     lists, _ = create_lists_from_splitted_dataset(splitted_4d_output_dir_task)
-
     imgcrop = ImageCropper(num_threads, cropped_out_dir)
     imgcrop.run_cropping(lists, overwrite_existing=override)
     shutil.copy(join(nnUNet_raw_data, task_string, "dataset.json"), cropped_out_dir)

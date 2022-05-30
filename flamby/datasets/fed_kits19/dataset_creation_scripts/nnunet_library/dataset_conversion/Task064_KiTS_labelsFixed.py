@@ -19,9 +19,7 @@ import os
 import shutil
 import sys
 from collections import defaultdict
-from itertools import groupby
 
-import matplotlib.pyplot as plt
 import numpy as np
 from batchgenerators.utilities.file_and_folder_operations import *
 
@@ -47,7 +45,7 @@ def add_args(parser):
     return args
 
 
-def read_csv_file(csv_file="../../../metadata/anony_sites.csv", debug=False):
+def read_csv_file(csv_file="../../../metadata/anony_sites.csv"):
     print(" Reading kits19 Meta Data ...")
     columns = defaultdict(list)  # each value in each column is appended to a list
 
@@ -66,10 +64,6 @@ def read_csv_file(csv_file="../../../metadata/anony_sites.csv", debug=False):
 
     case_ids_array = np.array(site_ids)
     unique_hospital_IDs = np.unique(case_ids_array)
-    freq = {key: len(list(group)) for key, group in groupby(np.sort(case_ids_array))}
-
-    plt.hist(site_ids[0:209], bins=len(unique_hospital_IDs) + 5)
-    plt.savefig("kits19_Silo_vs_Data_count.png", dpi=200)
 
     # Now apply Thresholding
     thresholded_case_ids = None
@@ -78,33 +72,17 @@ def read_csv_file(csv_file="../../../metadata/anony_sites.csv", debug=False):
     train_case_ids = case_ids[0:210]
     train_site_ids = site_ids[0:210]
 
-    if debug == False:  # Load all silos
-        for ID in range(0, 89):
-            client_ids = np.where(np.array(train_site_ids) == ID)[0]
-            if len(client_ids) >= 10:
-                client_data_idxx = np.array([train_case_ids[i] for i in client_ids])
-                if thresholded_case_ids is None:
-                    thresholded_case_ids = client_data_idxx
-                else:
-                    thresholded_case_ids = np.concatenate(
-                        (thresholded_case_ids, client_data_idxx), axis=0
-                    )
-    else:
-        silo_count = 0
-        for ID in range(0, 89):
-            client_ids = np.where(np.array(train_site_ids) == ID)[0]
-            if len(client_ids) >= 10:
-                silo_count += 1
-                client_data_idxx = np.array([train_case_ids[i] for i in client_ids])
-                if thresholded_case_ids is None:
-                    thresholded_case_ids = client_data_idxx
-                else:
-                    thresholded_case_ids = np.concatenate(
-                        (thresholded_case_ids, client_data_idxx), axis=0
-                    )
 
-            if silo_count == 2:
-                break
+    for ID in range(0, 89):
+        client_ids = np.where(np.array(train_site_ids) == ID)[0]
+        if len(client_ids) >= 10:
+            client_data_idxx = np.array([train_case_ids[i] for i in client_ids])
+            if thresholded_case_ids is None:
+                thresholded_case_ids = client_data_idxx
+            else:
+                thresholded_case_ids = np.concatenate(
+                    (thresholded_case_ids, client_data_idxx), axis=0
+                )
 
     print(" Creating Thresholded Data's metadata file ")
     with open("../../../metadata/thresholded_sites.csv", "w", newline="") as file:
@@ -119,12 +97,6 @@ def read_csv_file(csv_file="../../../metadata/anony_sites.csv", debug=False):
                 client_data_idxx = np.array([train_case_ids[i] for i in client_ids])
                 data_length = len(client_data_idxx)
                 train_ids = int(0.8 * data_length)
-                test_ids = int(0.2 * data_length)
-                # print(train_ids)
-                # print(test_ids)
-                # print(client_data_idxx)
-                # print(client_data_idxx[:train_ids])
-                # print(client_data_idxx[train_ids:])
                 for i in client_data_idxx[:train_ids]:
                     writer.writerow([i, silo_count, "train", "train_" + str(silo_count)])
                 for i in client_data_idxx[train_ids:]:
@@ -169,9 +141,7 @@ if __name__ == "__main__":
     train_patient_names = []
     test_patient_names = []
     all_cases = subfolders(base, join=False)
-    case_ids, site_ids, unique_hospital_ids, thresholded_ids = read_csv_file(
-        debug=args.debug
-    )
+    case_ids, site_ids, unique_hospital_ids, thresholded_ids = read_csv_file()
 
     print(thresholded_ids)
     if args.debug == True:
