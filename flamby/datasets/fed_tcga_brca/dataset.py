@@ -12,17 +12,14 @@ class TcgaBrcaRaw(torch.utils.data.Dataset):
     ----------
     X_dtype: torch.dtype, the dtype of the X features output
     y_dtype: torch.dtype, the dtype of the (E, T) output
-    train_test: str, equals "train" or "test", characterizes if the dataset is
-    used for training or for testing, default "train"
     dic: dictionary containing the paths to the data and the train_test_split file
-    data: pandas dataframe containing the data for the patients in the training
-    or the test set according to the variable train_test
+    data: pandas dataframe containing the data for the all the patients
     __getitem__: returns a tuple, first element is a torch tensor of dimension
     (39,) for the covariates, second element is a torch tensor of dimension (2,)
     for E, T
     """
 
-    def __init__(self, train=True, X_dtype=torch.float32, y_dtype=torch.float32):
+    def __init__(self, X_dtype=torch.float32, y_dtype=torch.float32):
 
         input_path = Path(os.path.realpath(__file__)).parent.resolve()
         self.dic = {
@@ -33,12 +30,7 @@ class TcgaBrcaRaw(torch.utils.data.Dataset):
         }
         self.X_dtype = X_dtype
         self.y_dtype = y_dtype
-        self.train_test = "train" if train else "test"
-        df = pd.read_csv(self.dic["train_test_split"])
-        pids = df.query("fold == '" + self.train_test + "' ").reset_index(drop=True)
-        pid_list = list(pids["pid"])
-        df2 = pd.read_csv(self.dic["input_preprocessed"])
-        self.data = df2[df2["pid"].isin(pid_list)]
+        self.data = pd.read_csv(self.dic["input_preprocessed"])
 
     def __len__(self):
         return self.data.shape[0]
@@ -61,6 +53,8 @@ class FedTcgaBrca(TcgaBrcaRaw):
     The train/test split is static and given in the train_test_split file.
     Attributes
     ----------
+    train: boolean, characterizes if the dataset is used for training or for testing,
+    default "train"
     pooled: boolean, characterizes if the dataset is pooled or not
     center: int, between 0 and 5, designates the region in the case of pooled==False
     data: pandas dataframe containing the data for the patients in the training
@@ -78,28 +72,49 @@ class FedTcgaBrca(TcgaBrcaRaw):
         y_dtype=torch.float32,
     ):
 
-        super().__init__(train, X_dtype=X_dtype, y_dtype=y_dtype)
+        super().__init__(X_dtype=X_dtype, y_dtype=y_dtype)
 
         self.center = center
+        self.train_test = "train" if train else "test"
         self.pooled = pooled
-        key = self.train_test + "_" + str(self.center)
+        self.key = self.train_test + "_" + str(self.center)
+        df = pd.read_csv(self.dic["train_test_split"])
+
+        if self.pooled:
+            pids = df.query("fold == '" + self.train_test + "' ").reset_index(drop=True)
+
         if not self.pooled:
             assert center in range(6)
-            df = pd.read_csv(self.dic["train_test_split"])
-            pids = df.query("fold2 == '" + key + "' ").reset_index(drop=True)
-            pid_list = list(pids["pid"])
-            df2 = pd.read_csv(self.dic["input_preprocessed"])
-            self.data = df2[df2["pid"].isin(pid_list)]
+            pids = df.query("fold2 == '" + self.key + "' ").reset_index(drop=True)
+
+        pid_list = list(pids["pid"])
+        df2 = pd.read_csv(self.dic["input_preprocessed"])
+        self.data = df2[df2["pid"].isin(pid_list)]
 
 
 if __name__ == "__main__":
 
-    mydataset = FedTcgaBrca(train=True, pooled=True)
-    print(f"The dataset has {len(mydataset)} elements")
+    mydataset = TcgaBrcaRaw()
+    print(len(mydataset))
     print("Example of dataset record: ", mydataset[0])
 
+    mydataset = FedTcgaBrca(train=True, pooled=True)
+    print(len(mydataset))
+    print("Example of dataset record: ", mydataset[0])
+    mydataset = FedTcgaBrca(train=False, pooled=True)
+    print(len(mydataset))
+    print("Example of dataset record: ", mydataset[0])
+
+    for i in range (6):
+        mydataset = FedTcgaBrca(center=i, train=True, pooled=False)
+        print(len(mydataset))
+        print("Example of dataset record: ", mydataset[0])
+        mydataset = FedTcgaBrca(center=i, train=False, pooled=False)
+        print(len(mydataset))
+        print("Example of dataset record: ", mydataset[0])
+    
     mydataset = FedTcgaBrca(center=5, train=False, pooled=False)
-    print(f"The dataset has {len(mydataset)} elements")
-    for i in range(5):
-        print(f"X {i} ", mydataset[i][0], mydataset[i][0].shape)
-        print(f"(E,T) {i} ", mydataset[i][1])
+    print(len(mydataset))
+    for i in range(11):
+        print("Example of dataset record: ", mydataset[i])
+
