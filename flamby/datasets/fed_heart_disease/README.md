@@ -10,12 +10,15 @@ available for download
 
 ## Dataset description
 
-|                   | Dataset description
-| ----------------- | -----------------------------------------------
-| Description       | Heart Disease dataset
-| Dataset           | 740 records, 16 features (303/294/123/200 records per center)
-| Centers           | 4 centers (Cleveland, Hungary, Switzerland and Long Beach V)
-| Task              | Classification of tabular data
+|                    | Dataset description
+|--------------------| -----------------------------------------------------------------------------------------------
+| Description        | Heart Disease dataset.
+| Dataset size       | 39,6 KB.
+| Centers            | 4 centers - Cleveland, Hungary, Switzerland and Long Beach V.
+| Records per center | 303, 294, 123, 200  <!--- ou (199, 172, 30, 85) ? -->
+| Inputs shape       | 16 features (tabular data).
+| Total nb of points | 920.
+| Task               | Binary classification
 
 
 ## Download and preprocessing instructions
