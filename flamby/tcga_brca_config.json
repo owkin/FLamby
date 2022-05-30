@@ -2,10 +2,12 @@
   "results_file": "results_tcga_brca.csv",
   "dataset": "fed_tcga_brca",
   "strategies": {
-    "FedAvg": {},
+    "FedAvg": {
+      "optimizer_class": "torch.optim.SGD"
+    },
     "FedProx": {
       "learning_rate_scaler": 1.0,
-      "mu": 1e-1
+      "mu": 1.0
     },
     "FedAdagrad": {
       "learning_rate_scaler": 10.0,
