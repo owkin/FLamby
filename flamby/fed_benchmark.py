@@ -89,7 +89,7 @@ def main(args_cli):
         batch_size_test = 1
         from flamby.datasets.fed_lidc_idri import evaluate_dice_on_tests_by_chunks
 
-        def evaluate_func(m, test_dls, metric, use_gpu=False, return_pred=False):
+        def evaluate_func(m, test_dls, metric, use_gpu=use_gpu, return_pred=False):
             dice_dict = evaluate_dice_on_tests_by_chunks(m, test_dls, use_gpu)
             # dice_dict = {f"client_test_{i}": 0.5 for i in range(NUM_CLIENTS)}
             if return_pred:
@@ -97,6 +97,18 @@ def main(args_cli):
             return dice_dict
 
         compute_ensemble_perf = False
+    elif dataset_name == "fed_kits19":
+        from flamby.datasets.fed_kits19 import evaluate_dice_on_tests
+        batch_size_test = 2
+        def evaluate_func(m, test_dls, metric, use_gpu=use_gpu, return_pred=False):
+            dice_dict = evaluate_dice_on_tests(m, test_dls, metric, use_gpu)
+            # dice_dict = {f"client_test_{i}": 0.5 for i in range(NUM_CLIENTS)}
+            if return_pred:
+                return dice_dict, None, None
+            return dice_dict
+
+        compute_ensemble_perf = False
+
     else:
         batch_size_test = None
         evaluate_func = evaluate_model_on_tests
@@ -408,15 +420,15 @@ def main(args_cli):
                 bool_objects = np.ones((len(df.index), 1)).astype("bool")
             bool_method = df["Method"] == (sname + str(num_updates))
             index_of_interest = df.loc[
-                bool_numerical.squeeze() & bool_objects.squeeze() & bool_method.squeeze()
-            ].index
+                 bool_numerical.squeeze() & bool_objects.squeeze() & bool_method.squeeze()
+             ].index
             # non-robust version
-            # index_of_interest = df.loc[
-            #    (df["Method"] == (sname + str(num_updates)))
-            #    & (
-            #        df[list(hyperparameters)] == pd.Series(hyperparameters)
-            #    ).all(axis=1)
-            # ].index
+            #index_of_interest = df.loc[
+            #   (df["Method"] == (sname + str(num_updates)))
+            #   & (
+            #       df[list(hyperparameters)] == pd.Series(hyperparameters)
+            #   ).all(axis=1)
+            #].index
             # An experiment is finished if there are num_clients + 1 rows
             if len(index_of_interest) < (NUM_CLIENTS + 1):
                 # Dealing with edge case that shouldn't happen
@@ -566,7 +578,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--workers",
         type=int,
-        default=10,
+        default=1,
         help="Numbers of workers for the dataloader",
     )
     parser.add_argument(

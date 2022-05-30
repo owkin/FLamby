@@ -86,6 +86,7 @@ setup(
         "sphinx",
         "batchgenerators",
         "nnunet",
+        "setuptools==59.5.0",
     ],
     extras_require={},
     description="FLamby: A cross-silo Federated Learning Benchmark.",
