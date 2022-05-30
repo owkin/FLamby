@@ -24,7 +24,7 @@ def generate_synthetic_dataset(
     label_heterogeneity: float, used for classification problem
         Dirichlet law for classification
     noise_heterogeneity: float or list or None
-    features_heterogeneity:
+    features_heterogeneity: float or list or None
     Returns
     -------
     df_full: pandas dataframe
@@ -41,6 +41,7 @@ def generate_synthetic_dataset(
             n_samples // n_centers + (i < n_samples % n_centers)
             for i in range(n_centers)
         ]
+
     elif type(sample_repartition) in [list, np.array]:
         sample_repartition = np.array(sample_repartition)
         assert len(sample_repartition) == n_centers
@@ -68,6 +69,26 @@ def generate_synthetic_dataset(
             "Incorrect value sample repartition. It must be either a list of\
             weights, or a float, or None."
         )
+    
+    if features_heterogeneity is None:
+        features_locs = np.zeros((n_centers, n_features))
+    elif type(features_heterogeneity) == float:
+        # TODO: discuss about what does we really want here with the other
+        features_locs = np.random.random((n_centers, n_features)) * features_heterogeneity
+    else:
+        raise ValueError(
+            "Incorrect value features_heterogeneity. It must be either a float, or None."
+        )
+    
+    if noise_heterogeneity is None:
+        snr_locs = np.ones() * snr
+    elif type(noise_heterogeneity) in [list, np.array]:
+        assert snr == 3, "Option snr is incompatible with noise_heterogeneity as a list."
+        snr_locs = np.array(noise_heterogeneity)
+    else:
+        raise ValueError(
+            "Incorrect value noise_heterogeneity. It must be either a list of signal to noise ratio, or None for a constant signal to noise ratio."
+        )
 
     indices = []
     start_index = 0
@@ -82,16 +103,16 @@ def generate_synthetic_dataset(
     df_full = pd.DataFrame()
     cov = np.eye(n_features)
 
-    for n_samples_loc in n_samples_locs:
-        # generate features
+    for i in range(n_centers):
         X = rng.multivariate_normal(
-            mean=np.zeros(n_features), cov=cov, size=n_samples_loc
+            mean=features_locs[i], cov=cov, size=n_samples_locs[i]
         )
+
         # generate labels
-        y_raw = np.dot(X, w)
-        noise_stdev = np.sqrt(np.mean(y_raw**2) / snr)
-        noise = rng.normal(scale=noise_stdev, size=n_samples_loc)
-        y = np.dot(X, w) + noise
+        signal = np.dot(X, w)
+        noise_stdev = np.sqrt(np.mean(signal**2) / snr_locs[i])
+        noise = rng.normal(scale=noise_stdev, size=n_samples_locs[i])
+        y = signal + noise
 
         Xy = np.hstack((X, y[:, None]))
         df = pd.DataFrame(Xy)
