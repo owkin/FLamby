@@ -9,10 +9,10 @@ The dataset used in this repo comes from [The Cancer Genome Atlas (TCGA)](https:
 | Description        | Clinical data from the TCGA-BRCA study with 1,088 patients.
 | Dataset size       | 117,5 KB (stored in this repository).
 | Centers            | 6 regions - Northeast, South, West, Midwest, Europe, Canada.
-| Records per center | 248, 156, 164, 129, 129, 40.
+| Records per center | Train/Test: 248/63, 156/40, 164/42, 129/33, 129/33, 40/11.
 | Inputs shape       | 39 features (tabular data).
 | Targets shape      | (E,T). E: relative risk, continuous variable. T: ground truth, at 0 or 1. 
-| Total nb of points | 866.
+| Total nb of points | 1088.
 | Task               | Survival analysis.
 
 

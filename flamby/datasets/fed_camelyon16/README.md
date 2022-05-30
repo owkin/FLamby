@@ -10,7 +10,7 @@ We will use the [Google-Drive-API-v3](https://developers.google.com/drive/api/v3
 | Description        | Dataset from Camelyon16
 | Dataset size       | 900 GB (and 50 GB after features extraction).
 | Centers            | 2 centers - RUMC and UMCU.
-| Records per center | RUMC: 2170 (Train) + 89 (Test), UMCU: 100 (Train) + 50 (Test)
+| Records per center | RUMC: 170 (Train) + 89 (Test), UMCU: 100 (Train) + 50 (Test)
 | Inputs shape       | Image of shape (10000, 2048).
 | Total nb of points | 399 slides.
 | Task               | Weakly Supervised (Binary) Classification.
