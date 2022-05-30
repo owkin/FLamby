@@ -419,9 +419,10 @@ def main(args_cli):
             else:
                 bool_objects = np.ones((len(df.index), 1)).astype("bool")
             bool_method = df["Method"] == (sname + str(num_updates))
-            index_of_interest = df.loc[
-                 bool_numerical.squeeze() & bool_objects.squeeze() & bool_method.squeeze()
-             ].index
+            index_of_interest_1 = df.loc[pd.DataFrame(bool_numerical).all(axis=1)].index
+            index_of_interest_2 = df.loc[pd.DataFrame(bool_objects).all(axis=1)].index
+            index_of_interest_3 = df.loc[pd.DataFrame(bool_method).all(axis=1)].index
+            index_of_interest = index_of_interest_1.intersection(index_of_interest_2).intersection(index_of_interest_3)
             # non-robust version
             #index_of_interest = df.loc[
             #   (df["Method"] == (sname + str(num_updates)))
