@@ -139,13 +139,14 @@ def resize_by_crop_or_pad(X, output_shape=(384, 384, 384)):
     pad_begin = missing_dims.div(2)
     pad_last = torch.max(output_shape, input_shape) - pad_begin - input_shape
     # Inverting order because of pytorch padding conventions
-    padding = tuple(torch.stack([pad_begin, pad_last], dim=-1).flatten())[::-1]
+    padding = tuple(
+        torch.stack([pad_begin, pad_last], dim=-1).flatten().long().tolist()
+    )[::-1]
+
     X = F.pad(X, padding, mode="constant", value=X.min())
 
     # Crop extra
-    extra = torch.clamp(torch.tensor(X.shape) - output_shape, min=0).div(
-        2
-    )
+    extra = torch.clamp(torch.tensor(X.shape) - output_shape, min=0).div(2).long()
 
     for d, start in enumerate(extra):
         X = X.narrow(d, start, output_shape[d])
