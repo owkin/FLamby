@@ -15,9 +15,9 @@ available for download
 | Description        | Heart Disease dataset.
 | Dataset size       | 39,6 KB.
 | Centers            | 4 centers - Cleveland, Hungary, Switzerland and Long Beach V.
-| Records per center | 303, 294, 123, 200  <!--- ou (199, 172, 30, 85) ? -->
+| Records per center | Train/Test: 199/104, 172/89, 30/16, 85/45.
 | Inputs shape       | 16 features (tabular data).
-| Total nb of points | 920.
+| Total nb of points | 740.
 | Task               | Binary classification
 
 
