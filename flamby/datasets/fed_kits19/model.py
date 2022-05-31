@@ -15,13 +15,13 @@
 
 
 from copy import deepcopy
-from nnunet.utilities.nd_softmax import softmax_helper
-from torch import nn
-import torch
+
 import numpy as np
+import torch
+import torch.nn.functional
 from nnunet.network_architecture.initialization import InitWeights_He
 from nnunet.network_architecture.neural_network import SegmentationNetwork
-import torch.nn.functional
+from torch import nn
 
 
 class ConvDropoutNormNonlin(nn.Module):
@@ -29,20 +29,34 @@ class ConvDropoutNormNonlin(nn.Module):
     fixes a bug in ConvDropoutNormNonlin where lrelu was used regardless of nonlin. Bad.
     """
 
-    def __init__(self, input_channels, output_channels,
-                 conv_op=nn.Conv2d, conv_kwargs=None,
-                 norm_op=nn.BatchNorm2d, norm_op_kwargs=None,
-                 dropout_op=nn.Dropout2d, dropout_op_kwargs=None,
-                 nonlin=nn.LeakyReLU, nonlin_kwargs=None):
+    def __init__(
+        self,
+        input_channels,
+        output_channels,
+        conv_op=nn.Conv2d,
+        conv_kwargs=None,
+        norm_op=nn.BatchNorm2d,
+        norm_op_kwargs=None,
+        dropout_op=nn.Dropout2d,
+        dropout_op_kwargs=None,
+        nonlin=nn.LeakyReLU,
+        nonlin_kwargs=None,
+    ):
         super(ConvDropoutNormNonlin, self).__init__()
         if nonlin_kwargs is None:
-            nonlin_kwargs = {'negative_slope': 1e-2, 'inplace': True}
+            nonlin_kwargs = {"negative_slope": 1e-2, "inplace": True}
         if dropout_op_kwargs is None:
-            dropout_op_kwargs = {'p': 0.5, 'inplace': True}
+            dropout_op_kwargs = {"p": 0.5, "inplace": True}
         if norm_op_kwargs is None:
-            norm_op_kwargs = {'eps': 1e-5, 'affine': True, 'momentum': 0.1}
+            norm_op_kwargs = {"eps": 1e-5, "affine": True, "momentum": 0.1}
         if conv_kwargs is None:
-            conv_kwargs = {'kernel_size': 3, 'stride': 1, 'padding': 1, 'dilation': 1, 'bias': True}
+            conv_kwargs = {
+                "kernel_size": 3,
+                "stride": 1,
+                "padding": 1,
+                "dilation": 1,
+                "bias": True,
+            }
 
         self.nonlin_kwargs = nonlin_kwargs
         self.nonlin = nonlin
@@ -54,8 +68,11 @@ class ConvDropoutNormNonlin(nn.Module):
         self.norm_op = norm_op
 
         self.conv = self.conv_op(input_channels, output_channels, **self.conv_kwargs)
-        if self.dropout_op is not None and self.dropout_op_kwargs['p'] is not None and self.dropout_op_kwargs[
-            'p'] > 0:
+        if (
+            self.dropout_op is not None
+            and self.dropout_op_kwargs["p"] is not None
+            and self.dropout_op_kwargs["p"] > 0
+        ):
             self.dropout = self.dropout_op(**self.dropout_op_kwargs)
         else:
             self.dropout = None
@@ -78,12 +95,23 @@ class ConvDropoutNonlinNorm(ConvDropoutNormNonlin):
 
 
 class StackedConvLayers(nn.Module):
-    def __init__(self, input_feature_channels, output_feature_channels, num_convs,
-                 conv_op=nn.Conv2d, conv_kwargs=None,
-                 norm_op=nn.BatchNorm2d, norm_op_kwargs=None,
-                 dropout_op=nn.Dropout2d, dropout_op_kwargs=None,
-                 nonlin=nn.LeakyReLU, nonlin_kwargs=None, first_stride=None, basic_block=ConvDropoutNormNonlin):
-        '''
+    def __init__(
+        self,
+        input_feature_channels,
+        output_feature_channels,
+        num_convs,
+        conv_op=nn.Conv2d,
+        conv_kwargs=None,
+        norm_op=nn.BatchNorm2d,
+        norm_op_kwargs=None,
+        dropout_op=nn.Dropout2d,
+        dropout_op_kwargs=None,
+        nonlin=nn.LeakyReLU,
+        nonlin_kwargs=None,
+        first_stride=None,
+        basic_block=ConvDropoutNormNonlin,
+    ):
+        """
         stacks ConvDropoutNormLReLU layers. initial_stride will only be applied to first layer in the stack. The other parameters affect all layers
         :param input_feature_channels:
         :param output_feature_channels:
@@ -100,18 +128,24 @@ class StackedConvLayers(nn.Module):
         :param neg_slope:
         :param norm_affine:
         :param conv_bias:
-        '''
+        """
         self.input_channels = input_feature_channels
         self.output_channels = output_feature_channels
 
         if nonlin_kwargs is None:
-            nonlin_kwargs = {'negative_slope': 1e-2, 'inplace': True}
+            nonlin_kwargs = {"negative_slope": 1e-2, "inplace": True}
         if dropout_op_kwargs is None:
-            dropout_op_kwargs = {'p': 0.5, 'inplace': True}
+            dropout_op_kwargs = {"p": 0.5, "inplace": True}
         if norm_op_kwargs is None:
-            norm_op_kwargs = {'eps': 1e-5, 'affine': True, 'momentum': 0.1}
+            norm_op_kwargs = {"eps": 1e-5, "affine": True, "momentum": 0.1}
         if conv_kwargs is None:
-            conv_kwargs = {'kernel_size': 3, 'stride': 1, 'padding': 1, 'dilation': 1, 'bias': True}
+            conv_kwargs = {
+                "kernel_size": 3,
+                "stride": 1,
+                "padding": 1,
+                "dilation": 1,
+                "bias": True,
+            }
 
         self.nonlin_kwargs = nonlin_kwargs
         self.nonlin = nonlin
@@ -124,36 +158,70 @@ class StackedConvLayers(nn.Module):
 
         if first_stride is not None:
             self.conv_kwargs_first_conv = deepcopy(conv_kwargs)
-            self.conv_kwargs_first_conv['stride'] = first_stride
+            self.conv_kwargs_first_conv["stride"] = first_stride
         else:
             self.conv_kwargs_first_conv = conv_kwargs
 
         super(StackedConvLayers, self).__init__()
         self.blocks = nn.Sequential(
-            *([basic_block(input_feature_channels, output_feature_channels, self.conv_op,
-                           self.conv_kwargs_first_conv,
-                           self.norm_op, self.norm_op_kwargs, self.dropout_op, self.dropout_op_kwargs,
-                           self.nonlin, self.nonlin_kwargs)] +
-              [basic_block(output_feature_channels, output_feature_channels, self.conv_op,
-                           self.conv_kwargs,
-                           self.norm_op, self.norm_op_kwargs, self.dropout_op, self.dropout_op_kwargs,
-                           self.nonlin, self.nonlin_kwargs) for _ in range(num_convs - 1)]))
+            *(
+                [
+                    basic_block(
+                        input_feature_channels,
+                        output_feature_channels,
+                        self.conv_op,
+                        self.conv_kwargs_first_conv,
+                        self.norm_op,
+                        self.norm_op_kwargs,
+                        self.dropout_op,
+                        self.dropout_op_kwargs,
+                        self.nonlin,
+                        self.nonlin_kwargs,
+                    )
+                ]
+                + [
+                    basic_block(
+                        output_feature_channels,
+                        output_feature_channels,
+                        self.conv_op,
+                        self.conv_kwargs,
+                        self.norm_op,
+                        self.norm_op_kwargs,
+                        self.dropout_op,
+                        self.dropout_op_kwargs,
+                        self.nonlin,
+                        self.nonlin_kwargs,
+                    )
+                    for _ in range(num_convs - 1)
+                ]
+            )
+        )
 
     def forward(self, x):
         return self.blocks(x)
 
 
 def print_module_training_status(module):
-    if isinstance(module, nn.Conv2d) or isinstance(module, nn.Conv3d) or isinstance(module, nn.Dropout3d) or \
-            isinstance(module, nn.Dropout2d) or isinstance(module, nn.Dropout) or isinstance(module, nn.InstanceNorm3d) \
-            or isinstance(module, nn.InstanceNorm2d) or isinstance(module, nn.InstanceNorm1d) \
-            or isinstance(module, nn.BatchNorm2d) or isinstance(module, nn.BatchNorm3d) or isinstance(module,
-                                                                                                      nn.BatchNorm1d):
+    if (
+        isinstance(module, nn.Conv2d)
+        or isinstance(module, nn.Conv3d)
+        or isinstance(module, nn.Dropout3d)
+        or isinstance(module, nn.Dropout2d)
+        or isinstance(module, nn.Dropout)
+        or isinstance(module, nn.InstanceNorm3d)
+        or isinstance(module, nn.InstanceNorm2d)
+        or isinstance(module, nn.InstanceNorm1d)
+        or isinstance(module, nn.BatchNorm2d)
+        or isinstance(module, nn.BatchNorm3d)
+        or isinstance(module, nn.BatchNorm1d)
+    ):
         print(str(module), module.training)
 
 
 class Upsample(nn.Module):
-    def __init__(self, size=None, scale_factor=None, mode='nearest', align_corners=False):
+    def __init__(
+        self, size=None, scale_factor=None, mode="nearest", align_corners=False
+    ):
         super(Upsample, self).__init__()
         self.align_corners = align_corners
         self.mode = mode
@@ -161,8 +229,13 @@ class Upsample(nn.Module):
         self.size = size
 
     def forward(self, x):
-        return nn.functional.interpolate(x, size=self.size, scale_factor=self.scale_factor, mode=self.mode,
-                                         align_corners=self.align_corners)
+        return nn.functional.interpolate(
+            x,
+            size=self.size,
+            scale_factor=self.scale_factor,
+            mode=self.mode,
+            align_corners=self.align_corners,
+        )
 
 
 class Baseline(SegmentationNetwork):
@@ -189,15 +262,32 @@ class Baseline(SegmentationNetwork):
     #                      False, lambda x: x, InitWeights_He(1e-2),
     #                      net_num_pool_op_kernel_sizes, net_conv_kernel_sizes, False, True, True)
 
-    def __init__(self, input_channels = 1, base_num_features = 32, num_classes = 3, num_pool = 5, num_conv_per_stage=2,
-                 feat_map_mul_on_downscale=2, conv_op=nn.Conv3d,
-                 norm_op=nn.InstanceNorm3d, norm_op_kwargs={'eps': 1e-5, 'affine': True},
-                 dropout_op=nn.Dropout3d, dropout_op_kwargs={'p': 0, 'inplace': True},
-                 nonlin=nn.LeakyReLU, nonlin_kwargs={'negative_slope': 1e-2, 'inplace': True}, deep_supervision=False, dropout_in_localization=False,
-                 final_nonlin=lambda x: x, weightInitializer=InitWeights_He(1e-2),
-                 upscale_logits=False, convolutional_pooling=True, convolutional_upsampling=True,
-                 max_num_features=None, basic_block=ConvDropoutNormNonlin,
-                 seg_output_use_bias=False):
+    def __init__(
+        self,
+        input_channels=1,
+        base_num_features=32,
+        num_classes=3,
+        num_pool=5,
+        num_conv_per_stage=2,
+        feat_map_mul_on_downscale=2,
+        conv_op=nn.Conv3d,
+        norm_op=nn.InstanceNorm3d,
+        norm_op_kwargs={"eps": 1e-5, "affine": True},
+        dropout_op=nn.Dropout3d,
+        dropout_op_kwargs={"p": 0, "inplace": True},
+        nonlin=nn.LeakyReLU,
+        nonlin_kwargs={"negative_slope": 1e-2, "inplace": True},
+        deep_supervision=False,
+        dropout_in_localization=False,
+        final_nonlin=lambda x: x,
+        weightInitializer=InitWeights_He(1e-2),
+        upscale_logits=False,
+        convolutional_pooling=True,
+        convolutional_upsampling=True,
+        max_num_features=None,
+        basic_block=ConvDropoutNormNonlin,
+        seg_output_use_bias=False,
+    ):
         """
         basically more flexible than v1, architecture is the same
 
@@ -209,18 +299,25 @@ class Baseline(SegmentationNetwork):
         """
         super(Baseline, self).__init__()
         pool_op_kernel_sizes = [[2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2], [1, 2, 2]]
-        conv_kernel_sizes = [[3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3]]
+        conv_kernel_sizes = [
+            [3, 3, 3],
+            [3, 3, 3],
+            [3, 3, 3],
+            [3, 3, 3],
+            [3, 3, 3],
+            [3, 3, 3],
+        ]
         self.convolutional_upsampling = convolutional_upsampling
         self.convolutional_pooling = convolutional_pooling
         self.upscale_logits = upscale_logits
         if nonlin_kwargs is None:
-            nonlin_kwargs = {'negative_slope': 1e-2, 'inplace': True}
+            nonlin_kwargs = {"negative_slope": 1e-2, "inplace": True}
         if dropout_op_kwargs is None:
-            dropout_op_kwargs = {'p': 0.5, 'inplace': True}
+            dropout_op_kwargs = {"p": 0.5, "inplace": True}
         if norm_op_kwargs is None:
-            norm_op_kwargs = {'eps': 1e-5, 'affine': True, 'momentum': 0.1}
+            norm_op_kwargs = {"eps": 1e-5, "affine": True, "momentum": 0.1}
 
-        self.conv_kwargs = {'stride': 1, 'dilation': 1, 'bias': True}
+        self.conv_kwargs = {"stride": 1, "dilation": 1, "bias": True}
 
         self.nonlin = nonlin
         self.nonlin_kwargs = nonlin_kwargs
@@ -236,7 +333,7 @@ class Baseline(SegmentationNetwork):
         self.do_ds = deep_supervision
 
         if conv_op == nn.Conv2d:
-            upsample_mode = 'bilinear'
+            upsample_mode = "bilinear"
             pool_op = nn.MaxPool2d
             transpconv = nn.ConvTranspose2d
             if pool_op_kernel_sizes is None:
@@ -244,7 +341,7 @@ class Baseline(SegmentationNetwork):
             if conv_kernel_sizes is None:
                 conv_kernel_sizes = [(3, 3)] * (num_pool + 1)
         elif conv_op == nn.Conv3d:
-            upsample_mode = 'trilinear'
+            upsample_mode = "trilinear"
             pool_op = nn.MaxPool3d
             transpconv = nn.ConvTranspose3d
             if pool_op_kernel_sizes is None:
@@ -252,9 +349,13 @@ class Baseline(SegmentationNetwork):
             if conv_kernel_sizes is None:
                 conv_kernel_sizes = [(3, 3, 3)] * (num_pool + 1)
         else:
-            raise ValueError("unknown convolution dimensionality, conv op: %s" % str(conv_op))
+            raise ValueError(
+                "unknown convolution dimensionality, conv op: %s" % str(conv_op)
+            )
 
-        self.input_shape_must_be_divisible_by = np.prod(pool_op_kernel_sizes, 0, dtype=np.int64)
+        self.input_shape_must_be_divisible_by = np.prod(
+            pool_op_kernel_sizes, 0, dtype=np.int64
+        )
         self.pool_op_kernel_sizes = pool_op_kernel_sizes
         self.conv_kernel_sizes = conv_kernel_sizes
 
@@ -286,14 +387,26 @@ class Baseline(SegmentationNetwork):
             else:
                 first_stride = None
 
-            self.conv_kwargs['kernel_size'] = self.conv_kernel_sizes[d]
-            self.conv_kwargs['padding'] = self.conv_pad_sizes[d]
+            self.conv_kwargs["kernel_size"] = self.conv_kernel_sizes[d]
+            self.conv_kwargs["padding"] = self.conv_pad_sizes[d]
             # add convolutions
-            self.conv_blocks_context.append(StackedConvLayers(input_features, output_features, num_conv_per_stage,
-                                                              self.conv_op, self.conv_kwargs, self.norm_op,
-                                                              self.norm_op_kwargs, self.dropout_op,
-                                                              self.dropout_op_kwargs, self.nonlin, self.nonlin_kwargs,
-                                                              first_stride, basic_block=basic_block))
+            self.conv_blocks_context.append(
+                StackedConvLayers(
+                    input_features,
+                    output_features,
+                    num_conv_per_stage,
+                    self.conv_op,
+                    self.conv_kwargs,
+                    self.norm_op,
+                    self.norm_op_kwargs,
+                    self.dropout_op,
+                    self.dropout_op_kwargs,
+                    self.nonlin,
+                    self.nonlin_kwargs,
+                    first_stride,
+                    basic_block=basic_block,
+                )
+            )
             if not self.convolutional_pooling:
                 self.td.append(pool_op(pool_op_kernel_sizes[d]))
             input_features = output_features
@@ -316,26 +429,53 @@ class Baseline(SegmentationNetwork):
         else:
             final_num_features = self.conv_blocks_context[-1].output_channels
 
-        self.conv_kwargs['kernel_size'] = self.conv_kernel_sizes[num_pool]
-        self.conv_kwargs['padding'] = self.conv_pad_sizes[num_pool]
-        self.conv_blocks_context.append(nn.Sequential(
-            StackedConvLayers(input_features, output_features, num_conv_per_stage - 1, self.conv_op, self.conv_kwargs,
-                              self.norm_op, self.norm_op_kwargs, self.dropout_op, self.dropout_op_kwargs, self.nonlin,
-                              self.nonlin_kwargs, first_stride, basic_block=basic_block),
-            StackedConvLayers(output_features, final_num_features, 1, self.conv_op, self.conv_kwargs,
-                              self.norm_op, self.norm_op_kwargs, self.dropout_op, self.dropout_op_kwargs, self.nonlin,
-                              self.nonlin_kwargs, basic_block=basic_block)))
+        self.conv_kwargs["kernel_size"] = self.conv_kernel_sizes[num_pool]
+        self.conv_kwargs["padding"] = self.conv_pad_sizes[num_pool]
+        self.conv_blocks_context.append(
+            nn.Sequential(
+                StackedConvLayers(
+                    input_features,
+                    output_features,
+                    num_conv_per_stage - 1,
+                    self.conv_op,
+                    self.conv_kwargs,
+                    self.norm_op,
+                    self.norm_op_kwargs,
+                    self.dropout_op,
+                    self.dropout_op_kwargs,
+                    self.nonlin,
+                    self.nonlin_kwargs,
+                    first_stride,
+                    basic_block=basic_block,
+                ),
+                StackedConvLayers(
+                    output_features,
+                    final_num_features,
+                    1,
+                    self.conv_op,
+                    self.conv_kwargs,
+                    self.norm_op,
+                    self.norm_op_kwargs,
+                    self.dropout_op,
+                    self.dropout_op_kwargs,
+                    self.nonlin,
+                    self.nonlin_kwargs,
+                    basic_block=basic_block,
+                ),
+            )
+        )
 
         # if we don't want to do dropout in the localization pathway then we set the dropout prob to zero here
         if not dropout_in_localization:
-            old_dropout_p = self.dropout_op_kwargs['p']
-            self.dropout_op_kwargs['p'] = 0.0
+            old_dropout_p = self.dropout_op_kwargs["p"]
+            self.dropout_op_kwargs["p"] = 0.0
 
         # now lets build the localization pathway
         for u in range(num_pool):
             nfeatures_from_down = final_num_features
             nfeatures_from_skip = self.conv_blocks_context[
-                -(2 + u)].output_channels  # self.conv_blocks_context[-1] is bottleneck, so start with -2
+                -(2 + u)
+            ].output_channels  # self.conv_blocks_context[-1] is bottleneck, so start with -2
             n_features_after_tu_and_concat = nfeatures_from_skip * 2
 
             # the first conv reduces the number of features to match those of skip
@@ -347,37 +487,86 @@ class Baseline(SegmentationNetwork):
                 final_num_features = nfeatures_from_skip
 
             if not self.convolutional_upsampling:
-                self.tu.append(Upsample(scale_factor=pool_op_kernel_sizes[-(u + 1)], mode=upsample_mode))
+                self.tu.append(
+                    Upsample(
+                        scale_factor=pool_op_kernel_sizes[-(u + 1)], mode=upsample_mode
+                    )
+                )
             else:
-                self.tu.append(transpconv(nfeatures_from_down, nfeatures_from_skip, pool_op_kernel_sizes[-(u + 1)],
-                                          pool_op_kernel_sizes[-(u + 1)], bias=False))
+                self.tu.append(
+                    transpconv(
+                        nfeatures_from_down,
+                        nfeatures_from_skip,
+                        pool_op_kernel_sizes[-(u + 1)],
+                        pool_op_kernel_sizes[-(u + 1)],
+                        bias=False,
+                    )
+                )
 
-            self.conv_kwargs['kernel_size'] = self.conv_kernel_sizes[- (u + 1)]
-            self.conv_kwargs['padding'] = self.conv_pad_sizes[- (u + 1)]
-            self.conv_blocks_localization.append(nn.Sequential(
-                StackedConvLayers(n_features_after_tu_and_concat, nfeatures_from_skip, num_conv_per_stage - 1,
-                                  self.conv_op, self.conv_kwargs, self.norm_op, self.norm_op_kwargs, self.dropout_op,
-                                  self.dropout_op_kwargs, self.nonlin, self.nonlin_kwargs, basic_block=basic_block),
-                StackedConvLayers(nfeatures_from_skip, final_num_features, 1, self.conv_op, self.conv_kwargs,
-                                  self.norm_op, self.norm_op_kwargs, self.dropout_op, self.dropout_op_kwargs,
-                                  self.nonlin, self.nonlin_kwargs, basic_block=basic_block)
-            ))
+            self.conv_kwargs["kernel_size"] = self.conv_kernel_sizes[-(u + 1)]
+            self.conv_kwargs["padding"] = self.conv_pad_sizes[-(u + 1)]
+            self.conv_blocks_localization.append(
+                nn.Sequential(
+                    StackedConvLayers(
+                        n_features_after_tu_and_concat,
+                        nfeatures_from_skip,
+                        num_conv_per_stage - 1,
+                        self.conv_op,
+                        self.conv_kwargs,
+                        self.norm_op,
+                        self.norm_op_kwargs,
+                        self.dropout_op,
+                        self.dropout_op_kwargs,
+                        self.nonlin,
+                        self.nonlin_kwargs,
+                        basic_block=basic_block,
+                    ),
+                    StackedConvLayers(
+                        nfeatures_from_skip,
+                        final_num_features,
+                        1,
+                        self.conv_op,
+                        self.conv_kwargs,
+                        self.norm_op,
+                        self.norm_op_kwargs,
+                        self.dropout_op,
+                        self.dropout_op_kwargs,
+                        self.nonlin,
+                        self.nonlin_kwargs,
+                        basic_block=basic_block,
+                    ),
+                )
+            )
 
         for ds in range(len(self.conv_blocks_localization)):
-            self.seg_outputs.append(conv_op(self.conv_blocks_localization[ds][-1].output_channels, num_classes,
-                                            1, 1, 0, 1, 1, seg_output_use_bias))
+            self.seg_outputs.append(
+                conv_op(
+                    self.conv_blocks_localization[ds][-1].output_channels,
+                    num_classes,
+                    1,
+                    1,
+                    0,
+                    1,
+                    1,
+                    seg_output_use_bias,
+                )
+            )
 
         self.upscale_logits_ops = []
         cum_upsample = np.cumprod(np.vstack(pool_op_kernel_sizes), axis=0)[::-1]
         for usl in range(num_pool - 1):
             if self.upscale_logits:
-                self.upscale_logits_ops.append(Upsample(scale_factor=tuple([int(i) for i in cum_upsample[usl + 1]]),
-                                                        mode=upsample_mode))
+                self.upscale_logits_ops.append(
+                    Upsample(
+                        scale_factor=tuple([int(i) for i in cum_upsample[usl + 1]]),
+                        mode=upsample_mode,
+                    )
+                )
             else:
                 self.upscale_logits_ops.append(lambda x: x)
 
         if not dropout_in_localization:
-            self.dropout_op_kwargs['p'] = old_dropout_p
+            self.dropout_op_kwargs["p"] = old_dropout_p
 
         # register all modules properly
         self.conv_blocks_localization = nn.ModuleList(self.conv_blocks_localization)
@@ -387,7 +576,8 @@ class Baseline(SegmentationNetwork):
         self.seg_outputs = nn.ModuleList(self.seg_outputs)
         if self.upscale_logits:
             self.upscale_logits_ops = nn.ModuleList(
-                self.upscale_logits_ops)  # lambda x:x is not a Module so we need to distinguish here
+                self.upscale_logits_ops
+            )  # lambda x:x is not a Module so we need to distinguish here
 
         if self.weightInitializer is not None:
             self.apply(self.weightInitializer)
@@ -411,15 +601,30 @@ class Baseline(SegmentationNetwork):
             seg_outputs.append(self.final_nonlin(self.seg_outputs[u](x)))
 
         if self._deep_supervision and self.do_ds:
-            return tuple([seg_outputs[-1]] + [i(j) for i, j in
-                                              zip(list(self.upscale_logits_ops)[::-1], seg_outputs[:-1][::-1])])
+            return tuple(
+                [seg_outputs[-1]]
+                + [
+                    i(j)
+                    for i, j in zip(
+                        list(self.upscale_logits_ops)[::-1], seg_outputs[:-1][::-1]
+                    )
+                ]
+            )
         else:
             return seg_outputs[-1]
 
     @staticmethod
-    def compute_approx_vram_consumption(patch_size, num_pool_per_axis, base_num_features, max_num_features,
-                                        num_modalities, num_classes, pool_op_kernel_sizes, deep_supervision=False,
-                                        conv_per_stage=2):
+    def compute_approx_vram_consumption(
+        patch_size,
+        num_pool_per_axis,
+        base_num_features,
+        max_num_features,
+        num_modalities,
+        num_classes,
+        pool_op_kernel_sizes,
+        deep_supervision=False,
+        conv_per_stage=2,
+    ):
         """
         This only applies for num_conv_per_stage and convolutional_upsampling=True
         not real vram consumption. just a constant term to which the vram consumption will be approx proportional
@@ -440,9 +645,13 @@ class Baseline(SegmentationNetwork):
         npool = len(pool_op_kernel_sizes)
 
         map_size = np.array(patch_size)
-        tmp = np.int64((conv_per_stage * 2 + 1) * np.prod(map_size, dtype=np.int64) * base_num_features +
-                       num_modalities * np.prod(map_size, dtype=np.int64) +
-                       num_classes * np.prod(map_size, dtype=np.int64))
+        tmp = np.int64(
+            (conv_per_stage * 2 + 1)
+            * np.prod(map_size, dtype=np.int64)
+            * base_num_features
+            + num_modalities * np.prod(map_size, dtype=np.int64)
+            + num_classes * np.prod(map_size, dtype=np.int64)
+        )
 
         num_feat = base_num_features
 
@@ -450,7 +659,9 @@ class Baseline(SegmentationNetwork):
             for pi in range(len(num_pool_per_axis)):
                 map_size[pi] /= pool_op_kernel_sizes[p][pi]
             num_feat = min(num_feat * 2, max_num_features)
-            num_blocks = (conv_per_stage * 2 + 1) if p < (npool - 1) else conv_per_stage  # conv_per_stage + conv_per_stage for the convs of encode/decode and 1 for transposed conv
+            num_blocks = (
+                (conv_per_stage * 2 + 1) if p < (npool - 1) else conv_per_stage
+            )  # conv_per_stage + conv_per_stage for the convs of encode/decode and 1 for transposed conv
             tmp += num_blocks * np.prod(map_size, dtype=np.int64) * num_feat
             if deep_supervision and p < (npool - 2):
                 tmp += np.prod(map_size, dtype=np.int64) * num_classes

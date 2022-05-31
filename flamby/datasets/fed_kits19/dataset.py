@@ -3,7 +3,6 @@ import sys
 from collections import OrderedDict
 from pathlib import Path
 
-import nnunet
 import numpy as np
 import pandas as pd
 import torch
@@ -18,7 +17,17 @@ import flamby.datasets.fed_kits19
 from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.data_augmentations import (
     transformations,
 )
-from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.paths import *
+from flamby.utils import get_config_file_path, read_config
+
+path_to_config_file = get_config_file_path("fed_kits19", False)
+dict = read_config(path_to_config_file)
+base = dict["dataset_path"] + "/"
+os.environ["nnUNet_raw_data_base"] = base
+os.environ["nnUNet_preprocessed"] = base + "kits19_preprocessing"
+os.environ["RESULTS_FOLDER"] = base + "kits19_Results"
+
+from nnunet.paths import preprocessing_output_dir
+
 from flamby.utils import check_dataset_from_config
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "")))
