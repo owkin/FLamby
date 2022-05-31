@@ -17,16 +17,26 @@ import argparse
 import csv
 import os
 import shutil
-import sys
 from collections import defaultdict
 
 import numpy as np
-from batchgenerators.utilities.file_and_folder_operations import *
+from batchgenerators.utilities.file_and_folder_operations import (
+    join,
+    maybe_mkdir_p,
+    save_json,
+    subfolders,
+)
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "../../")))
-sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "../")))
-sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "")))
-from nnunet_library.paths import base, nnUNet_raw_data
+from flamby.utils import get_config_file_path, read_config
+
+path_to_config_file = get_config_file_path("fed_kits19", False)
+dict = read_config(path_to_config_file)
+base = dict["dataset_path"] + "/"
+os.environ["nnUNet_raw_data_base"] = base
+os.environ["nnUNet_preprocessed"] = base + "kits19_preprocessing"
+os.environ["RESULTS_FOLDER"] = base + "kits19_Results"
+
+from nnunet.paths import base, nnUNet_raw_data
 
 from flamby.utils import get_config_file_path, read_config, write_value_in_config
 
@@ -71,7 +81,6 @@ def read_csv_file(csv_file="../../../metadata/anony_sites.csv"):
 
     train_case_ids = case_ids[0:210]
     train_site_ids = site_ids[0:210]
-
 
     for ID in range(0, 89):
         client_ids = np.where(np.array(train_site_ids) == ID)[0]
