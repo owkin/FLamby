@@ -56,7 +56,7 @@ class Kits19Raw(Dataset):
             Whether or not to use only the part of the dataset downloaded in
             debug mode. Defaults to False.
         """
-        dict = check_dataset_from_config("fed_kits19", debug)
+        check_dataset_from_config("fed_kits19", debug)
 
         plans_file = (
             preprocessing_output_dir
