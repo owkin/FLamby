@@ -76,9 +76,9 @@ cd dataset_creation_scripts/nnunet_library/experiment_planning
 ```
 and run the following command to preprocess the data,
 ```bash
-python3 nnUNet_plan_and_preprocess.py -t 064
+python3 nnUNet_plan_and_preprocess.py -t 064 -tl 1 -tf 1
 ```
-For the preprocessing, it can take around ~30-45 minutes. 
+you can modify the number after the tl and tf options in order use more threads. 
 With this preprocessing, running the experiments can be very time efficient as it saves the preprocessing time for every experiment run.
 
 ## Pooled Experiment
