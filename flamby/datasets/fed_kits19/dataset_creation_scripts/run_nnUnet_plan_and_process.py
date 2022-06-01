@@ -31,7 +31,7 @@ if __name__ == "__main__":
         action="store_true",
         help="Specify if debug mode (True) or not (False)",
     )
-    parser.add_argument("--num_threads", default=1, help="Number of threads used.")
+    parser.add_argument("--num_threads", default="1", help="Number of threads used.")
     args = parser.parse_args()
 
     # set_environment_variables should be called before importing nnunet
@@ -43,6 +43,7 @@ if __name__ == "__main__":
     if "--debug" in sys.argv:
         sys.argv.remove("--debug")
     sys.argv = sys.argv + ["-t", "064", "-tf", args.num_threads, "-tf", args.num_threads]
+    print(sys.argv)
 
     main()
     path_to_config_file = get_config_file_path("fed_kits19", False)
