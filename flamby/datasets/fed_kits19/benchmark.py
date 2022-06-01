@@ -204,7 +204,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--epochs",
         type=int,
-        default=500,
+        default=NUM_EPOCHS_POOLED,
         help="Numbers of Epochs",
     )
     parser.add_argument(

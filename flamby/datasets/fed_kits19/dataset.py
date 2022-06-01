@@ -1,9 +1,26 @@
+#    Copyright 2020 Division of Medical Image Computing, German Cancer Research Center (DKFZ), Heidelberg, Germany
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+
+# Part of this file comes from https://github.com/MIC-DKFZ/nnUNet/tree/master/nnunet
+# See flamby/datasets/fed_kits19/dataset_creation_scripts/LICENSE/README.md for more
+# information
+
 import os
 import sys
 from collections import OrderedDict
 from pathlib import Path
 
-import nnunet
 import numpy as np
 import pandas as pd
 import torch
@@ -15,13 +32,13 @@ from nnunet.training.data_augmentation.default_data_augmentation import (
 from torch.utils.data import Dataset
 
 import flamby.datasets.fed_kits19
-from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.data_augmentations import (
-    transformations,
-)
-from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.paths import *
+from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.data_augmentations import \
+    transformations
+from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.set_environment_variables import \
+    set_environment_variables
+
 from flamby.utils import check_dataset_from_config
 
-# sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "../")))
 sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "")))
 
 
@@ -48,7 +65,11 @@ class Kits19Raw(Dataset):
             Whether or not to use only the part of the dataset downloaded in
             debug mode. Defaults to False.
         """
-        dict = check_dataset_from_config("fed_kits19", debug)
+        # set_environment_variables should be called before importing nnunet
+        set_environment_variables(debug)
+        from nnunet.paths import preprocessing_output_dir
+
+        check_dataset_from_config("fed_kits19", debug)
 
         plans_file = (
             preprocessing_output_dir
@@ -89,9 +110,11 @@ class Kits19Raw(Dataset):
 
         print(self.train_test)
 
-        df = pd.read_csv(Path(os.path.dirname(flamby.datasets.fed_kits19.__file__))
+        df = pd.read_csv(
+            Path(os.path.dirname(flamby.datasets.fed_kits19.__file__))
             / Path("metadata")
-            / Path("thresholded_sites.csv"))
+            / Path("thresholded_sites.csv")
+        )
         df2 = df.query("train_test_split == '" + self.train_test + "' ").reset_index(
             drop=True
         )
@@ -318,9 +341,11 @@ class FedKits19(Kits19Raw):
         print(key)
         if not pooled:
             assert center in range(6)
-            df = pd.read_csv(Path(os.path.dirname(flamby.datasets.fed_kits19.__file__))
-            / Path("metadata")
-            / Path("thresholded_sites.csv"))
+            df = pd.read_csv(
+                Path(os.path.dirname(flamby.datasets.fed_kits19.__file__))
+                / Path("metadata")
+                / Path("thresholded_sites.csv")
+            )
             df2 = df.query("train_test_split_silo == '" + key + "' ").reset_index(
                 drop=True
             )
@@ -341,38 +366,3 @@ class FedKits19(Kits19Raw):
                 c += 1
 
             self.centers = df2.site_ids
-
-
-if __name__ == "__main__":
-    train_dataset = FedKits19(
-        5,
-        train=False,
-        pooled=False,
-    )
-    train_dataloader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=2, shuffle=True
-    )
-
-    pooled_training = FedKits19(train=True, pooled=True)
-    print(len(pooled_training))  # 74
-    local_dataset_lengths = [
-        len(FedKits19(train=True, pooled=False, center=i)) for i in range(6)
-    ]  # [9, 11, 9, 9, 12, 24]
-
-    # we should have:
-    print(local_dataset_lengths)
-    assert len(pooled_training) == sum(local_dataset_lengths)
-
-    pooled_test = FedKits19(train=False, pooled=True)
-    print(len(pooled_test))  # 74
-    local_dataset_lengths = [
-        len(FedKits19(train=False, pooled=False, center=i)) for i in range(6)
-    ]  # [3, 3, 3, 3, 4, 6]
-
-    # we should have:
-    print(local_dataset_lengths)
-    assert len(pooled_test) == sum(local_dataset_lengths)
-
-    for sample in train_dataloader:
-        print(sample[0].shape)
-        print(sample[1].shape)
