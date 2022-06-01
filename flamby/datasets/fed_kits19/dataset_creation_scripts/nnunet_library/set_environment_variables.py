@@ -9,7 +9,6 @@ def set_environment_variables(debug):
     nnunet library
     """
     path_to_config_file = get_config_file_path("fed_kits19", debug)
-    print(path_to_config_file)
     dict = read_config(path_to_config_file)
 
     base = dict["dataset_path"] + "/"

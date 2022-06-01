@@ -30,11 +30,6 @@ from batchgenerators.utilities.file_and_folder_operations import (
 from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.set_environment_variables import (
     set_environment_variables,
 )
-
-# set_environment_variables should be called before importing nnunet
-set_environment_variables()
-from nnunet.paths import base, nnUNet_raw_data
-
 from flamby.utils import get_config_file_path, read_config, write_value_in_config
 
 
@@ -127,6 +122,10 @@ if __name__ == "__main__":
     # parse python script input parameters
     parser = argparse.ArgumentParser()
     args = add_args(parser)
+
+    # set_environment_variables should be called before importing nnunet
+    set_environment_variables(args.debug)
+    from nnunet.paths import base, nnUNet_raw_data
 
     path_to_config_file = get_config_file_path("fed_kits19", debug=args.debug)
     dict = read_config(path_to_config_file)
