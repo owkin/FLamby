@@ -17,15 +17,12 @@ import flamby.datasets.fed_kits19
 from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.data_augmentations import (
     transformations,
 )
-from flamby.utils import get_config_file_path, read_config
+from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.set_environment_variables import (
+    set_environment_variables,
+)
 
-path_to_config_file = get_config_file_path("fed_kits19", False)
-dict = read_config(path_to_config_file)
-base = dict["dataset_path"] + "/"
-os.environ["nnUNet_raw_data_base"] = base
-os.environ["nnUNet_preprocessed"] = base + "kits19_preprocessing"
-os.environ["RESULTS_FOLDER"] = base + "kits19_Results"
-
+# set_environment_variables should be called before importing nnunet
+set_environment_variables()
 from nnunet.paths import preprocessing_output_dir
 
 from flamby.utils import check_dataset_from_config
