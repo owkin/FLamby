@@ -12,6 +12,10 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+# Part of this file comes from https://github.com/MIC-DKFZ/nnUNet/tree/master/nnunet
+# See flamby/datasets/fed_kits19/dataset_creation_scripts/LICENSE/README.md for more
+# information
+
 
 import argparse
 import csv
@@ -27,7 +31,7 @@ from batchgenerators.utilities.file_and_folder_operations import (
     subfolders,
 )
 
-from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.set_environment_variables import (
+from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.set_environment_variables import (
     set_environment_variables,
 )
 from flamby.utils import get_config_file_path, read_config, write_value_in_config

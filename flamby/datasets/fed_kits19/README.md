@@ -57,27 +57,26 @@ These commands will populate the data folder (given in the kits19 repository) wi
 ```bash
 python3 create_config.py --output_folder "data_folder_path" 
 ```
-Note that "data_folder_path" should contain path to the kits19 git repository, for example, 'Desktop/kits19' can be an example of the "data_folder_path" given you cloned kits19 git repository in the Desktop folder and data folder containing KiTS19 dataset resides in this kits19 git repository.
+You can add an option '--debug', if you want to run the whole pipeline on only a part of the dataset. Note that "data_folder_path" should contain path to the kits19 git repository, for example, 'Desktop/kits19' can be an example of the "data_folder_path" given you cloned kits19 git repository in the Desktop folder and data folder containing KiTS19 dataset resides in this kits19 git repository.
 ## Data Preprocessing   
 For preprocessing, we use [nnunet](https://github.com/MIC-DKFZ/nnUNet) library and [batchgenerators](https://github.com/MIC-DKFZ/batchgenerators) packages. We exploit nnunet preprocessing pipeline
 to apply intensity normalization, voxel and foreground resampling. In addition, we apply extensive transformations such as random crop, rotation, scaling, mirror etc from the batchgenerators package. 
 
 1. To run preprocessing, first step is dataset conversion. For this step, go to the following directory from the fed_kits19 directory
 ```bash
-cd dataset_creation_scripts/nnunet_library/dataset_conversion
+cd dataset_creation_scripts
 ```
 and run the following command to prepare the data for preprocessing.
 ```bash
-python3 Task064_KiTS_labelsFixed.py 
+python3 parsing_and_adding_metadata.py 
 ```
+You should add the option '--debug', if you already did so during the step 3 of the data download. 
 2. After data conversion, next step is to run the preprocessing which involves, data intensity normalization and voxel resampling. To run preprocessing, run the following command to go to the right directory from fed_kits19 directory
 ```bash
-cd dataset_creation_scripts/nnunet_library/experiment_planning
+python3 run_nnUNet_plan_and_preprocess.py --num-threads 1
 ```
-and run the following command to preprocess the data,
-```bash
-python3 nnUNet_plan_and_preprocess.py -t 064 -tl 1 -tf 1
-```
+Similarly, you should add the option '--debug' if you used it on the previous steps.
+
 **Warning:** If you use more threads than your machine has available CPUs it, the preprocessing can halt indefinitely.
 With this preprocessing, running the experiments can be very time efficient as it saves the preprocessing time for every experiment run.
 
