@@ -78,7 +78,7 @@ and run the following command to preprocess the data,
 ```bash
 python3 nnUNet_plan_and_preprocess.py -t 064 -tl 1 -tf 1
 ```
-you can modify the number after the tl and tf options in order use more threads. 
+**Warning:** If you use more threads than your machine has available CPUs it, the preprocessing can halt indefinitely.
 With this preprocessing, running the experiments can be very time efficient as it saves the preprocessing time for every experiment run.
 
 ## Pooled Experiment
