@@ -30,6 +30,32 @@ def main(output_folder, debug=False):
 
     os.makedirs(output_folder, exist_ok=True)
 
+    print(
+        "This dataset is licensed under a Creative Commons Attribution 4.0 "
+        "International (CC BY 4.0) license."
+    )
+
+    print("See https://archive-beta.ics.uci.edu/ml/datasets/heart+disease.\n")
+
+    print(
+        "Creators of the dataset:\n"
+        "  1. Hungarian Institute of Cardiology."
+        " Budapest: Andras Janosi, M.D.\n"
+        "  2. University Hospital,"
+        " Zurich, Switzerland: William Steinbrunn, M.D.\n"
+        "  3. University Hospital,"
+        " Basel, Switzerland: Matthias Pfisterer, M.D.\n"
+        "  4. V.A. Medical Center, Long Beach and"
+        " Cleveland Clinic Foundation: Robert Detrano, M.D., Ph.D.\n"
+    )
+
+    print(
+        "To cite this dataset, cite the following:"
+        " Janosi, Andras, Steinbrunn, William, Pfisterer, Matthias, Detrano,"
+        " Robert & M.D., M.D.. (1988). Heart Disease."
+        " UCI Machine Learning Repository.\n"
+    )
+
     # Creating config file with path to dataset
     dict, config_file = create_config(output_folder, debug, "fed_heart_disease")
     if dict["download_complete"]:
