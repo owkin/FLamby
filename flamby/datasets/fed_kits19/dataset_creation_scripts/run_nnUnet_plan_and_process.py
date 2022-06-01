@@ -38,12 +38,16 @@ if __name__ == "__main__":
     set_environment_variables(args.debug)
     from nnunet.experiment_planning.nnUNet_plan_and_preprocess import main
 
-    # We need to remove --debug from sys.argv as it is not listed in the CLI
-    # of nnunet.experiment_planning.nnUNet_plan_and_preprocess.main()
+    # We need to remove --debug and '--num_threads' from sys.argv as it is not listed in
+    # the CLI of nnunet.experiment_planning.nnUNet_plan_and_preprocess.main()
     if "--debug" in sys.argv:
         sys.argv.remove("--debug")
+    if '--num_threads' in sys.argv:
+        index_num_threads = sys.argv.index('--num_threads')
+        for _ in range(2):
+            sys.argv.pop(index_num_threads)
+
     sys.argv = sys.argv + ["-t", "064", "-tf", args.num_threads, "-tf", args.num_threads]
-    print(sys.argv)
 
     main()
     path_to_config_file = get_config_file_path("fed_kits19", False)
