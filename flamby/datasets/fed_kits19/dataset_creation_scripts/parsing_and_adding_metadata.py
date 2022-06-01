@@ -90,7 +90,7 @@ def read_csv_file(csv_file="../metadata/anony_sites.csv"):
                 )
 
     print(" Creating Thresholded Data's metadata file ")
-    with open("../../../metadata/thresholded_sites.csv", "w", newline="") as file:
+    with open("../metadata/thresholded_sites.csv", "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(
             ["case_ids", "site_ids", "train_test_split", "train_test_split_silo"]
