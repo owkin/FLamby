@@ -12,6 +12,10 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+# Part of this file comes from https://github.com/MIC-DKFZ/nnUNet/tree/master/nnunet
+# See flamby/datasets/fed_kits19/dataset_creation_scripts/LICENSE/README.md for more
+# information
+
 from batchgenerators.transforms.abstract_transforms import Compose
 from batchgenerators.transforms.channel_selection_transforms import (
     DataChannelSelectionTransform,
