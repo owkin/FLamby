@@ -4,6 +4,9 @@ from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.set_envi
 from flamby.utils import get_config_file_path, write_value_in_config
 
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+
     # set_environment_variables should be called before importing nnunet
     set_environment_variables()
     from nnunet.experiment_planning.nnUNet_plan_and_preprocess import main

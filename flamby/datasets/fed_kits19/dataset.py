@@ -21,10 +21,6 @@ from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.set_envi
     set_environment_variables,
 )
 
-# set_environment_variables should be called before importing nnunet
-set_environment_variables()
-from nnunet.paths import preprocessing_output_dir
-
 from flamby.utils import check_dataset_from_config
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "")))
@@ -53,6 +49,10 @@ class Kits19Raw(Dataset):
             Whether or not to use only the part of the dataset downloaded in
             debug mode. Defaults to False.
         """
+        # set_environment_variables should be called before importing nnunet
+        set_environment_variables(debug)
+        from nnunet.paths import preprocessing_output_dir
+
         check_dataset_from_config("fed_kits19", debug)
 
         plans_file = (
