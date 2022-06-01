@@ -1,6 +1,6 @@
 import os
 
-from flamby.utils import get_config_file_path, read_config
+from flamby.utils import get_config_file_path, read_config, write_value_in_config
 
 if __name__ == "__main__":
     path_to_config_file = get_config_file_path("fed_kits19", False)
@@ -14,3 +14,4 @@ if __name__ == "__main__":
     from nnunet.experiment_planning.nnUNet_plan_and_preprocess import main
 
     main()
+    write_value_in_config(path_to_config_file, "preprocessing_complete", True)
