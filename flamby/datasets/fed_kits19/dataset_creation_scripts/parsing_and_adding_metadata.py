@@ -51,7 +51,7 @@ def add_args(parser):
     return args
 
 
-def read_csv_file(csv_file="../../../metadata/anony_sites.csv"):
+def read_csv_file(csv_file="../metadata/anony_sites.csv"):
     print(" Reading kits19 Meta Data ...")
     columns = defaultdict(list)  # each value in each column is appended to a list
 
