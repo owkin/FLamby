@@ -1,4 +1,4 @@
-from .common import (
+from flamby.datasets.fed_heart_disease.common import (
     BATCH_SIZE,
     LR,
     NUM_CLIENTS,
@@ -6,7 +6,7 @@ from .common import (
     Optimizer,
     get_nb_max_rounds,
 )
-from .dataset import FedHeartDisease, HeartDiseaseRaw
-from .loss import BaselineLoss
-from .metric import metric
-from .model import Baseline
+from flamby.datasets.fed_heart_disease.dataset import FedHeartDisease, HeartDiseaseRaw
+from flamby.datasets.fed_heart_disease.loss import BaselineLoss
+from flamby.datasets.fed_heart_disease.metric import metric
+from flamby.datasets.fed_heart_disease.model import Baseline

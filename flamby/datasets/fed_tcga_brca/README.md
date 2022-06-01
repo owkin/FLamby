@@ -4,12 +4,16 @@ The dataset used in this repo comes from [The Cancer Genome Atlas (TCGA)](https:
 
 ## Dataset description
 
-|                   | Dataset description
-| ----------------- | -----------------------------------------------------------------------------------------------
-| Description       | Clinical data from the TCGA-BRCA study
-| Dataset           | 1,088 patients, each patient is represented by a vector of dimension 39
-| Centers           | 6 regions (Northeast, South, West, Midwest, Europe, Canada)
-| Task              | Survival analysis
+|                    | Dataset description
+|--------------------| -----------------------------------------------------------------------------------------------
+| Description        | Clinical data from the TCGA-BRCA study with 1,088 patients.
+| Dataset size       | 117,5 KB (stored in this repository).
+| Centers            | 6 regions - Northeast, South, West, Midwest, Europe, Canada.
+| Records per center | Train/Test: 248/63, 156/40, 164/42, 129/33, 129/33, 40/11.
+| Inputs shape       | 39 features (tabular data).
+| Targets shape      | (E,T). E: relative risk, continuous variable. T: ground truth, at 0 or 1. 
+| Total nb of points | 1088.
+| Task               | Survival analysis.
 
 
 Raw TCGA-BRCA data can be viewed and downloaded [here](https://portal.gdc.cancer.gov/projects/TCGA-BRCA).

@@ -5,12 +5,15 @@ We will use the [Google-Drive-API-v3](https://developers.google.com/drive/api/v3
 
 ## Dataset description
 
-|                   | Dataset description 
-| ----------------- | -----------------------------------------------
-| Description       | This is the dataset from Camelyon16
-| Dataset           | 399 slides with labels (170 (Train) + 89 (Test) slides in Center0 (RUMC), 100 (Train)+ 50 (Test) slides in Center1 (UMCU))
-| Centers           | Original Institutions from which WSIs originate RUMC and UMCU (2)
-| Task              | Weakly Supervised Classification
+|                    | Dataset description
+|--------------------| -----------------------------------------------------------------------------------------------
+| Description        | Dataset from Camelyon16
+| Dataset size       | 900 GB (and 50 GB after features extraction).
+| Centers            | 2 centers - RUMC and UMCU.
+| Records per center | RUMC: 170 (Train) + 89 (Test), UMCU: 100 (Train) + 50 (Test)
+| Inputs shape       | Image of shape (10000, 2048).
+| Total nb of points | 399 slides.
+| Task               | Weakly Supervised (Binary) Classification.
 
 
 ## Download and preprocessing instructions

@@ -320,7 +320,7 @@ class _Model:
                     )
             self.current_epoch = _current_epoch
 
-    @torch.inference_mode()
+    @torch.no_grad()
     def _get_current_params(self):
         """Returns the current weights of the pytorch model.
 
@@ -333,7 +333,7 @@ class _Model:
             param.cpu().detach().clone().numpy() for param in self.model.parameters()
         ]
 
-    @torch.inference_mode()
+    @torch.no_grad()
     def _update_params(self, new_params):
         """Update in place the weights of the pytorch model by adding the
         new_params list of the same size to it.

@@ -6,9 +6,16 @@
 Welcome to FLamby's documentation!
 ==================================
 
+FLamby
+######
 
-FLamby capabilities
-###################
+
+.. image:: logo.png
+   :scale: 50 %
+   :align: center
+  
+
+
 
 FLamby is a repository regrouping several distributed datasets with natural splits \
 whose aim is to benchmark new cross-silo FL strategies on realistic problems 

@@ -63,6 +63,8 @@ autodoc_mock_imports = [
     "tensorboard",
     "wget",
     "pytest",
+    "batchgenerators",
+    "nnunet",
 ]
 # -- General configuration ---------------------------------------------------
 

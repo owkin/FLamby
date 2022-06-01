@@ -1,5 +1,6 @@
 # FLamby
- PLACEHOLDER LOGO
+<img src="/docs/logo.png" width="600">
+
 
 ## Table of Contents
 - [Overview](#overview)
@@ -13,7 +14,7 @@
 ## Overview
 FLamby is a benchmark for cross-silo Federated Learning with natural partitioning.
 It spans multiple data modalities and should allow easy interfacing with most
-Federated-Learning frameworks ([FedML](https://github.com/FedML-AI/FedML), [Fed-BioMed](https://gitlab.inria.fr/fedbiomed/fedbiomed), [Substra](https://github.com/Substra/substra), ...). It contains implementations of different
+Federated-Learning frameworks ([Fed-BioMed](https://gitlab.inria.fr/fedbiomed/fedbiomed), [FedML](https://github.com/FedML-AI/FedML), [Substra](https://github.com/Substra/substra), ...). It contains implementations of different
 standard strategies.
 
 The FLamby package contains:
@@ -30,6 +31,7 @@ We do not distribute datasets in this repository. **The use of any of the datase
 included in FLamby requires accepting its corresponding license on the original
 website.**
 We do not own copyrights on any of the datasets.
+For any problem or question with respect to any licence related matters please open a github issue on this repository.
 
 
 ## Extending FLamby
@@ -40,7 +42,9 @@ Similarly one can add the results of a new strategy or training algorithm.
 
 ## Installation
 
-We recommend using anaconda and pip. You may need `make` for simplification.
+We recommend using anaconda and pip. You can install anaconda by downloading and executing appropriate installers from the [Anaconda website](https://www.anaconda.com/products/distribution), pip often comes included with python otherwise check [the following instructions](https://pip.pypa.io/en/stable/installation/). We support all Python version starting from **3.7**.  
+
+You may need `make` for simplification.
 create and launch the environment using:
 
 ```bash
@@ -49,6 +53,7 @@ cd FLamby
 make install
 conda activate flamby
 ```
+
 
 ### Update environment
 Use the following command if new dependencies have been added, and you want to update the environment:
@@ -93,7 +98,7 @@ make html
 ```
 This will generate html pages in the folder _builds/html that can be accessed in your browser:
 ```bash
-open _builds/html/index.html
+open _build/html/index.html
 ```
 ## Contributing
 
