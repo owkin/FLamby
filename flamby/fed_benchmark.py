@@ -424,6 +424,8 @@ def main(args_cli):
                 # and objects equality in a robust fashion
                 found_xps = df[list(hyperparameters)]
                 found_xps_numerical = found_xps.select_dtypes(exclude=[object])
+                if 'deterministic_cycle' in found_xps_numerical.columns:
+                    found_xps_numerical['deterministic_cycle'] = found_xps_numerical['deterministic_cycle'].fillna(0.0).astype(float)
                 col_numericals = found_xps_numerical.columns
                 col_objects = [c for c in found_xps.columns if not (c in col_numericals)]
 
@@ -433,7 +435,7 @@ def main(args_cli):
                             found_xps_numerical,
                             pd.Series(
                                 {
-                                    k: hyperparameters[k]
+                                    k: float(hyperparameters[k])
                                     for k in list(hyperparameters.keys())
                                     if k in col_numericals
                                 }
@@ -444,6 +446,7 @@ def main(args_cli):
                     )
                 else:
                     bool_numerical = np.ones((len(df.index), 1)).astype("bool")
+
                 if len(col_objects):
                     bool_objects = found_xps[col_objects].astype(str) == pd.Series(
                         {
@@ -454,6 +457,7 @@ def main(args_cli):
                     )
                 else:
                     bool_objects = np.ones((len(df.index), 1)).astype("bool")
+
                 bool_method = df["Method"] == (sname + str(num_updates))
                 index_of_interest_1 = df.loc[
                     pd.DataFrame(bool_numerical).all(axis=1)
@@ -465,6 +469,7 @@ def main(args_cli):
                 index_of_interest = index_of_interest_1.intersection(
                     index_of_interest_2
                 ).intersection(index_of_interest_3)
+
                 # non-robust version
                 # index_of_interest = df.loc[
                 #   (df["Method"] == (sname + str(num_updates)))
