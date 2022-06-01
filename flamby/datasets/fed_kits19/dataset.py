@@ -32,12 +32,11 @@ from nnunet.training.data_augmentation.default_data_augmentation import (
 from torch.utils.data import Dataset
 
 import flamby.datasets.fed_kits19
-from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.data_augmentations import (
-    transformations,
-)
-from flamby.datasets.fed_kits19.dataset_creation_scripts.nnunet_library.set_environment_variables import (
-    set_environment_variables,
-)
+from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.data_augmentations import \
+    transformations
+from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.set_environment_variables import \
+    set_environment_variables
+
 from flamby.utils import check_dataset_from_config
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "")))
