@@ -15,8 +15,6 @@ def generate_synthetic_dataset(
     label_heterogeneity=None,
     n_clusters=3,
 ):
-
-    print(sample_repartition)
     """
     Generates a synthetic dataset
     Parameters
@@ -82,20 +80,25 @@ def generate_synthetic_dataset(
 
         n_samples_locs = [np.sum(positions == i) for i in range(n_centers)]
 
-    elif type(sample_repartition) == float:
+    elif type(sample_repartition) == float or type(sample_repartition) == int:
         assert sample_repartition > 1
+
+        min_samples_per_center = 5
+        assert n_samples > min_samples_per_center * n_centers
 
         weights = [(i + 1) ** (-sample_repartition + 1) for i in range(n_centers)]
         prob = weights / np.sum(weights)
 
         positions = rng.choice(
             n_centers,
-            size=n_samples,
+            size=n_samples - min_samples_per_center * n_centers,
             replace=True,
             p=prob,
         )
 
-        n_samples_locs = [np.sum(positions == i) for i in range(n_centers)]
+        n_samples_locs = [
+            np.sum(positions == i) + min_samples_per_center for i in range(n_centers)
+        ]
 
     else:
         raise ValueError(
@@ -172,7 +175,6 @@ def generate_synthetic_dataset(
             )
         df_full = pd.DataFrame()
         cov = np.eye(n_features) * 0.1
-        print(cov)
 
         for i in range(n_centers):
             for label in range(n_clusters):
