@@ -118,11 +118,11 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
 
     ax.yaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
     label_format = "{:.1f}"
-    ax.set_yticklabels([label_format.format(y) for y in ticks_loc], fontsize=25)
+    ax.set_yticklabels([label_format.format(y) for y in ticks_loc], fontsize=35)
 
-    ax.set_xticklabels(labels, rotation=90, fontsize=25, fontweight="heavy")
-    ax.set_xlabel(ax.get_xlabel(), fontsize=25, fontweight="heavy")
-    ax.set_ylabel(ax.get_ylabel(), fontsize=25, fontweight="heavy")
+    ax.set_xticklabels(labels, rotation=90, fontsize=35, fontweight="heavy")
+    ax.set_xlabel(ax.get_xlabel(), fontsize=35, fontweight="heavy")
+    ax.set_ylabel(ax.get_ylabel(), fontsize=35, fontweight="heavy")
 
     # We only display the xlabel on figures from the second row except the 4th one because it has no counterpart(label can be removed entirely)
     # and y label on the first figure of each row
@@ -132,7 +132,7 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
         ax.set(ylabel=None)
     current_title = " ".join([word.capitalize() for word in name.split("_")])
 
-    ax.set_title(current_title, fontsize=25, fontweight="heavy")
+    ax.set_title(current_title, fontsize=35, fontweight="heavy")
 
 # Hide the last plot
 flattened_axs[-1].set_visible(False)
