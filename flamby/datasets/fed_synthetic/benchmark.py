@@ -19,7 +19,14 @@ from flamby.datasets.fed_synthetic import (
 from flamby.utils import evaluate_model_on_tests
 
 
-def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=False):
+def main(
+    num_workers_torch,
+    log=False,
+    log_period=10,
+    debug=False,
+    cpu_only=False,
+    n_features=10,
+):
     """Function to execute the benchmark on Heart Disease.
 
     Parameters
@@ -33,17 +40,30 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
     use_gpu = torch.cuda.is_available() and not (cpu_only)
 
     training_dl = dl(
-        FedSynthetic(train=True, pooled=True, debug=debug),
+        FedSynthetic(
+            train=True,
+            pooled=True,
+            debug=debug,
+            classification=True,
+            n_features=n_features,
+        ),
         num_workers=num_workers_torch,
         batch_size=BATCH_SIZE,
         shuffle=True,
     )
     test_dl = dl(
-        FedSynthetic(train=False, pooled=True, debug=debug),
+        FedSynthetic(
+            train=False,
+            pooled=True,
+            debug=debug,
+            classification=True,
+            n_features=n_features,
+        ),
         num_workers=num_workers_torch,
         batch_size=BATCH_SIZE,
         shuffle=False,
     )
+
     print(f"The training set pooled contains {len(training_dl.dataset)} records")
     print(f"The test set pooled contains {len(test_dl.dataset)} records")
 
@@ -60,7 +80,7 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
         # At each new seed we re-initialize the model
         # and training_dl is shuffled as well
         torch.manual_seed(seed)
-        m = Baseline()
+        m = Baseline(n_features)
         # We put the model on GPU whenever it is possible
         if use_gpu:
             m = m.cuda()
@@ -150,6 +170,19 @@ if __name__ == "__main__":
         action="store_true",
         help="Deactivate the GPU to perform all computations on CPU only.",
     )
+    parser.add_argument(
+        "--nfeatures",
+        type=int,
+        default=10,
+        help="Number of features in the synthetic data..",
+    )
 
     args = parser.parse_args()
-    main(args.num_workers_torch, args.log, args.log_period, args.debug, args.cpu_only)
+    main(
+        args.num_workers_torch,
+        args.log,
+        args.log_period,
+        args.debug,
+        args.cpu_only,
+        args.nfeatures,
+    )
