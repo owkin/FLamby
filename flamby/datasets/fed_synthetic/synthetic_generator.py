@@ -37,7 +37,7 @@ def generate_synthetic_dataset(
         n_centers and contains the weights of being in a given center. If None,
         samples are equally splitted to each of the centers.
     noise_heterogeneity: list or None, default=None
-        Noise in the features per centers. If None, 
+        Noise in the features per centers. If None,
         noise is parametrized by snr. If list, it must be of the same size as
         n_centers and containsthe snr of each center
     features_heterogeneity: float or None
@@ -185,7 +185,7 @@ def generate_synthetic_dataset(
                 # generate samples
                 X = rng.multivariate_normal(
                     mean=current_center,
-                    cov=cov * snr_locs[i],
+                    cov=cov / snr_locs[i],
                     size=int(n_samples_labels[i][label]),
                 )
                 y = np.ones(int(n_samples_labels[i][label])) * label
