@@ -183,7 +183,7 @@ def generate_synthetic_dataset(
                 # generate samples
                 X = rng.multivariate_normal(
                     mean=current_center,
-                    cov=cov * snr_locs[i],
+                    cov=cov / snr_locs[i],
                     size=int(n_samples_labels[i][label]),
                 )
                 y = np.ones(int(n_samples_labels[i][label])) * label
