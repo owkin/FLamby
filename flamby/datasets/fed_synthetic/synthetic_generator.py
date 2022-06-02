@@ -64,7 +64,7 @@ def generate_synthetic_dataset(
     # Generation of indices
     if sample_repartition is None:
         n_samples_locs = [
-            n_samples // n_centers + (i < n_samples % n_centers)
+            int(n_samples // n_centers + (i < n_samples % n_centers))
             for i in range(n_centers)
         ]
 
