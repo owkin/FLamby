@@ -23,26 +23,11 @@ class SyntheticRaw(Dataset):
     """
 
     def __init__(
-        self,
-        n_centers=5,
-        n_samples=[1000, 10, 100, 500],
-        n_features=10,
-        seed=42,
-        X_dtype=torch.float32,
-        y_dtype=torch.float32,
-        debug=False,
+        self, X_dtype=torch.float32, y_dtype=torch.float32, debug=False, **kwargs
     ):
         """See description above
         Parameters
         ----------
-        n_centers : int, optional
-            Number of centers in the dataset.
-        n_samples : int or list, optional
-            Number of records in each center.
-        n_features : int, optional
-            Number of features in the dataset.
-        seed : int, optional
-            Seed for the random data generation.
         X_dtype : torch.dtype, optional
             Dtype for inputs `X`. Defaults to `torch.float32`.
         y_dtype : torch.dtype, optional
@@ -50,6 +35,9 @@ class SyntheticRaw(Dataset):
         debug : bool, optional,
             Whether or not to use only the part of the dataset downloaded in
             debug mode. Defaults to False.
+        **kwargs :
+            Other arguments are forwarded to the dataset generator. See
+            `generate_synthetic_dataset`.
         """
 
         # dict, config_file = create_config(output_folder, debug, "fed_heart_disease")
@@ -61,9 +49,11 @@ class SyntheticRaw(Dataset):
         self.y_dtype = y_dtype
         self.debug = debug
 
-        self.n_centers = n_centers
-        self.n_samples = n_samples
-        self.n_features = n_features
+        full_df, indices = generate_synthetic_dataset(**kwargs)
+
+        self.n_centers = len(indices)
+        self.n_samples = full_df.shape[0]
+        self.n_features = full_df.shape[1] - 1
 
         self.features = pd.DataFrame()
         self.labels = pd.DataFrame()
@@ -71,8 +61,6 @@ class SyntheticRaw(Dataset):
         self.sets = []
 
         self.train_fraction = 0.66
-
-        full_df, indices = generate_synthetic_dataset(n_centers, n_samples, n_features)
 
         for i, center_indices in enumerate(indices):
 
@@ -143,27 +131,16 @@ class FedSynthetic(SyntheticRaw):
 
     def __init__(
         self,
-        n_centers=5,
-        n_samples=[1000, 10, 100, 500],
-        n_features=10,
-        seed=42,
         center=0,
         train=True,
         pooled=False,
         X_dtype=torch.float32,
         y_dtype=torch.float32,
         debug=False,
+        **kwargs
     ):
         """Instantiate the dataset
         Parameters
-        n_centers : int, optional
-            Number of centers in the dataset.
-        n_samples : int or list, optional
-            Number of records in each center.
-        n_features : int, optional
-            Number of features in the dataset.
-        seed : int, optional
-            Seed for the random data generation.
         pooled : bool, optional
             Whether to take all data from the 2 centers into one dataset, by
             default False
@@ -174,9 +151,12 @@ class FedSynthetic(SyntheticRaw):
         debug : bool, optional,
             Whether or not to use only the part of the dataset downloaded in
             debug mode. Defaults to False.
+        **kwargs :
+            Other arguments are forwarded to the dataset generator. See
+            `generate_synthetic_dataset`.
         """
 
-        super().__init__(X_dtype=X_dtype, y_dtype=y_dtype, debug=debug)
+        super().__init__(X_dtype=X_dtype, y_dtype=y_dtype, debug=debug, **kwargs)
         assert center in np.arange(self.n_centers)
 
         self.chosen_centers = [center]
