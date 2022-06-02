@@ -59,7 +59,7 @@ fig, axs = plt.subplots(2, 4, sharey=True, figsize=(40, 13), dpi=80)
 fig.subplots_adjust(hspace=0.5)
 flattened_axs = axs.flatten()
 
-
+palette = sns.color_palette("hls", 14)
 for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)):
     # Remove pooled results
     res = res.loc[res["Test"] != "Pooled Test"]
@@ -92,6 +92,9 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
     res = res.rename(columns={"Method": "Training Method"})
     res.loc[res["Training Method"] == "Pooled Training", "Training Method"] = "Pooled"
     current_methods_display = [re.sub(" Training", "", c) for c in current_methods]
+
+    # Messing with palettes to keep the same color for pooled and strategies
+    current_palette = [palette[0]] + palette[1 : (current_num_clients + 1)] + palette[7:]
     sns.barplot(
         ax=ax,
         x="Training Method",
@@ -102,6 +105,7 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
         saturation=8,
         errcolor="gray",
         errwidth=2,
+        palette=current_palette,
     )
     # We remove the number of updates which will go into the legend
     labels = [re.sub("100", "", item.get_text()) for item in ax.get_xticklabels()]
