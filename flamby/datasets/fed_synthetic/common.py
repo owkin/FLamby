@@ -2,8 +2,8 @@ import torch
 
 NUM_CLIENTS = 4
 BATCH_SIZE = 8
-NUM_EPOCHS_POOLED = 50
-LR = 0.001
+NUM_EPOCHS_POOLED = 10
+LR = 0.005
 Optimizer = torch.optim.Adam
 
 
