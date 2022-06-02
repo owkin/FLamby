@@ -22,6 +22,11 @@ def dl_ixi_tiny(output_folder, debug=False):
         output_folder : str
             The folder where to download the dataset.
     """
+    print("The IXI dataset is made available under the Creative Commons CC BY-SA 3.0 license.\n\
+    If you use the IXI data please acknowledge the source of the IXI data, e.g. the following website: https://brain-development.org/ixi-dataset/\n\
+    IXI Tiny is derived from the same source. Acknowledge the following reference on TorchIO : https://torchio.readthedocs.io/datasets.html#ixitiny\n\
+    Pérez-García F, Sparks R, Ourselin S. TorchIO: a Python library for efficient loading, preprocessing, augmentation and patch-based sampling of medical images in deep learning. arXiv:2003.04696 [cs, eess, stat]. 2020. https://doi.org/10.48550/arXiv.2003.04696")
+
     os.makedirs(output_folder, exist_ok=True)
 
     # Creating config file with path to dataset
