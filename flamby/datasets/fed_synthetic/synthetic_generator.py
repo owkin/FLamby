@@ -15,6 +15,8 @@ def generate_synthetic_dataset(
     label_heterogeneity=None,
     n_clusters=3,
 ):
+
+    print(sample_repartition)
     """
     Generates a synthetic dataset
     Parameters
@@ -74,7 +76,7 @@ def generate_synthetic_dataset(
         assert len(sample_repartition) == n_centers
         assert (sample_repartition >= 0).all()
 
-        positions = np.random.choice(
+        positions = rng.choice(
             n_centers, size=n_samples, replace=True, p=sample_repartition
         )
 
@@ -86,7 +88,7 @@ def generate_synthetic_dataset(
         weights = [(i + 1) ** (-sample_repartition + 1) for i in range(n_centers)]
         prob = weights / np.sum(weights)
 
-        positions = np.random.choice(
+        positions = rng.choice(
             n_centers,
             size=n_samples,
             replace=True,
@@ -113,9 +115,7 @@ def generate_synthetic_dataset(
         features_locs = np.zeros((n_centers, n_features))
     elif type(features_heterogeneity) == float:
         if not classification:
-            features_locs = (
-                np.random.random((n_centers, n_features)) * features_heterogeneity
-            )
+            features_locs = rng.random((n_centers, n_features)) * features_heterogeneity
     else:
         raise ValueError(
             "Incorrect value features_heterogeneity. It must be either a float, or None."
@@ -135,7 +135,7 @@ def generate_synthetic_dataset(
     if classification:
         # generate true centers for each class
         assert type(n_clusters) is int, "Number of clusters should be an int"
-        means_center = np.random.normal(size=[n_features, n_clusters])
+        means_center = rng.normal(size=[n_features, n_clusters])
         distance_from_origin = np.linalg.norm(means_center, ord=2, axis=0)
         means_center /= distance_from_origin.reshape(1, -1)
         means_center = means_center.T
@@ -158,7 +158,7 @@ def generate_synthetic_dataset(
             for i in range(n_centers):
                 n_i = n_samples_locs[i]
                 n_samples_labels[i] = np.floor(
-                    np.random.dirichlet(np.repeat(label_heterogeneity, n_clusters)) * n_i
+                    rng.dirichlet(np.repeat(label_heterogeneity, n_clusters)) * n_i
                 )
                 missing_labels = n_i - np.sum(n_samples_labels[i])
                 n_samples_labels[i] += np.array(
@@ -179,9 +179,7 @@ def generate_synthetic_dataset(
                 # generate centers of the clients
                 current_center = means_center[label]
                 if features_heterogeneity:
-                    current_center += features_heterogeneity * np.random.random(
-                        n_features
-                    )
+                    current_center += features_heterogeneity * rng.random(n_features)
                 # generate samples
                 X = rng.multivariate_normal(
                     mean=current_center,
