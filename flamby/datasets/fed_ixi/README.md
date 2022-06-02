@@ -56,6 +56,8 @@ These files contain images in **NIFTI** format.
 To produce the labels, ROBEX, an automatic whole-brain extraction tool for T1-weighted MRI data has been used.
 Affine registration, which is a necessary prerequisite for many image processing tasks, has been performed using [NiftyReg](https://github.com/KCL-BMEIS/niftyreg) putting all the brain images onto a common reference space (MNI template). An orientation tweak has finally been made with [ITK](https://itk.org/).
 
+Volumes have a dimension of 83 x 44 x 55 voxels (compared to 256 x 256 x 140 in the standard dataset).
+
 The total size of this tiny dataset is 444 MB.
 
 The structure of the archive containing the dataset has been modified, making it adapted for particular cases of use where each subject is represented by a directory containing all the modalities associated with them.
