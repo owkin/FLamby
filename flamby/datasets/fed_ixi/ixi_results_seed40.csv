@@ -15,35 +15,87 @@ client_test_0,Local 2,0.8031101,,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
 client_test_1,Local 2,0.7945006,,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
 client_test_2,Local 2,0.80858475,,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
 Pooled Test,Local 2,0.801094,,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
-client_test_0,Ensemble,0.8882749,,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
-client_test_1,Ensemble,0.88722163,,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
-client_test_2,Ensemble,0.88194066,,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
-Pooled Test,Ensemble,0.8870985,,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
-client_test_0,FedAvg1,0.912076473236084,,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
-client_test_1,FedAvg1,0.9121994376182556,,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
-client_test_2,FedAvg1,0.9094956517219543,,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
-Pooled Test,FedAvg1,0.9117730855941772,,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
-client_test_0,FedProx1,0.9154873490333557,0.1,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
-client_test_1,FedProx1,0.915512204170227,0.1,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
-client_test_2,FedProx1,0.9124251008033752,0.1,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
-Pooled Test,FedProx1,0.9150887727737427,0.1,0.001,,,,,<class 'torch.optim.adamw.AdamW'>
-client_test_0,FedAdagrad1,0.9628497958183289,,0.0001,"0,00000001",0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
-client_test_1,FedAdagrad1,0.9489767551422119,,0.0001,"0,00000001",0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
-client_test_2,FedAdagrad1,0.9535170793533325,,0.0001,"0,00000001",0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
-Pooled Test,FedAdagrad1,0.9571911692619324,,0.0001,"0,00000001",0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
-client_test_0,FedAdam1,0.9626413583755493,,0.0001,"0,00000001",0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
-client_test_1,FedAdam1,0.9420340061187744,,0.0001,"0,00000001",0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
-client_test_2,FedAdam1,0.9490082859992981,,0.0001,"0,00000001",0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
-Pooled Test,FedAdam1,0.9542664289474487,,0.0001,"0,00000001",0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
-client_test_0,FedYogi1,0.8521936535835266,,0.0001,"0,00000001",0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
-client_test_1,FedYogi1,0.7796167731285095,,0.0001,"0,00000001",0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
-client_test_2,FedYogi1,0.863256573677063,,0.0001,"0,00000001",0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
-Pooled Test,FedYogi1,0.8305403590202332,,0.0001,"0,00000001",0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
-client_test_0,Cyclic1,0.4992866814136505,,0.00001,,,,,<class 'torch.optim.adamw.AdamW'>
-client_test_1,Cyclic1,0.5060908198356628,,0.00001,,,,,<class 'torch.optim.adamw.AdamW'>
-client_test_2,Cyclic1,0.49627357721328735,,0.00001,,,,,<class 'torch.optim.adamw.AdamW'>
-Pooled Test,Cyclic1,0.5010543465614319,,0.00001,,,,,<class 'torch.optim.adamw.AdamW'>
-client_test_0,Scaffold1,0.6649654507637024,,0.001,,1.0,,,<class 'torch.optim.sgd.SGD'>
-client_test_1,Scaffold1,0.6684338450431824,,0.001,,1.0,,,<class 'torch.optim.sgd.SGD'>
-client_test_2,Scaffold1,0.6534764170646667,,0.001,,1.0,,,<class 'torch.optim.sgd.SGD'>
-Pooled Test,Scaffold1,0.6645452380180359,,0.001,,1.0,,,<class 'torch.optim.sgd.SGD'>
+client_test_0,FedAvg1,0.81656414270401,,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_1,FedAvg1,0.811777651309967,,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_2,FedAvg1,0.8083532452583313,,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+Pooled Test,FedAvg1,0.8139492869377136,,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_0,FedProx1,0.8166459202766418,0.1,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_1,FedProx1,0.8115529417991638,0.1,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_2,FedProx1,0.8086830973625183,0.1,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+Pooled Test,FedProx1,0.8139662742614746,0.1,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_0,FedAdagrad1,0.944970965385437,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_1,FedAdagrad1,0.9317491054534912,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_2,FedAdagrad1,0.9377070069313048,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+Pooled Test,FedAdagrad1,0.9397944808006288,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_0,FedAdam1,0.928257703781128,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_1,FedAdam1,0.909942626953125,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_2,FedAdam1,0.9285808801651,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+Pooled Test,FedAdam1,0.922465682029724,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_0,FedYogi1,0.904413878917694,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_1,FedYogi1,0.8568551540374756,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_2,FedYogi1,0.8722158074378967,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+Pooled Test,FedYogi1,0.8849884271621704,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_0,Cyclic1,0.4642122089862823,,0.0001,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_1,Cyclic1,0.4584486186504364,,0.0001,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_2,Cyclic1,0.4639630019664764,,0.0001,,,,,<class 'torch.optim.sgd.SGD'>
+Pooled Test,Cyclic1,0.4623429179191589,,0.0001,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_0,Scaffold1,0.8171266913414001,,0.01,,1.0,,,<class 'torch.optim.sgd.SGD'>
+client_test_1,Scaffold1,0.8123579621315002,,0.01,,1.0,,,<class 'torch.optim.sgd.SGD'>
+client_test_2,Scaffold1,0.8088817596435547,,0.01,,1.0,,,<class 'torch.optim.sgd.SGD'>
+Pooled Test,Scaffold1,0.8145129680633545,,0.01,,1.0,,,<class 'torch.optim.sgd.SGD'>
+client_test_0,FedAvg5,0.81605064868927,,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_1,FedAvg5,0.8128859996795654,,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_2,FedAvg5,0.8070271611213684,,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+Pooled Test,FedAvg5,0.813844621181488,,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_0,FedProx5,0.8161341547966003,0.1,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_1,FedProx5,0.8128531575202942,0.1,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_2,FedProx5,0.8075606226921082,0.1,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+Pooled Test,FedProx5,0.8139508962631226,0.1,0.01,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_0,FedAdagrad5,0.90944641828537,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_1,FedAdagrad5,0.9385170340538024,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_2,FedAdagrad5,0.89959317445755,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+Pooled Test,FedAdagrad5,0.9173998832702636,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_0,FedAdam5,0.750227689743042,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_1,FedAdam5,0.7681475877761841,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_2,FedAdam5,0.7424523234367371,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+Pooled Test,FedAdam5,0.754904568195343,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_0,FedYogi5,0.7974847555160522,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_1,FedYogi5,0.844005823135376,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_2,FedYogi5,0.7983178496360779,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+Pooled Test,FedYogi5,0.8124161958694458,,0.001,1e-08,0.1,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_0,Cyclic5,0.4642122089862823,,0.0001,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_1,Cyclic5,0.4584486186504364,,0.0001,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_2,Cyclic5,0.4639630019664764,,0.0001,,,,,<class 'torch.optim.sgd.SGD'>
+Pooled Test,Cyclic5,0.4623429179191589,,0.0001,,,,,<class 'torch.optim.sgd.SGD'>
+client_test_0,Scaffold5,0.8172028064727783,,0.01,,1.0,,,<class 'torch.optim.sgd.SGD'>
+client_test_1,Scaffold5,0.8124810457229614,,0.01,,1.0,,,<class 'torch.optim.sgd.SGD'>
+client_test_2,Scaffold5,0.8088346123695374,,0.01,,1.0,,,<class 'torch.optim.sgd.SGD'>
+Pooled Test,Scaffold5,0.8145877718925476,,0.01,,1.0,,,<class 'torch.optim.sgd.SGD'>
+client_test_0,FedAvg1,0.8165643811225891,,0.01,,0.2,,,<class 'torch.optim.sgd.SGD'>
+client_test_1,FedAvg1,0.8117774128913879,,0.01,,0.2,,,<class 'torch.optim.sgd.SGD'>
+client_test_2,FedAvg1,0.8083537220954895,,0.01,,0.2,,,<class 'torch.optim.sgd.SGD'>
+Pooled Test,FedAvg1,0.813949465751648,,0.01,,0.2,,,<class 'torch.optim.sgd.SGD'>
+client_test_0,FedProx1,0.8166458606719971,0.1,0.01,,0.2,,,<class 'torch.optim.sgd.SGD'>
+client_test_1,FedProx1,0.8115530610084534,0.1,0.01,,0.2,,,<class 'torch.optim.sgd.SGD'>
+client_test_2,FedProx1,0.8086830973625183,0.1,0.01,,0.2,,,<class 'torch.optim.sgd.SGD'>
+Pooled Test,FedProx1,0.8139663338661194,0.1,0.01,,0.2,,,<class 'torch.optim.sgd.SGD'>
+client_test_0,FedAdagrad1,0.9444423317909241,,0.001,1e-08,0.2,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_1,FedAdagrad1,0.930891752243042,,0.001,1e-08,0.2,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_2,FedAdagrad1,0.9372584223747253,,0.001,1e-08,0.2,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+Pooled Test,FedAdagrad1,0.9391718506813049,,0.001,1e-08,0.2,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_0,FedAdam1,0.9628708958625793,,0.001,1e-08,0.2,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_1,FedAdam1,0.9563784003257751,,0.001,1e-08,0.2,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_2,FedAdam1,0.9559654593467712,,0.001,1e-08,0.2,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+Pooled Test,FedAdam1,0.9598857760429382,,0.001,1e-08,0.2,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_0,FedYogi1,0.9008095860481262,,0.001,1e-08,0.2,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_1,FedYogi1,0.8994147181510925,,0.001,1e-08,0.2,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_2,FedYogi1,0.8960689902305603,,0.001,1e-08,0.2,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+Pooled Test,FedYogi1,0.8997359275817871,,0.001,1e-08,0.2,0.9,0.999,<class 'torch.optim.sgd.SGD'>
+client_test_0,Cyclic1,0.46421220898628235,,0.0001,,0.2,,,<class 'torch.optim.sgd.SGD'>
+client_test_1,Cyclic1,0.4584486186504364,,0.0001,,0.2,,,<class 'torch.optim.sgd.SGD'>
+client_test_2,Cyclic1,0.46396300196647644,,0.0001,,0.2,,,<class 'torch.optim.sgd.SGD'>
+Pooled Test,Cyclic1,0.46234291791915894,,0.0001,,0.2,,,<class 'torch.optim.sgd.SGD'>
+client_test_0,Scaffold1,0.8171266317367554,,0.01,,0.2,,,<class 'torch.optim.sgd.SGD'>
+client_test_1,Scaffold1,0.8123582601547241,,0.01,,0.2,,,<class 'torch.optim.sgd.SGD'>
+client_test_2,Scaffold1,0.8088809251785278,,0.01,,0.2,,,<class 'torch.optim.sgd.SGD'>
+Pooled Test,Scaffold1,0.8145127892494202,,0.01,,0.2,,,<class 'torch.optim.sgd.SGD'>
