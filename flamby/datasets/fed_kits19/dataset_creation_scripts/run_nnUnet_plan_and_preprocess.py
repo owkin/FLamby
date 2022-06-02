@@ -42,12 +42,12 @@ if __name__ == "__main__":
     # the CLI of nnunet.experiment_planning.nnUNet_plan_and_preprocess.main()
     if "--debug" in sys.argv:
         sys.argv.remove("--debug")
-    if '--num_threads' in sys.argv:
-        index_num_threads = sys.argv.index('--num_threads')
+    if "--num_threads" in sys.argv:
+        index_num_threads = sys.argv.index("--num_threads")
         for _ in range(2):
             sys.argv.pop(index_num_threads)
 
-    sys.argv = sys.argv + ["-t", "064", "-tf", args.num_threads, "-tf", args.num_threads]
+    sys.argv = sys.argv + ["-t", "064", "-tf", args.num_threads, "-tl", args.num_threads]
 
     main()
     path_to_config_file = get_config_file_path("fed_kits19", False)
