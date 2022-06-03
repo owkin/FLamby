@@ -42,9 +42,11 @@ Similarly one can add the results of a new strategy or training algorithm.
 
 ## Installation
 
-We recommend using anaconda and pip. You can install anaconda by downloading and executing appropriate installers from the [Anaconda website](https://www.anaconda.com/products/distribution), pip often comes included with python otherwise check [the following instructions](https://pip.pypa.io/en/stable/installation/). We support all Python version starting from **3.7**.  
+We recommend using anaconda and pip. You can install anaconda by downloading and executing appropriate installers from the [Anaconda website](https://www.anaconda.com/products/distribution), pip often comes included with python otherwise check [the following instructions](https://pip.pypa.io/en/stable/installation/). We support all Python version starting from **3.7**.
 
-You may need `make` for simplification.
+You may need `make` for simplification. (Note that this will install the packages used by all the datasets within
+Flamby. If you wish to install only packages for one or more datasets or only for tests or documentation do make with
+the following command).
 create and launch the environment using:
 
 ```bash
@@ -54,12 +56,39 @@ make install
 conda activate flamby
 ```
 
+If you wish to limit the number of packages to be installed you can use argument `enable` to specify which dataset(s),
+tests or documentation you wish to make the installation:
+
+```bash
+git clone https://github.com/owkin/FLamby.git
+cd FLamby
+make enable=option_name install
+conda activate flamby
+```
+
+where `option_name` can be one of the following:
+cam16, heart, isic2019, ixi, kits19, lidc, tcga, docs, tests
+
+if you want to use more than one option you can do it using comma (',' followed by no space), eg:
+
+```bash
+git clone https://github.com/owkin/FLamby.git
+cd FLamby
+make enable=cam16,kits19,tests install
+conda activate flamby
+```
 
 ### Update environment
-Use the following command if new dependencies have been added, and you want to update the environment:
+Use the following command if new dependencies have been added, and you want to update the environment for all the datasets:
 ```bash
 make update
 ```
+
+or you can use `enable` option:
+```bash
+make enable=cam16 update
+```
+
 
 ### In case you don't have the `make` command (e.g. Windows users)
 You can install the environment by running:
@@ -68,8 +97,24 @@ git clone https://github.com/owkin/FLamby.git
 cd FLamby
 conda env create -f environment.yml
 conda activate flamby
+pip install -e .
 ```
 
+or if you wish to install the environment for only one or more datasets, tests or documentation:
+```bash
+git clone https://github.com/owkin/FLamby.git
+cd FLamby
+conda env create -f environment.yml
+conda activate flamby
+pip install -e .[option_name]
+```
+
+where `option_name` can be one of the following:
+cam16, heart, isic2019, ixi, kits19, lidc, tcga, docs, tests. If you want to use more than one option you can do it
+using comma (',') (no space), eg:
+```bash
+pip install -e .[cam16,ixi]
+```
 
 ### Accepting data licensing
 Then proceed to read and accept the different licenses and download the data from
