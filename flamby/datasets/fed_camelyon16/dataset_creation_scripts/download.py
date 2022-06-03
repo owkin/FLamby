@@ -8,6 +8,7 @@ from pathlib import Path
 import pandas as pd
 from google_client import create_service
 from googleapiclient.http import MediaIoBaseDownload
+from googleapiclient.errors import HttpError
 from tqdm import tqdm
 
 import flamby.datasets.fed_camelyon16.dataset_creation_scripts as dl_module
@@ -117,17 +118,26 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
 
             name = row["name"]
             print(f"Downloading slide {name} into {os.path.realpath(dataset_path)}")
-            fh = io.FileIO(slide_path, mode="wb")
-            downloader = MediaIoBaseDownload(fh, request)
-            done = False
-            with tqdm(total=100) as pbar:
-                while done is False:
-                    status, done = downloader.next_chunk()
-                    pbar.update(int(status.progress() * 100) - pbar.n)
-            # Only if we reach 100% completion we count the file as downloaded
-            downloaded_images_status_file.loc[
-                downloaded_images_status_file["Slide"] == row["name"], "Status"
-            ] = "Downloaded"
+            # Adding a try/except clause
+            try:
+                fh = io.FileIO(slide_path, mode="wb")
+                downloader = MediaIoBaseDownload(fh, request)
+                done = False
+                with tqdm(total=100) as pbar:
+                    while done is False:
+                        status, done = downloader.next_chunk()
+                        pbar.update(int(status.progress() * 100) - pbar.n)
+                # Only if we reach 100% completion we count the file as downloaded
+                downloaded_images_status_file.loc[
+                    downloaded_images_status_file["Slide"] == row["name"], "Status"
+                ] = "Downloaded"
+            except HttpError:
+                # if there was an error (e.g. quota not reached), we record it
+                # and we move on to the next
+                downloaded_images_status_file.loc[
+                    downloaded_images_status_file["Slide"] == row["name"], "Status"
+                ] = "Error during download"
+
             downloaded_images_status_file.to_csv(
                 downloaded_images_status_file_path, index=False
             )
@@ -135,6 +145,8 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
     # We assert we have everything and write it
     if all((downloaded_images_status_file["Status"] == "Downloaded").tolist()):
         write_value_in_config(config_file, "download_complete", True)
+    else:
+        write_value_in_config(config_file, "download_complete", False)
 
 
 if __name__ == "__main__":

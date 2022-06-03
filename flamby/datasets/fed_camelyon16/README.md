@@ -31,6 +31,7 @@ It should not take more than 5 minutes. The important steps are listed below.
 3. Go to Credentials, create an id, then client oauth id  
 4. Choose Web app, go through the steps and **allow URI redirect** towards http://localhost:6006 and http://localhost:6006/ (notice the last backslash)
 5. Retrieve the secrets in JSON by clicking on Download icon at the end of the process.
+6. Enable Google Drive API for this project, by clicking on "API and services" on the left panel
 
 Then copy-paste your secrets to the directory you want:
 
@@ -40,16 +41,18 @@ cp ~/Downloads/code_secret_client_bignumber.apps.googleusercontent.com.json clie
 
 ### Step 2: Downloading the dataset
 
-**If you have ssh to a distant server make sure you do ssh forwarding of the port 6006 onto the port 6006 of your laptop.**
-Make sure you have enough space to hold the dataset (900GB).
+- **Remark 1: If you are downloading on a remote server**, make sure you do ssh forwarding of the port 6006 onto the port 6006 of your laptop.
+- Remark 2 : Make sure you have enough space to hold the dataset (900GB).
+
 Then run:
 
 ```bash
 python download.py --output-folder ./camelyon16_dataset --path-to-secret /path/towards/client_secrets.json --port 6006
 ```
 
-The first time this script is launched, the user will be asked to explicitly allow the app to operate by loging into his/her Google account.
-This will download all of Camelyon's slides in `./camelyon16_dataset`. As there are multiple
+The first time this script is launched, the user will be asked to explicitly allow the app to operate by logging into his/her Google account (hence the need for the port 6006 forwarding in the case of a remote machine without browser).
+
+This script will download all of Camelyon's slides in the output folder. As there are multiple
 slides that are quite big, this script can take a few hours to complete. It can be stopped and
 resumed anytime however if you are ssh into a server better use detached mode (screenrc/tmux/etc.).
 
