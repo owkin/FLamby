@@ -241,7 +241,7 @@ if __name__ == "__main__":
             albumentations.Normalize(always_apply=True),
         ]
     )
-    test_dataset = dataset.FedIsic2019(train=False, pooled=True, augmentations=test_aug)
+    test_dataset = dataset.FedIsic2019(train=False, pooled=True)
     test_dataloader = torch.utils.data.DataLoader(
         test_dataset,
         batch_size=BATCH_SIZE,
