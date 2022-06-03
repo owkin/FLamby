@@ -9,13 +9,13 @@ import random
 
 import albumentations
 import torch
-import torch.nn as nn
 from torch.nn import functional as F
+from torch.nn.modules.loss import _Loss
 
 from flamby.datasets.fed_isic2019 import Baseline, FedIsic2019
 
 
-class BaselineLoss(nn.Module):
+class BaselineLoss(_Loss):
     """Weighted focal loss
     See this [link](https://amaarora.github.io/2020/06/29/FocalLoss.html) for
     a good explanation
@@ -27,9 +27,9 @@ class BaselineLoss(nn.Module):
     examples"
     """
 
-    def __init__(self, alpha=torch.tensor([1, 1, 1, 1, 1, 1, 1, 1]), gamma=2):
+    def __init__(self, alpha=torch.tensor([5.5813, 2.0472, 7.0204, 26.1194, 9.5369, 101.0707, 92.5224, 38.3443]), gamma=2.):
         super(BaselineLoss, self).__init__()
-        self.alpha = alpha
+        self.alpha = alpha.to(torch.float)
         self.gamma = gamma
 
     def forward(self, inputs, targets):
@@ -44,6 +44,7 @@ class BaselineLoss(nn.Module):
         logpt = logpt.gather(1, targets.long())
         logpt = logpt.view(-1)
         pt = logpt.exp()
+        self.alpha = self.alpha.to(targets.device)
         at = self.alpha.gather(0, targets.data.view(-1).long())
         logpt = logpt * at
         loss = -1 * (1 - pt) ** self.gamma * logpt

@@ -49,6 +49,19 @@ These files contain images in **NIFTI** format.
 
 ## IXI Tiny Dataset
 
+### Dataset description
+
+|                    | Dataset description
+|--------------------| -----------------------------------------------------------------------------------------------
+| Description        | Dataset contains data from three different hospitals in London focusing on brain images through MRI.
+| Dataset size       | 941,4 MB
+| Centers            | 3 centers - Guys (Guy’s Hospital), HH (Hammersmith Hospital), IOP (Institute of Psychiatry).
+| Records per center | Guys: 249/62, HH: 145/36, IOP: 59/15 (train/test).
+| Inputs shape       | Image of shape (1, 48, 60, 48).
+| Targets shape      | Image of shape (2, 48, 60, 48).
+| Total nb of points | 566.
+| Task               | Segmentation.
+
 ### Overview
 
 **IXI Tiny** relies on **IXI**, a publicly available dataset of almost 600 subjects. This lighter version made by [TorchIO](https://torchio.readthedocs.io/datasets.html#ixitiny) is focusing on 566 T1-weighted brain MR images and comes with a set of corresponding labels (brain segmentations).
@@ -118,7 +131,7 @@ center1 = FedIXITiny(transform=None, center=1, train=True, pooled=False)
 ```
 
 - 'transform' allows to perform a specific transformation on the brain images (e. g. with the MONAI library).
-- 'center' allows center indexation
+- 'center' allows center indexation, must be in `[0, 1, 2]` or in `['Guys', 'HH', 'IOP']`.
 - 'train', whether we want to load the train or test set
 - 'pooled' loads data from all the centers (overwriting previous center argument)
 

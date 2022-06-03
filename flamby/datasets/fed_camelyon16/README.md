@@ -1,17 +1,19 @@
 ## Camelyon16
 
-
 Camelyon16 as Camelyon17 are open access (CC0), the original dataset is accessible [here](https://camelyon17.grand-challenge.org/Data/).
 We will use the [Google-Drive-API-v3](https://developers.google.com/drive/api/v3/quickstart/python) in order to fetch the slides from the public Google Drive and will then tile the matter using a feature extractor producing a bag of features for each slide.
 
 ## Dataset description
 
-|                   | Dataset description 
-| ----------------- | -----------------------------------------------
-| Description       | This is the dataset from Camelyon16
-| Dataset           | 399 slides with labels (170 (Train) + 89 (Test) slides in Center0 (RUMC), 100 (Train)+ 50 (Test) slides in Center1 (UMCU))
-| Centers           | Original Institutions from which WSIs originate RUMC and UMCU (2)
-| Task              | Weakly Supervised Classification
+|                    | Dataset description
+|--------------------| -----------------------------------------------------------------------------------------------
+| Description        | Dataset from Camelyon16
+| Dataset size       | 900 GB (and 50 GB after features extraction).
+| Centers            | 2 centers - RUMC and UMCU.
+| Records per center | RUMC: 170 (Train) + 89 (Test), UMCU: 100 (Train) + 50 (Test)
+| Inputs shape       | Image of shape (10000, 2048).
+| Total nb of points | 399 slides.
+| Task               | Weakly Supervised (Binary) Classification.
 
 
 ## Download and preprocessing instructions
@@ -44,24 +46,28 @@ resumed anytime however if you are ssh into a server better use detached mode (s
 **IMPORTANT :** If you choose to relocate the dataset after downloading it, it is
 imperative that you run the following script otherwise all subsequent scripts will not find it:
 ```
-python update_config.py --new-path /new/path/towards/dataset
+python update_config.py --new-path /new/path/towards/dataset #adding --debug if you are in debug mode
 ```
 
 
 The next step is to tile the matter on each slide with a feature extractor pretrained on IMAGENET.  
 
-We will use the [histolab package](https://github.com/histolab/histolab) to segment the matter on each slide and torchvision to download a pretrained ResNet50 that will be applied on each tile to convert each slide to a numpy feature.
+We will use the [histolab package](https://github.com/histolab/histolab) to segment the matter on each slide and torchvision to download a pretrained ResNet50 that will be applied on each tile to convert each slide to a bag of numpy features.
+This package requires the installation of [Openslide](https://openslide.org/download/). The associated webpage contains instructions to install it on every major distributions. On Linux simply run:
+```
+sudo apt-get install openslide-tools
+```
 One can chose to remove or not the original slides that take up quite some space to keep only the features (therefore using only approximatively 50G instead of 800).
 Again as extracting the matter on all the slides is a lengthy process this script might take a few hours (and a few days if the tiling is done from scratch). 
 It can also be stopped and resumed anytime and should be preferably run in detached mode.
 This process should be run on an environment with GPU otherwise it might be prohibitively slow.
 
 ```
-python tiling_sides.py --batch-size 64
+python tiling_slides.py --batch-size 64
 ```
 or
 ```
-python tiling_sides.py --batch-size 64 --remove-big-tiff
+python tiling_slides.py --batch-size 64 --remove-big-tiff
 ```
 
 You can check the dataset is ready for use by running:

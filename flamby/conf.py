@@ -106,7 +106,8 @@ def get_strategies(config, learning_rate=None, args={}):
                     "server_learning_rate"
                 ]
             if args["strategy"] == "Cyclic":
-                strategies[args["strategy"]]["deterministic_cycle"] = args.deterministic
+
+                strategies[args["strategy"]]["deterministic_cycle"] = args["deterministic"]
 
     for strategy in strategies.keys():
         if "optimizer_class" in strategies[strategy].keys():
@@ -125,8 +126,12 @@ def get_strategies(config, learning_rate=None, args={}):
     return strategies
 
 
-def get_results_file(config):
-    return Path(config["results_file"])
+
+def get_results_file(config, path=None):
+    if path is None:
+        return Path(config["results_file"])
+    else:
+        return Path(path)
 
 
 if __name__ == "__main__":

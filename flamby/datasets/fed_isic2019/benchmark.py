@@ -45,6 +45,11 @@ def train_model(
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
 
+    print(
+        "Test metric before training",
+        evaluate_model_on_tests(model, [dataloaders["test"]], metric, use_gpu=True),
+    )
+
     for epoch in range(num_epochs):
         print("Epoch {}/{}".format(epoch, num_epochs - 1))
         print("-" * 10)
@@ -98,6 +103,14 @@ def train_model(
                 )
             )
 
+            if phase == "test":
+                print(
+                    "Test metric",
+                    evaluate_model_on_tests(
+                        model, [dataloaders["test"]], metric, use_gpu=True
+                    ),
+                )
+
             # deep copy the model
             if phase == "test" and epoch_balanced_acc > best_acc:
                 best_acc = epoch_balanced_acc
@@ -124,35 +137,18 @@ def main(args):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
     torch.use_deterministic_algorithms(False)
 
-    sz = 200
-    train_aug = albumentations.Compose(
-        [
-            albumentations.RandomScale(0.07),
-            albumentations.Rotate(50),
-            albumentations.RandomBrightnessContrast(0.15, 0.1),
-            albumentations.Flip(p=0.5),
-            albumentations.Affine(shear=0.1),
-            albumentations.RandomCrop(sz, sz),
-            albumentations.CoarseDropout(random.randint(1, 8), 16, 16),
-            albumentations.Normalize(always_apply=True),
-        ]
-    )
-    test_aug = albumentations.Compose(
-        [
-            albumentations.CenterCrop(sz, sz),
-            albumentations.Normalize(always_apply=True),
-        ]
-    )
+    random.seed(0)
+    torch.manual_seed(0)
 
     dict = check_dataset_from_config(dataset_name="fed_isic2019", debug=False)
     input_path = dict["dataset_path"]
     dic = {"model_dest": os.path.join(input_path, "saved_model_state_dict")}
 
-    train_dataset = FedIsic2019(train=True, pooled=True, augmentations=train_aug)
+    train_dataset = FedIsic2019(train=True, pooled=True)
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=args.workers
     )
-    test_dataset = FedIsic2019(train=False, pooled=True, augmentations=test_aug)
+    test_dataset = FedIsic2019(train=False, pooled=True)
     test_dataloader = torch.utils.data.DataLoader(
         test_dataset,
         batch_size=BATCH_SIZE,
@@ -198,6 +194,7 @@ def main(args):
 
     num_epochs = NUM_EPOCHS_POOLED
 
+    t0 = time.time()
     model = train_model(
         model,
         optimizer,
@@ -208,6 +205,8 @@ def main(args):
         lossfunc,
         num_epochs,
     )
+    t1 = time.time()
+    print("calc time in minutes", (t1 - t0) / 60)
 
     script_directory = os.path.abspath(os.path.dirname(__file__))
     dest_file = os.path.join(script_directory, dic["model_dest"])
@@ -242,10 +241,10 @@ if __name__ == "__main__":
             albumentations.Normalize(always_apply=True),
         ]
     )
-    test_dataset = dataset.FedIsic2019(0, True, "test", augmentations=test_aug)
+    test_dataset = dataset.FedIsic2019(train=False, pooled=True, augmentations=test_aug)
     test_dataloader = torch.utils.data.DataLoader(
         test_dataset,
-        batch_size=args.batch,
+        batch_size=BATCH_SIZE,
         shuffle=False,
         num_workers=args.workers,
         drop_last=True,
@@ -257,6 +256,5 @@ if __name__ == "__main__":
     dic = {"model_dest": os.path.join(input_path, "saved_model_state_dict")}
     model.load_state_dict(torch.load(dic["model_dest"]))
     model.eval()
-
     torch.use_deterministic_algorithms(False)
     print(evaluate_model_on_tests(model, [test_dataloader], metric, use_gpu=True))

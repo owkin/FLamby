@@ -1,5 +1,13 @@
-import pandas as pd
+import torch
 
-METADATA_DICT = {"ctscans_dir": "", "labels": pd.DataFrame()}
 NUM_CLIENTS = 4
-NB_MAX_ROUNDS = 20
+NUM_EPOCHS_POOLED = 100
+BATCH_SIZE = 1
+LR = 1e-2
+SEEDS = [42]
+
+Optimizer = torch.optim.Adam
+
+
+def get_nb_max_rounds(num_updates, batch_size=BATCH_SIZE):
+    return (805 // NUM_CLIENTS // batch_size) * NUM_EPOCHS_POOLED // num_updates

@@ -5,7 +5,7 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
-from .utils import DataLoaderWithMemory, _Model
+from flamby.strategies.utils import DataLoaderWithMemory, _Model
 
 
 class Cyclic:

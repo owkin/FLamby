@@ -1,5 +1,6 @@
 # FLamby
- PLACEHOLDER LOGO
+<img src="/docs/logo.png" width="600">
+
 
 ## Table of Contents
 - [Overview](#overview)
@@ -13,7 +14,7 @@
 ## Overview
 FLamby is a benchmark for cross-silo Federated Learning with natural partitioning.
 It spans multiple data modalities and should allow easy interfacing with most
-Federated-Learning frameworks ([FedML](https://github.com/FedML-AI/FedML), [Fed-BioMed](https://gitlab.inria.fr/fedbiomed/fedbiomed), [Substra](https://github.com/Substra/substra), ...). It contains implementations of different
+Federated-Learning frameworks ([Fed-BioMed](https://gitlab.inria.fr/fedbiomed/fedbiomed), [FedML](https://github.com/FedML-AI/FedML), [Substra](https://github.com/Substra/substra), ...). It contains implementations of different
 standard strategies.
 
 The FLamby package contains:
@@ -22,7 +23,7 @@ The FLamby package contains:
 - Evaluation functions to evaluate trained models on the different tracks as defined in the companion paper.
 - Benchmark code using the utilities below to obtain the performances of baselines using different strategies.
 
-It does not contain datasets that have to be downloaded separately.
+It does not contain datasets, which have to be downloaded separately.
 See the section below.
 
 ## Source datasets
@@ -30,6 +31,7 @@ We do not distribute datasets in this repository. **The use of any of the datase
 included in FLamby requires accepting its corresponding license on the original
 website.**
 We do not own copyrights on any of the datasets.
+For any problem or question with respect to any licence related matters please open a github issue on this repository.
 
 
 ## Extending FLamby
@@ -40,7 +42,9 @@ Similarly one can add the results of a new strategy or training algorithm.
 
 ## Installation
 
-We recommend using anaconda and pip. You may need `make` for simplification.
+We recommend using anaconda and pip. You can install anaconda by downloading and executing appropriate installers from the [Anaconda website](https://www.anaconda.com/products/distribution), pip often comes included with python otherwise check [the following instructions](https://pip.pypa.io/en/stable/installation/). We support all Python version starting from **3.7**.  
+
+You may need `make` for simplification.
 create and launch the environment using:
 
 ```bash
@@ -49,6 +53,7 @@ cd FLamby
 make install
 conda activate flamby
 ```
+
 
 ### Update environment
 Use the following command if new dependencies have been added, and you want to update the environment:
@@ -62,21 +67,39 @@ You can install the environment by running:
 git clone https://github.com/owkin/FLamby.git
 cd FLamby
 conda env create -f environment.yml
-conda conda activate flamby
+conda activate flamby
 ```
+
 
 ### Accepting data licensing
 Then proceed to read and accept the different licenses and download the data from
 all the datasets you are interested in by following the instructions provided in each folder:
 - [Fed-Camelyon16](./flamby/datasets/fed_camelyon16/README.md)
-- [Fed-LIDIC-IDRI](./flamby/datasets/fed_lidc_idri/README.md)
+- [Fed-LIDC-IDRI](./flamby/datasets/fed_lidc_idri/README.md)
 - [Fed-ISIC2019](./flamby/datasets/fed_isic2019/README.md)
+- [Fed-TCGA-BRCA](./flamby/datasets/fed_tcga_brca/README.md)
+- [Fed-Heart-Disease](./flamby/datasets/fed_heart_disease/README.md)
+- [Fed-IXITiny](./flamby/datasets/fed_ixi/README.md)
+- [Fed-KITS2019](./flamby/datasets/fed_kits19/README.md)
 
 ## Usage
 
 Look at our tutorials and get started sections.
 #TODO write tutorials and get started sections
 
+## Deploy documentations
+
+We use [sphinx](https://www.sphinx-doc.org/en/master/) to create FLamby's documentation.
+In order to build the doc locally, activate the environment then:
+```bash
+cd docs
+make clean
+make html
+```
+This will generate html pages in the folder _builds/html that can be accessed in your browser:
+```bash
+open _build/html/index.html
+```
 ## Contributing
 
 After installing the package in dev mode (``pip install -e .``)
@@ -94,7 +117,7 @@ Looking and or commenting the open issues is a good way to start. Once you have 
 - Installing pre-commit
 - Creating a new branch following the convention name_contributor/short_explicit_name-wpi: `git checkout -b name_contributor/short_explicit_name-wpi`
 - Potentially pushing the branch to origin with : `git push origin name_contributor/short_explicit_name-wpi`
-- Working on the branch locally by making commits frequently: `git commit -m explicit description of the commit's content`
+- Working on the branch locally by making commits frequently: `git commit -m "explicit description of the commit's content"`
 - Once the branch is ready or after considering you have made significant progresses opening a Pull Request using Github interface, selecting your branch as a source and the target to be the main branch and creating the PR **in draft mode**  after having made **a detailed description of the content of the PR** and potentially linking to related issues.
 Rebasing the branch onto main by doing `git fetch origin` and  `git rebase origin/main`, solving potential conflicts adding the resolved files `git add myfile.py`
 then continuing with `git rebase --continue` until the rebase is complete. Then pushing the branch to origin with `git push origin --force-with-lease`.

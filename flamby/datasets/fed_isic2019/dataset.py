@@ -21,8 +21,6 @@ class Isic2019Raw(torch.utils.data.Dataset):
     centers: list[int], the list for all datacenters for all features
     X_dtype: torch.dtype, the dtype of the X features output
     y_dtype: torch.dtype, the dtype of the y label output
-    train: bool, characterizes if the dataset is used for training or for
-    testing, default True
     augmentations: image transform operations from the albumentations library,
     used for data augmentation
     dic: dictionary containing the paths to the input images and the
@@ -31,7 +29,6 @@ class Isic2019Raw(torch.utils.data.Dataset):
 
     def __init__(
         self,
-        train=True,
         X_dtype=torch.float32,
         y_dtype=torch.int64,
         augmentations=None,
@@ -49,9 +46,7 @@ class Isic2019Raw(torch.utils.data.Dataset):
         }
         self.X_dtype = X_dtype
         self.y_dtype = y_dtype
-        self.train_test = "train" if train else "test"
-        df = pd.read_csv(self.dic["train_test_split"])
-        df2 = df.query("fold == '" + self.train_test + "' ").reset_index(drop=True)
+        df2 = pd.read_csv(self.dic["train_test_split"])
         images = df2.image.tolist()
         self.image_paths = [
             os.path.join(self.dic["input_preprocessed"], image_name + ".jpg")
@@ -92,6 +87,8 @@ class FedIsic2019(Isic2019Raw):
     Attributes
     ----------
     pooled: boolean, characterizes if the dataset is pooled or not
+    train: bool, characterizes if the dataset is used for training or for
+    testing, default True
     center: int, between 0 and 5, designates the datacenter in the case of pooled==False
     """
 
@@ -103,58 +100,82 @@ class FedIsic2019(Isic2019Raw):
         debug=False,
         X_dtype=torch.float32,
         y_dtype=torch.int64,
-        augmentations=None,
     ):
+        sz = 200
+        if train:
+            augmentations = albumentations.Compose(
+                [
+                    albumentations.RandomScale(0.07),
+                    albumentations.Rotate(50),
+                    albumentations.RandomBrightnessContrast(0.15, 0.1),
+                    albumentations.Flip(p=0.5),
+                    albumentations.Affine(shear=0.1),
+                    albumentations.RandomCrop(sz, sz),
+                    albumentations.CoarseDropout(random.randint(1, 8), 16, 16),
+                    albumentations.Normalize(always_apply=True),
+                ]
+            )
+        else:
+            augmentations = albumentations.Compose(
+                [
+                    albumentations.CenterCrop(sz, sz),
+                    albumentations.Normalize(always_apply=True),
+                ]
+            )
 
         super().__init__(
-            train,
             X_dtype=X_dtype,
             y_dtype=y_dtype,
             augmentations=augmentations,
         )
 
         self.center = center
+        self.train_test = "train" if train else "test"
         self.pooled = pooled
-        key = self.train_test + "_" + str(self.center)
+        self.key = self.train_test + "_" + str(self.center)
+        df = pd.read_csv(self.dic["train_test_split"])
+
+        if self.pooled:
+            df2 = df.query("fold == '" + self.train_test + "' ").reset_index(drop=True)
+
         if not self.pooled:
             assert center in range(6)
-            df = pd.read_csv(self.dic["train_test_split"])
-            df2 = df.query("fold2 == '" + key + "' ").reset_index(drop=True)
-            images = df2.image.tolist()
-            self.image_paths = [
-                os.path.join(self.dic["input_preprocessed"], image_name + ".jpg")
-                for image_name in images
-            ]
-            self.targets = df2.target
-            self.centers = df2.center
+            df2 = df.query("fold2 == '" + self.key + "' ").reset_index(drop=True)
+        
+        images = df2.image.tolist()
+        self.image_paths = [
+            os.path.join(self.dic["input_preprocessed"], image_name + ".jpg")
+            for image_name in images
+        ]
+        self.targets = df2.target
+        self.centers = df2.center
 
 
 if __name__ == "__main__":
 
-    sz = 200
-    train_aug = albumentations.Compose(
-        [
-            albumentations.RandomScale(0.07),
-            albumentations.Rotate(50),
-            albumentations.RandomBrightnessContrast(0.15, 0.1),
-            albumentations.Flip(p=0.5),
-            albumentations.Affine(shear=0.1),
-            albumentations.RandomCrop(sz, sz) if sz else albumentations.NoOp(),
-            albumentations.CoarseDropout(random.randint(1, 8), 16, 16),
-            albumentations.Normalize(always_apply=True),
-        ]
-    )
-    test_aug = albumentations.Compose(
-        [
-            albumentations.CenterCrop(sz, sz),
-            albumentations.Normalize(always_apply=True),
-        ]
-    )
-
-    mydataset = FedIsic2019(5, train=False, pooled=True, augmentations=test_aug)
-
+    mydataset = Isic2019Raw()
     print("Example of dataset record: ", mydataset[0])
     print(f"The dataset has {len(mydataset)} elements")
-    for i in range(50):
+    for i in range(10):
         print(f"Size of image {i} ", mydataset[i][0].shape)
         print(f"Target {i} ", mydataset[i][1])
+
+    mydataset = FedIsic2019(train=True, pooled=True)
+    print(len(mydataset))
+    print(f"Size of image 0 ", mydataset[0][0].shape)
+    mydataset = FedIsic2019(train=False, pooled=True)
+    print(len(mydataset))
+    print(f"Size of image 0 ", mydataset[0][0].shape)
+
+    for i in range (6):
+        mydataset = FedIsic2019(center=i, train=True, pooled=False)
+        print(len(mydataset))
+        print(f"Size of image 0 ", mydataset[0][0].shape)
+        mydataset = FedIsic2019(center=i, train=False, pooled=False)
+        print(len(mydataset))
+        print(f"Size of image 0 ", mydataset[0][0].shape)
+    
+    mydataset = FedIsic2019(center=5, train=False, pooled=False)
+    print(len(mydataset))
+    for i in range(11):
+        print(f"Size of image {i} ", mydataset[i][0].shape)
