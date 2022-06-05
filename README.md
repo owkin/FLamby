@@ -57,7 +57,7 @@ conda activate flamby
 ```
 
 If you wish to limit the number of packages to be installed you can use the `enable` argument to specify which dataset(s)
-you want to build required dependencies and if you need to execute the tests and documentation:
+you want to build required dependencies for and if you will need to execute the tests (tests) and build the documentation (docs):
 
 ```bash
 git clone https://github.com/owkin/FLamby.git
