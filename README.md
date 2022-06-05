@@ -56,8 +56,8 @@ make install
 conda activate flamby
 ```
 
-If you wish to limit the number of packages to be installed you can use argument `enable` to specify which dataset(s),
-tests or documentation you wish to make the installation:
+If you wish to limit the number of packages to be installed you can use the `enable` argument to specify which dataset(s)
+you want to build required dependencies and if you need to execute the tests and documentation:
 
 ```bash
 git clone https://github.com/owkin/FLamby.git
@@ -69,7 +69,7 @@ conda activate flamby
 where `option_name` can be one of the following:
 cam16, heart, isic2019, ixi, kits19, lidc, tcga, docs, tests
 
-if you want to use more than one option you can do it using comma (',' followed by no space), eg:
+if you want to use more than one option you can do it using comma (**WARNING:** there should be no space after `,`), eg:
 
 ```bash
 git clone https://github.com/owkin/FLamby.git
@@ -77,9 +77,12 @@ cd FLamby
 make enable=cam16,kits19,tests install
 conda activate flamby
 ```
+Be careful, each command tries to create a conda environment named flamby therefore make install will fail if executed
+numerous times as the flamby environment will already exist. Use make update as explained in the next section if you decide to
+use more datasets than intended originally.
 
 ### Update environment
-Use the following command if new dependencies have been added, and you want to update the environment for all the datasets:
+Use the following command if new dependencies have been added, and you want to update the environment for additional datasets:
 ```bash
 make update
 ```
