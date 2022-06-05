@@ -44,10 +44,8 @@ Similarly one can add the results of a new strategy or training algorithm.
 
 We recommend using anaconda and pip. You can install anaconda by downloading and executing appropriate installers from the [Anaconda website](https://www.anaconda.com/products/distribution), pip often comes included with python otherwise check [the following instructions](https://pip.pypa.io/en/stable/installation/). We support all Python version starting from **3.7**.
 
-You may need `make` for simplification. (Note that this will install the packages used by all the datasets within
-Flamby. If you wish to install only packages for one or more datasets or only for tests or documentation do make with
-the following command).
-create and launch the environment using:
+You may need `make` for simplification. The following command will install all packages used by all datasets within FLamby. If you already know you will only need a fraction of the datasets inside the suite you can do a partial installation and update it along the way using the options described below.
+Create and launch the environment using:
 
 ```bash
 git clone https://github.com/owkin/FLamby.git
@@ -56,7 +54,7 @@ make install
 conda activate flamby
 ```
 
-If you wish to limit the number of packages to be installed you can use the `enable` argument to specify which dataset(s)
+As explained above to limit the number of installed packages you can use the `enable` argument to specify which dataset(s)
 you want to build required dependencies for and if you will need to execute the tests (tests) and build the documentation (docs):
 
 ```bash
