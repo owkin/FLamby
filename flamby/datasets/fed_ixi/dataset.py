@@ -3,8 +3,10 @@ from pathlib import Path
 from typing import Dict, Tuple
 from zipfile import ZipFile
 
+import torch
+import numpy as np
 import pandas as pd
-from monai.transforms import AddChannel, AsDiscrete, Compose, Resize, ToTensor
+from monai.transforms import AddChannel, AsDiscrete, Compose, Resize, ToTensor, NormalizeIntensity
 from torch import Tensor
 from torch.utils.data import Dataset
 
@@ -128,9 +130,12 @@ class IXITinyRaw(Dataset):
             ]
         )
 
+        intensity_transform = Compose([NormalizeIntensity()])
+
         one_hot_transform = Compose([AsDiscrete(to_onehot=2)])
 
         img = default_transform(img)
+        img = intensity_transform(img)
         label = default_transform(label)
         label = one_hot_transform(label)
 
@@ -142,7 +147,7 @@ class IXITinyRaw(Dataset):
 
         if self.transform:
             img = self.transform(img)
-        return img, label
+        return img.to(torch.float32), label
 
     def __len__(self) -> int:
         return len(self.images_paths)

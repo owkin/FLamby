@@ -106,6 +106,7 @@ def get_strategies(config, learning_rate=None, args={}):
                     "server_learning_rate"
                 ]
             if args["strategy"] == "Cyclic":
+
                 strategies[args["strategy"]]["deterministic_cycle"] = args["deterministic"]
 
     for strategy in strategies.keys():
@@ -123,6 +124,7 @@ def get_strategies(config, learning_rate=None, args={}):
             )
             strategies[strategy].pop("learning_rate_scaler")
     return strategies
+
 
 
 def get_results_file(config, path=None):

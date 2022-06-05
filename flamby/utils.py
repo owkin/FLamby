@@ -68,12 +68,10 @@ def evaluate_model_on_tests(
 
 def read_config(config_file):
     """Read a config file in YAML.
-
     Parameters
     ----------
     config_file : str
         Path towards the con fig file in YAML.
-
     Returns
     -------
     dict
@@ -92,14 +90,12 @@ def read_config(config_file):
 
 def get_config_file_path(dataset_name, debug):
     """Get the config_file path in real or debug mode.
-
     Parameters
     ----------
     dataset_name: str
         The name of the dataset to get the config from.
     debug : bool
        The mode in which we download the dataset.
-
     Returns
     -------
     str
@@ -127,7 +123,6 @@ def get_config_file_path(dataset_name, debug):
 def create_config(output_folder, debug, dataset_name="fed_camelyon16"):
     """Create or modify config file by writing the absolute path of \
         output_folder in its dataset_path key.
-
     Parameters
     ----------
     output_folder : str
@@ -136,7 +131,6 @@ def create_config(output_folder, debug, dataset_name="fed_camelyon16"):
         Whether or not we are in debug mode.
     dataset_name: str
         The name of the dataset to get the config from.
-
     Returns
     -------
     Tuple(dict, str)
@@ -169,7 +163,6 @@ def create_config(output_folder, debug, dataset_name="fed_camelyon16"):
 
 def write_value_in_config(config_file, key, value):
     """Update config_file by modifying one of its key with its new value.
-
     Parameters
     ----------
     config_file : str
@@ -197,7 +190,6 @@ def write_value_in_config(config_file, key, value):
 def check_dataset_from_config(dataset_name, debug):
     """Verify that the dataset is ready to be used by reading info from the config
     files.
-
     Parameters
     ----------
     dataset_name: str

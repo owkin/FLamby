@@ -34,6 +34,7 @@ class Baseline(nn.Module):
             monte_carlo_dropout: float = 0,
             ):
         super().__init__()
+        self.CHANNELS_DIMENSION = 1
         depth = num_encoding_blocks - 1
 
         # Force padding if residual blocks
@@ -124,7 +125,9 @@ class Baseline(nn.Module):
         x = self.decoder(skip_connections, encoding)
         if self.monte_carlo_layer is not None:
             x = self.monte_carlo_layer(x)
-        return self.classifier(x)
+        x = self.classifier(x)
+        x = F.softmax(x, dim=self.CHANNELS_DIMENSION)
+        return x
 
 #### Conv ####
 
