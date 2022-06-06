@@ -133,7 +133,7 @@ class Kits19Raw(Dataset):
                 self.images_path[c]["properties_file"]
             )
             c += 1
-
+        self.oversample_next_sample = 0
         self.centers = df2.site_ids
 
     def __len__(self):
@@ -149,14 +149,15 @@ class Kits19Raw(Dataset):
 
         properties = self.images_path[idx]["properties"]
         # randomly oversample the foreground classes
-        coin_flip = np.random.binomial(1, 0.5)
-        if coin_flip == 1:
+        if self.oversample_next_sample == 1:
+            self.oversample_next_sample = 0
             item = self.oversample_foreground_class(
                 case_all_data,
                 True,
                 properties,
             )
         else:
+            self.oversample_next_sample = 1
             item = self.oversample_foreground_class(
                 case_all_data,
                 False,
