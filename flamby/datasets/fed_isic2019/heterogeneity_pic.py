@@ -94,7 +94,36 @@ if __name__ == "__main__":
     #pca = PCA(10)
     #X = pca.fit_transform(X)
 
-    X_reduced = umap.UMAP().fit_transform(X)
 
-    plt.scatter(X_reduced[:, 0], X_reduced[:, 1], c=centers, s=0.5)
-    plt.savefig('heterogeneity_pic.png')
+    #X_reduced = umap.UMAP().fit_transform(X)
+    #plt.scatter(X_reduced[:, 0], X_reduced[:, 1], c=centers, s=0.5)
+    #plt.savefig('heterogeneity_pic.png')
+
+
+    def draw_umap(n_neighbors=15, min_dist=0.1, n_components=2, metric='euclidean'):
+        u = umap.UMAP(n_neighbors=n_neighbors, min_dist=min_dist, n_components=n_components, metric=metric).fit_transform(X)
+        if n_components == 1:
+            fig = plt.figure()
+            ax = fig.add_subplot()
+            plt.scatter(u[:,0], range(len(u)), c=centers, s=0.5)
+        if n_components == 2:
+            fig = plt.figure()
+            ax = fig.add_subplot()
+            plt.scatter(u[:,0], u[:,1], c=centers, s=0.5)
+        if n_components == 3:
+            fig = plt.figure()
+            ax = fig.add_subplot(projection='3d')
+            ax.scatter(u[:,0], u[:,1], u[:,2], c=centers, s=0.5)
+        plt.savefig('heterogeneity_pic_'+str(n_neighbors)+'_'+str(min_dist)+'_'+str(n_components)+'.png')
+
+
+    draw_umap(n_neighbors=5, min_dist=0.0, n_components=1)
+    draw_umap(n_neighbors=5, min_dist=0.0, n_components=2)
+    draw_umap(n_neighbors=5, min_dist=0.0, n_components=3)
+    draw_umap(n_neighbors=250, min_dist=0.5, n_components=1)
+    draw_umap(n_neighbors=250, min_dist=0.5, n_components=2)
+    draw_umap(n_neighbors=250, min_dist=0.5, n_components=3)
+    draw_umap(n_neighbors=1000, min_dist=0.99, n_components=1)
+    draw_umap(n_neighbors=1000, min_dist=0.99, n_components=2)
+    draw_umap(n_neighbors=1000, min_dist=0.99, n_components=3)
+
