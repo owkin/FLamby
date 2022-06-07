@@ -1,7 +1,8 @@
+
 import argparse
 import copy
 import os
-
+import ipdb
 import numpy as np
 import pandas as pd
 import torch
@@ -67,7 +68,9 @@ def main(args_cli):
         config, learning_rate=LR, args=vars(args_cli)
     )
 
-    init_hp_additional_args = ["Test", "Method", "Metric"]
+    nseeds = args_cli.nseeds
+
+    init_hp_additional_args = ["Test", "Method", "Metric", "nseeds"]
     # We need to add strategy hyperparameters columns to the benchmark
     hp_additional_args = []
 
@@ -81,9 +84,6 @@ def main(args_cli):
     # column names used for the results file
     columns_names = init_hp_additional_args + hp_additional_args
 
-    # Use the same initialization for everyone in order to be fair
-    torch.manual_seed(0)
-    global_init = Baseline()
     # Instantiate all train and test dataloaders required including pooled ones
     if dataset_name == "fed_lidc_idri":
         batch_size_test = 1
@@ -118,24 +118,6 @@ def main(args_cli):
 
     nb_local_and_ensemble_xps = (NUM_CLIENTS + int(compute_ensemble_perf)) * (
         NUM_CLIENTS + 1
-    )
-
-    training_dls, test_dls = init_data_loaders(
-        dataset=FedDataset,
-        pooled=False,
-        batch_size=BATCH_SIZE,
-        num_workers=args_cli.workers,
-        num_clients=NUM_CLIENTS,
-        batch_size_test=batch_size_test,
-        collate_fn=collate_fn,
-    )
-    train_pooled, test_pooled = init_data_loaders(
-        dataset=FedDataset,
-        pooled=True,
-        batch_size=BATCH_SIZE,
-        num_workers=args_cli.workers,
-        batch_size_test=batch_size_test,
-        collate_fn=collate_fn,
     )
 
     # Check if some results are already computed
@@ -188,7 +170,7 @@ def main(args_cli):
     # Pooled Baseline
     # Throughout the experiments we only launch training if we do not have the results
     # yet. Note that pooled and local baselines do not use hyperparameters.
-    index_of_interest = df.loc[df["Method"] == "Pooled Training"].index
+    index_of_interest = df.loc[(df["Method"] == "Pooled Training")&(df["nseeds"] == nseeds)].index
     # an experiment is finished if there are num_clients + 1 rows
     if (len(index_of_interest) < (NUM_CLIENTS + 1)) and do_baseline["Pooled"]:
         # dealing with edge case that shouldn't happen
@@ -196,30 +178,62 @@ def main(args_cli):
         if len(index_of_interest) > 0:
             df.drop(index_of_interest, inplace=True)
             perf_lines_dicts = df.to_dict("records")
-        model = copy.deepcopy(global_init)
-        if use_gpu:
-            model.cuda()
-        bloss = BaselineLoss()
-        opt = Optimizer(model.parameters(), lr=LR)
-        print("Pooled")
-        for _ in tqdm(range(NUM_EPOCHS_POOLED)):
-            for X, y in train_pooled:
-                if use_gpu:
-                    # use GPU if requested and available
-                    X = X.cuda()
-                    y = y.cuda()
-                opt.zero_grad()
-                y_pred = model(X)
-                loss = bloss(y_pred, y)
-                loss.backward()
-                opt.step()
 
-        perf_dict = evaluate_func(model, test_dls, metric, use_gpu=use_gpu)
-        pooled_perf_dict = evaluate_func(model, [test_pooled], metric, use_gpu=use_gpu)
+        perf_dicts = []
+        pooled_perf_dicts = []
+
+        for seed in range(nseeds):
+            # The seed will be used to initialize the model and the training batches
+            torch.manual_seed(seed)
+            
+            # Use the same initialization for all strategies in order to be fair
+            global_init = Baseline()
+
+            training_dls, test_dls = init_data_loaders(
+                dataset=FedDataset,
+                pooled=False,
+                batch_size=BATCH_SIZE,
+                num_workers=args_cli.workers,
+                num_clients=NUM_CLIENTS,
+                batch_size_test=batch_size_test,
+                collate_fn=collate_fn,
+            )
+            train_pooled, test_pooled = init_data_loaders(
+                dataset=FedDataset,
+                pooled=True,
+                batch_size=BATCH_SIZE,
+                num_workers=args_cli.workers,
+                batch_size_test=batch_size_test,
+                collate_fn=collate_fn,
+            )
+
+            model = copy.deepcopy(global_init)
+            if use_gpu:
+                model.cuda()
+            bloss = BaselineLoss()
+            opt = Optimizer(model.parameters(), lr=LR)
+            print("Pooled")
+            for _ in tqdm(range(NUM_EPOCHS_POOLED)):
+                for X, y in train_pooled:
+                    if use_gpu:
+                        # use GPU if requested and available
+                        X = X.cuda()
+                        y = y.cuda()
+                    opt.zero_grad()
+                    y_pred = model(X)
+                    loss = bloss(y_pred, y)
+                    loss.backward()
+                    opt.step()
+            perf_dicts.append( evaluate_func(model, test_dls, metric, use_gpu=use_gpu) )
+            pooled_perf_dicts.append( evaluate_func(model, [test_pooled], metric, use_gpu=use_gpu) )
+
+        perf_dict=dict_mean(perf_dicts)
+        pooled_perf_dict=dict_mean(pooled_perf_dicts)
         print("Per-center performance:")
         print(perf_dict)
         print("Performance on pooled test set:")
         print(pooled_perf_dict)
+
         method = "Pooled Training"
         for k, v in perf_dict.items():
             perf_lines_dicts.append(
@@ -230,6 +244,7 @@ def main(args_cli):
                     Method=method,
                     learning_rate=str(LR),
                     optimizer_class=Optimizer,
+                    nseeds=nseeds
                 )
             )
 
@@ -241,11 +256,13 @@ def main(args_cli):
                 Method=method,
                 learning_rate=str(LR),
                 optimizer_class=Optimizer,
+                nseeds=nseeds
             )
         )
         # We update csv and save it when the results are there
         df = pd.DataFrame.from_dict(perf_lines_dicts)
         df.to_csv(results_file, index=False)
+
 
     # Local baselines and ensemble
     y_true_dicts = {}
@@ -254,12 +271,12 @@ def main(args_cli):
     pooled_y_pred_dicts = {}
 
     # We only launch training if it's not finished already.
-    index_of_interest = df.loc[df["Method"] == "Local 0"].index
+    index_of_interest = df.loc[(df["Method"] == "Local 0")&(df["nseeds"] == nseeds)].index
     for i in range(1, NUM_CLIENTS):
         index_of_interest = index_of_interest.union(
-            df.loc[df["Method"] == f"Local {i}"].index
+            df.loc[(df["Method"] == f"Local {i}")&(df["nseeds"] == nseeds)].index
         )
-    index_of_interest = index_of_interest.union(df.loc[df["Method"] == "Ensemble"].index)
+    index_of_interest = index_of_interest.union(df.loc[(df["Method"] == "Ensemble")&(df["nseeds"] == nseeds)].index)
     # This experiment is finished if there are num_clients + 1 rows in each local
     # training and the ensemble training
 
@@ -267,13 +284,8 @@ def main(args_cli):
         # Dealing with edge case that shouldn't happen.
         # If some of the rows are there but not all of them we redo the experiments.
         for i in range(NUM_CLIENTS):
-            m = copy.deepcopy(global_init)
-            if use_gpu:
-                m = m.cuda()
-            bloss = BaselineLoss()
-            opt = Optimizer(m.parameters(), lr=LR)
-            index_of_interest = df.loc[df["Method"] == f"Local {i}"].index
-
+           
+            index_of_interest = df.loc[(df["Method"] == f"Local {i}")&(df["nseeds"] == nseeds)].index
             if (
                 (len(index_of_interest) < (NUM_CLIENTS + 1)) or compute_ensemble_perf
             ) and do_baseline[f"Local {i}"]:
@@ -281,32 +293,74 @@ def main(args_cli):
                     df.drop(index_of_interest, inplace=True)
                     perf_lines_dicts = df.to_dict("records")
                 print("Local " + str(i))
-                for e in tqdm(range(NUM_EPOCHS_POOLED)):
-                    for X, y in training_dls[i]:
-                        if use_gpu:
-                            X = X.cuda()
-                            y = y.cuda()
-                        opt.zero_grad()
-                        y_pred = m(X)
-                        loss = bloss(y_pred, y)
-                        loss.backward()
-                        opt.step()
 
-                (
-                    perf_dict,
-                    y_true_dicts[f"Local {i}"],
-                    y_pred_dicts[f"Local {i}"],
-                ) = evaluate_func(m, test_dls, metric, return_pred=True)
-                (
-                    pooled_perf_dict,
-                    pooled_y_true_dicts[f"Local {i}"],
-                    pooled_y_pred_dicts[f"Local {i}"],
-                ) = evaluate_func(m, [test_pooled], metric, return_pred=True)
+                perf_dicts = []
+                pooled_perf_dicts = []
+
+                for seed in range(nseeds):
+                    # The seed will be used to initialize the model and the training batches
+                    torch.manual_seed(seed)
+                    
+                    # Use the same initialization for all strategies in order to be fair
+                    global_init = Baseline()
+
+                    training_dls, test_dls = init_data_loaders(
+                        dataset=FedDataset,
+                        pooled=False,
+                        batch_size=BATCH_SIZE,
+                        num_workers=args_cli.workers,
+                        num_clients=NUM_CLIENTS,
+                        batch_size_test=batch_size_test,
+                        collate_fn=collate_fn,
+                    )
+                    train_pooled, test_pooled = init_data_loaders(
+                        dataset=FedDataset,
+                        pooled=True,
+                        batch_size=BATCH_SIZE,
+                        num_workers=args_cli.workers,
+                        batch_size_test=batch_size_test,
+                        collate_fn=collate_fn,
+                    )
+
+                    m = copy.deepcopy(global_init)
+                    if use_gpu:
+                        m.cuda()
+                    bloss = BaselineLoss()
+                    opt = Optimizer(m.parameters(), lr=LR)
+
+                    for e in tqdm(range(NUM_EPOCHS_POOLED)):
+                        for X, y in training_dls[i]:
+                            if use_gpu:
+                                X = X.cuda()
+                                y = y.cuda()
+                            opt.zero_grad()
+                            y_pred = m(X)
+                            loss = bloss(y_pred, y)
+                            loss.backward()
+                            opt.step()
+
+                    (
+                        perf_dict,
+                        y_true_dicts[f"Local {i}"],
+                        y_pred_dicts[f"Local {i}"],
+                    ) = evaluate_func(m, test_dls, metric, return_pred=True)
+                    (
+                        pooled_perf_dict,
+                        pooled_y_true_dicts[f"Local {i}"],
+                        pooled_y_pred_dicts[f"Local {i}"],
+                    ) = evaluate_func(m, [test_pooled], metric, return_pred=True)
+
+                    perf_dicts.append(perf_dict)
+                    pooled_perf_dicts.append(pooled_perf_dict)
+
+                perf_dict2 = dict_mean(perf_dicts)
+                pooled_perf_dict2 = dict_mean(pooled_perf_dicts)
                 print("Per-center performance:")
-                print(perf_dict)
+                print(perf_dict2)
                 print("Performance on pooled test set:")
-                print(pooled_perf_dict)
-                for k, v in perf_dict.items():
+                print(pooled_perf_dict2)
+
+                for k, v in perf_dict2.items():
                     # Make sure there is no weird inplace stuff
                     perf_lines_dicts.append(
                         prepare_dict(
@@ -316,22 +370,25 @@ def main(args_cli):
                             Method=f"Local {i}",
                             learning_rate=str(LR),
                             optimizer_class=Optimizer,
+                            nseeds=nseeds
                         )
                     )
                 perf_lines_dicts.append(
                     prepare_dict(
                         keys=columns_names,
                         Test="Pooled Test",
-                        Metric=pooled_perf_dict["client_test_0"],
+                        Metric=pooled_perf_dict2["client_test_0"],
                         Method=f"Local {i}",
                         learning_rate=str(LR),
                         optimizer_class=Optimizer,
+                        nseeds=nseeds
                     )
                 )
                 # We update csv and save it when the results are there
                 df = pd.DataFrame.from_dict(perf_lines_dicts)
                 df.to_csv(results_file, index=False)
 
+# ENSEMBLE NEEDS TO BE RECODED TO TAKE INTO ACCOUNT MULTIPLE SEEDS
         if compute_ensemble_perf:
             print("Computing ensemble performance")
             for testset in range(NUM_CLIENTS):
@@ -396,18 +453,17 @@ def main(args_cli):
     if do_strategy:
         for num_updates in run_num_updates:
             for sname in strategy_specific_hp_dicts.keys():
+
                 # Base arguments
-                m = copy.deepcopy(global_init)
                 bloss = BaselineLoss()
                 args = {
-                    "training_dataloaders": training_dls,
-                    "model": m,
                     "loss": bloss,
                     "optimizer_class": torch.optim.SGD,
                     "learning_rate": LR,
                     "num_updates": num_updates,
                     "nrounds": get_nb_max_rounds(num_updates),
                 }
+
                 strategy_specific_hp_dict = strategy_specific_hp_dicts[sname]
                 # Overwriting arguments with strategy specific arguments
                 for k, v in strategy_specific_hp_dict.items():
@@ -458,7 +514,8 @@ def main(args_cli):
                 else:
                     bool_objects = np.ones((len(df.index), 1)).astype("bool")
 
-                bool_method = df["Method"] == (sname + str(num_updates))
+                bool_method = (df["Method"] == (sname + str(num_updates)))&(df["nseeds"] == nseeds)
+
                 index_of_interest_1 = df.loc[
                     pd.DataFrame(bool_numerical).all(axis=1)
                 ].index
@@ -494,19 +551,61 @@ def main(args_cli):
                         if k in ["mu", "deterministic_cycle"]:
                             basename += "-" + str(k) + str(v)
 
-                    # We run the FL strategy
-                    s = getattr(strats, sname)(
-                        **args, log=args_cli.log, log_basename=basename
-                    )
-                    print("FL strategy", sname, " num_updates ", num_updates)
-                    m = s.run()[0]
+                    perf_dicts = []
+                    pooled_perf_dicts = []
 
-                    perf_dict = evaluate_func(m, test_dls, metric)
-                    pooled_perf_dict = evaluate_func(m, [test_pooled], metric)
+                    for seed in range(nseeds):
+
+                        # The seed will be used to initialize the model and the training batches
+                        torch.manual_seed(seed)
+                        
+                        # Use the same initialization for all strategies in order to be fair
+                        global_init = Baseline()
+
+                        training_dls, test_dls = init_data_loaders(
+                            dataset=FedDataset,
+                            pooled=False,
+                            batch_size=BATCH_SIZE,
+                            num_workers=args_cli.workers,
+                            num_clients=NUM_CLIENTS,
+                            batch_size_test=batch_size_test,
+                            collate_fn=collate_fn,
+                        )
+                        train_pooled, test_pooled = init_data_loaders(
+                            dataset=FedDataset,
+                            pooled=True,
+                            batch_size=BATCH_SIZE,
+                            num_workers=args_cli.workers,
+                            batch_size_test=batch_size_test,
+                            collate_fn=collate_fn,
+                        )
+
+                        m = copy.deepcopy(global_init)
+                        if use_gpu:
+                            m.cuda()
+                        args["training_dataloaders"] = training_dls
+                        args["model"] = m
+
+                        # We run the FL strategy
+                        s = getattr(strats, sname)(
+                            **args, log=args_cli.log, log_basename=basename
+                        )
+                        print("FL strategy", sname, " num_updates ", num_updates)
+                        m = s.run()[0]
+                        
+                        perf_dict = evaluate_func(m, test_dls, metric)
+                        pooled_perf_dict = evaluate_func(m, [test_pooled], metric)
+
+                        perf_dicts.append(perf_dict)
+                        pooled_perf_dicts.append(pooled_perf_dict)
+
+                    perf_dict2 = dict_mean(perf_dicts)
+                    pooled_perf_dict2 = dict_mean(pooled_perf_dicts)
                     print("Per-center performance:")
-                    print(perf_dict)
+                    print(perf_dict2)
                     print("Performance on pooled test set:")
-                    print(pooled_perf_dict)
+                    print(pooled_perf_dict2)
+
                     hyperparams_save = {
                         k: v
                         for k, v in hyperparameters.items()
@@ -520,6 +619,7 @@ def main(args_cli):
                                 Test=k,
                                 Metric=v,
                                 Method=sname + str(num_updates),
+                                nseeds=nseeds,
                                 # We add the hyperparameters used
                                 **hyperparams_save,
                             )
@@ -531,6 +631,7 @@ def main(args_cli):
                             Test="Pooled Test",
                             Metric=pooled_perf_dict["client_test_0"],
                             Method=sname + str(num_updates),
+                            nseeds=nseeds,
                             # We add the hyperparamters used
                             **hyperparams_save,
                         )
@@ -612,6 +713,13 @@ def prepare_dict(keys, allow_new=False, **kwargs):
 
     # create the dictionary from the given keys and fill when appropriate with the kwargs
     return {**dict.fromkeys(keys), **kwargs}
+
+
+def dict_mean(dict_list):
+    mean_dict = {}
+    for key in dict_list[0].keys():
+        mean_dict[key] = sum(d[key] for d in dict_list) / len(dict_list)
+    return mean_dict
 
 
 if __name__ == "__main__":
@@ -716,6 +824,12 @@ if __name__ == "__main__":
         type=int,
         help="Will only be used if --single-centric-baseline Local, will test"
         "only training on Local {nlocal}.",
+    )
+    parser.add_argument(
+        "--nseeds",
+        default=1,
+        type=int,
+        help="Number of seeds the benchmark script will be ran with.",
     )
 
     args = parser.parse_args()
