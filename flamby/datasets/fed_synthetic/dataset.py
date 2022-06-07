@@ -1,10 +1,13 @@
+import os
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import torch
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset
 
-from flamby.datasets.fed_synthetic.synthetic_generator import generate_synthetic_dataset
+from flamby.utils import check_dataset_from_config
 
 
 class SyntheticRaw(Dataset):
@@ -22,9 +25,7 @@ class SyntheticRaw(Dataset):
     debug: bool, Whether or not we use the dataset with only part of the features
     """
 
-    def __init__(
-        self, X_dtype=torch.float32, y_dtype=torch.float32, debug=False, **kwargs
-    ):
+    def __init__(self, X_dtype=torch.float32, y_dtype=torch.float32, debug=False):
         """See description above
         Parameters
         ----------
@@ -45,15 +46,12 @@ class SyntheticRaw(Dataset):
         # dict = check_dataset_from_config("fed_synthetic", debug)
         # self.data_dir = Path(dict["dataset_path"])
 
+        dict = check_dataset_from_config("fed_synthetic", debug)
+        self.data_dir = Path(dict["dataset_path"])
+
         self.X_dtype = X_dtype
         self.y_dtype = y_dtype
         self.debug = debug
-
-        full_df, indices = generate_synthetic_dataset(**kwargs)
-
-        self.n_centers = len(indices)
-        self.n_samples = full_df.shape[0]
-        self.n_features = full_df.shape[1] - 1
 
         self.features = pd.DataFrame()
         self.labels = pd.DataFrame()
@@ -62,9 +60,10 @@ class SyntheticRaw(Dataset):
 
         self.train_fraction = 0.66
 
-        for i, center_indices in enumerate(indices):
+        for center_data_file in self.data_dir.glob("*.data"):
 
-            df = full_df.iloc[center_indices]
+            center_name = os.path.basename(center_data_file).split(".")[0]
+            df = pd.read_csv(center_data_file, header=None)
 
             center_X = df.iloc[:, :-1]
             center_y = df.iloc[:, -1]
@@ -72,7 +71,7 @@ class SyntheticRaw(Dataset):
             self.features = pd.concat((self.features, center_X), ignore_index=True)
             self.labels = pd.concat((self.labels, center_y), ignore_index=True)
 
-            self.centers += [i] * center_X.shape[0]
+            self.centers += [int(center_name)] * center_X.shape[0]
 
             # proposed modification to introduce shuffling before splitting the center
             nb = int(center_X.shape[0])
@@ -108,6 +107,8 @@ class SyntheticRaw(Dataset):
         # keep 0 (no disease) and put 1 for all other values (disease)
         self.labels = torch.from_numpy(self.labels.values).to(self.X_dtype)
 
+        self.center_names = np.unique(self.centers)
+
     def __len__(self):
         return len(self.labels)
 
@@ -137,7 +138,6 @@ class FedSynthetic(SyntheticRaw):
         X_dtype=torch.float32,
         y_dtype=torch.float32,
         debug=False,
-        **kwargs
     ):
         """Instantiate the dataset
         Parameters
@@ -156,12 +156,12 @@ class FedSynthetic(SyntheticRaw):
             `generate_synthetic_dataset`.
         """
 
-        super().__init__(X_dtype=X_dtype, y_dtype=y_dtype, debug=debug, **kwargs)
-        assert center in np.arange(self.n_centers)
+        super().__init__(X_dtype=X_dtype, y_dtype=y_dtype, debug=debug)
+        assert center in self.center_names
 
         self.chosen_centers = [center]
         if pooled:
-            self.chosen_centers = np.arange(self.n_centers)
+            self.chosen_centers = self.center_names
 
         if train:
             self.chosen_sets = ["train"]
