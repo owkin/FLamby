@@ -9,27 +9,27 @@ from flamby.datasets.fed_lidc_idri import FedLidcIdri
 
 def run_plot():
     list_x = np.linspace(0, 1, num=200)
-    for center in [0, 1, 2, 3]:
-        print(f"doing center {center}")
-        ds = FedLidcIdri(
-            train=True,
-            pooled=False,
-            center=center,
-            debug=False,
-        )
-        list_data = []
-        for k in tqdm(range(len(ds))):
-            data = ds[k][0].detach().cpu().ravel()
-            data = data[data > 0.0]
-            data = data[data < 1.0]
-            list_data.append(data)
-        list_data = np.concatenate(list_data)
-        counts, bins, bars = plt.hist(
-            list_data, density=True, bins=list_x, alpha=0.5, label=f"center {k+1}"
-        )
-        np.save("bins.npy", bins)
-        np.save(f"counts_center_{center}.npy", counts)
-    plt.clf()
+    # for center in [0, 1, 2, 3]:
+    #     print(f"doing center {center}")
+    #     ds = FedLidcIdri(
+    #         train=True,
+    #         pooled=False,
+    #         center=center,
+    #         debug=False,
+    #     )
+    #     list_data = []
+    #     for k in tqdm(range(len(ds))):
+    #         data = ds[k][0].detach().cpu().ravel()
+    #         data = data[data > 0.0]
+    #         data = data[data < 1.0]
+    #         list_data.append(data)
+    #     list_data = np.concatenate(list_data)
+    #     counts, bins, bars = plt.hist(
+    #         list_data, density=True, bins=list_x, alpha=0.5, label=f"center {k+1}"
+    #     )
+    #     np.save("bins.npy", bins)
+    #     np.save(f"counts_center_{center}.npy", counts)
+    # plt.clf()
 
     sns.set_theme(style="darkgrid")
 
@@ -47,7 +47,7 @@ def run_plot():
     plt.xlabel("Voxels of intensity...")
     plt.ylabel("Density of voxels")
     plt.legend(prop={"size": 8})
-    plt.savefig("fed_lidc_intensity.pdf")
+    plt.savefig("fed_lidc_intensity_bis.pdf")
     plt.show()
 
 
