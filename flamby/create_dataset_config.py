@@ -20,4 +20,4 @@ if __name__ == "__main__":
     dict, config_file = create_config(args.path, args.debug, args.dataset_name)
     write_value_in_config(config_file, "dataset_path", args.path)
     write_value_in_config(config_file, "download_complete", True)
-    write_value_in_config(config_file, "preprocessing", True)
+    write_value_in_config(config_file, "preprocessing_complete", True)
