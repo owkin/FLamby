@@ -18,8 +18,8 @@
             "server_learning_rate": 0.0031622776601683
         },
         "FedAvg": {
-            "learning_rate": 0.0005,
-            "optimizer_class": "torch.optim.Adam"
+            "learning_rate": 0.01,
+            "optimizer_class": "torch.optim.SGD"
         },
         "FedProx": {
             "learning_rate": 0.01,
