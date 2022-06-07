@@ -403,7 +403,7 @@ def main(args_cli):
                     "training_dataloaders": training_dls,
                     "model": m,
                     "loss": bloss,
-                    "optimizer_class": Optimizer,
+                    "optimizer_class": torch.optim.SGD,
                     "learning_rate": LR,
                     "num_updates": num_updates,
                     "nrounds": get_nb_max_rounds(num_updates),
