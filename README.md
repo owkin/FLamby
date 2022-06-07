@@ -98,7 +98,7 @@ git clone https://github.com/owkin/FLamby.git
 cd FLamby
 conda env create -f environment.yml
 conda activate flamby
-pip install -e .
+pip install -e .[all_extra]
 ```
 
 or if you wish to install the environment for only one or more datasets, tests or documentation:
@@ -148,7 +148,7 @@ open _build/html/index.html
 ```
 ## Contributing
 
-After installing the package in dev mode (``pip install -e .``)
+After installing the package in dev mode (``pip install -e .[all_extra]``)
 You should also initialize ``pre-commit`` by running:
 ```
 pre-commit install
