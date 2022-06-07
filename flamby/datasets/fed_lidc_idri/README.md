@@ -36,6 +36,8 @@ The data is split in a training and testing sets containing 80% and 20% of the a
 This split is stratified according to the centers (the manufacturers of the CT-scan apparatus),
 in order to preserve the distribution of centers of origin within each split. 
 
+Centers (i.e., manufacturers) are encoded using a unique index, as follows: GE MEDICAL SYSTEMS: 0, Philips: 1, SIEMENS: 2, TOSHIBA: 3.
+
 
 ### Downloading and preprocessing
 
