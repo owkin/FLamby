@@ -1,17 +1,19 @@
+import inspect
 import json
 import os
 from glob import glob
 
 import numpy as np
 import pandas as pd
+import torch
 
 dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "flamby", "results")
-breakpoint()
 csv_files = glob(os.path.join(dir_path, "results_*.csv"))
 
 dataset_names = [
     "_".join(csvf.split("/")[-1].split(".")[0].split("_")[2:]) for csvf in csv_files
 ]
+optimizers_classes = [e[1] for e in inspect.getmembers(torch.optim, inspect.isclass)]
 csvs = [pd.read_csv(e) for e in csv_files]
 configs = []
 for dname, csv, csvf in zip(dataset_names, csvs, csv_files):
@@ -49,6 +51,15 @@ for dname, csv, csvf in zip(dataset_names, csvs, csv_files):
             except TypeError:
                 isnan = False
             if not (isnan):
+                has_corresp_opt = [
+                    str(v) == str(opt_class) for opt_class in optimizers_classes
+                ]
+
+                if any(has_corresp_opt):
+                    v = (
+                        "torch.optim."
+                        + optimizers_classes[has_corresp_opt.index(True)].__name__
+                    )
                 config["strategies"][stratname][k] = v
 
         # Match best hyperparameters in original df and keep only those ones
@@ -102,7 +113,7 @@ for dname, csv, csvf in zip(dataset_names, csvs, csv_files):
     ].to_dict("records")
 
     with open(f"config_{dname}.json", "w") as outfile:
-        json.dump(config, outfile)
+        json.dump(config, outfile, indent=4, sort_keys=True)
 
     final_df = pd.DataFrame.from_dict(current_xps_dicts)
     final_df.to_csv(f"results_{dname}_v2.csv", index=False)
