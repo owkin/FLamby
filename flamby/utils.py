@@ -108,6 +108,7 @@ def get_config_file_path(dataset_name, debug):
     assert dataset_name in [
         "fed_camelyon16",
         "fed_heart_disease",
+        "fed_synthetic",
         "fed_isic2019",
         "fed_lidc_idri",
         "fed_ixi",

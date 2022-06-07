@@ -40,25 +40,13 @@ def main(
     use_gpu = torch.cuda.is_available() and not (cpu_only)
 
     training_dl = dl(
-        FedSynthetic(
-            train=True,
-            pooled=True,
-            debug=debug,
-            classification=True,
-            n_features=n_features,
-        ),
+        FedSynthetic(train=True, pooled=True, debug=debug),
         num_workers=num_workers_torch,
         batch_size=BATCH_SIZE,
         shuffle=True,
     )
     test_dl = dl(
-        FedSynthetic(
-            train=False,
-            pooled=True,
-            debug=debug,
-            classification=True,
-            n_features=n_features,
-        ),
+        FedSynthetic(train=False, pooled=True, debug=debug),
         num_workers=num_workers_torch,
         batch_size=BATCH_SIZE,
         shuffle=False,
