@@ -25,7 +25,8 @@ def main(output_folder, debug=False, **kwargs):
     os.makedirs(output_folder, exist_ok=True)
 
     # Erase existing config file
-    os.remove(get_config_file_path("fed_synthetic", debug))
+    if os.path.exists(get_config_file_path("fed_synthetic", debug)):
+        os.remove(get_config_file_path("fed_synthetic", debug))
 
     # Creating config file with path to dataset
     dict, config_file = create_config(output_folder, debug, "fed_synthetic")
