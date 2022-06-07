@@ -6,33 +6,32 @@ import time
 
 import albumentations
 import dataset
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
 import torch
+import torch.nn as nn
+import umap.umap_ as umap
+from efficientnet_pytorch import EfficientNet
 from sklearn import metrics
+from sklearn.decomposition import PCA
 
 from flamby.datasets.fed_isic2019 import (
     BATCH_SIZE,
     LR,
+    NUM_CLIENTS,
     NUM_EPOCHS_POOLED,
     Baseline,
     BaselineLoss,
     FedIsic2019,
     metric,
-    NUM_CLIENTS
 )
 from flamby.utils import check_dataset_from_config, evaluate_model_on_tests
 
-import torch.nn as nn
-from efficientnet_pytorch import EfficientNet
-from flamby.datasets.fed_isic2019 import FedIsic2019
-
-import umap.umap_ as umap
-from sklearn.decomposition import PCA
-import numpy as np
-import matplotlib.pyplot as plt
+sns.set()
 
 
 class model_eff_net_pretrained(nn.Module):
-    
     def __init__(self, pretrained=True, arch_name="efficientnet-b0"):
         super(model_eff_net_pretrained, self).__init__()
         self.pretrained = pretrained
@@ -75,47 +74,94 @@ if __name__ == "__main__":
     model = model.to(device)
     model.eval()
 
-    X = np.empty((0,1280))
-    centers = np.empty((0,1))
-
-    for i in range (NUM_CLIENTS):
+    X = np.empty((0, 1280))
+    centers = np.empty((0, 1))
+    colors = sns.color_palette(
+        "hls", 6
+    )  # ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b']
+    for i in range(NUM_CLIENTS):
         mydataset = FedIsic2019(center=i, train=True, pooled=False)
-        dataloader = torch.utils.data.DataLoader(mydataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=args.workers)
+        dataloader = torch.utils.data.DataLoader(
+            mydataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=args.workers
+        )
         for sample in dataloader:
             inputs = sample[0].to(device)
             with torch.set_grad_enabled(False):
                 outputs = model(inputs)
             X_ = outputs.cpu().detach().clone().numpy()
             X = np.concatenate([X, X_])
-            centers_ = i * np.ones((outputs.shape[0],1))
+            centers_ = i * np.ones((outputs.shape[0], 1))
             centers = np.concatenate([centers, centers_])
 
+    # pca = PCA(10)
+    # X = pca.fit_transform(X)
 
-    #pca = PCA(10)
-    #X = pca.fit_transform(X)
+    # X_reduced = umap.UMAP().fit_transform(X)
+    # plt.scatter(X_reduced[:, 0], X_reduced[:, 1], c=centers, s=0.5)
+    # plt.savefig('heterogeneity_pic.png')
 
-
-    #X_reduced = umap.UMAP().fit_transform(X)
-    #plt.scatter(X_reduced[:, 0], X_reduced[:, 1], c=centers, s=0.5)
-    #plt.savefig('heterogeneity_pic.png')
-
-
-    def draw_umap(n_neighbors=15, min_dist=0.1, n_components=2, metric='euclidean'):
-        u = umap.UMAP(n_neighbors=n_neighbors, min_dist=min_dist, n_components=n_components, metric=metric).fit_transform(X)
+    def draw_umap(n_neighbors=15, min_dist=0.1, n_components=2, metric="euclidean"):
+        print(
+            f"Computing UMAP, NN={n_neighbors}, min dist {min_dist}, ncomponents {n_components}"
+        )
+        u = umap.UMAP(
+            n_neighbors=n_neighbors,
+            min_dist=min_dist,
+            n_components=n_components,
+            metric=metric,
+        ).fit_transform(X)
         if n_components == 1:
             fig = plt.figure()
             ax = fig.add_subplot()
-            plt.scatter(u[:,0], range(len(u)), c=centers, s=0.5)
+            for i in range(NUM_CLIENTS):
+                from_current_center = (centers == i)[:, 0]
+                ax.scatter(
+                    u[from_current_center, 0],
+                    range(from_current_center.sum()),
+                    color=colors[i],
+                    s=0.5,
+                    label=f"Local {i}",
+                )
         if n_components == 2:
             fig = plt.figure()
             ax = fig.add_subplot()
-            plt.scatter(u[:,0], u[:,1], c=centers, s=0.5)
+            for i in range(NUM_CLIENTS):
+                from_current_center = (centers == i)[:, 0]
+                ax.scatter(
+                    u[from_current_center, 0],
+                    u[from_current_center, 1],
+                    color=colors[i],
+                    s=0.5,
+                    label=f"Local {i}",
+                )
+
         if n_components == 3:
             fig = plt.figure()
-            ax = fig.add_subplot(projection='3d')
-            ax.scatter(u[:,0], u[:,1], u[:,2], c=centers, s=0.5)
-        plt.savefig('heterogeneity_pic_'+str(n_neighbors)+'_'+str(min_dist)+'_'+str(n_components)+'.png')
-
+            ax = fig.add_subplot(projection="3d")
+            for i in range(NUM_CLIENTS):
+                from_current_center = (centers == i)[:, 0]
+                ax.scatter(
+                    u[from_current_center, 0],
+                    u[from_current_center, 1],
+                    u[from_current_center, 2],
+                    color=colors[i],
+                    s=0.5,
+                    label=f"Local {i}",
+                )
+        lgnd = plt.legend()
+        for handle in lgnd.legendHandles:
+            handle.set_sizes([10.0])
+        name_fig = (
+            "heterogeneity_pic_"
+            + str(n_neighbors)
+            + "_"
+            + str(min_dist)
+            + "_"
+            + str(n_components)
+            + ".png"
+        )
+        print(f"Saving {name_fig}")
+        plt.savefig(name_fig)
 
     draw_umap(n_neighbors=5, min_dist=0.0, n_components=1)
     draw_umap(n_neighbors=5, min_dist=0.0, n_components=2)
@@ -126,4 +172,3 @@ if __name__ == "__main__":
     draw_umap(n_neighbors=1000, min_dist=0.99, n_components=1)
     draw_umap(n_neighbors=1000, min_dist=0.99, n_components=2)
     draw_umap(n_neighbors=1000, min_dist=0.99, n_components=3)
-
