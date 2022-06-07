@@ -1,11 +1,6 @@
 import argparse
-import copy
 import os
-import random
-import time
 
-import albumentations
-import dataset
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -13,20 +8,12 @@ import torch
 import torch.nn as nn
 import umap.umap_ as umap
 from efficientnet_pytorch import EfficientNet
-from sklearn import metrics
-from sklearn.decomposition import PCA
 
-from flamby.datasets.fed_isic2019 import (
-    BATCH_SIZE,
-    LR,
-    NUM_CLIENTS,
-    NUM_EPOCHS_POOLED,
-    Baseline,
-    BaselineLoss,
-    FedIsic2019,
-    metric,
-)
-from flamby.utils import check_dataset_from_config, evaluate_model_on_tests
+from flamby.datasets.fed_isic2019 import BATCH_SIZE, NUM_CLIENTS, FedIsic2019
+
+# from sklearn import metrics
+# from sklearn.decomposition import PCA
+
 
 sns.set()
 
@@ -102,7 +89,7 @@ if __name__ == "__main__":
 
     def draw_umap(n_neighbors=15, min_dist=0.1, n_components=2, metric="euclidean"):
         print(
-            f"Computing UMAP, NN={n_neighbors}, min dist {min_dist}, ncomponents {n_components}"
+            f"Computing UMAP, NN {n_neighbors}, min d {min_dist}, ncomp {n_components}"
         )
         u = umap.UMAP(
             n_neighbors=n_neighbors,
