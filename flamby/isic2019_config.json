@@ -1,1 +1,40 @@
-{"dataset": "fed_isic2019", "results_file": "results_benchmark_fed_isic2019.csv", "strategies": {"Scaffold": {"optimizer_class": "<class 'torch.optim.sgd.SGD'>", "learning_rate": 0.01, "server_learning_rate": 1.0}, "Cyclic": {"optimizer_class": "<class 'torch.optim.sgd.SGD'>", "learning_rate": 0.0031622776601683, "deterministic_cycle": false}, "FedAdam": {"optimizer_class": "<class 'torch.optim.sgd.SGD'>", "learning_rate": 0.01, "server_learning_rate": 0.0031622776601683}, "FedYogi": {"optimizer_class": "<class 'torch.optim.sgd.SGD'>", "learning_rate": 0.01, "server_learning_rate": 0.0031622776601683}, "FedAvg": {"optimizer_class": "<class 'torch.optim.adam.Adam'>", "learning_rate": 0.0005}, "FedProx": {"optimizer_class": "<class 'torch.optim.sgd.SGD'>", "learning_rate": 0.01, "mu": 0.001}, "FedAdagrad": {"optimizer_class": "<class 'torch.optim.sgd.SGD'>", "learning_rate": 0.01, "server_learning_rate": 0.0316227766016837}}}
+{
+    "dataset": "fed_isic2019",
+    "results_file": "results_benchmark_fed_isic2019.csv",
+    "strategies": {
+        "Cyclic": {
+            "deterministic_cycle": false,
+            "learning_rate": 0.0031622776601683,
+            "optimizer_class": "torch.optim.SGD"
+        },
+        "FedAdagrad": {
+            "learning_rate": 0.01,
+            "optimizer_class": "torch.optim.SGD",
+            "server_learning_rate": 0.0316227766016837
+        },
+        "FedAdam": {
+            "learning_rate": 0.01,
+            "optimizer_class": "torch.optim.SGD",
+            "server_learning_rate": 0.0031622776601683
+        },
+        "FedAvg": {
+            "learning_rate": 0.0005,
+            "optimizer_class": "torch.optim.Adam"
+        },
+        "FedProx": {
+            "learning_rate": 0.01,
+            "mu": 0.001,
+            "optimizer_class": "torch.optim.SGD"
+        },
+        "FedYogi": {
+            "learning_rate": 0.01,
+            "optimizer_class": "torch.optim.SGD",
+            "server_learning_rate": 0.0031622776601683
+        },
+        "Scaffold": {
+            "learning_rate": 0.01,
+            "optimizer_class": "torch.optim.SGD",
+            "server_learning_rate": 1.0
+        }
+    }
+}
