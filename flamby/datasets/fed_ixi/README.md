@@ -54,7 +54,7 @@ These files contain images in **NIFTI** format.
 |                    | Dataset description
 |--------------------| -----------------------------------------------------------------------------------------------
 | Description        | Dataset contains data from three different hospitals in London focusing on brain images through MRI.
-| Dataset size       | 941,4 MB
+| Dataset size       | 444 MB
 | Centers            | 3 centers - Guys (Guy’s Hospital), HH (Hammersmith Hospital), IOP (Institute of Psychiatry).
 | Records per center | Guys: 249/62, HH: 145/36, IOP: 59/15 (train/test).
 | Inputs shape       | Image of shape (1, 48, 60, 48).
