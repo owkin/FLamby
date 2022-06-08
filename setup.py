@@ -100,8 +100,6 @@ setup(
         "torch",
         "torchvision",
         "tqdm",
-        "wget",
-        "xlrd",
         "umap-learn"
     ],
     extras_require={
