@@ -60,6 +60,8 @@ class HeartDiseaseRaw(Dataset):
             df = pd.read_csv(center_data_file, header=None)
             df = df.replace("?", np.NaN).drop([10, 11, 12], axis=1).dropna(axis=0)
 
+            df = df.apply(pd.to_numeric)
+
             center_X = df.iloc[:, :-1]
             center_y = df.iloc[:, -1]
 
