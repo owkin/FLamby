@@ -46,33 +46,44 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 #     df = pd.DataFrame({"Method": methods, "Metric": metrics, "Test": tests})
 #     df.to_csv(os.path.join(dir_path, f"results_benchmark_{name}.csv"), index=False)
 
-# ugly but needed to fix the order of the plots quickly
-# csv_files = glob(os.path.join(dir_path, "results_*.csv"))
-csv_files = [
+# dataset where only one seed was used for simulations
+# For lidc, filename should be fed_lidc_idri
+csv_files_one_seed = [
             os.path.join(dir_path, "results_benchmark_fed_camelyon16.csv"),
             os.path.join(dir_path, "results_benchmark_fed_lidc_idri.csv"),
-            os.path.join(dir_path, "results_benchmark_fed_ixi.csv"),
             os.path.join(dir_path, "results_benchmark_fed_tcga_brca.csv"),
             os.path.join(dir_path, "results_benchmark_fed_kits19.csv"),
-            os.path.join(dir_path, "results_benchmark_fed_isic2019.csv"),
-            os.path.join(dir_path, "results_benchmark_fed_heart_disease.csv"),
             ]
-
-# Assumes the csv file name follows results_benchmark_fed_my_dataset convention will probably break for IXITiny make sure filename has fed_ixi
 # For lidc, filename should be fed_lidc_idri
 dataset_names = [
-    "_".join(csvf.split("/")[-1].split(".")[0].split("_")[2:]) for csvf in csv_files
+    "_".join(csvf.split("/")[-1].split(".")[0].split("_")[2:]) for csvf in csv_files_one_seed
 ]
-results = [pd.read_csv(csvf) for csvf in csv_files]
+results = [pd.read_csv(csvf) for csvf in csv_files_one_seed]
 
+# datasets where only several seeds were used for simulations
+# For isic, ixi and heart, directory names should be as below
+dirs_multiple_seeds = [
+            os.path.join(dir_path, "results_benchmark_fed_ixi"),
+            os.path.join(dir_path, "results_benchmark_fed_isic2019"),
+            os.path.join(dir_path, "results_benchmark_fed_heart_disease"),
+            ]
+for dir in dirs_multiple_seeds:
+    csv_files = [os.path.join(dir,f) for f in os.listdir(dir)]
+    result_pds = [pd.read_csv(f) for f in csv_files]
+    df = pd.concat(result_pds, ignore_index=True)
+    results.append(df)
+    dataset_names.append( "_".join(dir.split("/")[-1].split(".")[0].split("_")[2:]) )
+
+# reorder the charts to match paper
+order = [0, 1, 4, 2, 3, 5, 6]
+results = [results[i] for i in order]
+dataset_names = [dataset_names[i] for i in order]
 
 fig, axs = plt.subplots(2, 4, sharey=True, figsize=(40, 13), dpi=80)
 # Keep Room for Strategy labels
-#fig.subplots_adjust(hspace=0.5)
 fig.subplots_adjust(hspace=5.0)
 flattened_axs = axs.flatten()
 
-#palette = sns.color_palette("hls", 14)
 palette = sns.color_palette("mako")
 for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)):
     # Remove pooled results
@@ -116,7 +127,6 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
         data=res,
         order=current_methods_display,
         capsize=0.05,
-        #saturation=8,
         saturation=2,
         errcolor="gray",
         errwidth=2,
