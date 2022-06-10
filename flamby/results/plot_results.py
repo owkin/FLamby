@@ -46,24 +46,15 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 #     df = pd.DataFrame({"Method": methods, "Metric": metrics, "Test": tests})
 #     df.to_csv(os.path.join(dir_path, f"results_benchmark_{name}.csv"), index=False)
 
-# dataset where only one seed was used for simulations
-# For lidc, filename should be fed_lidc_idri
-csv_files_one_seed = [
-            os.path.join(dir_path, "results_benchmark_fed_camelyon16.csv"),
-            os.path.join(dir_path, "results_benchmark_fed_lidc_idri.csv"),
-            os.path.join(dir_path, "results_benchmark_fed_tcga_brca.csv"),
-            os.path.join(dir_path, "results_benchmark_fed_kits19.csv"),
-            ]
-# For lidc, filename should be fed_lidc_idri
-dataset_names = [
-    "_".join(csvf.split("/")[-1].split(".")[0].split("_")[2:]) for csvf in csv_files_one_seed
-]
-results = [pd.read_csv(csvf) for csvf in csv_files_one_seed]
-
-# datasets where only several seeds were used for simulations
-# For isic, ixi and heart, directory names should be as below
+dataset_names = []
+results =[]
+# directory names should be as below
 dirs_multiple_seeds = [
+            os.path.join(dir_path, "results_benchmark_fed_camelyon16"),
+            os.path.join(dir_path, "results_benchmark_fed_lidc_idri"),
             os.path.join(dir_path, "results_benchmark_fed_ixi"),
+            os.path.join(dir_path, "results_benchmark_fed_tcga_brca"),
+            os.path.join(dir_path, "results_benchmark_fed_kits19"),
             os.path.join(dir_path, "results_benchmark_fed_isic2019"),
             os.path.join(dir_path, "results_benchmark_fed_heart_disease"),
             ]
@@ -73,11 +64,6 @@ for dir in dirs_multiple_seeds:
     df = pd.concat(result_pds, ignore_index=True)
     results.append(df)
     dataset_names.append( "_".join(dir.split("/")[-1].split(".")[0].split("_")[2:]) )
-
-# reorder the charts to match paper
-order = [0, 1, 4, 2, 3, 5, 6]
-results = [results[i] for i in order]
-dataset_names = [dataset_names[i] for i in order]
 
 fig, axs = plt.subplots(2, 4, sharey=True, figsize=(40, 13), dpi=80)
 # Keep Room for Strategy labels
