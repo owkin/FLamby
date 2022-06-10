@@ -43,4 +43,4 @@ kms = [
     for idx, y in enumerate(local_ys)
 ]
 [km.plot() for km in kms]
-plt.savefig("local_kms.png")
+plt.savefig("local_kms.png", dpi=600)

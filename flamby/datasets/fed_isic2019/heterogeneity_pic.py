@@ -121,6 +121,8 @@ if __name__ == "__main__":
                     s=0.5,
                     label=f"Local {i}",
                 )
+            plt.xlabel("Umap dimension 1")
+            plt.ylabel("Umap dimension 2")
 
         if n_components == 3:
             fig = plt.figure()
@@ -147,15 +149,26 @@ if __name__ == "__main__":
             + str(n_components)
             + ".png"
         )
+        name_fig_2 = (
+            "heterogeneity_pic_"
+            + str(n_neighbors)
+            + "_"
+            + str(min_dist)
+            + "_"
+            + str(n_components)
+            + ".eps"
+        )
         print(f"Saving {name_fig}")
         plt.savefig(name_fig)
+        plt.savefig(name_fig_2)
 
-    draw_umap(n_neighbors=5, min_dist=0.0, n_components=1)
-    draw_umap(n_neighbors=5, min_dist=0.0, n_components=2)
-    draw_umap(n_neighbors=5, min_dist=0.0, n_components=3)
-    draw_umap(n_neighbors=250, min_dist=0.5, n_components=1)
+
+    #draw_umap(n_neighbors=5, min_dist=0.0, n_components=1)
+    #draw_umap(n_neighbors=5, min_dist=0.0, n_components=2)
+    #draw_umap(n_neighbors=5, min_dist=0.0, n_components=3)
+    #draw_umap(n_neighbors=250, min_dist=0.5, n_components=1)
     draw_umap(n_neighbors=250, min_dist=0.5, n_components=2)
-    draw_umap(n_neighbors=250, min_dist=0.5, n_components=3)
-    draw_umap(n_neighbors=1000, min_dist=0.99, n_components=1)
-    draw_umap(n_neighbors=1000, min_dist=0.99, n_components=2)
-    draw_umap(n_neighbors=1000, min_dist=0.99, n_components=3)
+    #draw_umap(n_neighbors=250, min_dist=0.5, n_components=3)
+    #draw_umap(n_neighbors=1000, min_dist=0.99, n_components=1)
+    #draw_umap(n_neighbors=1000, min_dist=0.99, n_components=2)
+    #draw_umap(n_neighbors=1000, min_dist=0.99, n_components=3)
