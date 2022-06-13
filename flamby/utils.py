@@ -59,8 +59,9 @@ def evaluate_model_on_tests(
             y_true_final = np.concatenate(y_true_final)
             y_pred_final = np.concatenate(y_pred_final)
             results_dict[f"client_test_{i}"] = metric(y_true_final, y_pred_final)
-            y_true_dict[f"client_test_{i}"] = y_true_final
-            y_pred_dict[f"client_test_{i}"] = y_pred_final
+            if return_pred:
+                y_true_dict[f"client_test_{i}"] = y_true_final
+                y_pred_dict[f"client_test_{i}"] = y_pred_final
     if return_pred:
         return results_dict, y_true_dict, y_pred_dict
     else:

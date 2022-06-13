@@ -1,5 +1,5 @@
 {
-  "results_file": "./results/results_benchmark_fed_tcga_brca.csv",
+  "results_file": "./results/test_tcga.csv",
   "dataset": "fed_tcga_brca",
   "strategies": {
     "FedAvg": {
