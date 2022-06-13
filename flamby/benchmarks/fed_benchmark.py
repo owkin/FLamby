@@ -14,12 +14,12 @@ from flamby.benchmarks.benchmark_utils import (
     init_data_loaders,
     init_xp_plan,
     set_dataset_specific_config,
+    get_logfile_name_from_strategy,
     train_single_centric,
 )
 from flamby.benchmarks.conf import (
     check_config,
     get_dataset_args,
-    get_logfile_name_from_strategy,
     get_results_file,
     get_strategies,
 )
