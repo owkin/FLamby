@@ -147,3 +147,31 @@ As a first approach, what we can do with the **IXI Tiny** dataset is to set up a
 Create a model which take T1 image as input and predict the binary mask of the brain (label). This process allows us to isolate the brain from the other head components, such as the eyes, skin, and fat.
 
 We will use a UNet model (a kind of convolution neural network architecture with few changes), very popular in biomedical segmentation. UNet is specifically used to perform semantic segmentation, meaning that each voxel of our volume will be classified. We can also refer this task as a dense prediction.
+
+Here are some information to give an insight into how the prediction is set up:
+
+**Loss and metric formulas** : We use the DICE loss calculated the following way : `DICE_loss = 1 - DICE_score = 1 - (2 * TP / (2 * TP + FP + FN + epsilon))` and take the DICE score for the performance metric.
+
+**UNet final hyperparameters** :
+```python
+in_channels: int = 1,
+out_classes: int = 2,
+dimensions: int = 3,
+num_encoding_blocks: int = 3,
+out_channels_first_layer: int = 8,
+normalization: Optional[str] = "batch",
+pooling_type: str = "max",
+upsampling_type: str = "linear",
+preactivation: bool = False,
+residual: bool = False,
+padding: int = 1,
+padding_mode: str = "zeros",
+activation: Optional[str] = "PReLU",
+initial_dilation: Optional[int] = None,
+dropout: float = 0,
+monte_carlo_dropout: float = 0
+```
+
+**Batch size** : 2
+
+**Learning rate** : 0.001 (AdamW optimizer)
