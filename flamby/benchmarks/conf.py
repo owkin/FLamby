@@ -162,6 +162,8 @@ def get_strategies(config, learning_rate=None, args={}):
         ), f"The parameter.s {non_compatible_parameters} is/are not"
         "compatible with the strategy's signature. "
         f"Please check the {sname} strategy documentation."
+
+        # We occasionally apply the scaler
         if ("learning_rate" in sparams) and ("learning_rate_scaler" in sparams):
             raise ValueError(
                 "Cannot provide both a leraning rate and a learning rate scaler."
@@ -173,6 +175,10 @@ def get_strategies(config, learning_rate=None, args={}):
                 else sparams.pop("learning_rate_scaler")
             )
             strategies[sname]["learning_rate"] = learning_rate * float(scaler)
+
+        if "optimizer_class" in sparams:
+            strategies[sname]["optimizer_class"] = eval(sparams.pop("optimizer_class"))
+
         if (sname == "FedProx") and "mu" not in sparams:
             raise ValueError("If using FedProx you should provide a value for mu.")
 

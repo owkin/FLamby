@@ -47,6 +47,7 @@ def fill_df_with_xp_results(
             len(perf_dict) == 1
         ), "Your pooled perf dict has multiple keys this is impossible."
         perf_dict["Pooled Test"] = perf_dict.pop(list(perf_dict)[0])
+
     for k, v in perf_dict.items():
         perf_lines_dicts.append(
             prepare_dict(
@@ -106,7 +107,7 @@ def find_xps_in_df(df, hyperparameters, sname, num_updates):
         "FedAdam",
         "FedAdagrad",
         "FedYogi",
-    ], f"Strategy nae {sname} not recognized."
+    ], f"Strategy name {sname} not recognized."
     found_xps = df[list(hyperparameters)]
 
     # Different types of data need different matching strategy
@@ -114,7 +115,6 @@ def find_xps_in_df(df, hyperparameters, sname, num_updates):
     col_numericals = found_xps_numerical.columns
     col_objects = [c for c in found_xps.columns if not (c in col_numericals)]
 
-    breakpoint()
     # Special cases for boolean parameters
     if "deterministic_cycle" in found_xps_numerical.columns:
         found_xps_numerical["deterministic_cycle"] = (
@@ -255,6 +255,7 @@ def get_logfile_name_from_strategy(dataset_name, sname, num_updates, args):
             basename += "-" + "".join([e[0] for e in str(k).split("_")]) + str(v)
         if k in ["mu", "deterministic_cycle"]:
             basename += "-" + str(k) + str(v)
+    return basename
 
 
 def evaluate_model_on_local_and_pooled_tests(
