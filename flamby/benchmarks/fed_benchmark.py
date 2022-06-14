@@ -87,7 +87,7 @@ def main(args_cli):
         config, learning_rate=LR, args=vars(args_cli)
     )
     pooled_hyperparameters = {"optimizer_class": Optimizer, "learning_rate": LR}
-    main_columns_names = ["Test", "Method", "Metric", "learning_rate", "optimizer_class"]
+    main_columns_names = ["Test", "Method", "Metric"]
 
     # We might need to dynamically add additional parameters to the csv columns
     hp_additional_args = []
