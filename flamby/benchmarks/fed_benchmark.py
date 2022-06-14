@@ -94,16 +94,16 @@ def main(args_cli):
     main_columns_names = ["Test", "Method", "Metric", "seed"]
 
     # We might need to dynamically add additional parameters to the csv columns
-    hp_additional_args = []
+    all_strategies_args = []
     # get all hparam names from all the strategies used
     for strategy in strategy_specific_hp_dicts.values():
-        hp_additional_args += [
+        all_strategies_args += [
             arg_names
             for arg_names in strategy.keys()
-            if arg_names not in hp_additional_args
+            if arg_names not in all_strategies_args
         ]
     # column names used for the results file
-    columns_names = list(set(main_columns_names + hp_additional_args))
+    columns_names = list(set(main_columns_names + all_strategies_args))
 
     evaluate_func, batch_size_test, compute_ensemble_perf = set_dataset_specific_config(
         dataset_name, compute_ensemble_perf=True
@@ -336,14 +336,14 @@ def main(args_cli):
                     "num_updates": num_updates,
                     "nrounds": nrounds_list[idx],
                 }
-                # We overwritre defaults with new hyperparameters from config
+                # We overwrite defaults with new hyperparameters from config
                 strategy_specific_hp_dict = strategy_specific_hp_dicts[sname]
                 # Overwriting arguments with strategy specific arguments
                 for k, v in strategy_specific_hp_dict.items():
                     args[k] = v
                 # We fill the hyperparameters dict for later use in filling the csv by filling missing column with nans
                 hyperparameters = {}
-                for k in hp_additional_args:
+                for k in all_strategies_args:
                     if k in args:
                         hyperparameters[k] = args[k]
                     else:
