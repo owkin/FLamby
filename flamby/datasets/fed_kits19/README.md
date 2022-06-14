@@ -45,7 +45,9 @@ The commands for data download
 git clone https://github.com/neheller/kits19
 ```
 
-2. Run the following commands to download the dataset. Make sure you have ~30GB space available.
+2. Proceed to read and accept the license and data terms
+
+3. Run the following commands to download the dataset. Make sure you have ~30GB space available.
 ```bash
 cd kits19
 pip3 install -r requirements.txt
@@ -53,7 +55,7 @@ python3 -m starter_code.get_imaging
 ```
 These commands will populate the data folder (given in the kits19 repository) with the imaging data. 
 
-3. To configure the KiTS19 data path so that it can be accessed by the Flamby library, run the following command in the directory `flamby/datasets/fed_kits19/dataset_creation_scripts/`,
+4. To configure the KiTS19 data path so that it can be accessed by the Flamby library, run the following command in the directory `flamby/datasets/fed_kits19/dataset_creation_scripts/`,
 ```bash
 python3 create_config.py --output_folder "path_towards_kits19_repository" 
 ```

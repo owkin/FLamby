@@ -11,7 +11,7 @@ from googleapiclient.http import MediaIoBaseDownload
 from tqdm import tqdm
 
 import flamby.datasets.fed_camelyon16.dataset_creation_scripts as dl_module
-from flamby.utils import create_config, write_value_in_config
+from flamby.utils import accept_license, create_config, write_value_in_config
 
 SLIDES_LINKS_FOLDER = os.path.dirname(dl_module.__file__)
 
@@ -32,9 +32,11 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
         Whether or not to download only a few images to check feasibility,
         by default False
     """
+    accept_license("https://camelyon17.grand-challenge.org/Data/")
     if debug:
         print(
-            "WARNING YOU ARE DOWNLOADING ONLY PART OF THE DATASET YOU ARE IN DEBUG MODE !"
+            "WARNING YOU ARE DOWNLOADING ONLY PART OF THE DATASET YOU ARE"
+            " IN DEBUG MODE !"
         )
     train_df = pd.read_csv(
         str(Path(SLIDES_LINKS_FOLDER) / Path("training_slides_links_drive.csv"))
@@ -87,7 +89,7 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
         port=port,
     )
     regex = "(?<=https://drive.google.com/file/d/)[a-zA-Z0-9]+"
-    # Resourcekey is now mandatory, thanks Kris from: https://stackoverflow.com/questions/71343002/downloading-files-from-public-google-drive-in-python-scoping-issues
+    # Resourcekey is now mandatory (credit @Kris in: https://stackoverflow.com/questions/71343002/downloading-files-from-public-google-drive-in-python-scoping-issues)
     regex_rkey = "(?<=resourcekey=).+"
     for current_df in [train_df, test_df]:
         for i in tqdm(range(len(current_df.index))):

@@ -4,6 +4,8 @@ from pathlib import Path
 import pandas as pd
 import torch
 
+from flamby.utils import accept_license
+
 
 class TcgaBrcaRaw(torch.utils.data.Dataset):
     """Pytorch dataset containing all the clinical features and (event, time)
@@ -20,7 +22,9 @@ class TcgaBrcaRaw(torch.utils.data.Dataset):
     """
 
     def __init__(self, X_dtype=torch.float32, y_dtype=torch.float32):
-
+        accept_license(
+            "https://gdc.cancer.gov/access-data/data-access-processes-and-tools"
+        )
         input_path = Path(os.path.realpath(__file__)).parent.resolve()
         self.dic = {
             "input_preprocessed": os.path.join(input_path, "brca.csv"),
@@ -105,16 +109,15 @@ if __name__ == "__main__":
     print(len(mydataset))
     print("Example of dataset record: ", mydataset[0])
 
-    for i in range (6):
+    for i in range(6):
         mydataset = FedTcgaBrca(center=i, train=True, pooled=False)
         print(len(mydataset))
         print("Example of dataset record: ", mydataset[0])
         mydataset = FedTcgaBrca(center=i, train=False, pooled=False)
         print(len(mydataset))
         print("Example of dataset record: ", mydataset[0])
-    
+
     mydataset = FedTcgaBrca(center=5, train=False, pooled=False)
     print(len(mydataset))
     for i in range(11):
         print("Example of dataset record: ", mydataset[i])
-
