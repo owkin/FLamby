@@ -1,5 +1,10 @@
 # TCGA-BRCA
-The dataset used in this repo comes from [The Cancer Genome Atlas (TCGA)](https://www.cancer.gov/about-nci/organization/ccg/research/structural-genomics/tcga). We selected one single cancer type: Breast Invasive Carcinoma (BRCA) and only use clinical tabular data. We use data preprocessed by the authors of this [article](https://arxiv.org/pdf/2006.08997.pdf) i.e. a subset of the features in the raw TCGA-BRCA dataset (categorical variables are one-hot encoded).
+The dataset used in this repo comes from [The Cancer Genome Atlas (TCGA)](https://www.cancer.gov/about-nci/organization/ccg/research/structural-genomics/tcga) from [the GDC data portal](https://portal.gdc.cancer.gov/). 
+The data terms can be found [here](https://gdc.cancer.gov/access-data/data-access-processes-and-tools).
+We do not guarantee that the use of this data can be done freely by the user. As such it is mandatory that one should check the applicability of the licence associated with this data before using it.
+
+
+We selected one single cancer type: Breast Invasive Carcinoma (BRCA) and only use clinical tabular data. We use data preprocessed by the authors of this [article](https://arxiv.org/pdf/2006.08997.pdf) i.e. a subset of the features in the raw TCGA-BRCA dataset (categorical variables are one-hot encoded).
 
 
 ## Dataset description
