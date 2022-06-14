@@ -4,7 +4,13 @@ The data terms can be found [here](https://gdc.cancer.gov/access-data/data-acces
 We do not guarantee that the use of this data can be done freely by the user. As such it is mandatory that one should check the applicability of the licence associated with this data before using it.
 
 
-We selected one single cancer type: Breast Invasive Carcinoma (BRCA) and only use clinical tabular data. We use data preprocessed by the authors of this [article](https://arxiv.org/pdf/2006.08997.pdf) i.e. a subset of the features in the raw TCGA-BRCA dataset (categorical variables are one-hot encoded).
+We selected one single cancer type: Breast Invasive Carcinoma (BRCA) and only use clinical tabular data. We replicate the preprocessing used by [Andreux et al.](https://arxiv.org/pdf/2006.08997.pdf) from data originally computed from TCGA by [Liu et al.](https://pubmed.ncbi.nlm.nih.gov/29625055/):
+
+Liu J, Lichtenberg T, Hoadley KA, Poisson LM, Lazar AJ, Cherniack AD, Kovatich AJ, Benz CC, Levine DA, Lee AV, Omberg L, Wolf DM, Shriver CD, Thorsson V; Cancer Genome Atlas Research Network, Hu H. An Integrated TCGA Pan-Cancer Clinical Data Resource to Drive High-Quality Survival Outcome Analytics. Cell. 2018 Apr 5;173(2):400-416.e11. doi: 10.1016/j.cell.2018.02.052. PMID: 29625055; PMCID: PMC6066282.
+
+Andreux, M., Manoel, A., Menuet, R., Saillard, C., and Simpson, C., “Federated Survival Analysis with Discrete-Time Cox Models”, <i>arXiv e-prints</i>, 2020.
+
+i.e. a subset of the features in the raw TCGA-BRCA dataset (categorical variables are one-hot encoded).
 
 
 ## Dataset description
