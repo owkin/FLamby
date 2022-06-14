@@ -6,7 +6,7 @@ import sys
 import pandas as pd
 import wget
 
-from flamby.utils import create_config, write_value_in_config
+from flamby.utils import accept_license, create_config, write_value_in_config
 
 
 def main(output_folder, debug=False):
@@ -19,6 +19,7 @@ def main(output_folder, debug=False):
     """
 
     # location of the files in the UCI archive
+    accept_license("https://archive-beta.ics.uci.edu/ml/datasets/heart+disease")
     base_url = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/"
     centers = ["cleveland", "hungarian", "switzerland", "va"]
     md5_hashes = [

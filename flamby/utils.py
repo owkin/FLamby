@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -243,3 +244,37 @@ def check_dataset_from_config(dataset_name, debug):
             "before use"
         )
     return dict
+
+
+def accept_license(license_link):
+    """This function forces the user to accept the license terms before
+    proceeding with the download.
+
+    Parameters
+    ----------
+    license_link : str
+        _description_
+    """
+    while True:
+        answer = input(
+            "Have you taken the time to read and accept the data terms on the"
+            " original website, available at the following link: "
+            f"{license_link} ? | (y/n)\n\n\n"
+        )
+        if any(answer.lower() == f for f in ["yes", "y", "1", "ye"]):
+            print("You may now proceed to download.\n")
+            break
+
+        elif any(answer.lower() == f for f in ["no", "n", "0"]):
+            print(
+                "Since you have not read and accepted the license terms the "
+                "download of the dataset is aborted. Please come back when you"
+                "have fulfilled this legal obligation."
+            )
+            sys.exit()
+        else:
+            print(
+                "If you wish to proceed with the download you need to read and"
+                " accept the license and data terms of the original data owners."
+                "Please read and accept the terms and answer yes.\n\n\n"
+            )

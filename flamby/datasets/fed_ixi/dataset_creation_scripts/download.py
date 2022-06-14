@@ -1,17 +1,21 @@
 import argparse
-import requests
-import shutil
-import zipfile
 import os
+import shutil
 import sys
-
+import zipfile
 from pathlib import Path
+
+import requests
 from tqdm import tqdm
-from flamby.utils import create_config, write_value_in_config
+
+from flamby.utils import accept_license, create_config, write_value_in_config
 
 # IXI Tiny
 
-TINY_URL = 'https://md-datasets-cache-zipfiles-prod.s3.eu-west-1.amazonaws.com/7kd5wj7v7p-1.zip'
+TINY_URL = (
+    "https://md-datasets-cache-zipfiles-prod.s3.eu-west-1.amazonaws.com/7kd5wj7v7p-1.zip"
+)
+
 
 def dl_ixi_tiny(output_folder, debug=False):
     """
@@ -22,11 +26,13 @@ def dl_ixi_tiny(output_folder, debug=False):
         output_folder : str
             The folder where to download the dataset.
     """
-    print("The IXI dataset is made available under the Creative Commons CC BY-SA 3.0 license.\n\
+    print(
+        "The IXI dataset is made available under the Creative Commons CC BY-SA 3.0 license.\n\
     If you use the IXI data please acknowledge the source of the IXI data, e.g. the following website: https://brain-development.org/ixi-dataset/\n\
     IXI Tiny is derived from the same source. Acknowledge the following reference on TorchIO : https://torchio.readthedocs.io/datasets.html#ixitiny\n\
-    Pérez-García F, Sparks R, Ourselin S. TorchIO: a Python library for efficient loading, preprocessing, augmentation and patch-based sampling of medical images in deep learning. arXiv:2003.04696 [cs, eess, stat]. 2020. https://doi.org/10.48550/arXiv.2003.04696")
-
+    Pérez-García F, Sparks R, Ourselin S. TorchIO: a Python library for efficient loading, preprocessing, augmentation and patch-based sampling of medical images in deep learning. arXiv:2003.04696 [cs, eess, stat]. 2020. https://doi.org/10.48550/arXiv.2003.04696"
+    )
+    accept_license("https://brain-development.org/ixi-dataset/")
     os.makedirs(output_folder, exist_ok=True)
 
     # Creating config file with path to dataset
@@ -35,28 +41,28 @@ def dl_ixi_tiny(output_folder, debug=False):
         print("You have already downloaded the IXI dataset, aborting.")
         sys.exit()
 
-    img_zip_archive_name = TINY_URL.split('/')[-1]
+    img_zip_archive_name = TINY_URL.split("/")[-1]
     img_archive_path = Path(output_folder).joinpath(img_zip_archive_name)
 
     with requests.get(TINY_URL, stream=True) as response:
         # Raise error if not 200
         response.raise_for_status()
-        file_size = int(response.headers.get('Content-Length', 0))
-        desc = '(Unknown total file size)' if file_size == 0 else ''
-        print(f'Downloading to {img_archive_path}')
-        with tqdm.wrapattr(response.raw, 'read', total=file_size, desc=desc) as r_raw:
-            with open(img_archive_path, 'wb') as f:
+        file_size = int(response.headers.get("Content-Length", 0))
+        desc = "(Unknown total file size)" if file_size == 0 else ""
+        print(f"Downloading to {img_archive_path}")
+        with tqdm.wrapattr(response.raw, "read", total=file_size, desc=desc) as r_raw:
+            with open(img_archive_path, "wb") as f:
                 shutil.copyfileobj(r_raw, f)
-    
+
     # extraction
-    print(f'Extracting to {output_folder}')
-    with zipfile.ZipFile(f'{img_archive_path}', 'r') as zip_ref:
+    print(f"Extracting to {output_folder}")
+    with zipfile.ZipFile(f"{img_archive_path}", "r") as zip_ref:
         for file in tqdm(iterable=zip_ref.namelist(), total=len(zip_ref.namelist())):
             zip_ref.extract(member=file, path=output_folder)
-    
+
     write_value_in_config(config_file, "download_complete", True)
     write_value_in_config(config_file, "preprocessing_complete", True)
-    
+
 
 if __name__ == "__main__":
     parser_tiny = argparse.ArgumentParser()
@@ -66,7 +72,7 @@ if __name__ == "__main__":
         "--output-folder",
         type=str,
         help="Where to store the downloaded files.",
-        required=True
+        required=True,
     )
 
     parser_tiny.add_argument(

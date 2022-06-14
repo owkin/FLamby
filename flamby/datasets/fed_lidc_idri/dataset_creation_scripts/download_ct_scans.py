@@ -18,7 +18,12 @@ from process_raw import clean_up_dicoms, convert_to_niftis
 # from sklearn.model_selection import train_test_split
 from tciaclient import TCIAClient
 
-from flamby.utils import create_config, get_config_file_path, write_value_in_config
+from flamby.utils import (
+    accept_license,
+    create_config,
+    get_config_file_path,
+    write_value_in_config,
+)
 
 try:
     n_cpus = multiprocessing.cpu_count()
@@ -236,13 +241,16 @@ def LIDC_to_niftis(extraction_results_dataframe, spacing=[1.0, 1.0, 1.0], debug=
     print(f"{final_shape}/{initial_shape} DICOMs folders successfully converted.")
 
     # Update config file
-    config_file = get_config_file_path(dataset_name='fed_lidc_idri', debug=debug)
+    config_file = get_config_file_path(dataset_name="fed_lidc_idri", debug=debug)
     write_value_in_config(config_file, "preprocessing_complete", True)
 
     return extraction_results_dataframe
 
 
 def main(output_folder, debug=False, keep_dicoms=False):
+    accept_license(
+        "https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI#1966254a2b592e6fba14f949f6e23bb1b7804cc"
+    )
     patientXseries = download_LIDC(output_folder, debug)
     LIDC_to_niftis(patientXseries, debug=debug)
 

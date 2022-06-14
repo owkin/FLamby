@@ -5,7 +5,7 @@ import zipfile
 
 import pandas as pd
 
-from flamby.utils import create_config, write_value_in_config
+from flamby.utils import accept_license, create_config, write_value_in_config
 
 url_1 = (
     "https://isic-challenge-data.s3.amazonaws.com/2019/" "ISIC_2019_Training_Input.zip"
@@ -30,6 +30,7 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
+accept_license("https://challenge.isic-archive.com/data/")
 os.makedirs(args.output_folder, exist_ok=True)
 
 # Creating config file with path to dataset from arguments
