@@ -1,2 +1,1 @@
-recursive-include flamby/datasets/fed_lidc_idri/metadata/*.csv
-recursive-include flamby/datasets/fed_tcga_brca/*.csv
+recursive-include flamby/*.csv
