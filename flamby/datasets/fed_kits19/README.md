@@ -40,7 +40,7 @@ See below the full citations:
 The commands for data download
 (as given on the official kits19 git repository (https://github.com/neheller/kits19)) are as follows,
 
-1. Clone the kits19 git repository to the directory you would like to keep KiTS19 data in,
+1. Cd to a different directory with sufficient space to hold kits data (~30GB) and clone the kits19 git repository:
 ```bash
 git clone https://github.com/neheller/kits19
 ```
@@ -53,11 +53,12 @@ python3 -m starter_code.get_imaging
 ```
 These commands will populate the data folder (given in the kits19 repository) with the imaging data. 
 
-3. To configure the KiTS19 data path for Flamby library, run the following command in the directory 'flamby/datasets/fed_kits19/dataset_creation_scripts/nnunet_library/dataset_conversion',
+3. To configure the KiTS19 data path so that it can be accessed by the Flamby library, run the following command in the directory `flamby/datasets/fed_kits19/dataset_creation_scripts/`,
 ```bash
-python3 create_config.py --output_folder "data_folder_path" 
+python3 create_config.py --output_folder "path_towards_kits19_repository" 
 ```
-You can add an option '--debug', if you want to run the whole pipeline on only a part of the dataset. Note that "data_folder_path" should contain path to the kits19 git repository, for example, 'Desktop/kits19' can be an example of the "data_folder_path" given you cloned kits19 git repository in the Desktop folder and data folder containing KiTS19 dataset resides in this kits19 git repository.
+You can add an option '--debug', if you want to run the whole pipeline on only a part of the dataset. Note that "path_towards_kits19_repository" should contain the path to the kits19 git repository, for example, '~/Desktop/kits19' can be an example of the "path_towards_kits19_repository" given you cloned the kits19 git repository in the Desktop folder and the data folder containing KiTS19 dataset resides in this kits19 git repository.  
+
 ## Data Preprocessing   
 For preprocessing, we use [nnunet](https://github.com/MIC-DKFZ/nnUNet) library and [batchgenerators](https://github.com/MIC-DKFZ/batchgenerators) packages. We exploit nnunet preprocessing pipeline
 to apply intensity normalization, voxel and foreground resampling. In addition, we apply extensive transformations such as random crop, rotation, scaling, mirror etc from the batchgenerators package. 
@@ -73,7 +74,7 @@ python3 parsing_and_adding_metadata.py
 You should add the option '--debug', if you already did so during the step 3 of the data download. 
 2. After data conversion, next step is to run the preprocessing which involves, data intensity normalization and voxel resampling. To run preprocessing, run the following command to go to the right directory from fed_kits19 directory
 ```bash
-python3 run_nnUNet_plan_and_preprocess.py --num-threads 1
+python3 run_nnUNet_plan_and_preprocess.py --num_threads 1
 ```
 Similarly, you should add the option '--debug' if you used it on the previous steps.
 

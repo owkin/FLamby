@@ -36,9 +36,45 @@ class CustomEggInfoCommand(egg_info):
         assert command == 0
 
 
+# datasets has a dependency that requires options
+camelyon16 = [
+    "google-api-python-client",
+    "google-auth-httplib2",
+    "google-auth-oauthlib",
+    "histolab",
+    "openslide-python",
+    "requests",
+]
+heart = ["wget"]
+isic2019 = ["albumentations", "efficientnet-pytorch", "requests", "wget"]
+ixi = ["monai", "nibabel"]
+kits19 = ["batchgenerators", "nibabel", "nnunet==1.7.0"]
+lidc = ["dask", "dicom-numpy", "nibabel", "pydicom", "scipy"]
+tcga = ["lifelines"]
+docs = [
+    "albumentations",
+    "batchgenerators",
+    "dask",
+    "dicom-numpy",
+    "efficientnet-pytorch",
+    "google-api-python-client",
+    "google-auth-httplib2",
+    "google-auth-oauthlib",
+    "histolab",
+    "lifelines",
+    "matplotlib",
+    "monai",
+    "nnunet==1.7.0",
+    "pydicom",
+    "requests",
+    "scipy",
+    "sphinx",
+]
+tests = ["albumentations", "pytest"]
+all_extra = camelyon16 + heart + isic2019 + ixi + kits19 + lidc + tcga + docs + tests
+
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
-
 
 setup(
     name="flamby",
@@ -52,48 +88,36 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     install_requires=[
-        "albumentations",
         "argparse",
-        "batchgenerators",
-        "dask",
-        "dicom-numpy",
-        "dicom-numpy",
-        "efficientnet-pytorch",
-        "google-api-python-client",
-        "google-auth-httplib2",
-        "google-auth-oauthlib",
-        "histolab",
-        "lifelines",
-        "matplotlib",
-        "monai",
-        "nibabel",
-        "nibabel",
-        "nnunet==1.7.0",
         "numpy",
-        "openslide-python",
         "pandas",
         "pre-commit",
-        "pydicom",
-        "pydrive",
-        "pytest",
-        "requests",
         "scikit-learn",
         "scipy",
         "seaborn",
         "setuptools==59.5.0",
-        "sphinx",
         "tensorboard",
         "torch",
         "torchvision",
         "tqdm",
-        "wget",
-        "xlrd",
+        "umap-learn"
     ],
-    extras_require={},
+    extras_require={
+        "cam16": camelyon16,
+        "heart": heart,
+        "isic2019": isic2019,
+        "ixi": ixi,
+        "kits19": kits19,
+        "lidc": lidc,
+        "tcga": tcga,
+        "all_extra": all_extra,
+        "docs": docs,
+        "tests": tests,
+    },
     description="FLamby: A cross-silo Federated Learning Benchmark.",
     long_description=long_description,
     author="FL-datasets team",
-    author_email="jean.du-terrail@owkin.com",
+    author_email="unknown",
     packages=find_packages(),
     include_package_data=True,
     cmdclass={

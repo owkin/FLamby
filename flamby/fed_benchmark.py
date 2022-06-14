@@ -82,7 +82,8 @@ def main(args_cli):
     columns_names = init_hp_additional_args + hp_additional_args
 
     # Use the same initialization for everyone in order to be fair
-    torch.manual_seed(0)
+    torch.manual_seed(args_cli.seed)
+    np.random.seed(args_cli.seed)
     global_init = Baseline()
     # Instantiate all train and test dataloaders required including pooled ones
     if dataset_name == "fed_lidc_idri":
@@ -403,7 +404,7 @@ def main(args_cli):
                     "training_dataloaders": training_dls,
                     "model": m,
                     "loss": bloss,
-                    "optimizer_class": Optimizer,
+                    "optimizer_class": torch.optim.SGD,
                     "learning_rate": LR,
                     "num_updates": num_updates,
                     "nrounds": get_nb_max_rounds(num_updates),
@@ -424,8 +425,12 @@ def main(args_cli):
                 # and objects equality in a robust fashion
                 found_xps = df[list(hyperparameters)]
                 found_xps_numerical = found_xps.select_dtypes(exclude=[object])
-                if 'deterministic_cycle' in found_xps_numerical.columns:
-                    found_xps_numerical['deterministic_cycle'] = found_xps_numerical['deterministic_cycle'].fillna(0.0).astype(float)
+                if "deterministic_cycle" in found_xps_numerical.columns:
+                    found_xps_numerical["deterministic_cycle"] = (
+                        found_xps_numerical["deterministic_cycle"]
+                        .fillna(0.0)
+                        .astype(float)
+                    )
                 col_numericals = found_xps_numerical.columns
                 col_objects = [c for c in found_xps.columns if not (c in col_numericals)]
 
@@ -717,6 +722,7 @@ if __name__ == "__main__":
         help="Will only be used if --single-centric-baseline Local, will test"
         "only training on Local {nlocal}.",
     )
+    parser.add_argument("--seed", default=0, type=int, help="Seed")
 
     args = parser.parse_args()
 

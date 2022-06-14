@@ -1,4 +1,5 @@
 from typing import Optional
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -13,26 +14,27 @@ Requires: Python >=3.6
 
 #### UNet
 
+
 class Baseline(nn.Module):
     def __init__(
-            self,
-            in_channels: int = 1,
-            out_classes: int = 2,
-            dimensions: int = 2,
-            num_encoding_blocks: int = 5,
-            out_channels_first_layer: int = 64,
-            normalization: Optional[str] = None,
-            pooling_type: str = 'max',
-            upsampling_type: str = 'conv',
-            preactivation: bool = False,
-            residual: bool = False,
-            padding: int = 0,
-            padding_mode: str = 'zeros',
-            activation: Optional[str] = 'ReLU',
-            initial_dilation: Optional[int] = None,
-            dropout: float = 0,
-            monte_carlo_dropout: float = 0,
-            ):
+        self,
+        in_channels: int = 1,
+        out_classes: int = 2,
+        dimensions: int = 3,
+        num_encoding_blocks: int = 3,
+        out_channels_first_layer: int = 8,
+        normalization: Optional[str] = "batch",
+        pooling_type: str = "max",
+        upsampling_type: str = "linear",
+        preactivation: bool = False,
+        residual: bool = False,
+        padding: int = 1,
+        padding_mode: str = "zeros",
+        activation: Optional[str] = "PReLU",
+        initial_dilation: Optional[int] = None,
+        dropout: float = 0,
+        monte_carlo_dropout: float = 0,
+    ):
         super().__init__()
         self.CHANNELS_DIMENSION = 1
         depth = num_encoding_blocks - 1
@@ -106,7 +108,7 @@ class Baseline(nn.Module):
         # Monte Carlo dropout
         self.monte_carlo_layer = None
         if monte_carlo_dropout:
-            dropout_class = getattr(nn, 'Dropout{}d'.format(dimensions))
+            dropout_class = getattr(nn, "Dropout{}d".format(dimensions))
             self.monte_carlo_layer = dropout_class(p=monte_carlo_dropout)
 
         # Classifier
@@ -115,8 +117,11 @@ class Baseline(nn.Module):
         elif dimensions == 3:
             in_channels = 2 * out_channels_first_layer
         self.classifier = ConvolutionalBlock(
-            dimensions, in_channels, out_classes,
-            kernel_size=1, activation=None,
+            dimensions,
+            in_channels,
+            out_classes,
+            kernel_size=1,
+            activation=None,
         )
 
     def forward(self, x):
@@ -129,23 +134,25 @@ class Baseline(nn.Module):
         x = F.softmax(x, dim=self.CHANNELS_DIMENSION)
         return x
 
+
 #### Conv ####
+
 
 class ConvolutionalBlock(nn.Module):
     def __init__(
-            self,
-            dimensions: int,
-            in_channels: int,
-            out_channels: int,
-            normalization: Optional[str] = None,
-            kernel_size: int = 3,
-            activation: Optional[str] = 'ReLU',
-            preactivation: bool = False,
-            padding: int = 0,
-            padding_mode: str = 'zeros',
-            dilation: Optional[int] = None,
-            dropout: float = 0,
-            ):
+        self,
+        dimensions: int,
+        in_channels: int,
+        out_channels: int,
+        normalization: Optional[str] = None,
+        kernel_size: int = 3,
+        activation: Optional[str] = "ReLU",
+        preactivation: bool = False,
+        padding: int = 0,
+        padding_mode: str = "zeros",
+        dilation: Optional[int] = None,
+        dropout: float = 0,
+    ):
         super().__init__()
 
         block = nn.ModuleList()
@@ -155,7 +162,7 @@ class ConvolutionalBlock(nn.Module):
             total_padding = kernel_size + 2 * (dilation - 1) - 1
             padding = total_padding // 2
 
-        class_name = 'Conv{}d'.format(dimensions)
+        class_name = "Conv{}d".format(dimensions)
         conv_class = getattr(nn, class_name)
         no_bias = not preactivation and (normalization is not None)
         conv_layer = conv_class(
@@ -170,8 +177,7 @@ class ConvolutionalBlock(nn.Module):
 
         norm_layer = None
         if normalization is not None:
-            class_name = '{}Norm{}d'.format(
-                normalization.capitalize(), dimensions)
+            class_name = "{}Norm{}d".format(normalization.capitalize(), dimensions)
             norm_class = getattr(nn, class_name)
             num_features = in_channels if preactivation else out_channels
             norm_layer = norm_class(num_features)
@@ -191,7 +197,7 @@ class ConvolutionalBlock(nn.Module):
 
         dropout_layer = None
         if dropout:
-            class_name = 'Dropout{}d'.format(dimensions)
+            class_name = "Dropout{}d".format(dimensions)
             dropout_class = getattr(nn, class_name)
             dropout_layer = dropout_class(p=dropout)
             self.add_if_not_none(block, dropout_layer)
@@ -211,34 +217,35 @@ class ConvolutionalBlock(nn.Module):
         if module is not None:
             module_list.append(module)
 
+
 #### Decoding ####
 
 CHANNELS_DIMENSION = 1
 UPSAMPLING_MODES = (
-    'nearest',
-    'linear',
-    'bilinear',
-    'bicubic',
-    'trilinear',
+    "nearest",
+    "linear",
+    "bilinear",
+    "bicubic",
+    "trilinear",
 )
 
 
 class Decoder(nn.Module):
     def __init__(
-            self,
-            in_channels_skip_connection: int,
-            dimensions: int,
-            upsampling_type: str,
-            num_decoding_blocks: int,
-            normalization: Optional[str],
-            preactivation: bool = False,
-            residual: bool = False,
-            padding: int = 0,
-            padding_mode: str = 'zeros',
-            activation: Optional[str] = 'ReLU',
-            initial_dilation: Optional[int] = None,
-            dropout: float = 0,
-            ):
+        self,
+        in_channels_skip_connection: int,
+        dimensions: int,
+        upsampling_type: str,
+        num_decoding_blocks: int,
+        normalization: Optional[str],
+        preactivation: bool = False,
+        residual: bool = False,
+        padding: int = 0,
+        padding_mode: str = "zeros",
+        activation: Optional[str] = "ReLU",
+        initial_dilation: Optional[int] = None,
+        dropout: float = 0,
+    ):
         super().__init__()
         upsampling_type = fix_upsampling_type(upsampling_type, dimensions)
         self.decoding_blocks = nn.ModuleList()
@@ -271,27 +278,28 @@ class Decoder(nn.Module):
 
 class DecodingBlock(nn.Module):
     def __init__(
-            self,
-            in_channels_skip_connection: int,
-            dimensions: int,
-            upsampling_type: str,
-            normalization: Optional[str],
-            preactivation: bool = True,
-            residual: bool = False,
-            padding: int = 0,
-            padding_mode: str = 'zeros',
-            activation: Optional[str] = 'ReLU',
-            dilation: Optional[int] = None,
-            dropout: float = 0,
-            ):
+        self,
+        in_channels_skip_connection: int,
+        dimensions: int,
+        upsampling_type: str,
+        normalization: Optional[str],
+        preactivation: bool = True,
+        residual: bool = False,
+        padding: int = 0,
+        padding_mode: str = "zeros",
+        activation: Optional[str] = "ReLU",
+        dilation: Optional[int] = None,
+        dropout: float = 0,
+    ):
         super().__init__()
 
         self.residual = residual
 
-        if upsampling_type == 'conv':
+        if upsampling_type == "conv":
             in_channels = out_channels = 2 * in_channels_skip_connection
             self.upsample = get_conv_transpose_layer(
-                dimensions, in_channels, out_channels)
+                dimensions, in_channels, out_channels
+            )
         else:
             self.upsample = get_upsampling_layer(upsampling_type)
         in_channels_first = in_channels_skip_connection * (1 + 2)
@@ -360,10 +368,7 @@ class DecodingBlock(nn.Module):
 
 def get_upsampling_layer(upsampling_type: str) -> nn.Upsample:
     if upsampling_type not in UPSAMPLING_MODES:
-        message = (
-            'Upsampling type is "{}"'
-            ' but should be one of the following: {}'
-        )
+        message = 'Upsampling type is "{}"' " but should be one of the following: {}"
         message = message.format(upsampling_type, UPSAMPLING_MODES)
         raise ValueError(message)
     upsample = nn.Upsample(
@@ -375,39 +380,41 @@ def get_upsampling_layer(upsampling_type: str) -> nn.Upsample:
 
 
 def get_conv_transpose_layer(dimensions, in_channels, out_channels):
-    class_name = 'ConvTranspose{}d'.format(dimensions)
+    class_name = "ConvTranspose{}d".format(dimensions)
     conv_class = getattr(nn, class_name)
     conv_layer = conv_class(in_channels, out_channels, kernel_size=2, stride=2)
     return conv_layer
 
 
 def fix_upsampling_type(upsampling_type: str, dimensions: int):
-    if upsampling_type == 'linear':
+    if upsampling_type == "linear":
         if dimensions == 2:
-            upsampling_type = 'bilinear'
+            upsampling_type = "bilinear"
         elif dimensions == 3:
-            upsampling_type = 'trilinear'
+            upsampling_type = "trilinear"
     return upsampling_type
+
 
 #### Encoding ####
 
+
 class Encoder(nn.Module):
     def __init__(
-            self,
-            in_channels: int,
-            out_channels_first: int,
-            dimensions: int,
-            pooling_type: str,
-            num_encoding_blocks: int,
-            normalization: Optional[str],
-            preactivation: bool = False,
-            residual: bool = False,
-            padding: int = 0,
-            padding_mode: str = 'zeros',
-            activation: Optional[str] = 'ReLU',
-            initial_dilation: Optional[int] = None,
-            dropout: float = 0,
-            ):
+        self,
+        in_channels: int,
+        out_channels_first: int,
+        dimensions: int,
+        pooling_type: str,
+        num_encoding_blocks: int,
+        normalization: Optional[str],
+        preactivation: bool = False,
+        residual: bool = False,
+        padding: int = 0,
+        padding_mode: str = "zeros",
+        activation: Optional[str] = "ReLU",
+        initial_dilation: Optional[int] = None,
+        dropout: float = 0,
+    ):
         super().__init__()
 
         self.encoding_blocks = nn.ModuleList()
@@ -454,21 +461,21 @@ class Encoder(nn.Module):
 
 class EncodingBlock(nn.Module):
     def __init__(
-            self,
-            in_channels: int,
-            out_channels_first: int,
-            dimensions: int,
-            normalization: Optional[str],
-            pooling_type: Optional[str],
-            preactivation: bool = False,
-            is_first_block: bool = False,
-            residual: bool = False,
-            padding: int = 0,
-            padding_mode: str = 'zeros',
-            activation: Optional[str] = 'ReLU',
-            dilation: Optional[int] = None,
-            dropout: float = 0,
-            ):
+        self,
+        in_channels: int,
+        out_channels_first: int,
+        dimensions: int,
+        normalization: Optional[str],
+        pooling_type: Optional[str],
+        preactivation: bool = False,
+        is_first_block: bool = False,
+        residual: bool = False,
+        padding: int = 0,
+        padding_mode: str = "zeros",
+        activation: Optional[str] = "ReLU",
+        dilation: Optional[int] = None,
+        dropout: float = 0,
+    ):
         super().__init__()
 
         self.preactivation = preactivation
@@ -548,11 +555,10 @@ class EncodingBlock(nn.Module):
 
 
 def get_downsampling_layer(
-        dimensions: int,
-        pooling_type: str,
-        kernel_size: int = 2,
-        ) -> nn.Module:
-    class_name = '{}Pool{}d'.format(pooling_type.capitalize(), dimensions)
+    dimensions: int,
+    pooling_type: str,
+    kernel_size: int = 2,
+) -> nn.Module:
+    class_name = "{}Pool{}d".format(pooling_type.capitalize(), dimensions)
     class_ = getattr(nn, class_name)
     return class_(kernel_size)
-

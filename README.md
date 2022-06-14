@@ -19,7 +19,7 @@ standard strategies.
 
 The FLamby package contains:
 
-- Data loaders that automatically handle data preprocessing and splitting for distributed datasets.
+- Data loaders that automatically handle data preprocessing and partitions of distributed datasets.
 - Evaluation functions to evaluate trained models on the different tracks as defined in the companion paper.
 - Benchmark code using the utilities below to obtain the performances of baselines using different strategies.
 
@@ -42,10 +42,10 @@ Similarly one can add the results of a new strategy or training algorithm.
 
 ## Installation
 
-We recommend using anaconda and pip. You can install anaconda by downloading and executing appropriate installers from the [Anaconda website](https://www.anaconda.com/products/distribution), pip often comes included with python otherwise check [the following instructions](https://pip.pypa.io/en/stable/installation/). We support all Python version starting from **3.7**.  
+We recommend using anaconda and pip. You can install anaconda by downloading and executing appropriate installers from the [Anaconda website](https://www.anaconda.com/products/distribution), pip often comes included with python otherwise check [the following instructions](https://pip.pypa.io/en/stable/installation/). We support all Python version starting from **3.7**.
 
-You may need `make` for simplification.
-create and launch the environment using:
+You may need `make` for simplification. The following command will install all packages used by all datasets within FLamby. If you already know you will only need a fraction of the datasets inside the suite you can do a partial installation and update it along the way using the options described below.
+Create and launch the environment using:
 
 ```bash
 git clone https://github.com/owkin/FLamby.git
@@ -54,12 +54,42 @@ make install
 conda activate flamby
 ```
 
+As explained above to limit the number of installed packages you can use the `enable` argument to specify which dataset(s)
+you want to build required dependencies for and if you will need to execute the tests (tests) and build the documentation (docs):
+
+```bash
+git clone https://github.com/owkin/FLamby.git
+cd FLamby
+make enable=option_name install
+conda activate flamby
+```
+
+where `option_name` can be one of the following:
+cam16, heart, isic2019, ixi, kits19, lidc, tcga, docs, tests
+
+if you want to use more than one option you can do it using comma (**WARNING:** there should be no space after `,`), eg:
+
+```bash
+git clone https://github.com/owkin/FLamby.git
+cd FLamby
+make enable=cam16,kits19,tests install
+conda activate flamby
+```
+Be careful, each command tries to create a conda environment named flamby therefore make install will fail if executed
+numerous times as the flamby environment will already exist. Use make update as explained in the next section if you decide to
+use more datasets than intended originally.
 
 ### Update environment
-Use the following command if new dependencies have been added, and you want to update the environment:
+Use the following command if new dependencies have been added, and you want to update the environment for additional datasets:
 ```bash
 make update
 ```
+
+or you can use `enable` option:
+```bash
+make enable=cam16 update
+```
+
 
 ### In case you don't have the `make` command (e.g. Windows users)
 You can install the environment by running:
@@ -68,8 +98,24 @@ git clone https://github.com/owkin/FLamby.git
 cd FLamby
 conda env create -f environment.yml
 conda activate flamby
+pip install -e .[all_extra]
 ```
 
+or if you wish to install the environment for only one or more datasets, tests or documentation:
+```bash
+git clone https://github.com/owkin/FLamby.git
+cd FLamby
+conda env create -f environment.yml
+conda activate flamby
+pip install -e .[option_name]
+```
+
+where `option_name` can be one of the following:
+cam16, heart, isic2019, ixi, kits19, lidc, tcga, docs, tests. If you want to use more than one option you can do it
+using comma (',') (no space), eg:
+```bash
+pip install -e .[cam16,ixi]
+```
 
 ### Accepting data licensing
 Then proceed to read and accept the different licenses and download the data from
@@ -102,7 +148,7 @@ open _build/html/index.html
 ```
 ## Contributing
 
-After installing the package in dev mode (``pip install -e .``)
+After installing the package in dev mode (``pip install -e .[all_extra]``)
 You should also initialize ``pre-commit`` by running:
 ```
 pre-commit install

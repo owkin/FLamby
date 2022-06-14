@@ -7,8 +7,9 @@ We do not own the copyright of the data, everyone using those datasets should ab
 |                   | Dataset description
 | ----------------- | -----------------------------------------------------------------------------------------------
 | Description       | Dataset from the ISIC 2019 challenge, we keep images for which the datacenter can be extracted.
-| Dataset           | 23,247 images of skin lesions
+| Dataset           | 23,247 images of skin lesions ((9930/2483), (3163/791), (2691/672), (1807/452), (655/164), (351/88))
 | Centers           | 6 centers (BCN, HAM_vidir_molemax, HAM_vidir_modern, HAM_rosendahl, MSK, HAM_vienna_dias)
+| 
 | Task              | Multiclass image classification
 
 
