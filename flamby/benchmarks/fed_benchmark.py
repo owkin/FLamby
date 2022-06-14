@@ -11,10 +11,10 @@ from flamby.benchmarks.benchmark_utils import (
     evaluate_model_on_local_and_pooled_tests,
     fill_df_with_xp_results,
     find_xps_in_df,
+    get_logfile_name_from_strategy,
     init_data_loaders,
     init_xp_plan,
     set_dataset_specific_config,
-    get_logfile_name_from_strategy,
     train_single_centric,
 )
 from flamby.benchmarks.conf import (
@@ -68,7 +68,16 @@ def main(args_cli):
             collate_fn,
         ],
     ) = get_dataset_args(dataset_name)
-    NUM_EPOCHS_POOLED = 0
+
+    nrounds_list = [get_nb_max_rounds(num_updates) for num_updates in run_num_updates]
+
+    if args_cli.debug:
+        nrounds_list = [1 for _ in run_num_updates]
+        NUM_EPOCHS_POOLED = 1
+
+    if args_cli.hard_debug:
+        nrounds_list = [0 for _ in run_num_updates]
+        NUM_EPOCHS_POOLED = 0
 
     # We can now instantiate the dataset specific model on CPU
     global_init = Baseline()
@@ -128,7 +137,9 @@ def main(args_cli):
         df = pd.read_csv(results_file)
         # Update df if new hyperparameters added
         df = df.reindex(
-            df.columns.union(columns_names, sort=False), axis="columns", fill_value=None
+            df.columns.union(columns_names, sort=False).unique(),
+            axis="columns",
+            fill_value=None,
         )
     else:
         # initialize data frame with the column_names and no data if no csv was
@@ -298,7 +309,7 @@ def main(args_cli):
 
     # Strategies
     if do_strategy:
-        for num_updates in run_num_updates:
+        for idx, num_updates in enumerate(run_num_updates):
             for sname in strategy_specific_hp_dicts.keys():
                 # Base arguments
                 m = copy.deepcopy(global_init)
@@ -311,7 +322,7 @@ def main(args_cli):
                     "optimizer_class": torch.optim.SGD,
                     "learning_rate": LR,
                     "num_updates": num_updates,
-                    "nrounds": get_nb_max_rounds(num_updates),
+                    "nrounds": nrounds_list[idx],
                 }
                 # We overwritre defaults with new hyperparameters from config
                 strategy_specific_hp_dict = strategy_specific_hp_dicts[sname]
@@ -337,8 +348,9 @@ def main(args_cli):
                     # experiments
                     if len(index_of_interest) > 0:
                         df.drop(index_of_interest, inplace=True)
-
-                    basename = get_logfile_name_from_strategy(sname, num_updates)
+                    basename = get_logfile_name_from_strategy(
+                        dataset_name, sname, num_updates, args
+                    )
 
                     # We run the FL strategy
                     s = getattr(strats, sname)(
@@ -392,9 +404,21 @@ if __name__ == "__main__":
         help="Force computation on CPU.",
     )
     parser.add_argument(
+        "--debug",
+        action="store_true",
+        default=False,
+        help="Do 1 round and 1 epoch to check if the script is working",
+    )
+    parser.add_argument(
+        "--hard-debug",
+        action="store_true",
+        default=False,
+        help="Do 0 round and 0 epoch to check if the script is working",
+    )
+    parser.add_argument(
         "--workers",
         type=int,
-        default=1,
+        default=0,
         help="Numbers of workers for the dataloader",
     )
     parser.add_argument(
