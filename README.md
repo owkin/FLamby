@@ -26,12 +26,15 @@ The FLamby package contains:
 It does not contain datasets, which have to be downloaded separately.
 See the section below.
 
+FLamby was tested on Ubuntu and MacOS environment. If you are facing any problems installing or executing FLamby code
+please help us improve it by filing an issue on FLamby github page ensuring to explain it in detail.
+
 ## Source datasets
 We do not distribute datasets in this repository. **The use of any of the datasets
 included in FLamby requires accepting its corresponding license on the original
 website.**
 We do not own copyrights on any of the datasets.
-For any problem or question with respect to any licence related matters please open a github issue on this repository.
+For any problem or question with respect to any license related matters please open a github issue on this repository.
 
 
 ## Extending FLamby
@@ -54,7 +57,7 @@ make install
 conda activate flamby
 ```
 
-As explained above to limit the number of installed packages you can use the `enable` argument to specify which dataset(s)
+To limit the number of installed packages you can use the `enable` argument to specify which dataset(s)
 you want to build required dependencies for and if you will need to execute the tests (tests) and build the documentation (docs):
 
 ```bash
@@ -67,7 +70,8 @@ conda activate flamby
 where `option_name` can be one of the following:
 cam16, heart, isic2019, ixi, kits19, lidc, tcga, docs, tests
 
-if you want to use more than one option you can do it using comma (**WARNING:** there should be no space after `,`), eg:
+if you want to use more than one option you can do it using comma
+(**WARNING:** there should be no space after `,`), eg:
 
 ```bash
 git clone https://github.com/owkin/FLamby.git
@@ -178,3 +182,13 @@ To clean the environment you must execute (after being inside the FLamby folder 
 conda deactivate
 make clean
 ```
+
+### I get an error when installing Flamby
+#### error: [Errno 2] No such file or directory: 'pip'
+Try running:
+```bash
+conda deactivate
+make clean
+pip3 install --upgrade pip
+```
+and try running your make installation option again.

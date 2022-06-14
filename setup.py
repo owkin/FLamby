@@ -7,7 +7,7 @@ from setuptools.command.install import install
 
 # Histolab has a dependency that requires options
 histolab_dep_commands = [
-    "pip",
+    "pip3",
     "install",
     "large-image-source-openslide",
     "--find-links",
@@ -100,7 +100,7 @@ setup(
         "torch",
         "torchvision",
         "tqdm",
-        "umap-learn"
+        "umap-learn",
     ],
     extras_require={
         "cam16": camelyon16,
