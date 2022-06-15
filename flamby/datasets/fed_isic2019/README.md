@@ -42,7 +42,12 @@ Thank you to [Aman Arora](https://github.com/amaarora) for his [implementation](
 Please first accept the licences on the HAM10000 and ISIC2019 dataset pages and run the following steps.
 
 ## Data
-To download the ISIC 2019 training data and extract the original datacenter information for each image, run:
+To download the ISIC 2019 training data and extract the original datacenter information for each image, 
+First cd into the `dataset_creation_scripts` folder:  
+```bash
+cd flamby/datasets/fed_isic2019/dataset_creation_scripts
+```
+then run:
 ```
 python download_isic.py --output-folder /path/to/user/folder
 ```
