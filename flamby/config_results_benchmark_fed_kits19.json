@@ -1,0 +1,48 @@
+{
+    "dataset": "fed_kits19",
+    "results_file": "results_benchmark_fed_kits19.csv",
+    "strategies": {
+        "Cyclic": {
+            "learning_rate": 0.3,
+            "optimizer_class": "torch.optim.SGD"
+        },
+        "FedAdagrad": {
+            "beta1": 0.9,
+            "beta2": 0.999,
+            "learning_rate": 0.1,
+            "optimizer_class": "torch.optim.SGD",
+            "server_learning_rate": 0.1,
+            "tau": 1e-08
+        },
+        "FedAdam": {
+            "beta1": 0.9,
+            "beta2": 0.999,
+            "learning_rate": 0.1,
+            "optimizer_class": "torch.optim.SGD",
+            "server_learning_rate": 0.01,
+            "tau": 1e-08
+        },
+        "FedAvg": {
+            "learning_rate": 0.03,
+            "optimizer_class": "torch.optim.SGD"
+        },
+        "FedProx": {
+            "learning_rate": 0.1,
+            "mu": 0.001,
+            "optimizer_class": "torch.optim.SGD"
+        },
+        "FedYogi": {
+            "beta1": 0.9,
+            "beta2": 0.999,
+            "learning_rate": 0.1,
+            "optimizer_class": "torch.optim.SGD",
+            "server_learning_rate": 0.01,
+            "tau": 1e-08
+        },
+        "Scaffold": {
+            "learning_rate": 0.1,
+            "optimizer_class": "torch.optim.SGD",
+            "server_learning_rate": 1.0
+        }
+    }
+}

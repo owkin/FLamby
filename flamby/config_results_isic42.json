@@ -1,6 +1,6 @@
 {
     "dataset": "fed_isic2019",
-    "results_file": "results_benchmark_fed_isic2019.csv",
+    "results_file": "results_isic42.csv",
     "strategies": {
         "Cyclic": {
             "deterministic_cycle": false,
