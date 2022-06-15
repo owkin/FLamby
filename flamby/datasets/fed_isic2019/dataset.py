@@ -101,12 +101,6 @@ class FedIsic2019(Isic2019Raw):
     One can instantiate this dataset with train or test data coming from either of
     the 6 centers it was created from or all data pooled.
     The train/test split is fixed and given in the train_test_split file.
-    Attributes
-    ----------
-    pooled: boolean, characterizes if the dataset is pooled or not
-    train: bool, characterizes if the dataset is used for training or for
-    testing, default True
-    center: int, between 0 and 5, designates the datacenter in the case of pooled==False
 
     Parameters
     ----------
