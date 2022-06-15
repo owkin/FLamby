@@ -132,10 +132,9 @@ all the datasets you are interested in by following the instructions provided in
 - [Fed-IXITiny](./flamby/datasets/fed_ixi/README.md)
 - [Fed-KITS2019](./flamby/datasets/fed_kits19/README.md)
 
-## Usage
+## Quickstart
 
-Look at our tutorials and get started sections.
-#TODO write tutorials and get started sections
+Follow this [link](./Quickstart.md) to get started with FLamby.
 
 ## Deploy documentations
 
