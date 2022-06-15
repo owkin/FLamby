@@ -12,13 +12,18 @@ class TcgaBrcaRaw(torch.utils.data.Dataset):
     information for TCGA-BRCA survival analysis.
     Attributes
     ----------
-    X_dtype: torch.dtype, the dtype of the X features output
-    y_dtype: torch.dtype, the dtype of the (E, T) output
-    dic: dictionary containing the paths to the data and the train_test_split file
-    data: pandas dataframe containing the data for the all the patients
-    __getitem__: returns a tuple, first element is a torch tensor of dimension
-    (39,) for the covariates, second element is a torch tensor of dimension (2,)
-    for E, T
+    X_dtype: torch.dtyp
+        the dtype of the X features output
+    y_dtype: torch.dtype,
+        the dtype of the (E, T) output
+    dic:
+        dictionary containing the paths to the data and the train_test_split file
+    data:
+        pandas dataframe containing the data for the all the patients
+    __getitem__:
+        returns a tuple, first element is a torch tensor of dimension
+        (39,) for the covariates, second element is a torch tensor of dimension (2,)
+        for E, T
     """
 
     def __init__(self, X_dtype=torch.float32, y_dtype=torch.float32):
@@ -56,26 +61,32 @@ class FedTcgaBrca(TcgaBrcaRaw):
     One can instantiate this dataset with train or test data coming from either of
     the 6 regions or all regions pooled.
     The train/test split is static and given in the train_test_split file.
-    Attributes
+
+    Parameters
     ----------
-    train: boolean, characterizes if the dataset is used for training or for testing,
-    default "train"
-    pooled: boolean, characterizes if the dataset is pooled or not
-    center: int, between 0 and 5, designates the region in the case of pooled==False
-    data: pandas dataframe containing the data for the patients in the training
-    or the test set (according to the variable train) in a specific region
-    (chosen thanks to the variable center if pooled==False) or across all regions
-    (if pooled==True)
+    center : int, optional
+        Default to 0
+    train : bool, optional
+        Default to True
+    pooled : bool, optional
+        Default to False
+    X_dtype : torch.dtype, optional
+        Default to torch.float32
+    y_dtype : torch.dtype, optional
+        Default to torch.float32
     """
 
     def __init__(
         self,
-        center=0,
-        train=True,
-        pooled=False,
-        X_dtype=torch.float32,
-        y_dtype=torch.float32,
+        center: int = 0,
+        train: bool = True,
+        pooled: bool = False,
+        X_dtype: torch.dtype = torch.float32,
+        y_dtype: torch.dtype = torch.float32,
     ):
+        """
+        cf class docstring
+        """
 
         super().__init__(X_dtype=X_dtype, y_dtype=y_dtype)
 
