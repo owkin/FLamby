@@ -14,6 +14,7 @@ from flamby.utils import check_dataset_from_config
 class Isic2019Raw(torch.utils.data.Dataset):
     """Pytorch dataset containing all the features, labels and datacenter
     information for Isic2019.
+
     Attributes
     ----------
     image_paths: list[str], the list with the path towards all features
@@ -90,17 +91,33 @@ class FedIsic2019(Isic2019Raw):
     train: bool, characterizes if the dataset is used for training or for
     testing, default True
     center: int, between 0 and 5, designates the datacenter in the case of pooled==False
+
+    Parameters
+    ----------
+    center : int, optional
+        Default to 0
+    train : bool, optional
+        Default to True
+    pooled : bool, optional
+        Default to False
+    debug : bool, optional
+        Default to False
+    X_dtype : torch.dtype, optional
+        Default to torch.float32
+    y_dtype : torch.dtype, optional
+        Default to torch.int64
     """
 
     def __init__(
         self,
-        center=0,
-        train=True,
-        pooled=False,
-        debug=False,
-        X_dtype=torch.float32,
-        y_dtype=torch.int64,
+        center: int = 0,
+        train: bool = True,
+        pooled: bool = False,
+        debug: bool = False,
+        X_dtype: torch.dtype = torch.float32,
+        y_dtype: torch.dtype = torch.int64,
     ):
+        """Cf class docstring"""
         sz = 200
         if train:
             augmentations = albumentations.Compose(
@@ -141,7 +158,7 @@ class FedIsic2019(Isic2019Raw):
         if not self.pooled:
             assert center in range(6)
             df2 = df.query("fold2 == '" + self.key + "' ").reset_index(drop=True)
-        
+
         images = df2.image.tolist()
         self.image_paths = [
             os.path.join(self.dic["input_preprocessed"], image_name + ".jpg")
@@ -167,14 +184,14 @@ if __name__ == "__main__":
     print(len(mydataset))
     print(f"Size of image 0 ", mydataset[0][0].shape)
 
-    for i in range (6):
+    for i in range(6):
         mydataset = FedIsic2019(center=i, train=True, pooled=False)
         print(len(mydataset))
         print(f"Size of image 0 ", mydataset[0][0].shape)
         mydataset = FedIsic2019(center=i, train=False, pooled=False)
         print(len(mydataset))
         print(f"Size of image 0 ", mydataset[0][0].shape)
-    
+
     mydataset = FedIsic2019(center=5, train=False, pooled=False)
     print(len(mydataset))
     for i in range(11):

@@ -26,16 +26,26 @@ class Camelyon16Raw(Dataset):
 
     Attributes
     ----------
-    tiles_dir : str, Where all features are located
-    labels: pd.DataFrame, The ground truth DataFrame for labels
-    metadata: pd.DataFrame, The ground truth dataframe for metadata such as centers
-    features_paths: list[str], The list with the path towards all features.
-    features_labels: list[int], The list with all classification labels for all features
-    features_centers: list[int], The list for all centers for all features
-    features_sets: list[str], The list for all sets (train/test) for all features
-    X_dtype: torch.dtype, The dtype of the X features output
-    y_dtype: torch.dtype, The dtype of the y label output
-    debug: bool, Whether or not we use the dataset with only part of the features
+    tiles_dir : str
+        Where all features are located
+    labels: pd.DataFrame
+        The ground truth DataFrame for labels
+    metadata: pd.DataFrame
+        The ground truth dataframe for metadata such as centers
+    features_paths: list[str]
+        The list with the path towards all features.
+    features_labels: list[int]
+        The list with all classification labels for all features
+    features_centers: list[int]
+        The list for all centers for all features
+    features_sets: list[str]
+        The list for all sets (train/test) for all features
+    X_dtype: torch.dtype
+        The dtype of the X features output
+    y_dtype: torch.dtype
+        The dtype of the y label output
+    debug: bool
+        Whether or not we use the dataset with only part of the features
     """
 
     def __init__(self, X_dtype=torch.float32, y_dtype=torch.float32, debug=False):

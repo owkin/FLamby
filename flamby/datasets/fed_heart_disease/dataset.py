@@ -13,30 +13,39 @@ from flamby.utils import check_dataset_from_config
 class HeartDiseaseRaw(Dataset):
     """Pytorch dataset containing all the features, labels and
     metadata for the Heart Disease dataset.
+
+    Parameters
+    ----------
+    X_dtype : torch.dtype, optional
+        Dtype for inputs `X`. Defaults to `torch.float32`.
+    y_dtype : torch.dtype, optional
+        Dtype for labels `y`. Defaults to `torch.int64`.
+    debug : bool, optional,
+        Whether or not to use only the part of the dataset downloaded in
+        debug mode. Defaults to False.
+
     Attributes
     ----------
-    data_dir : str, Where data files are located
-    data_paths: list[str], The list with the path towards all features.
-    features_labels: list[int], The list with all classification labels for all features
-    features_centers: list[int], The list for all centers for all features
-    features_sets: list[str], The list for all sets (train/test) for all features
-    X_dtype: torch.dtype, The dtype of the X features output
-    y_dtype: torch.dtype, The dtype of the y label output
-    debug: bool, Whether or not we use the dataset with only part of the features
+    data_dir : str
+        Where data files are located
+    data_paths: list[str]
+        The list with the path towards all features.
+    features_labels: list[int]
+        The list with all classification labels for all features
+    features_centers: list[int]
+        The list for all centers for all features
+    features_sets: list[str]
+        The list for all sets (train/test) for all features
+    X_dtype: torch.dtype
+        The dtype of the X features output
+    y_dtype: torch.dtype
+        The dtype of the y label output
+    debug: bool
+        Whether or not we use the dataset with only part of the features
     """
 
     def __init__(self, X_dtype=torch.float32, y_dtype=torch.float32, debug=False):
-        """See description above
-        Parameters
-        ----------
-        X_dtype : torch.dtype, optional
-            Dtype for inputs `X`. Defaults to `torch.float32`.
-        y_dtype : torch.dtype, optional
-            Dtype for labels `y`. Defaults to `torch.int64`.
-        debug : bool, optional,
-            Whether or not to use only the part of the dataset downloaded in
-            debug mode. Defaults to False.
-        """
+        """See description above"""
         dict = check_dataset_from_config("fed_heart_disease", debug)
         self.data_dir = Path(dict["dataset_path"])
 
@@ -44,7 +53,12 @@ class HeartDiseaseRaw(Dataset):
         self.y_dtype = y_dtype
         self.debug = debug
 
-        self.centers_number = {"cleveland": 0, "hungarian": 1, "switzerland": 2, "va": 3}
+        self.centers_number = {
+            "cleveland": 0,
+            "hungarian": 1,
+            "switzerland": 2,
+            "va": 3,
+        }
 
         self.features = pd.DataFrame()
         self.labels = pd.DataFrame()
@@ -127,30 +141,35 @@ class FedHeartDisease(HeartDiseaseRaw):
     One can instantiate this dataset with train or test data coming from either
     of the 4 centers it was created from or all data pooled.
     The train/test split are arbitrarily fixed.
+
+    Parameters
+    ----------
+    center : int, optional
+        Default to 0
+    train : bool, optional
+        Default to True
+    pooled : bool, optional
+        Whether to take all data from the 2 centers into one dataset, by
+        default False
+    X_dtype : torch.dtype, optional
+        Dtype for inputs `X`. Defaults to `torch.float32`.
+    y_dtype : torch.dtype, optional
+        Dtype for labels `y`. Defaults to `torch.int64`.
+    debug : bool, optional,
+        Whether or not to use only the part of the dataset downloaded in
+        debug mode. Defaults to False.
     """
 
     def __init__(
         self,
-        center=0,
-        train=True,
-        pooled=False,
-        X_dtype=torch.float32,
-        y_dtype=torch.float32,
-        debug=False,
+        center: int = 0,
+        train: bool = True,
+        pooled: bool = False,
+        X_dtype: torch.dtype = torch.float32,
+        y_dtype: torch.dtype = torch.float32,
+        debug: bool = False,
     ):
-        """Instantiate the dataset
-        Parameters
-        pooled : bool, optional
-            Whether to take all data from the 2 centers into one dataset, by
-            default False
-        X_dtype : torch.dtype, optional
-            Dtype for inputs `X`. Defaults to `torch.float32`.
-        y_dtype : torch.dtype, optional
-            Dtype for labels `y`. Defaults to `torch.int64`.
-        debug : bool, optional,
-            Whether or not to use only the part of the dataset downloaded in
-            debug mode. Defaults to False.
-        """
+        """Cf class description"""
 
         super().__init__(X_dtype=X_dtype, y_dtype=y_dtype, debug=debug)
         assert center in [0, 1, 2, 3]
