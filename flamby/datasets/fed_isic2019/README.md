@@ -29,7 +29,7 @@ See below the full citations:
 
 [3] Marc Combalia, Noel C. F. Codella, Veronica Rotemberg, Brian Helba, Veronica Vilaplana, Ofer Reiter, Allan C. Halpern, Susana Puig, Josep Malvehy: “BCN20000: Dermoscopic Lesions in the Wild”, 2019; arXiv:1908.02288.
 
-Find attached the link to the [full licence]([https://creativecommons.org/licenses/by-nc/4.0/](https://challenge.isic-archive.com/data/)) for ISIC2019.
+Find attached the link to the [full licence](https://creativecommons.org/licenses/by-nc/4.0/](https://challenge.isic-archive.com/data/) for ISIC2019.
 
 
 In order to extract the origins of the images in the HAM10000 Dataset (cited above), we store in this repository a copy of [the original HAM10000 metadata file](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T).
