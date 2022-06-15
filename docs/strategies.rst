@@ -15,6 +15,7 @@ FedAdam
 
 .. autoclass:: flamby.strategies.FedAdam
    :members:
+   :inherited-members:
    :undoc-members:
    :private-members:
 
@@ -23,6 +24,7 @@ FedYogi
 
 .. autoclass:: flamby.strategies.FedYogi
    :members:
+   :inherited-members:
    :undoc-members:
    :private-members:
 
@@ -32,8 +34,7 @@ FedAdagrad
 
 .. autoclass:: flamby.strategies.FedAdagrad
    :members:
-   :undoc-members:
-   :private-members:
+   :inherited-members:
 
 
 Cyclic & RandomWalk
@@ -41,8 +42,7 @@ Cyclic & RandomWalk
 
 .. autoclass:: flamby.strategies.Cyclic
    :members:
-   :undoc-members:
-   :private-members:
+   :inherited-members:
 
 
 FedProx
@@ -50,8 +50,7 @@ FedProx
 
 .. autoclass:: flamby.strategies.FedProx
    :members:
-   :undoc-members:
-   :private-members:
+   :inherited-members:
 
 
 Scaffold
@@ -59,6 +58,5 @@ Scaffold
 
 .. autoclass:: flamby.strategies.Scaffold
    :members:
-   :undoc-members:
-   :private-members:
+   :inherited-members:
 

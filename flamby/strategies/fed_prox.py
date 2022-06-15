@@ -19,6 +19,42 @@ class FedProx(FedAvg):
     - https://arxiv.org/abs/1812.06127
     - https://github.com/litian96/FedProx
 
+    Parameters
+    ----------
+    training_dataloaders : List
+        The list of training dataloaders from multiple training centers.
+    model : torch.nn.Module
+        An initialized torch model.
+    loss : torch.nn.modules.loss._Loss
+        The loss to minimize between the predictions of the model and the
+        ground truth.
+    optimizer_class : torch.optim.Optimizer
+        The class of the torch model optimizer to use at each step.
+    learning_rate : float
+        The learning rate to be given to the optimizer_class.
+    num_updates : int
+        The number of updates to do on each client at each round.
+    nrounds : int
+        The number of communication rounds to do.
+    mu: float
+        The mu parameter involved in the proximal term. If mu = 0, then FedProx
+        is reduced to FedAvg. Need to be tuned, there are no default mu values
+        that would work for all settings.
+    log: bool, optional
+        Whether or not to store logs in tensorboard. Defaults to False.
+    log_period: int, optional
+        If log is True then log the loss every log_period batch updates.
+        Defauts to 100.
+    bits_counting_function : Union[callable, None], optional
+        A function making sure exchanges respect the rules, this function
+        can be obtained by decorating check_exchange_compliance in
+        flamby.utils. Should have the signature List[Tensor] -> int.
+        Defaults to None.
+    log_basename: str, optional
+        The basename of the created log file. Defaults to fed_prox.
+    logdir: str, optional
+        The directory where to store the logs. Defaults to ./runs.
+
     """
 
     def __init__(
@@ -37,43 +73,7 @@ class FedProx(FedAvg):
         log_basename: str = "fed_prox",
         logdir: str = "./runs",
     ):
-        """_summary_
-
-        Parameters
-        ----------
-        training_dataloaders : List
-            The list of training dataloaders from multiple training centers.
-        model : torch.nn.Module
-            An initialized torch model.
-        loss : torch.nn.modules.loss._Loss
-            The loss to minimize between the predictions of the model and the
-            ground truth.
-        optimizer_class : torch.optim.Optimizer
-            The class of the torch model optimizer to use at each step.
-        learning_rate : float
-            The learning rate to be given to the optimizer_class.
-        num_updates : int
-            The number of updates to do on each client at each round.
-        nrounds : int
-            The number of communication rounds to do.
-        mu: float
-            The mu parameter involved in the proximal term. If mu = 0, then FedProx
-            is reduced to FedAvg. Need to be tuned, there are no default mu values
-            that would work for all settings.
-        log: bool
-            Whether or not to store logs in tensorboard. Defaults to False.
-        log_period: int
-            If log is True then log the loss every log_period batch updates.
-            Defauts to 100.
-        bits_counting_function : Union[callable, None]
-            A function making sure exchanges respect the rules, this function
-            can be obtained by decorating check_exchange_compliance in
-            flamby.utils. Should have the signature List[Tensor] -> int.
-            Defaults to None.
-        log_basename: str
-            The basename of the created log file. Defaults to fed_prox.
-        logdir: str
-            The directory where to store the logs. Defaults to ./runs.
+        """ Cf class docstring
         """
         super().__init__(
             training_dataloaders,
