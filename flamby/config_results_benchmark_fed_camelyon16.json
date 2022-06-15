@@ -1,0 +1,40 @@
+{
+    "dataset": "fed_camelyon16",
+    "results_file": "results_benchmark_fed_camelyon16.csv",
+    "strategies": {
+        "Cyclic": {
+            "deterministic_cycle": false,
+            "learning_rate": 1.0,
+            "optimizer_class": "torch.optim.SGD"
+        },
+        "FedAdagrad": {
+            "learning_rate": 0.1,
+            "optimizer_class": "torch.optim.SGD",
+            "server_learning_rate": 1.0
+        },
+        "FedAdam": {
+            "learning_rate": 0.1,
+            "optimizer_class": "torch.optim.SGD",
+            "server_learning_rate": 0.1
+        },
+        "FedAvg": {
+            "learning_rate": 1e-05,
+            "optimizer_class": "torch.optim.SGD"
+        },
+        "FedProx": {
+            "learning_rate": 0.001,
+            "mu": 0.01,
+            "optimizer_class": "torch.optim.SGD"
+        },
+        "FedYogi": {
+            "learning_rate": 0.1,
+            "optimizer_class": "torch.optim.SGD",
+            "server_learning_rate": 0.1
+        },
+        "Scaffold": {
+            "learning_rate": 0.1,
+            "optimizer_class": "torch.optim.SGD",
+            "server_learning_rate": 10.0
+        }
+    }
+}
