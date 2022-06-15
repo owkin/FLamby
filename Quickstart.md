@@ -1,8 +1,14 @@
 ## Quickstart
 
-The Fed-TCGA-BRCA dataset requires no downloading or preprocessing.
+We will start with the Fed-TCGA-BRCA dataset because it requires no downloading or preprocessing and is very lightweight. Therefore it provides a good introduction to navigating Flamby.
 
 ### Dataset example
+
+We do provide users with two dataset abstractions: RawDataset and FedDataset.
+The recommended one is FedDataset: it is compatible with the rest of the repository's code.
+This class allows to instantiate either the single-centric version of the dataset using the argument `pooled = True`, or the different local datasets belonging to each client by providing the client index in the arguments (e.g. `center = 2, pooled = False`).
+The arguments `train = True` and `train = False` allow to instantiate train or test sets (in both pooled or local cases).
+We also provide RawDataset objects which are less easy to work with but that should provide all metadata required for power users that find the abstraction in FLamby hard to use for their use-cases.
 
 To instantiate the raw TCGA-BRCA or the Fed-TCGA-BRCA dataset, follow those examples:
 ```python
@@ -22,7 +28,7 @@ mydataset = FedTcgaBrca(center=2, train=True, pooled=False)
 
 ### Local training example
 
-Below is an example of how to train a baseline model on one local train set and evaluate it on all the local test sets:
+Below is an example of how to train the chosen baseline model with default settings on one local train set and evaluate it on all the local test sets:
 ```python
 
 import torch
@@ -36,7 +42,8 @@ from flamby.datasets.fed_tcga_brca import (
     Baseline,
     BaselineLoss,
     metric,
-    NUM_CLIENTS
+    NUM_CLIENTS,
+    Optimizer,
 )
 from flamby.datasets.fed_tcga_brca import FedTcgaBrca as FedDataset
 
@@ -45,10 +52,9 @@ train_dataset = FedDataset(center=0, train=True, pooled=False)
 train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
 lossfunc = BaselineLoss()
 model = Baseline()
-optimizer = torch.optim.Adam(model.fc.parameters(), lr=LR)
-scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[3, 5, 7, 9, 11, 13, 15, 17], gamma=0.5)
+optimizer = Optimizer(model.parameters(), lr=LR)
 
-# Training loop
+# Traditional pytorch training loop
 for epoch in range(0, NUM_EPOCHS_POOLED):
     for idx, (X, y) in enumerate(train_dataloader):
         optimizer.zero_grad()
@@ -96,7 +102,7 @@ from flamby.datasets.fed_tcga_brca import FedTcgaBrca as FedDataset
 # 1st line of code to change to switch to another strategy
 from flamby.strategies.fed_avg import FedAvg as strat
 
-
+# We loop on all the clients of the distributed dataset and instantiate associated dataloaders
 train_dataloaders = [
             torch.utils.data.DataLoader(
                 FedDataset(center = i, train = True, pooled = False),
@@ -137,3 +143,37 @@ print(dict_cindex)
 
 ```
 
+### Downloading a dataset
+
+We will follow up on how to download a dataset that is not hosted in this repository.
+We will use Fed-Heart-Disease as the download process is simple and it requires no preprocessing.
+Please run:
+
+```
+cd flamby/datasets/fed_heart_disease/dataset_creation_scripts
+python download.py --output-folder ./heart_disease_dataset
+```
+
+### Training and evaluation in a pooled setting
+
+To train and evaluate a model for the pooled Heart Disease dataset, run:
+```
+cd flamby/datasets/fed_heart_disease
+python benchmark.py --num-workers-torch 0
+```
+
+### Training and evaluation in a federated learning setting
+
+In order to train and evaluate models trained on the pooled dataset, on all local datasets as well as in a federated way for all FL strategies, you can run the following command.
+The config file is present in the repository and holds all necesssary HPs for FL strategies. The results are stored in the csv file given in the command.
+
+```
+cd flamby/benchmarks
+python fed_benchmark.py --config-file-path ../heart_disease_config.json --results-file-path ./test_res.csv
+```
+
+In order to train and evaluate a model with a specific FL strategy and new hyperparameters one can run:
+
+```
+python fed_benchmark.py --strategy FedProx --mu 0.001 --learning_rate 3. --config-file-path ../heart_disease_config.json --results-file-path ./test_res.csv
+```

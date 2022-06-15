@@ -134,7 +134,7 @@ all the datasets you are interested in by following the instructions provided in
 
 ## Quickstart
 
-Follow this [link](./Quickstart.md) to get started with FLamby.
+Follow the [quickstart section](./Quickstart.md) to learn how to get started with FLamby.
 
 ## Deploy documentations
 
