@@ -17,15 +17,28 @@ class Isic2019Raw(torch.utils.data.Dataset):
 
     Attributes
     ----------
-    image_paths: list[str], the list with the path towards all features
-    targets: list[int], the list with all classification labels for all features
-    centers: list[int], the list for all datacenters for all features
-    X_dtype: torch.dtype, the dtype of the X features output
-    y_dtype: torch.dtype, the dtype of the y label output
-    augmentations: image transform operations from the albumentations library,
-    used for data augmentation
-    dic: dictionary containing the paths to the input images and the
-    train_test_split file
+    image_paths: list[str]
+        the list with the path towards all features
+    targets: list[int]
+        the list with all classification labels for all features
+    centers: list[int]
+        the list for all datacenters for all features
+    X_dtype: torch.dtype
+        the dtype of the X features output
+    y_dtype: torch.dtype
+        the dtype of the y label output
+    augmentations:
+        image transform operations from the albumentations library,
+        used for data augmentation
+    dic:
+        dictionary containing the paths to the input images and the
+        train_test_split file
+
+    Parameters
+    ----------
+    X_dtype :
+    y_dtype :
+    augmentations :
     """
 
     def __init__(
@@ -34,6 +47,9 @@ class Isic2019Raw(torch.utils.data.Dataset):
         y_dtype=torch.int64,
         augmentations=None,
     ):
+        """
+        Cf class docstring
+        """
         dict = check_dataset_from_config(dataset_name="fed_isic2019", debug=False)
         input_path = dict["dataset_path"]
         dir = str(Path(os.path.realpath(__file__)).parent.resolve())
@@ -179,18 +195,18 @@ if __name__ == "__main__":
 
     mydataset = FedIsic2019(train=True, pooled=True)
     print(len(mydataset))
-    print(f"Size of image 0 ", mydataset[0][0].shape)
+    print("Size of image 0 ", mydataset[0][0].shape)
     mydataset = FedIsic2019(train=False, pooled=True)
     print(len(mydataset))
-    print(f"Size of image 0 ", mydataset[0][0].shape)
+    print("Size of image 0 ", mydataset[0][0].shape)
 
     for i in range(6):
         mydataset = FedIsic2019(center=i, train=True, pooled=False)
         print(len(mydataset))
-        print(f"Size of image 0 ", mydataset[0][0].shape)
+        print("Size of image 0 ", mydataset[0][0].shape)
         mydataset = FedIsic2019(center=i, train=False, pooled=False)
         print(len(mydataset))
-        print(f"Size of image 0 ", mydataset[0][0].shape)
+        print("Size of image 0 ", mydataset[0][0].shape)
 
     mydataset = FedIsic2019(center=5, train=False, pooled=False)
     print(len(mydataset))

@@ -3,10 +3,16 @@ from pathlib import Path
 from typing import Dict, Tuple
 from zipfile import ZipFile
 
-import torch
-import numpy as np
 import pandas as pd
-from monai.transforms import AddChannel, AsDiscrete, Compose, Resize, ToTensor, NormalizeIntensity
+import torch
+from monai.transforms import (
+    AddChannel,
+    AsDiscrete,
+    Compose,
+    NormalizeIntensity,
+    Resize,
+    ToTensor,
+)
 from torch import Tensor
 from torch.utils.data import Dataset
 
@@ -25,9 +31,11 @@ class IXITinyRaw(Dataset):
     Generic interface for IXI Tiny Dataset
 
     Parameters
-        ----------
-        transform:
-            PyTorch Transform to process the data or augment it.
+    ----------
+    transform : optional
+        PyTorch Transform to process the data or augment it. Default to None
+    debug : bool, optional
+        Default to False
     """
 
     CENTER_LABELS = {"Guys": 0, "HH": 1, "IOP": 2}
@@ -158,19 +166,22 @@ class FedIXITiny(IXITinyRaw):
     Federated class for T1 images in IXI Tiny Dataset
 
     Parameters
-        ----------
-        transform:
-            PyTorch Transform to process the data or augment it.
-        center: int, str
-            Id of the center (hospital) from which to gather data. Defaults to 1.
-        train : bool, optional
-            Whether to take the train or test split. Defaults to True (train).
-        pooled : bool, optional
-            Whether to take all data from the 3 centers into one dataset.
-            If True, supersedes center argument. Defaults to False.
+    ----------
+    transform:
+        PyTorch Transform to process the data or augment it.
+    center: int, optional
+        Id of the center (hospital) from which to gather data. Defaults to 0.
+    train : bool, optional
+        Whether to take the train or test split. Defaults to True (train).
+    pooled : bool, optional
+        Whether to take all data from the 3 centers into one dataset.
+        If True, supersedes center argument. Defaults to False.
     """
 
     def __init__(self, transform=None, center=0, train=True, pooled=False):
+        """
+        Cf class docstring
+        """
         super(FedIXITiny, self).__init__(transform=transform)
 
         self.modality = "T1"
