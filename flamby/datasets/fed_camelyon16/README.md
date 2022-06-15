@@ -10,7 +10,7 @@ We will use the [Google-Drive-API-v3](https://developers.google.com/drive/api/v3
 | Description        | Dataset from Camelyon16
 | Dataset size       | 900 GB (and 50 GB after features extraction).
 | Centers            | 2 centers - RUMC and UMCU.
-| Records per center | RUMC: 170 (Train) + 89 (Test), UMCU: 100 (Train) + 50 (Test)
+| Records per center | RUMC: 169 (Train) + 74 (Test), UMCU: 101 (Train) + 55 (Test)
 | Inputs shape       | Tensor of shape (10000, 2048) (after feature extraction).
 | Total nb of points | 399 slides.
 | Task               | Weakly Supervised (Binary) Classification.
@@ -42,7 +42,12 @@ cp ~/Downloads/code_secret_client_bignumber.apps.googleusercontent.com.json clie
 ### Step 2: Downloading the dataset
 
 - **Remark 1: If you are downloading on a remote server**, make sure you do ssh forwarding of the port 6006 onto the port 6006 of your laptop.
-- Remark 2 : Make sure you have enough space to hold the dataset (900GB).
+- Remark 2 : Make sure you have enough space to hold the dataset (900GB).  
+- 
+First cd into the `dataset_creation_scripts`folder:  
+```bash
+cd flamby/datasets/fed_camelyon16/dataset_creation_scripts
+```
 
 Then run:
 
