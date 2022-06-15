@@ -18,6 +18,37 @@ class FedAvg:
     ----------
     - https://arxiv.org/abs/1602.05629
 
+    Parameters
+    ----------
+    training_dataloaders : List
+        The list of training dataloaders from multiple training centers.
+    model : torch.nn.Module
+        An initialized torch model.
+    loss : torch.nn.modules.loss._Loss
+        The loss to minimize between the predictions of the model and the
+        ground truth.
+    optimizer_class : torch.optim.Optimizer
+        The class of the torch model optimizer to use at each step.
+    learning_rate : float
+        The learning rate to be given to the optimizer_class.
+    num_updates : int
+        The number of updates to do on each client at each round.
+    nrounds : int
+        The number of communication rounds to do.
+    log: bool, optional
+        Whether or not to store logs in tensorboard. Defaults to False.
+    log_period: int, optional
+        If log is True then log the loss every log_period batch updates.
+        Defauts to 100.
+    bits_counting_function : Union[callable, None], optional
+        A function making sure exchanges respect the rules, this function
+        can be obtained by decorating check_exchange_compliance in
+        flamby.utils. Should have the signature List[Tensor] -> int.
+        Defaults to None.
+    logdir: str, optional
+        Where logs are stored. Defaults to ./runs.
+    log_basename: str, optional
+        The basename of the created log_file. Defaults to fed_avg.
     """
 
     def __init__(
@@ -35,39 +66,8 @@ class FedAvg:
         logdir: str = "./runs",
         log_basename: str = "fed_avg",
     ):
-        """_summary_
-
-        Parameters
-        ----------
-        training_dataloaders : List
-            The list of training dataloaders from multiple training centers.
-        model : torch.nn.Module
-            An initialized torch model.
-        loss : torch.nn.modules.loss._Loss
-            The loss to minimize between the predictions of the model and the
-            ground truth.
-        optimizer_class : torch.optim.Optimizer
-            The class of the torch model optimizer to use at each step.
-        learning_rate : float
-            The learning rate to be given to the optimizer_class.
-        num_updates : int
-            The number of updates to do on each client at each round.
-        nrounds : int
-            The number of communication rounds to do.
-        log: bool
-            Whether or not to store logs in tensorboard. Defaults to False.
-        log_period: int
-            If log is True then log the loss every log_period batch updates.
-            Defauts to 100.
-        bits_counting_function : Union[callable, None]
-            A function making sure exchanges respect the rules, this function
-            can be obtained by decorating check_exchange_compliance in
-            flamby.utils. Should have the signature List[Tensor] -> int.
-            Defaults to None.
-        logdir: str
-            Where logs are stored. Defaults to ./runs.
-        log_basename: str
-            The basename of the created log_file. Defaults to fed_avg.
+        """
+        Cf class docstring
         """
         self.training_dataloaders_with_memory = [
             DataLoaderWithMemory(e) for e in training_dataloaders
@@ -116,7 +116,7 @@ class FedAvg:
 
         - each model will be trained locally for num_updates batches.
         - the parameter updates will be collected and averaged. Averages will be
-            weighted by the number of samples in each client
+          weighted by the number of samples in each client
         - the averaged updates willl be used to update the local model
         """
         local_updates = list()

@@ -18,44 +18,51 @@ class Cyclic:
     ----------
     https://pubmed.ncbi.nlm.nih.gov/29617797/
 
-    Attributes
+    Parameters
     ----------
-    training_dataloaders : List
-            The list of training dataloaders from multiple training centers.
+    training_dataloaders: List[torch.utils.data.DataLoader]
+         The list of training dataloaders from multiple training centers.
 
-    model : torch.nn.Module
-        An initialized torch model.
+    model: torch.nn.Module
+         An initialized torch model.
 
-    loss : torch.nn.modules.loss._Loss
-        The loss to minimize between the predictions of the model and the
-        ground truth.
+    loss: torch.nn.modules.loss._Loss
+         The loss to minimize between the predictions of the model and the
+         ground truth.
 
-    optimizer_class : torch.optim.Optimizer
-        The class of the torch model optimizer to use at each step.
+    optimizer_class: callable torch.optim.Optimizer
+         The class of the torch model optimizer to use at each step.
 
-    learning_rate : float
-        The learning rate to be given to the optimizer_class.
+    learning_rate: float
+         The learning rate to be given to the optimizer_class.
 
-    num_updates : int
-        The number of updates to do on each client at each round.
+    num_updates: int
+         The number of epochs to do on each client at each round.
 
-    nrounds : int
-        The number of communication rounds to do.
+    nrounds: int
+          The number of communication rounds to do.
 
-    log: bool
-        Whether or not to store logs in tensorboard.
+    log: bool, optional
+         Whether or not to store logs in tensorboard.
 
-    bits_counting_function : callable
-        A function making sure exchanges respect the rules, this function
-        can be obtained by decorating check_exchange_compliance in
-        flamby.utils. Should have the signature List[Tensor] -> int
+    log_period: int, optional
 
-    Methods
-    ----------
-    perform_round: Perform a single round of cyclic weight transfer
+    bits_counting_function: callable, optional
+         A function making sure exchanges respect the rules, this function
+         can be obtained by decorating check_exchange_compliance in
+         flamby.utils. Should have the signature List[Tensor] -> int
 
-    run: Performs `self.nrounds` rounds of averaging and returns the final model.
+    deterministic_cycle: bool, optional
+         if True, we cycle through clients in their original order,
+         otherwise, the clients are reshuffled at the beginning of every cycle.
 
+    rng: np.random._generator.Generator, optional
+         used to reshuffle the clients
+
+    logdir: str, optional
+         The path where to store the logs if there are some. Defaults to ./runs.
+    log_basename: str
+         The basename of the created log file. Defaults to cyclic.
     """
 
     def __init__(
@@ -75,54 +82,7 @@ class Cyclic:
         log_basename: str = "cyclic",
         logdir: str = "./runs",
     ):
-        """_summary_
-
-         Parameters
-         ----------
-         training_dataloaders: List[torch.utils.data.DataLoader]
-              The list of training dataloaders from multiple training centers.
-
-         model: torch.nn.Module
-              An initialized torch model.
-
-         loss: torch.nn.modules.loss._Loss
-             The loss to minimize between the predictions of the model and the
-             ground truth.
-
-         optimizer_class: callable torch.optim.Optimizer
-             The class of the torch model optimizer to use at each step.
-
-         learning_rate: float
-             The learning rate to be given to the optimizer_class.
-
-         num_updates: int
-             The number of epochs to do on each client at each round.
-
-         nrounds: int
-              The number of communication rounds to do.
-
-         log: bool
-             Whether or not to store logs in tensorboard.
-
-         log_period: int
-
-         bits_counting_function: callable
-             A function making sure exchanges respect the rules, this function
-             can be obtained by decorating check_exchange_compliance in
-             flamby.utils. Should have the signature List[Tensor] -> int
-
-         deterministic_cycle: bool
-             if True, we cycle through clients in their original order,
-             otherwise, the clients are reshuffled at the beginning of every cycle.
-
-         rng: np.random._generator.Generator
-             used to reshuffle the clients
-
-        logdir: str
-            The path where to store the logs if there are some. Defaults to ./runs.
-        log_basename: str
-            The basename of the created log file. Defaults to cyclic.
-
+        """ Cf class docstring
         """
 
         self.training_dataloaders_with_memory = [
