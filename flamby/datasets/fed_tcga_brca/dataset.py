@@ -65,11 +65,12 @@ class FedTcgaBrca(TcgaBrcaRaw):
     Parameters
     ----------
     center : int, optional
-        Default to 0
+        Between 0 and 5, designates the region in the case of pooled==False. Default to
+        0
     train : bool, optional
-        Default to True
+        Characterizes if the dataset is used for training or for testing. Default to True
     pooled : bool, optional
-        Default to False
+        Characterizes if the dataset is pooled or not. Default to False
     X_dtype : torch.dtype, optional
         Default to torch.float32
     y_dtype : torch.dtype, optional
