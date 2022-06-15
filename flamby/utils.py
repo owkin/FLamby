@@ -247,15 +247,39 @@ def check_dataset_from_config(dataset_name, debug):
     return dict
 
 
-def accept_license(license_link):
+def accept_license(license_link, dataset_name, save_agreement=True):
     """This function forces the user to accept the license terms before
     proceeding with the download.
 
     Parameters
     ----------
     license_link : str
-        _description_
+        The link towards the data terms of the original dataset.
+    dataset_name: str
+        The name of the dataset associated with the license
+    save_agreement: bool
+        Whether or not to save a file if one already answered yes.
     """
+    assert dataset_name in [
+        "fed_camelyon16",
+        "fed_heart_disease",
+        "fed_synthetic",
+        "fed_isic2019",
+        "fed_lidc_idri",
+        "fed_ixi",
+        "fed_kits19",
+    ], f"Dataset name {dataset_name} not valid."
+
+    datasets_dir = str(Path(os.path.realpath(datasets.__file__)).parent.resolve())
+    path_to_dataset_folder = os.path.join(
+        datasets_dir, dataset_name, "dataset_creation_scripts"
+    )
+    license_acceptance_file_path = os.path.join(path_to_dataset_folder, f"license_agreement_{dataset_name}")
+
+    # If the license acceptance file is found we do nothing
+    if os.path.exists(license_acceptance_file_path):
+        return
+
     while True:
         answer = input(
             "Have you taken the time to read and accept the data terms on the"
@@ -263,6 +287,8 @@ def accept_license(license_link):
             f"{license_link} ? | (y/n)\n\n\n"
         )
         if any(answer.lower() == f for f in ["yes", "y", "1", "ye"]):
+            print("Saving license agreement")
+            Path(license_acceptance_file_path).touch()
             print("You may now proceed to download.\n")
             break
 
@@ -270,12 +296,12 @@ def accept_license(license_link):
             print(
                 "Since you have not read and accepted the license terms the "
                 "download of the dataset is aborted. Please come back when you"
-                "have fulfilled this legal obligation."
+                " have fulfilled this legal obligation."
             )
             sys.exit()
         else:
             print(
                 "If you wish to proceed with the download you need to read and"
                 " accept the license and data terms of the original data owners."
-                "Please read and accept the terms and answer yes.\n\n\n"
+                " Please read and accept the terms and answer yes.\n\n\n"
             )

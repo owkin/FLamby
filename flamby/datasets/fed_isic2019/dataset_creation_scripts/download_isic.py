@@ -30,7 +30,7 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-accept_license("https://challenge.isic-archive.com/data/")
+accept_license("https://challenge.isic-archive.com/data/", "fed_isic2019")
 os.makedirs(args.output_folder, exist_ok=True)
 
 # Creating config file with path to dataset from arguments

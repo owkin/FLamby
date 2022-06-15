@@ -32,7 +32,7 @@ def dl_ixi_tiny(output_folder, debug=False):
     IXI Tiny is derived from the same source. Acknowledge the following reference on TorchIO : https://torchio.readthedocs.io/datasets.html#ixitiny\n\
     Pérez-García F, Sparks R, Ourselin S. TorchIO: a Python library for efficient loading, preprocessing, augmentation and patch-based sampling of medical images in deep learning. arXiv:2003.04696 [cs, eess, stat]. 2020. https://doi.org/10.48550/arXiv.2003.04696"
     )
-    accept_license("https://brain-development.org/ixi-dataset/")
+    accept_license("https://brain-development.org/ixi-dataset/", "fed_ixi")
     os.makedirs(output_folder, exist_ok=True)
 
     # Creating config file with path to dataset

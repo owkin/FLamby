@@ -32,7 +32,7 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
         Whether or not to download only a few images to check feasibility,
         by default False
     """
-    accept_license("https://camelyon17.grand-challenge.org/Data/")
+    accept_license("https://camelyon17.grand-challenge.org/Data/", "fed_camelyon16")
     if debug:
         print(
             "WARNING YOU ARE DOWNLOADING ONLY PART OF THE DATASET YOU ARE"

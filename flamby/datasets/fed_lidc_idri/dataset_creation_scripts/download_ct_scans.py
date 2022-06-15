@@ -249,7 +249,8 @@ def LIDC_to_niftis(extraction_results_dataframe, spacing=[1.0, 1.0, 1.0], debug=
 
 def main(output_folder, debug=False, keep_dicoms=False):
     accept_license(
-        "https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI#1966254a2b592e6fba14f949f6e23bb1b7804cc"
+        "https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI#1966254a2b592e6fba14f949f6e23bb1b7804cc",
+        "fed_lidc_idri"
     )
     patientXseries = download_LIDC(output_folder, debug)
     LIDC_to_niftis(patientXseries, debug=debug)
