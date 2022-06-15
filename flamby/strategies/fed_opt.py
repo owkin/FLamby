@@ -56,24 +56,27 @@ class FedOpt:
              The number of updates to do on each client at each round.
          nrounds : int
              The number of communication rounds to do.
-         log: bool
+         log: bool, optional
              Whether or not to store logs in tensorboard. Defaults to False.
-         bits_counting_function : callable
+        log_period: int, optional
+            If log is True then log the loss every log_period batch updates.
+            Defauts to 100.
+         bits_counting_function : callable, optional
              A function making sure exchanges respect the rules, this function
              can be obtained by decorating check_exchange_compliance in
              flamby.utils. Should have the signature List[Tensor] -> int.
              Defaults to None.
-         tau: float
+         tau: float, optional
              adaptivity hyperparameter for the Adam/Yogi optimizer. Defaults to 1e-8.
-         server_learning_rate : float
+         server_learning_rate : float, optional
              The learning rate used by the server optimizer. Defaults to 1.
-         beta1: float
+         beta1: float, optional
              between 0 and 1, momentum parameter. Defaults to 0.9.
-         beta2: float
+         beta2: float, optional
              between 0 and 1, second moment parameter. Defaults to 0.999.
-        logdir: str
+         logdir: str, optional
              The path where to store the logs. Defaults to ./runs.
-        log_basename: str
+         log_basename: str, optional
              The basename of the logs that are created. Defaults to fed_opt.
         """
 
@@ -181,6 +184,48 @@ class FedAdam(FedOpt):
     ----------
     https://arxiv.org/abs/2003.00295
 
+
+    Parameters
+    ----------
+    training_dataloaders : List
+        The list of training dataloaders from multiple training centers.
+    model : torch.nn.Module
+        An initialized torch model.
+    loss : torch.nn.modules.loss._Loss
+        The loss to minimize between the predictions of the model and the
+        ground truth.
+    optimizer_class : torch.optim.Optimizer
+        This is the client optimizer, it has to be SGD is FedAdam is chosen
+        for the server optimizer. The adaptive logic sits with the server
+        optimizer and is coded below with the aggregation.
+    learning_rate : float
+        The learning rate to be given to the client optimizer_class.
+    num_updates : int
+        The number of updates to do on each client at each round.
+    nrounds : int
+        The number of communication rounds to do.
+    log: bool, optional
+        Whether or not to store logs in tensorboard. Defaults to False.
+    log_period: int, optional
+       If log is True then log the loss every log_period batch updates.
+       Defauts to 100.
+    bits_counting_function : callable, optional
+        A function making sure exchanges respect the rules, this function
+        can be obtained by decorating check_exchange_compliance in
+        flamby.utils. Should have the signature List[Tensor] -> int.
+        Defaults to None.
+    tau: float, optional
+        adaptivity hyperparameter for the Adam optimizer. Defaults to 1e-3.
+    server_learning_rate : float, optional
+        The learning rate used by the server optimizer. Defaults to 1e-2.
+    beta1: float, optional
+        between 0 and 1, momentum parameter. Defaults to 0.9.
+    beta2: float, optional
+        between 0 and 1, second moment parameter. Defaults to 0.999.
+    logdir: str, optional
+        The path where to store the logs. Defaults to ./runs.
+    log_basename: str, optional
+        The basename of the logs that are created. Defaults to fed_adam.
     """
 
     def __init__(
@@ -228,9 +273,9 @@ class FedAdam(FedOpt):
 
         - each model will be trained locally for num_updates batches.
         - the parameter updates will be collected and averaged. Averages will be
-            weighted by the number of samples in each client.
+          weighted by the number of samples in each client.
         - the averaged updates will be processed the same way as Adam or Yogi
-            algorithms do in a non-federated setting.
+          algorithms do in a non-federated setting.
         - the averaged updates will be used to update the local models.
         """
 
@@ -268,6 +313,47 @@ class FedYogi(FedOpt):
     ----------
     https://arxiv.org/abs/2003.00295
 
+    Parameters
+    ----------
+    training_dataloaders : List
+        The list of training dataloaders from multiple training centers.
+    model : torch.nn.Module
+        An initialized torch model.
+    loss : torch.nn.modules.loss._Loss
+        The loss to minimize between the predictions of the model and the
+        ground truth.
+    optimizer_class : torch.optim.Optimizer
+        This is the client optimizer, it has to be SGD is FedAdam is chosen
+        for the server optimizer. The adaptive logic sits with the server
+        optimizer and is coded below with the aggregation.
+    learning_rate : float
+        The learning rate to be given to the client optimizer_class.
+    num_updates : int
+        The number of updates to do on each client at each round.
+    nrounds : int
+        The number of communication rounds to do.
+    log: bool, optional
+        Whether or not to store logs in tensorboard. Defaults to False.
+    log_period: int, optional
+       If log is True then log the loss every log_period batch updates.
+       Defauts to 100.
+    bits_counting_function : callable, optional
+        A function making sure exchanges respect the rules, this function
+        can be obtained by decorating check_exchange_compliance in
+        flamby.utils. Should have the signature List[Tensor] -> int.
+        Defaults to None.
+    tau: float, optional
+        adaptivity hyperparameter for the Adam optimizer. Defaults to 1e-3.
+    server_learning_rate : float, optional
+        The learning rate used by the server optimizer. Defaults to 1e-2.
+    beta1: float, optional
+        between 0 and 1, momentum parameter. Defaults to 0.9.
+    beta2: float, optional
+        between 0 and 1, second moment parameter. Defaults to 0.999.
+    logdir: str, optional
+        The path where to store the logs. Defaults to ./runs.
+    log_basename: str, optional
+        The basename of the logs that are created. Defaults to fed_yogi.
     """
 
     def __init__(
@@ -315,9 +401,9 @@ class FedYogi(FedOpt):
 
         - each model will be trained locally for num_updates batches.
         - the parameter updates will be collected and averaged. Averages will be
-            weighted by the number of samples in each client.
+          weighted by the number of samples in each client.
         - the averaged updates will be processed the same way as Adam or Yogi
-            algorithms do in a non-federated setting.
+          algorithms do in a non-federated setting.
         - the averaged updates will be used to update the local models.
         """
         aggregated_delta_weights = self.calc_aggregated_delta_weights()
@@ -362,6 +448,47 @@ class FedAdagrad(FedOpt):
     ----------
     https://arxiv.org/abs/2003.00295
 
+    Parameters
+    ----------
+    training_dataloaders : List
+         The list of training dataloaders from multiple training centers.
+    model : torch.nn.Module
+         An initialized torch model.
+    loss : torch.nn.modules.loss._Loss
+         The loss to minimize between the predictions of the model and the
+         ground truth.
+    optimizer_class : torch.optim.Optimizer
+         This is the client optimizer, it has to be SGD is FedAdam is chosen
+         for the server optimizer. The adaptive logic sits with the server
+         optimizer and is coded below with the aggregation.
+    learning_rate : float
+         The learning rate to be given to the client optimizer_class.
+    num_updates : int
+         The number of updates to do on each client at each round.
+    nrounds : int
+         The number of communication rounds to do.
+    log: bool, optional
+         Whether or not to store logs in tensorboard. Defaults to False.
+    log_period: int, optional
+        If log is True then log the loss every log_period batch updates.
+        Defauts to 100.
+    bits_counting_function : callable, optional
+         A function making sure exchanges respect the rules, this function
+         can be obtained by decorating check_exchange_compliance in
+         flamby.utils. Should have the signature List[Tensor] -> int.
+         Defaults to None.
+    tau: float, optional
+         adaptivity hyperparameter for the Adam optimizer. Defaults to 1e-3.
+    server_learning_rate : float, optional
+         The learning rate used by the server optimizer. Defaults to 1e-2.
+    beta1: float, optional
+         between 0 and 1, momentum parameter. Defaults to 0.9.
+    beta2: float, optional
+         between 0 and 1, second moment parameter. Defaults to 0.999.
+    logdir: str, optional
+         The path where to store the logs. Defaults to ./runs.
+    log_basename: str, optional
+         The basename of the logs that are created. Defaults to fed_adagrad.
     """
 
     def __init__(
@@ -409,9 +536,9 @@ class FedAdagrad(FedOpt):
 
         - each model will be trained locally for num_updates batches.
         - the parameter updates will be collected and averaged. Averages will be
-            weighted by the number of samples in each client.
+          weighted by the number of samples in each client.
         - the averaged updates will be processed the same way as Adam or Yogi
-            algorithms do in a non-federated setting.
+          algorithms do in a non-federated setting.
         - the averaged updates will be used to update the local models.
         """
         aggregated_delta_weights = self.calc_aggregated_delta_weights()

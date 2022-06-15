@@ -124,7 +124,7 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "classic"
+html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -228,3 +228,9 @@ epub_exclude_files = ["search.html"]
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
+
+# Whether to add the type of args both in the function signature and in the
+# description, or only in one of them.
+# autodoc_typehints = "description" put only the type in the description
+autodoc_typehints = "description"
+
