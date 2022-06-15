@@ -23,7 +23,12 @@ available for download
 
 ## Download and preprocessing instructions
 
-To download the data, simply run the following command:
+To download the data, 
+First cd into the `dataset_creation_scripts` folder:  
+```bash
+cd flamby/datasets/fed_heart_disease/dataset_creation_scripts
+```
+then simply run the following command:
 ```
 python download.py --output-folder ./heart_disease_dataset
 ```
