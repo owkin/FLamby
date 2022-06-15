@@ -44,7 +44,7 @@ cp ~/Downloads/code_secret_client_bignumber.apps.googleusercontent.com.json clie
 - **Remark 1: If you are downloading on a remote server**, make sure you do ssh forwarding of the port 6006 onto the port 6006 of your laptop.
 - Remark 2 : Make sure you have enough space to hold the dataset (900GB).  
 - 
-First cd into the `dataset_creation_scripts`folder:  
+First cd into the `dataset_creation_scripts` folder:  
 ```bash
 cd flamby/datasets/fed_camelyon16/dataset_creation_scripts
 ```
