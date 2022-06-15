@@ -274,7 +274,9 @@ def accept_license(license_link, dataset_name, save_agreement=True):
     path_to_dataset_folder = os.path.join(
         datasets_dir, dataset_name, "dataset_creation_scripts"
     )
-    license_acceptance_file_path = os.path.join(path_to_dataset_folder, f"license_agreement_{dataset_name}")
+    license_acceptance_file_path = os.path.join(
+        path_to_dataset_folder, f"license_agreement_{dataset_name}"
+    )
 
     # If the license acceptance file is found we do nothing
     if os.path.exists(license_acceptance_file_path):
