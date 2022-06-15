@@ -19,7 +19,7 @@ def main(output_folder, debug=False):
     """
 
     # location of the files in the UCI archive
-    accept_license("https://archive-beta.ics.uci.edu/ml/datasets/heart+disease")
+    accept_license("https://archive-beta.ics.uci.edu/ml/datasets/heart+disease", "fed_heart_disease")
     base_url = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/"
     centers = ["cleveland", "hungarian", "switzerland", "va"]
     md5_hashes = [
