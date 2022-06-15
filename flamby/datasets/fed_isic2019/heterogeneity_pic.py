@@ -11,9 +11,6 @@ from efficientnet_pytorch import EfficientNet
 
 from flamby.datasets.fed_isic2019 import BATCH_SIZE, NUM_CLIENTS, FedIsic2019
 
-# from sklearn import metrics
-# from sklearn.decomposition import PCA
-
 
 sns.set()
 
@@ -63,9 +60,7 @@ if __name__ == "__main__":
 
     X = np.empty((0, 1280))
     centers = np.empty((0, 1))
-    colors = sns.color_palette(
-        "hls", 6
-    )  # ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b']
+    colors = sns.color_palette("hls", 6)
     for i in range(NUM_CLIENTS):
         mydataset = FedIsic2019(center=i, train=True, pooled=False)
         dataloader = torch.utils.data.DataLoader(
@@ -79,13 +74,6 @@ if __name__ == "__main__":
             X = np.concatenate([X, X_])
             centers_ = i * np.ones((outputs.shape[0], 1))
             centers = np.concatenate([centers, centers_])
-
-    # pca = PCA(10)
-    # X = pca.fit_transform(X)
-
-    # X_reduced = umap.UMAP().fit_transform(X)
-    # plt.scatter(X_reduced[:, 0], X_reduced[:, 1], c=centers, s=0.5)
-    # plt.savefig('heterogeneity_pic.png')
 
     def draw_umap(n_neighbors=15, min_dist=0.1, n_components=2, metric="euclidean"):
         print(
@@ -162,13 +150,4 @@ if __name__ == "__main__":
         plt.savefig(name_fig)
         plt.savefig(name_fig_2)
 
-
-    #draw_umap(n_neighbors=5, min_dist=0.0, n_components=1)
-    #draw_umap(n_neighbors=5, min_dist=0.0, n_components=2)
-    #draw_umap(n_neighbors=5, min_dist=0.0, n_components=3)
-    #draw_umap(n_neighbors=250, min_dist=0.5, n_components=1)
     draw_umap(n_neighbors=250, min_dist=0.5, n_components=2)
-    #draw_umap(n_neighbors=250, min_dist=0.5, n_components=3)
-    #draw_umap(n_neighbors=1000, min_dist=0.99, n_components=1)
-    #draw_umap(n_neighbors=1000, min_dist=0.99, n_components=2)
-    #draw_umap(n_neighbors=1000, min_dist=0.99, n_components=3)
