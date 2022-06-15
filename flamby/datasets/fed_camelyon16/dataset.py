@@ -13,6 +13,17 @@ from flamby.utils import check_dataset_from_config
 class Camelyon16Raw(Dataset):
     """Pytorch dataset containing all the features, labels and
     metadata for Camelyon16 WS without any discrimination.
+
+    Parameters
+    ----------
+    X_dtype : torch.dtype, optional
+        Dtype for inputs `X`. Defaults to `torch.float32`.
+    y_dtype : torch.dtype, optional
+        Dtype for labels `y`. Defaults to `torch.int64`.
+    debug : bool, optional,
+        Whether or not to use only the part of the dataset downloaded in
+        debug mode. Defaults to False.
+
     Attributes
     ----------
     tiles_dir : str, Where all features are located
@@ -28,17 +39,7 @@ class Camelyon16Raw(Dataset):
     """
 
     def __init__(self, X_dtype=torch.float32, y_dtype=torch.float32, debug=False):
-        """See description above
-        Parameters
-        ----------
-        X_dtype : torch.dtype, optional
-            Dtype for inputs `X`. Defaults to `torch.float32`.
-        y_dtype : torch.dtype, optional
-            Dtype for labels `y`. Defaults to `torch.int64`.
-        debug : bool, optional,
-            Whether or not to use only the part of the dataset downloaded in
-            debug mode. Defaults to False.
-        """
+        """See description above"""
         dict = check_dataset_from_config("fed_camelyon16", debug)
         self.tiles_dir = Path(dict["dataset_path"])
         path_to_labels_file = str(
@@ -63,13 +64,15 @@ class Camelyon16Raw(Dataset):
         for slide in self.tiles_dir.glob("*.npy"):
             slide_name = os.path.basename(slide).split(".")[0]
             slide_id = int(slide_name.split("_")[1])
-            label_from_metadata = int(self.metadata.loc[
-                [
-                    e.split(".")[0] == slide_name
-                    for e in self.metadata["slide_name"].tolist()
-                ],
-                "label",
-            ].item())
+            label_from_metadata = int(
+                self.metadata.loc[
+                    [
+                        e.split(".")[0] == slide_name
+                        for e in self.metadata["slide_name"].tolist()
+                    ],
+                    "label",
+                ].item()
+            )
             center_from_metadata = int(
                 self.metadata.loc[
                     [
@@ -141,29 +144,37 @@ class FedCamelyon16(Camelyon16Raw):
     One can instantiate this dataset with train or test data coming from either
     of the 2 centers it was created from or all data pooled.
     The train/test split corresponds to the one from the Challenge.
+
+    Parameters
+    ----------
+    center : int, optional
+        Default to 0.
+    train : bool, optional
+        Default to True
+    pooled : bool, optional
+        Whether to take all data from the 2 centers into one dataset, by
+        default False
+    X_dtype : torch.dtype, optional
+        Dtype for inputs `X`. Defaults to `torch.float32`.
+    y_dtype : torch.dtype, optional
+        Dtype for labels `y`. Defaults to `torch.int64`.
+    debug : bool, optional,
+        Whether or not to use only the part of the dataset downloaded in
+        debug mode. Defaults to False.
+
     """
 
     def __init__(
         self,
-        center=0,
-        train=True,
-        pooled=False,
-        X_dtype=torch.float32,
-        y_dtype=torch.float32,
-        debug=False,
+        center: int = 0,
+        train: bool = True,
+        pooled: bool = False,
+        X_dtype: torch.dtype = torch.float32,
+        y_dtype: torch.dtype = torch.float32,
+        debug: bool = False,
     ):
-        """Instantiate the dataset
-        Parameters
-        pooled : bool, optional
-            Whether to take all data from the 2 centers into one dataset, by
-            default False
-        X_dtype : torch.dtype, optional
-            Dtype for inputs `X`. Defaults to `torch.float32`.
-        y_dtype : torch.dtype, optional
-            Dtype for labels `y`. Defaults to `torch.int64`.
-        debug : bool, optional,
-            Whether or not to use only the part of the dataset downloaded in
-            debug mode. Defaults to False.
+        """
+        Cf class docstring
         """
         super().__init__(X_dtype=X_dtype, y_dtype=y_dtype, debug=debug)
         assert center in [0, 1]
