@@ -22,18 +22,46 @@ class LidcIdriRaw(Dataset):
 
     Attributes
     ----------
-    ctscans_dir : str, The directory where ctscans are located.
-    metadata: pd.DataFrame, The ground truth dataframe for metadata such as centers
-    features_paths: list[str], The list with the paths towards all features.
-    masks_paths: list[int], The list with the paths towards segmentation masks
-    features_centers: list[int], The list for all centers for all features
-    features_sets: list[str], The list for all sets (train/test) for all features
-    X_dtype: torch.dtype, The dtype of the X features output
-    y_dtype: torch.dtype, The dtype of the y label output
-    debug : bool, whether the dataset was processed in debug mode (first 10 files)
-    transform : torch.torchvision.Transform or None, Transformation to perform on data.
-    out_shape : Tuple or None, The desired output shape (If None, no reshaping)
-    sampler: Sampler object, algorithm to sample patches
+    ctscans_dir : str
+        The directory where ctscans are located.
+    metadata: pd.DataFrame
+        The ground truth dataframe for metadata such as centers
+    features_paths: list[str]
+        The list with the paths towards all features.
+    masks_paths: list[int]
+        The list with the paths towards segmentation masks
+    features_centers: list[int]
+        The list for all centers for all features
+    features_sets: list[str]
+        The list for all sets (train/test) for all features
+    X_dtype: torch.dtype
+        The dtype of the X features output
+    y_dtype: torch.dtype
+        The dtype of the y label output
+    debug : bool
+        whether the dataset was processed in debug mode (first 10 files)
+    transform : torch.torchvision.Transform or None
+        Transformation to perform on data.
+    out_shape : Tuple or None
+        The desired output shape (If None, no reshaping)
+    sampler: Sampler object
+        algorithm to sample patches
+
+    Parameters
+    ----------
+    X_dtype : torch.dtype, optional
+        Dtype for inputs `X`. Defaults to `torch.float32`.
+    y_dtype : torch.dtype, optional
+        Dtype for labels `y`. Defaults to `torch.int64`.
+    sampler : flamby.datasets.fed_lidc_idri.data_utils.Sampler
+        Patch sampling method.
+    transform : torch.torchvision.Transform or None, optional.
+        Transformation to perform on each data point. Default: ClipNorm.
+    out_shape : Tuple or None, optional
+        The desired output shape. If None, no padding or cropping is performed.
+        Default is (384, 384, 384).
+    debug : bool, optional
+        Whether the dataset was downloaded in debug mode. Defaults to false.
     """
 
     def __init__(
@@ -46,22 +74,7 @@ class LidcIdriRaw(Dataset):
         debug=False,
     ):
         """
-        See description above
-        Parameters
-        ----------
-        X_dtype : torch.dtype, optional
-            Dtype for inputs `X`. Defaults to `torch.float32`.
-        y_dtype : torch.dtype, optional
-            Dtype for labels `y`. Defaults to `torch.int64`.
-        sampler : flamby.datasets.fed_lidc_idri.data_utils.Sampler
-            Patch sampling method.
-        transform : torch.torchvision.Transform or None, optional.
-            Transformation to perform on each data point. Default: ClipNorm.
-        out_shape : Tuple or None, optional
-            The desired output shape. If None, no padding or cropping is performed.
-            Default is (384, 384, 384).
-        debug : bool, optional
-            Whether the dataset was downloaded in debug mode. Defaults to false.
+        Cf class docstring
         """
         self.metadata = pd.read_csv(
             Path(os.path.dirname(flamby.datasets.fed_lidc_idri.__file__))
@@ -124,6 +137,29 @@ class FedLidcIdri(LidcIdriRaw):
     """
     Pytorch dataset containing for each center the features and associated labels
     for LIDC-IDRI federated classification.
+
+     Parameters
+    ----------
+    X_dtype : torch.dtype, optional
+        Dtype for inputs `X`. Defaults to `torch.float32`.
+    y_dtype : torch.dtype, optional
+        Dtype for labels `y`. Defaults to `torch.int64`.
+    out_shape : Tuple or None, optional
+        The desired output shape. If None, no padding or cropping is performed.
+        Default is (384, 384, 384).
+    sampler : flamby.datasets.fed_lidc_idri.data_utils.Sampler
+        Patch sampling method.
+    transform : torch.torchvision.Transform or None, optional.
+        Transformation to perform on each data point.
+    center : int, optional
+        Id of the center from which to gather data. Defaults to 0.
+    train : bool, optional
+        Whether to take the train or test split. Defaults to True (train).
+    pooled : bool, optional
+        Whether to take all data from the 2 centers into one dataset.
+        If True, supersedes center argument. Defaults to False.
+    debug : bool, optional
+        Whether the dataset was downloaded in debug mode. Defaults to false.
     """
 
     def __init__(
@@ -139,29 +175,7 @@ class FedLidcIdri(LidcIdriRaw):
         debug=False,
     ):
         """
-        Instantiate the dataset
-        Parameters
-        ----------
-        X_dtype : torch.dtype, optional
-            Dtype for inputs `X`. Defaults to `torch.float32`.
-        y_dtype : torch.dtype, optional
-            Dtype for labels `y`. Defaults to `torch.int64`.
-        out_shape : Tuple or None, optional
-            The desired output shape. If None, no padding or cropping is performed.
-            Default is (384, 384, 384).
-        sampler : flamby.datasets.fed_lidc_idri.data_utils.Sampler
-            Patch sampling method.
-        transform : torch.torchvision.Transform or None, optional.
-            Transformation to perform on each data point.
-        center : int, optional
-            Id of the center from which to gather data. Defaults to 0.
-        train : bool, optional
-            Whether to take the train or test split. Defaults to True (train).
-        pooled : bool, optional
-            Whether to take all data from the 2 centers into one dataset.
-            If True, supersedes center argument. Defaults to False.
-        debug : bool, optional
-            Whether the dataset was downloaded in debug mode. Defaults to false.
+        Cf class docstring
         """
 
         super().__init__(

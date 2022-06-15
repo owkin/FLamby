@@ -1,4 +1,5 @@
-#    Copyright 2020 Division of Medical Image Computing, German Cancer Research Center (DKFZ), Heidelberg, Germany
+#    Copyright 2020 Division of Medical Image Computing, German Cancer Research Center
+#    (DKFZ), Heidelberg, Germany
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -32,11 +33,12 @@ from nnunet.training.data_augmentation.default_data_augmentation import (
 from torch.utils.data import Dataset
 
 import flamby.datasets.fed_kits19
-from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.data_augmentations import \
-    transformations
-from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.set_environment_variables import \
-    set_environment_variables
-
+from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.data_augmentations import (
+    transformations,
+)
+from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.set_environment_variables import (
+    set_environment_variables,
+)
 from flamby.utils import check_dataset_from_config
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "")))
@@ -44,27 +46,22 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "")))
 
 class Kits19Raw(Dataset):
     """Pytorch dataset containing all the images, and segmentations for KiTS19
-    Attributes
+
+    Parameters
     ----------
-    plan_dir : str, Where all preprocessing plans and augmentation details of the dataset are saved, used for preprocessing
-    dataset_directory: where preprocessed dataset is saved
-    debug: bool, Whether or not we use the dataset with only part of the features
+    X_dtype : torch.dtype, optional
+        Dtype for inputs `X`. Defaults to `torch.float32`.
+    y_dtype : torch.dtype, optional
+        Dtype for labels `y`. Defaults to `torch.int64`.
+    debug : bool, optional,
+        Whether or not to use only the part of the dataset downloaded in
+        debug mode. Defaults to False.
     """
 
     def __init__(
         self, train=True, X_dtype=torch.float32, y_dtype=torch.float32, debug=False
     ):
-        """See description above
-        Parameters
-        ----------
-        X_dtype : torch.dtype, optional
-            Dtype for inputs `X`. Defaults to `torch.float32`.
-        y_dtype : torch.dtype, optional
-            Dtype for labels `y`. Defaults to `torch.int64`.
-        debug : bool, optional,
-            Whether or not to use only the part of the dataset downloaded in
-            debug mode. Defaults to False.
-        """
+        """See description above"""
         # set_environment_variables should be called before importing nnunet
         set_environment_variables(debug)
         from nnunet.paths import preprocessing_output_dir
@@ -185,12 +182,15 @@ class Kits19Raw(Dataset):
         seg = np.zeros(seg_shape, dtype=np.float32)
         need_to_pad = self.need_to_pad.copy()
         for d in range(3):
-            # if case_all_data.shape + need_to_pad is still < patch size we need to pad more! We pad on both sides
+            # if case_all_data.shape + need_to_pad is still < patch size we need to
+            # pad more! We pad on both sides
             # always
             if need_to_pad[d] + case_all_data.shape[d + 1] < self.patch_size[d]:
                 need_to_pad[d] = self.patch_size[d] - case_all_data.shape[d + 1]
-        # we can now choose the bbox from -need_to_pad // 2 to shape - patch_size + need_to_pad // 2. Here we
-        # define what the upper and lower bound can be to then sample form them with np.random.randint
+        # we can now choose the bbox from -need_to_pad // 2 to shape - patch_size +
+        # need_to_pad // 2. Here we
+        # define what the upper and lower bound can be to then sample form them with
+        # np.random.randint
         shape = case_all_data.shape[1:]
         lb_x = -need_to_pad[0] // 2
         ub_x = shape[0] + need_to_pad[0] // 2 + need_to_pad[0] % 2 - self.patch_size[0]
@@ -199,7 +199,8 @@ class Kits19Raw(Dataset):
         lb_z = -need_to_pad[2] // 2
         ub_z = shape[2] + need_to_pad[2] // 2 + need_to_pad[2] % 2 - self.patch_size[2]
 
-        # if not force_fg then we can just sample the bbox randomly from lb and ub. Else we need to make sure we get
+        # if not force_fg then we can just sample the bbox randomly from lb and ub.
+        # Else we need to make sure we get
         # at least one of the foreground classes in the patch
         if not force_fg:
             bbox_x_lb = np.random.randint(lb_x, ub_x + 1)
@@ -213,7 +214,8 @@ class Kits19Raw(Dataset):
                 )
 
             # Foreground Classes = [0, 1]
-            # this saves us a np.unique. Preprocessing already did that for all cases. Neat.
+            # this saves us a np.unique. Preprocessing already did that for all cases.
+            # Neat.
             foreground_classes = np.array(
                 [
                     i
@@ -224,7 +226,8 @@ class Kits19Raw(Dataset):
             foreground_classes = foreground_classes[foreground_classes > 0]
 
             if len(foreground_classes) == 0:
-                # this only happens if some image does not contain foreground voxels at all
+                # this only happens if some image does not contain foreground voxels at
+                # all
                 selected_class = None
                 voxels_of_that_class = None
                 print("case does not contain any foreground classes", i)
@@ -237,13 +240,15 @@ class Kits19Raw(Dataset):
                 selected_voxel = voxels_of_that_class[
                     np.random.choice(len(voxels_of_that_class))
                 ]
-                # selected voxel is center voxel. Subtract half the patch size to get lower bbox voxel.
+                # selected voxel is center voxel. Subtract half the patch size to get
+                # lower bbox voxel.
                 # Make sure it is within the bounds of lb and ub
                 bbox_x_lb = max(lb_x, selected_voxel[0] - self.patch_size[0] // 2)
                 bbox_y_lb = max(lb_y, selected_voxel[1] - self.patch_size[1] // 2)
                 bbox_z_lb = max(lb_z, selected_voxel[2] - self.patch_size[2] // 2)
             else:
-                # If the image does not contain any foreground classes, we fall back to random cropping
+                # If the image does not contain any foreground classes, we fall back to
+                # random cropping
                 bbox_x_lb = np.random.randint(lb_x, ub_x + 1)
                 bbox_y_lb = np.random.randint(lb_y, ub_y + 1)
                 bbox_z_lb = np.random.randint(lb_z, ub_z + 1)
@@ -252,10 +257,11 @@ class Kits19Raw(Dataset):
         bbox_y_ub = bbox_y_lb + self.patch_size[1]
         bbox_z_ub = bbox_z_lb + self.patch_size[2]
 
-        # whoever wrote this knew what he was doing (hint: it was me). We first crop the data to the region of the
-        # bbox that actually lies within the data. This will result in a smaller array which is then faster to pad.
-        # valid_bbox is just the coord that lied within the data cube. It will be padded to match the patch size
-        # later
+        # whoever wrote this knew what he was doing (hint: it was me). We first crop
+        # the data to the region of the bbox that actually lies within the data. This
+        # will result in a smaller array which is then faster to pad. valid_bbox is
+        # just the coord that lied within the data cube. It will be padded to match the
+        # patch size later
         valid_bbox_x_lb = max(0, bbox_x_lb)
         valid_bbox_x_ub = min(shape[0], bbox_x_ub)
         valid_bbox_y_lb = max(0, bbox_y_lb)
@@ -263,9 +269,10 @@ class Kits19Raw(Dataset):
         valid_bbox_z_lb = max(0, bbox_z_lb)
         valid_bbox_z_ub = min(shape[2], bbox_z_ub)
 
-        # At this point you might ask yourself why we would treat seg differently from seg_from_previous_stage.
-        # Why not just concatenate them here and forget about the if statements? Well that's because segneeds to
-        # be padded with -1 constant whereas seg_from_previous_stage needs to be padded with 0s (we could also
+        # At this point you might ask yourself why we would treat seg differently from
+        # seg_from_previous_stage. Why not just concatenate them here and forget about
+        # the if statements? Well that's because segneeds to be padded with -1 constant
+        # whereas seg_from_previous_stage needs to be padded with 0s (we could also
         # remove label -1 in the data augmentation but this way it is less error prone)
         case_all_data = np.copy(
             case_all_data[
@@ -310,32 +317,34 @@ class FedKits19(Kits19Raw):
     One can instantiate this dataset with train or test data coming from either
     of the 2 centers it was created from or all data pooled.
     The train/test split corresponds to the one from the Challenge.
+
+    Parameters
+    ----------
+    center : int, optional
+        Center id between 0 and 5. Default to 0
+    train : bool, optional
+        Default to True
+    pooled : bool, optional
+        Default to False
+    X_dtype : torch.dtype, optional
+        Default to torch.float32
+    y_dtype : torch.dtype, optional
+        Default to torch.float32
+    debug : bool, optional
+        Whether or not to use only the part of the dataset downloaded in debug mode.
+        Default to False.
     """
 
     def __init__(
         self,
-        center=0,
-        train=True,
-        pooled=False,
-        X_dtype=torch.float32,
-        y_dtype=torch.float32,
-        debug=False,
+        center: int = 0,
+        train: bool = True,
+        pooled: bool = False,
+        X_dtype: torch.dtype = torch.float32,
+        y_dtype: torch.dtype = torch.float32,
+        debug: bool = False,
     ):
-        """Instantiate the dataset
-        Parameters
-        pooled : bool, optional
-            Whether to take all data from the 2 centers into one dataset, by
-            default False
-        X_dtype : torch.dtype, optional
-            Dtype for inputs `X`. Defaults to `torch.float32`.
-        y_dtype : torch.dtype, optional
-            Dtype for labels `y`. Defaults to `torch.float32`.
-        debug : bool, optional,
-            Whether or not to use only the part of the dataset downloaded in
-            debug mode. Defaults to False.
-        augmentations: Augmentations to be applied on X
-        center: Silo ID, must be from the set [0, 1, 2, 3, 4, 5]
-        """
+        """Cf class docstring"""
         super().__init__(X_dtype=X_dtype, train=train, y_dtype=y_dtype, debug=debug)
 
         key = self.train_test + "_" + str(center)
