@@ -263,11 +263,11 @@ def accept_license(license_link, dataset_name, save_agreement=True):
     assert dataset_name in [
         "fed_camelyon16",
         "fed_heart_disease",
-        "fed_synthetic",
         "fed_isic2019",
         "fed_lidc_idri",
         "fed_ixi",
         "fed_kits19",
+        "fed_tcga_brca",
     ], f"Dataset name {dataset_name} not valid."
 
     datasets_dir = str(Path(os.path.realpath(datasets.__file__)).parent.resolve())
