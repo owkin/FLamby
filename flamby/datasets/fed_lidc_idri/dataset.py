@@ -138,7 +138,7 @@ class FedLidcIdri(LidcIdriRaw):
     Pytorch dataset containing for each center the features and associated labels
     for LIDC-IDRI federated classification.
 
-     Parameters
+    Parameters
     ----------
     X_dtype : torch.dtype, optional
         Dtype for inputs `X`. Defaults to `torch.float32`.
