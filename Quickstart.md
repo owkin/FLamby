@@ -10,21 +10,22 @@ We do provide users with two dataset abstractions: RawDataset and FedDataset.
 The recommended one is FedDataset: it is compatible with the rest of the repository's code.
 This class allows to instantiate either the single-centric version of the dataset using the argument `pooled = True`, or the different local datasets belonging to each client by providing the client index in the arguments (e.g. `center = 2, pooled = False`).
 The arguments `train = True` and `train = False` allow to instantiate train or test sets (in both pooled or local cases).
-We also provide RawDataset objects which are less easy to work with but that should provide all metadata required for power users that find the abstraction in FLamby hard to use for their use-cases.
+We also provide RawDataset objects which are less easy to work with but that should provide all metadata required for experienced users that find the FedDataset abstraction not flexible enough for their specific use-cases.
 
-To instantiate the raw TCGA-BRCA or the Fed-TCGA-BRCA dataset, follow those examples:
+To instantiate the raw TCGA-BRCA or the Fed-TCGA-BRCA dataset, install FLamby and execute the following lines either in the python console, a notebook or a python script:
+
 ```python
 
 from flamby.datasets.fed_tcga_brca import TcgaBrcaRaw, FedTcgaBrca
 
 # Raw dataset
-mydataset = TcgaBrcaRaw()
+mydataset_raw = TcgaBrcaRaw()
 
 # Pooled test dataset
-mydataset = FedTcgaBrca(train=False, pooled=True)
+mydataset_pooled = FedTcgaBrca(train=False, pooled=True)
 
 # Center 2 train dataset
-mydataset = FedTcgaBrca(center=2, train=True, pooled=False)
+mydataset_local2= FedTcgaBrca(center=2, train=True, pooled=False)
 
 ```
 
@@ -49,7 +50,7 @@ from flamby.datasets.fed_tcga_brca import (
 )
 from flamby.datasets.fed_tcga_brca import FedTcgaBrca as FedDataset
 
-
+# Instantiation of local train set (and data loader)), baseline loss function, baseline model, default optimizer
 train_dataset = FedDataset(center=0, train=True, pooled=False)
 train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
 lossfunc = BaselineLoss()
@@ -66,6 +67,7 @@ for epoch in range(0, NUM_EPOCHS_POOLED):
         optimizer.step()
 
 # Evaluation
+# Instantiation of a list of the local test sets
 test_dataloaders = [
             torch.utils.data.DataLoader(
                 FedDataset(center=i, train=False, pooled=False),
@@ -75,6 +77,7 @@ test_dataloaders = [
             )
             for i in range(NUM_CLIENTS)
         ]
+# Function performing the evaluation
 dict_cindex = evaluate_model_on_tests(model, test_dataloaders, metric)
 print(dict_cindex)
 
@@ -82,7 +85,8 @@ print(dict_cindex)
 
 ### Federated Learning example
 
-See below an example of how to train a baseline model on the Fed-TCGA-BRCA dataset in a federated way using the FedAvg strategy and evaluate it on all the pooled test set:
+See below an example of how to train a baseline model on the Fed-TCGA-BRCA dataset in a federated way using the FedAvg strategy and evaluate it on the pooled test set:
+
 ```python
 
 import torch
@@ -104,7 +108,7 @@ from flamby.datasets.fed_tcga_brca import FedTcgaBrca as FedDataset
 # 1st line of code to change to switch to another strategy
 from flamby.strategies.fed_avg import FedAvg as strat
 
-# We loop on all the clients of the distributed dataset and instantiate associated dataloaders
+# We loop on all the clients of the distributed dataset and instantiate associated data loaders
 train_dataloaders = [
             torch.utils.data.DataLoader(
                 FedDataset(center = i, train = True, pooled = False),
@@ -114,6 +118,7 @@ train_dataloaders = [
             )
             for i in range(NUM_CLIENTS)
         ]
+
 lossfunc = BaselineLoss()
 m = Baseline()
 
@@ -132,6 +137,7 @@ s = strat(**args)
 m = s.run()[0]
 
 # Evaluation
+# We only instantiate one test set in this particular case: the pooled one
 test_dataloaders = [
             torch.utils.data.DataLoader(
                 FedDataset(train = False, pooled = True),
@@ -158,29 +164,32 @@ python download.py --output-folder ./heart_disease_dataset
 
 ### Training and evaluation in a pooled setting
 
-To train and evaluate a model for the pooled Heart Disease dataset, run:
+To train and evaluate a baseline model for the pooled Heart Disease dataset, run:
 ```
 cd flamby/datasets/fed_heart_disease
 python benchmark.py --num-workers-torch 0
 ```
 
-### Benchmarking, training and evaluation locally and in a FL setting
+### Benchmarking
 
 The command below allows to reproduce the article's results for a given seed:
 - train a model on the pooled dataset and evaluate it on all test sets (local and pooled)
 - train models on all local datasets and evaluate them on all test sets (local and pooled)
 - evaluate the ensemble of locally trained models on all test sets (local and pooled)
 - train models in a federated way for all FL strategies and evaluate them on all test sets (local and pooled)
-The config file is present in the repository and holds all necesssary HPs for FL strategies.
+
+The config file is present in the repository (`flamby/config_*.json`) and holds all necesssary HPs for FL strategies.
 The results are stored in the csv file given in the command.
 
 ```
 cd flamby/benchmarks
-python fed_benchmark.py --config-file-path ../config_results_heart_disease_seed11.json --results-file-path ./test_res_0.csv --seed 0
+python fed_benchmark.py --config-file-path ../config_heart_disease.json --results-file-path ./test_res_0.csv --seed 0
 ```
 
-In order to train and evaluate a model with specific FL strategy and hyperparameters one can run:
+### FL training and evaluation
+
+In order to train and evaluate a model with specific FL strategy and hyperparameters, one can run the following command (in this case the strategy specific HPs in the config file are ignored and the HPs used are either input in the command or take the default values given in the strategy class definition):
 
 ```
-python fed_benchmark.py --strategy FedProx --mu 0.001 --learning_rate 3. --config-file-path ../config_results_heart_disease_seed11.json --results-file-path ./test_res1.csv --seed 1
+python fed_benchmark.py --strategy FedProx --mu 1.0 --learning_rate 0.05 --config-file-path ../config_heart_disease.json --results-file-path ./test_res1.csv --seed 1
 ```
