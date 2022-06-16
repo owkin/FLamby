@@ -83,7 +83,7 @@ print(dict_cindex)
 
 ```
 
-### Federated Learning example
+### Federated Learning training example
 
 See below an example of how to train a baseline model on the Fed-TCGA-BRCA dataset in a federated way using the FedAvg strategy and evaluate it on the pooled test set:
 
@@ -131,6 +131,8 @@ args = {
             "optimizer_class": torch.optim.SGD,
             "learning_rate": LR / 10.0,
             "num_updates": 100,
+# This helper function returns the number of rounds necessary to perform approximately as many
+# epochs on each local dataset as with the pooled training
             "nrounds": get_nb_max_rounds(100),
         }
 s = strat(**args)
@@ -151,10 +153,12 @@ print(dict_cindex)
 
 ```
 
+Note that other models and loss functions compatible with the dataset can be used as long as they inherit from torch.nn.Module.
+
 ### Downloading a dataset
 
-We will follow up on how to download a dataset that is not hosted in this repository.
-We will use Fed-Heart-Disease as the download process is simple and it requires no preprocessing.
+We will follow up on how to download datasets that are not hosted on this repository.
+We will use the example of Fed-Heart-Disease as its download process is simple and it requires no preprocessing.
 Please run:
 
 ```
@@ -162,24 +166,37 @@ cd flamby/datasets/fed_heart_disease/dataset_creation_scripts
 python download.py --output-folder ./heart_disease_dataset
 ```
 
+You can instantiate this dataset as you did FedTcgaBrca by executing:
+```python
+from flamby.datasets.fed_heart_disease import HeartDiseaseRaw, FedHeartDisease
+# Raw dataset
+mydataset_raw = HeartDiseaseRaw()
+# Pooled train dataset
+mydataset_pooled = FedHeartDisease(train=True, pooled=True)
+# Center 1 train dataset
+mydataset_local1= FedHeartDisease(center=1, train=True, pooled=False)
+```
+
+Other datasets downloads and instantiations follow a similar pattern, please find instructions for each of the dataset in their corresponding sections.
+
 ### Training and evaluation in a pooled setting
 
-To train and evaluate a baseline model for the pooled Heart Disease dataset, run:
+To train and evaluate the baseline model for the pooled Heart Disease dataset using a helper script, run:
+
 ```
 cd flamby/datasets/fed_heart_disease
 python benchmark.py --num-workers-torch 0
 ```
 
-### Benchmarking
+### Benchmarking FL strategies
 
 The command below allows to reproduce the article's results for a given seed:
 - train a model on the pooled dataset and evaluate it on all test sets (local and pooled)
 - train models on all local datasets and evaluate them on all test sets (local and pooled)
-- evaluate the ensemble of locally trained models on all test sets (local and pooled)
-- train models in a federated way for all FL strategies and evaluate them on all test sets (local and pooled)
+- train models in a federated way for all FL strategies with associated hyperparameters and evaluate them on all test sets (local and pooled)
 
-The config file is present in the repository (`flamby/config_*.json`) and holds all necesssary HPs for FL strategies.
-The results are stored in the csv file given in the command.
+The config files given in the repository (`flamby/config_*.json`) hold the different HPs sets used in the companion article for the FL strategies on the different datasets.
+The results are stored in the csv file specified either in the config file or with the --results-file-path option.
 
 ```
 cd flamby/benchmarks
@@ -188,7 +205,7 @@ python fed_benchmark.py --config-file-path ../config_heart_disease.json --result
 
 ### FL training and evaluation
 
-In order to train and evaluate a model with specific FL strategy and hyperparameters, one can run the following command (in this case the strategy specific HPs in the config file are ignored and the HPs used are either input in the command or take the default values given in the strategy class definition):
+In order to train and evaluate the baseline model with a specific FL strategy and associated hyperparameters, one can run the following command (in this case the strategy specific HPs in the config file are ignored and the HPs used are given by the user or take the default values given in this script):
 
 ```
 python fed_benchmark.py --strategy FedProx --mu 1.0 --learning_rate 0.05 --config-file-path ../config_heart_disease.json
