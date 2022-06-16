@@ -61,7 +61,6 @@ def main(args_cli):
         e is not None
         for e in [args_cli.learning_rate, args_cli.server_learning_rate, args_cli.mu]
     ] + [args_cli.optimizer_class != "torch.optim.SGD", args_cli.deterministic]
-    breakpoint()
     if (args_cli.strategy is None) and any(hyperparameters_changed):
         hyperparameters_changed = [
             hyperparameters_names[i]
