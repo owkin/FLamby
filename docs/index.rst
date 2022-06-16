@@ -35,7 +35,6 @@ datasets.
 
    strategies
    datasets
-   Quickstart
 
 
 
