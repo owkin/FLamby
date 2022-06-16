@@ -1,6 +1,8 @@
 ## Quickstart
 
-We will start with the Fed-TCGA-BRCA dataset because it requires no downloading or preprocessing and is very lightweight. Therefore it provides a good introduction to navigating Flamby.
+We will start with the Fed-TCGA-BRCA dataset because it requires no downloading or preprocessing and is very lightweight.
+Therefore it provides a good introduction to navigating Flamby.
+This tutorial does not require the use of a GPU.
 
 ### Dataset example
 
@@ -169,7 +171,7 @@ The config file is present in the repository and holds all necesssary HPs for FL
 
 ```
 cd flamby/benchmarks
-python fed_benchmark.py --config-file-path ../heart_disease_config.json --results-file-path ./test_res.csv
+python fed_benchmark.py --config-file-path ../heart_disease_config.json --results-file-path ./test_res.csv --seed 0
 ```
 
 In order to train and evaluate a model with a specific FL strategy and new hyperparameters one can run:
