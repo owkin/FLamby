@@ -191,5 +191,6 @@ python fed_benchmark.py --config-file-path ../config_heart_disease.json --result
 In order to train and evaluate a model with specific FL strategy and hyperparameters, one can run the following command (in this case the strategy specific HPs in the config file are ignored and the HPs used are either input in the command or take the default values given in the strategy class definition):
 
 ```
-python fed_benchmark.py --strategy FedProx --mu 1.0 --learning_rate 0.05 --config-file-path ../config_heart_disease.json --results-file-path ./test_res1.csv --seed 1
+python fed_benchmark.py --strategy FedProx --mu 1.0 --learning_rate 0.05 --config-file-path ../config_heart_disease.json
+ --results-file-path ./test_res1.csv --seed 1
 ```
