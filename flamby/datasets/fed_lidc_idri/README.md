@@ -22,7 +22,7 @@ Additionally here we preprocess the dataset to create nifti files and retrieve t
 |                   | Dataset description |
 | ----------------- | -----------------------------------------------|
 | Description       | This is the dataset from LIDC-IDRI study |
-| Dataset           | 1018 CT-scans with masks (GE MEDICAL SYSTEMS 670, SIEMENS 205, TOSHIBA 69, Philips 74) |
+| Dataset           | 1018 CT-scans with masks (GE MEDICAL SYSTEMS 670 (536 / 134), SIEMENS 205 (164, 41), TOSHIBA 69 (55 / 14), Philips 74 (59 / 15) |
 | Centers           | Manufacturer of the CT-scans (GE MEDICAL SYSTEMS, SIEMENS, TOSHIBA, Philips) |
 | Permission        | Public |
 | Task              | Segmentation |
