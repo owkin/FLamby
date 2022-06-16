@@ -27,8 +27,15 @@ from flamby.gpu_utils import use_gpu_idx
 
 
 def main(args_cli):
-    """_summary_
-
+    """This function will launch either all single-centric and the FL strategies
+    specified in the config file provided.
+    This will write the results in a csv file. The FL strategies will use
+    hyperparameters defined in the config file or default ones.
+    This function behavior can be changed by providing the keywords
+    --strategy or --single-centric-baseline which will run only the provided
+    strategy or single-centric-baseline alongside parameters input by the CLI.
+    One cannot change the parameters of the single-centric baseline which are
+    kept fixed.
     Parameters
     ----------
     args_cli : A namespace of hyperparameters providing the ability to overwrite
@@ -36,20 +43,39 @@ def main(args_cli):
 
     Returns
     -------
-    _type_
-        _description_
+    None
     """
     # Use the same initialization for everyone in order to be fair
     torch.manual_seed(args_cli.seed)
     np.random.seed(args_cli.seed)
 
     use_gpu = use_gpu_idx(args_cli.GPU, args_cli.cpu_only)
-    hyperparameters_names = ["learning_rate", "server_learning_rate", "mu", "optimizer-class", "deterministic"]
-    hyperparameters_changed = [e is not None for e in [args_cli.learning_rate, args_cli.server_learning_rate, args_cli.mu]] + [args_cli.optimizer_class != "torch.optim.SGD", args_cli.deterministic]
+    hyperparameters_names = [
+        "learning_rate",
+        "server_learning_rate",
+        "mu",
+        "optimizer-class",
+        "deterministic",
+    ]
+    hyperparameters_changed = [
+        e is not None
+        for e in [args_cli.learning_rate, args_cli.server_learning_rate, args_cli.mu]
+    ] + [args_cli.optimizer_class != "torch.optim.SGD", args_cli.deterministic]
     breakpoint()
     if (args_cli.strategy is None) and any(hyperparameters_changed):
-        hyperparameters_changed = [hyperparameters_names[i] for i in range(len(hyperparameters_changed)) if hyperparameters_changed[i]]
-        raise ValueError(f"You cannot change one or several hyperparameters ({hyperparameters_changed} in your case) in a global fashion for all strategies, please use the keyword strategy to specify the strategy you want to affect by writing: --strategy [FedAvg, FedProx, FedAdam, FedAdagrad, FedYogi, Cyclic], otherwise modify the config file directly.")
+        hyperparameters_changed = [
+            hyperparameters_names[i]
+            for i in range(len(hyperparameters_changed))
+            if hyperparameters_changed[i]
+        ]
+        raise ValueError(
+            "You cannot change one or several hyperparameters "
+            f"({hyperparameters_changed} in your case) in a global fashion for"
+            " all strategies, please use the keyword strategy to specify the "
+            "strategy you want to affect by writing: "
+            "--strategy [FedAvg, FedProx, FedAdam, FedAdagrad, FedYogi, Cyclic]"
+            ", otherwise modify the config file directly."
+        )
     # Find a way to provide it through hyperparameters
     run_num_updates = [100]
 
@@ -294,7 +320,8 @@ def main(args_cli):
 
         if compute_ensemble_perf:
             print(
-                "Computing ensemble performance, local models need to have been trained in the same runtime"
+                "Computing ensemble performance, local models need to have been"
+                " trained in the same runtime"
             )
             local_ensemble_perf = ensemble_perf_from_predictions(
                 y_true_dicts, y_pred_dicts, NUM_CLIENTS, metric
@@ -347,7 +374,8 @@ def main(args_cli):
                 # Overwriting arguments with strategy specific arguments
                 for k, v in strategy_specific_hp_dict.items():
                     args[k] = v
-                # We fill the hyperparameters dict for later use in filling the csv by filling missing column with nans
+                # We fill the hyperparameters dict for later use in filling
+                # the csv by filling missing column with nans
                 hyperparameters = {}
                 for k in all_strategies_args:
                     if k in args:
