@@ -164,18 +164,23 @@ cd flamby/datasets/fed_heart_disease
 python benchmark.py --num-workers-torch 0
 ```
 
-### Training and evaluation in a federated learning setting
+### Benchmarking, training and evaluation locally and in a FL setting
 
-In order to train and evaluate models trained on the pooled dataset, on all local datasets as well as in a federated way for all FL strategies, you can run the following command.
-The config file is present in the repository and holds all necesssary HPs for FL strategies. The results are stored in the csv file given in the command.
+The command below allows to reproduce the article's results for a given seed:
+- train a model on the pooled dataset and evaluate it on all test sets (local and pooled)
+- train models on all local datasets and evaluate them on all test sets (local and pooled)
+- evaluate the ensemble of locally trained models on all test sets (local and pooled)
+- train models in a federated way for all FL strategies and evaluate them on all test sets (local and pooled)
+The config file is present in the repository and holds all necesssary HPs for FL strategies.
+The results are stored in the csv file given in the command.
 
 ```
 cd flamby/benchmarks
-python fed_benchmark.py --config-file-path ../heart_disease_config.json --results-file-path ./test_res.csv --seed 0
+python fed_benchmark.py --config-file-path ../config_results_heart_disease_seed11.json --results-file-path ./test_res_0.csv --seed 0
 ```
 
-In order to train and evaluate a model with a specific FL strategy and new hyperparameters one can run:
+In order to train and evaluate a model with specific FL strategy and hyperparameters one can run:
 
 ```
-python fed_benchmark.py --strategy FedProx --mu 0.001 --learning_rate 3. --config-file-path ../heart_disease_config.json --results-file-path ./test_res.csv
+python fed_benchmark.py --strategy FedProx --mu 0.001 --learning_rate 3. --config-file-path ../config_results_heart_disease_seed11.json --results-file-path ./test_res1.csv --seed 1
 ```
