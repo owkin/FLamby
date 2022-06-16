@@ -44,6 +44,12 @@ def main(args_cli):
     np.random.seed(args_cli.seed)
 
     use_gpu = use_gpu_idx(args_cli.GPU, args_cli.cpu_only)
+    hyperparameters_names = ["learning_rate", "server_learning_rate", "mu", "optimizer-class", "deterministic"]
+    hyperparameters_changed = [e is not None for e in [args_cli.learning_rate, args_cli.server_learning_rate, args_cli.mu]] + [args_cli.optimizer_class != "torch.optim.SGD", args_cli.deterministic]
+    breakpoint()
+    if (args_cli.strategy is None) and any(hyperparameters_changed):
+        hyperparameters_changed = [hyperparameters_names[i] for i in range(len(hyperparameters_changed)) if hyperparameters_changed[i]]
+        raise ValueError(f"You cannot change one or several hyperparameters ({hyperparameters_changed} in your case) in a global fashion for all strategies, please use the keyword strategy to specify the strategy you want to affect by writing: --strategy [FedAvg, FedProx, FedAdam, FedAdagrad, FedYogi, Cyclic], otherwise modify the config file directly.")
     # Find a way to provide it through hyperparameters
     run_num_updates = [100]
 
