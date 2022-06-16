@@ -408,6 +408,10 @@ def init_xp_plan(
         do_baselines[f"Local {i}"] = True
     # Single client baseline computation
     if single_centric_baseline is not None:
+        if compute_ensemble_perf:
+            print("WARNING: by providing the argument single_centric_baseline"
+            " you will not be able to compute ensemble performance.")
+            compute_ensemble_perf = False
         do_baselines = {"Pooled": False}
         for i in range(num_clients):
             do_baselines[f"Local {i}"] = False
@@ -421,6 +425,9 @@ def init_xp_plan(
 
     # if we give a strategy we compute only the strategy and not the baselines
     if strategy is not None:
+        if compute_ensemble_perf:
+            print("WARNING: by providing a strategy argument you will not be able to compute ensemble performance.")
+            compute_ensemble_perf = False
         for k, _ in do_baselines.items():
             do_baselines[k] = False
 
@@ -429,7 +436,7 @@ def init_xp_plan(
         raise ValueError(
             "Cannot compute ensemble performance if training on only one local"
         )
-    return do_baselines, do_strategy
+    return do_baselines, do_strategy, compute_ensemble_perf
 
 
 def ensemble_perf_from_predictions(

@@ -106,7 +106,7 @@ def main(args_cli):
     columns_names = list(set(main_columns_names + all_strategies_args))
 
     evaluate_func, batch_size_test, compute_ensemble_perf = set_dataset_specific_config(
-        dataset_name, compute_ensemble_perf=True
+        dataset_name, compute_ensemble_perf=False
     )
 
     # We compute the number of local and ensemble performances we should have
@@ -152,7 +152,7 @@ def main(args_cli):
 
     # We compute the experiment plan given the config and user-specific hyperparams
 
-    do_baselines, do_strategy = init_xp_plan(
+    do_baselines, do_strategy, compute_ensemble_perf = init_xp_plan(
         NUM_CLIENTS,
         args_cli.nlocal,
         args_cli.single_centric_baseline,
