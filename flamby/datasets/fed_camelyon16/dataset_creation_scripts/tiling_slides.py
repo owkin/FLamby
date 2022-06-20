@@ -1,22 +1,20 @@
 import argparse
 import os
 import sys
-import tempfile
 from glob import glob
 from pathlib import Path
-import itertools
+
 import numpy as np
 import pandas as pd
 import torch
 import torchvision.models as models
 from histolab.slide import Slide
 from histolab.tiler import GridTiler
-from skimage import io
+from openslide import open_slide
 from torch.nn import Identity
-from torch.utils.data import DataLoader, IterableDataset, Dataset
+from torch.utils.data import DataLoader, Dataset, IterableDataset
 from torchvision.transforms import Compose, Normalize, ToTensor
 from tqdm import tqdm
-from openslide import open_slide
 
 from flamby.utils import read_config, write_value_in_config
 
@@ -25,6 +23,7 @@ class SlideDataset(IterableDataset):
     def __init__(self, grid_tiles_extractor, slide, transform=None):
         self.transform = transform
         self.it = grid_tiles_extractor._tiles_generator(slide)
+
     def __iter__(self):
         for tile in self.it:
             im = tile[0].image.convert("RGB")
@@ -33,6 +32,7 @@ class SlideDataset(IterableDataset):
             coords = tile[1]._asdict()
             coords = torch.Tensor([coords["x_ul"], coords["y_ul"]]).long()
             yield im, coords
+
 
 class DatasetFromCoords(Dataset):
     def __init__(self, coords, slide_path, tile_size=224, level=1, transform=None):
@@ -45,20 +45,23 @@ class DatasetFromCoords(Dataset):
 
     def __len__(self):
         return self.coords.shape[0]
-        
+
     def __getitem__(self, idx):
-        pil_image = self.slide.read_region(self.coords[idx], self.level, (self.tile_size, self.tile_size)).convert("RGB")
+        pil_image = self.slide.read_region(
+            self.coords[idx], self.level, (self.tile_size, self.tile_size)
+        ).convert("RGB")
         if self.transform is not None:
             pil_image = self.transform(pil_image)
         return pil_image, self.coords[idx]
 
+
 def dict_to_df(dict_arg):
     return pd.DataFrame().from_dict(dict_arg)
+
 
 def save_dict_to_csv(dict_arg, file_name):
     df = dict_to_df(dict_arg)
     df.to_csv(file_name, index=False)
-
 
 
 def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
@@ -90,6 +93,7 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
     path_to_config_file = str(Path(os.path.realpath(__file__)).parent.resolve())
 
     config_file = os.path.join(path_to_config_file, "dataset_location.yaml")
+    write_value_in_config(config_file, "preprocessing_complete", False)
     if os.path.exists(config_file):
         debug = False
     else:
@@ -146,36 +150,44 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
     transform = Compose(
         [ToTensor(), Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]
     )
-    path_to_coords_file = os.path.join(Path(os.path.realpath(__file__)).parent.resolve(), "tiling_coordinates_camelyon16.csv")
-    if not(os.path.exists(path_to_coords_file)):
-        df_predecessor = {"slide_name": [], "coords_x": [], "coords_y": []}
+    path_to_coords_file = os.path.join(
+        Path(os.path.realpath(__file__)).parent.resolve(),
+        "tiling_coordinates_camelyon16.csv",
+    )
+    if not (os.path.exists(path_to_coords_file)):
+        df = dict_to_df({"slide_name": [], "coords_x": [], "coords_y": []})
     else:
-        df_predecessor = pd.read_csv(path_to_coords_file).to_dict("list")
-    # Tiling all downloaded slides with provided model
+        df = pd.read_csv(path_to_coords_file)
+    # For easier appending
+    df_predecessor = df.to_dict("records")
+
     for sp in tqdm(slides_paths):
         slide_name = os.path.basename(sp)
         path_to_features = os.path.join(slides_dir, slide_name + ".npy")
         if os.path.exists(path_to_features):
             continue
         print(f"Tiling slide {sp}")
-        # We use the matter detector from histolab to tile the dataset or the cached coords
-        df = dict_to_df(df_predecessor)
-        coords_from_slide = df.loc[df["slide_name"] == slide_name]
+        # We use the matter detector from histolab to tile the dataset or the
+        # cached coords
+        coords_from_slide = df.loc[df["slide_name"] == slide_name.lower()]
+
         has_coords = len(coords_from_slide.index) > 0
         print(f"HAS COORDS {has_coords}")
-        if has_coords and not(tile_from_scratch):
+        if has_coords and not (tile_from_scratch):
             coords = coords_from_slide[["coords_x", "coords_y"]].to_numpy()
             dataset_from_coords = DatasetFromCoords(coords, sp, transform=transform)
             dataloader = DataLoader(
-                    dataset_from_coords,
-                    batch_size=batch_size,
-                    pin_memory=torch.cuda.is_available(),
-                    num_workers=num_workers_torch,
-                    drop_last=False,
-                )
+                dataset_from_coords,
+                batch_size=batch_size,
+                pin_memory=torch.cuda.is_available(),
+                num_workers=num_workers_torch,
+                drop_last=False,
+            )
         else:
             slide = Slide(sp, "./tmp", use_largeimage=True)
-            dataset_from_slide = SlideDataset(grid_tiles_extractor, slide, transform=transform)
+            dataset_from_slide = SlideDataset(
+                grid_tiles_extractor, slide, transform=transform
+            )
             # We cannot use multiprocessing per slide
             dataloader = DataLoader(
                 dataset_from_slide,
@@ -184,8 +196,13 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
                 num_workers=0,
                 drop_last=False,
             )
-        print(f"Extracting tiles and forwarding them with ResNet50 by batch of {batch_size}")
+
+        print(
+            "Extracting tiles and forwarding them with ResNet50"
+            f"by batch of {batch_size}"
+        )
         import time
+
         t1 = time.time()
         with torch.inference_mode():
             features = np.zeros((0, 2048)).astype("float32")
@@ -193,26 +210,39 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
             for i, (batch_images, batch_coords) in enumerate(iter(dataloader)):
                 if torch.cuda.is_available():
                     batch_images = batch_images.cuda()
-                features = np.concatenate((features, net(batch_images).detach().cpu().numpy()), axis=0)
+                features = np.concatenate(
+                    (features, net(batch_images).detach().cpu().numpy()), axis=0
+                )
                 coords = np.concatenate((coords, batch_coords.numpy()))
         t2 = time.time()
-        num_workers_displayed = num_workers_torch if (has_coords and not(tile_from_scratch)) else 0
-        print(f"Slide {slide_name} extraction lasted {t2-t1}s with has_coords={has_coords} (num_workers {num_workers_displayed})")
+        num_workers_displayed = (
+            num_workers_torch if (has_coords and not (tile_from_scratch)) else 0
+        )
+        print(
+            f"Slide {slide_name} extraction lasted"
+            f" {t2-t1}s with has_coords={has_coords}"
+            f" (num_workers {num_workers_displayed})"
+            f" found {coords.shape[0]} tiles"
+        )
 
-        #
-
-        if not(has_coords):
-            # We store the coordinates information to speed up the extraction process via multiprocessing
+        if not (has_coords):
+            # We store the coordinates information to speed up
+            # the extraction process via multiprocessing
             num_tiles_on_slide = coords.shape[0]
-            df_predecessor["slide_name"] += ([slide_name] * num_tiles_on_slide)
-            df_predecessor["coords_x"] += coords[:, 0].tolist()
-            df_predecessor["coords_y"] += coords[:, 1].tolist()
-            save_dict_to_csv(df_predecessor, path_to_coords_file)
+            df_predecessor.append(
+                {
+                    "slide_name": [slide_name] * num_tiles_on_slide,
+                    "coords_x": coords[:, 0].tolist(),
+                    "coords_y": coords[:, 1].tolist(),
+                }
+            )
+            save_dict_to_csv(df_predecessor)
+
         # Saving features on dict
         np.save(path_to_features, features)
 
     write_value_in_config(config_file, "preprocessing_complete", True)
-    
+
     if args.remove_big_tiff:
         print("Removing all slides")
         for slide in slides_paths:
@@ -246,4 +276,9 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    main(args.batch_size, args.num_workers_torch, args.tile_from_scratch, args.remove_big_tiff)
+    main(
+        args.batch_size,
+        args.num_workers_torch,
+        args.tile_from_scratch,
+        args.remove_big_tiff,
+    )
