@@ -229,13 +229,14 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
             # We store the coordinates information to speed up
             # the extraction process via multiprocessing
             num_tiles_on_slide = coords.shape[0]
-            df_predecessor.append(
-                {
-                    "slide_name": [slide_name] * num_tiles_on_slide,
-                    "coords_x": coords[:, 0].tolist(),
-                    "coords_y": coords[:, 1].tolist(),
-                }
-            )
+            for i in range(num_tiles_on_slide):
+                df_predecessor.append(
+                    {
+                        "slide_name": slide_name.lower(),
+                        "coords_x": float(coords[i, 0]),
+                        "coords_y": float(coords[i, 1]),
+                    }
+                )
             save_dict_to_csv(df_predecessor, path_to_coords_file)
 
         # Saving features on dict
