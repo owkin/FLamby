@@ -1,40 +1,4 @@
-from subprocess import call, check_call
-
 from setuptools import find_packages, setup
-from setuptools.command.develop import develop
-from setuptools.command.egg_info import egg_info
-from setuptools.command.install import install
-
-# Histolab has a dependency that requires options
-histolab_dep_commands = [
-    "pip3",
-    "install",
-    "large-image-source-openslide",
-    "--find-links",
-    "https://girder.github.io/large_image_wheels",
-]
-
-
-class CustomInstallCommand(install):
-    def run(self):
-        install.run(self)
-        command = call(histolab_dep_commands)
-        assert command == 0
-
-
-class CustomDevelopCommand(develop):
-    def run(self):
-        develop.run(self)
-        command = call(histolab_dep_commands)
-        assert command == 0
-
-
-class CustomEggInfoCommand(egg_info):
-    def run(self):
-        egg_info.run(self)
-        command = check_call(histolab_dep_commands)
-        assert command == 0
-
 
 # datasets has a dependency that requires options
 camelyon16 = [
@@ -69,7 +33,7 @@ docs = [
     "requests",
     "scipy",
     "sphinx==4.5.0",
-    "sphinx-rtd-theme==1.0.0"
+    "sphinx-rtd-theme==1.0.0",
 ]
 tests = ["albumentations", "pytest"]
 all_extra = camelyon16 + heart + isic2019 + ixi + kits19 + lidc + tcga + docs + tests
@@ -121,9 +85,4 @@ setup(
     author_email="unknown",
     packages=find_packages(),
     include_package_data=True,
-    cmdclass={
-        "install": CustomInstallCommand,
-        "develop": CustomDevelopCommand,
-        "egg_info": CustomEggInfoCommand,
-    },
 )
