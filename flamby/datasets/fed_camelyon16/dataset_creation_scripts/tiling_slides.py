@@ -236,7 +236,7 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
                     "coords_y": coords[:, 1].tolist(),
                 }
             )
-            save_dict_to_csv(df_predecessor)
+            save_dict_to_csv(df_predecessor, path_to_coords_file)
 
         # Saving features on dict
         np.save(path_to_features, features)
