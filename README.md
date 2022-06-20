@@ -121,6 +121,11 @@ using comma (',') (no space), eg:
 pip install -e .[cam16,ixi]
 ```
 
+additionally you might need to install `large-image-source-openslide` if you wish to use cameleon16 dataset:
+```bash
+pip install large-image-source-openslide --find-links https://girder.github.io/large_image_wheels
+```
+
 ### Accepting data licensing
 Then proceed to read and accept the different licenses and download the data from
 all the datasets you are interested in by following the instructions provided in each folder:
