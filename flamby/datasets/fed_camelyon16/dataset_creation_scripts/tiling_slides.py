@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import torch
 import torchvision.models as models
+from histolab.masks import TissueMask
 from histolab.slide import Slide
 from histolab.tiler import GridTiler
 from openslide import open_slide
@@ -22,7 +23,10 @@ from flamby.utils import read_config, write_value_in_config
 class SlideDataset(IterableDataset):
     def __init__(self, grid_tiles_extractor, slide, transform=None):
         self.transform = transform
-        self.it = grid_tiles_extractor._tiles_generator(slide)
+        # tissue mask is needed to segment all regions
+        self.it = grid_tiles_extractor._tiles_generator(
+            slide, extraction_mask=TissueMask()
+        )
 
     def __iter__(self):
         for tile in self.it:
@@ -199,7 +203,7 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
 
         print(
             "Extracting tiles and forwarding them with ResNet50"
-            f"by batch of {batch_size}"
+            f" by batch of {batch_size}"
         )
         import time
 
