@@ -27,9 +27,14 @@ def seeding_performance_assert(dataset_name, nrep=5):
         all_dfs_for_seed = [rep[sidx] for rep in repetitions]
         paired_df = itertools.combinations(all_dfs_for_seed, 2)
         for pair in paired_df:
-            assert pair[0].equals(pair[1][pair[0].columns])
+            assert pair[0].fillna("-9").equals(pair[1].fillna("-9")[pair[0].columns])
+
     cleanup(filenames)
 
 
 def test_tcga():
     seeding_performance_assert("tcga_brca")
+
+
+def test_heart():
+    seeding_performance_assert("heart_disease")
