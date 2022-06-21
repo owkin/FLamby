@@ -1,6 +1,11 @@
+import itertools
+import re
+
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
 from lifelines import KaplanMeierFitter
+from lifelines.statistics import logrank_test
 from torch.utils.data import DataLoader as dl
 
 from flamby.datasets.fed_tcga_brca import NUM_CLIENTS, FedTcgaBrca
@@ -44,3 +49,34 @@ kms = [
 ]
 [km.plot() for km in kms]
 plt.savefig("local_kms.png", dpi=600)
+
+# Adding logrank test table
+columns = ["Local " + str(i) for i in range(NUM_CLIENTS)]
+paired_labels = list(itertools.combinations(columns, 2))
+print(paired_labels)
+paired_times = list(itertools.combinations(local_ys, 2))
+
+df_core = {col: [None] * len(columns) for col in columns}
+df_core["paired_with"] = columns
+df = pd.DataFrame(df_core)
+
+for label_pair, times_pair in zip(paired_labels, paired_times):
+    pval = logrank_test(
+        times_pair[0][:, 1],
+        times_pair[1][:, 1],
+        event_observed_A=times_pair[0][:, 0],
+        event_observed_B=times_pair[1][:, 0],
+    ).p_value
+    # We fill only the upper part of the symmetrical matrix
+    if int(re.findall("(?<=Local )[0-9]{1}", label_pair[0])[0]) > int(
+        re.findall("(?<=Local )[0-9]{1}", label_pair[1])[0]
+    ):
+        df.loc[(df["paired_with"] == label_pair[1]), label_pair[0]] = pval
+    else:
+        df.loc[(df["paired_with"] == label_pair[0]), label_pair[1]] = pval
+
+df = df.set_index("paired_with")
+df = df.drop(columns=["Local 0"])
+df.drop(df.tail(1).index, inplace=True)
+
+print(df.to_latex(index=True))
