@@ -15,6 +15,7 @@ from flamby.benchmarks.benchmark_utils import (
     init_data_loaders,
     init_xp_plan,
     set_dataset_specific_config,
+    set_seed,
     train_single_centric,
 )
 from flamby.benchmarks.conf import (
@@ -46,8 +47,7 @@ def main(args_cli):
     None
     """
     # Use the same initialization for everyone in order to be fair
-    torch.manual_seed(args_cli.seed)
-    np.random.seed(args_cli.seed)
+    set_seed(args_cli.seed)
 
     use_gpu = use_gpu_idx(args_cli.GPU, args_cli.cpu_only)
     hyperparameters_names = [
@@ -206,6 +206,7 @@ def main(args_cli):
         if len(index_of_interest) > 0:
             df.drop(index_of_interest, inplace=True)
         m = copy.deepcopy(global_init)
+        set_seed(args_cli.seed)
         m = train_single_centric(
             m,
             train_pooled,
@@ -279,6 +280,7 @@ def main(args_cli):
 
                 m = copy.deepcopy(global_init)
                 method_name = f"Local {i}"
+                set_seed(args_cli.seed)
                 m = train_single_centric(
                     m,
                     training_dls[i],
@@ -352,9 +354,12 @@ def main(args_cli):
             )
 
     # Strategies
+    # Needed for perfect reproducibility otherwise strategies are ordered randomly
+    strats_names = list(strategy_specific_hp_dicts.keys())
+    strats_names.sort()
     if do_strategy:
         for idx, num_updates in enumerate(run_num_updates):
-            for sname in strategy_specific_hp_dicts.keys():
+            for sname in strats_names:
                 # Base arguments
                 m = copy.deepcopy(global_init)
                 bloss = BaselineLoss()
@@ -368,6 +373,8 @@ def main(args_cli):
                     "num_updates": num_updates,
                     "nrounds": nrounds_list[idx],
                 }
+                if sname == "Cyclic":
+                    args["rng"] = np.random.default_rng(args_cli.seed)
                 # We overwrite defaults with new hyperparameters from config
                 strategy_specific_hp_dict = strategy_specific_hp_dicts[sname]
                 # Overwriting arguments with strategy specific arguments
@@ -403,6 +410,8 @@ def main(args_cli):
                         **args, log=args_cli.log, log_basename=basename
                     )
                     print("FL strategy", sname, " num_updates ", num_updates)
+                    set_seed(args_cli.seed)
+
                     m = s.run()[0]
                     (
                         perf_dict,
