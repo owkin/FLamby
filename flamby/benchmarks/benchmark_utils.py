@@ -6,6 +6,18 @@ from torch.utils.data import DataLoader as dl
 from tqdm import tqdm
 
 from flamby.utils import evaluate_model_on_tests
+import torch
+
+def set_seed(seed):
+    """Set both numpy and torch seed
+
+    Parameters
+    ----------
+    seed : int
+        The seed to set.
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
 
 
 def fill_df_with_xp_results(
@@ -409,8 +421,10 @@ def init_xp_plan(
     # Single client baseline computation
     if single_centric_baseline is not None:
         if compute_ensemble_perf:
-            print("WARNING: by providing the argument single_centric_baseline"
-            " you will not be able to compute ensemble performance.")
+            print(
+                "WARNING: by providing the argument single_centric_baseline"
+                " you will not be able to compute ensemble performance."
+            )
             compute_ensemble_perf = False
         do_baselines = {"Pooled": False}
         for i in range(num_clients):
@@ -426,7 +440,9 @@ def init_xp_plan(
     # if we give a strategy we compute only the strategy and not the baselines
     if strategy is not None:
         if compute_ensemble_perf:
-            print("WARNING: by providing a strategy argument you will not be able to compute ensemble performance.")
+            print(
+                "WARNING: by providing a strategy argument you will not be able to compute ensemble performance."
+            )
             compute_ensemble_perf = False
         for k, _ in do_baselines.items():
             do_baselines[k] = False

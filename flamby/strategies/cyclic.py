@@ -57,7 +57,7 @@ class Cyclic:
          otherwise, the clients are reshuffled at the beginning of every cycle.
 
     rng: np.random._generator.Generator, optional
-         used to reshuffle the clients
+         used to reshuffle the clients. Defaults to None.
 
     logdir: str, optional
          The path where to store the logs if there are some. Defaults to ./runs.
