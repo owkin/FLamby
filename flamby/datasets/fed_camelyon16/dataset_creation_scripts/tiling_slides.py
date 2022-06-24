@@ -52,7 +52,7 @@ class DatasetFromCoords(Dataset):
 
     def __getitem__(self, idx):
         pil_image = self.slide.read_region(
-            self.coords[idx], self.level, (self.tile_size, self.tile_size)
+            self.coords[idx].astype("int_"), self.level, (self.tile_size, self.tile_size)
         ).convert("RGB")
         if self.transform is not None:
             pil_image = self.transform(pil_image)
