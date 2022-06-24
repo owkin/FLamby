@@ -1,6 +1,7 @@
 import itertools
 import os
 
+import numpy as np
 import pandas as pd
 
 
@@ -16,7 +17,7 @@ def seeding_performance_assert(dataset_name, nrep=5):
     for i in range(nrep):
         seeds_results = []
         for s in seeds:
-            filename = f"seed{s}_rep{i}.csv"
+            filename = f"{dataset_name}_seed{s}_rep{i}.csv"
             os.system(
                 f"python ../../flamby/benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {filename} --debug"
             )
@@ -27,7 +28,10 @@ def seeding_performance_assert(dataset_name, nrep=5):
         all_dfs_for_seed = [rep[sidx] for rep in repetitions]
         paired_df = itertools.combinations(all_dfs_for_seed, 2)
         for pair in paired_df:
-            assert pair[0].fillna("-9").equals(pair[1].fillna("-9")[pair[0].columns])
+            df1 = pair[0].fillna("-9")
+            df2 = pair[1].fillna("-9")[pair[0].columns]
+            assert df1.drop(columns=["Metric"]).equals(df2.drop(columns=["Metric"]))
+            assert np.allclose(df1["Metric"], df2["Metric"])
 
     cleanup(filenames)
 
