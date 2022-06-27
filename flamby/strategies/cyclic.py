@@ -77,13 +77,12 @@ class Cyclic:
         log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
-        deterministic_cycle: bool = True,
+        deterministic_cycle: bool = False,
         rng: np.random._generator.Generator = None,
         log_basename: str = "cyclic",
         logdir: str = "./runs",
     ):
-        """ Cf class docstring
-        """
+        """Cf class docstring"""
 
         self.training_dataloaders_with_memory = [
             DataLoaderWithMemory(e) for e in training_dataloaders
@@ -118,6 +117,7 @@ class Cyclic:
         self.bits_counting_function = bits_counting_function
 
         self.deterministic_cycle = deterministic_cycle
+
         self._rng = rng if (rng is not None) else np.random.default_rng(int(time.time()))
 
         self._clients = self._shuffle_clients()
@@ -129,7 +129,6 @@ class Cyclic:
 
         else:
             _clients = self._rng.permutation(self.num_clients)
-
         return _clients
 
     def perform_round(self):
@@ -137,6 +136,7 @@ class Cyclic:
 
         if self._current_idx == self.num_clients:
             self._clients = self._shuffle_clients()
+
             self._current_idx = 0
 
         current_model = self.models_list[self._clients[self._current_idx]]
