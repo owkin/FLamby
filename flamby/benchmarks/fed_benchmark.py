@@ -360,6 +360,9 @@ def main(args_cli):
     if do_strategy:
         for idx, num_updates in enumerate(run_num_updates):
             for sname in strats_names:
+                print("========================")
+                print(sname.upper())
+                print("========================")
                 # Base arguments
                 m = copy.deepcopy(global_init)
                 bloss = BaselineLoss()
@@ -406,6 +409,7 @@ def main(args_cli):
                     )
 
                     # We run the FL strategy
+
                     s = getattr(strats, sname)(
                         **args, log=args_cli.log, log_basename=basename
                     )
@@ -413,6 +417,7 @@ def main(args_cli):
                     set_seed(args_cli.seed)
 
                     m = s.run()[0]
+
                     (
                         perf_dict,
                         pooled_perf_dict,
@@ -496,6 +501,27 @@ if __name__ == "__main__":
         type=float,
         default=None,
         help="FedProx mu parameter if strategy is given and that it is FedProx",
+    )
+    parser.add_argument(
+        "--tau",
+        "-tau",
+        type=float,
+        default=None,
+        help="FedOpt tau parameter used only if strategy is given and that it is a fedopt strategy",
+    )
+    parser.add_argument(
+        "--beta1",
+        "-b1",
+        type=float,
+        default=None,
+        help="FedOpt beta1 parameter used only if strategy is given and that it is a fedopt strategy",
+    )
+    parser.add_argument(
+        "--beta2",
+        "-b2",
+        type=float,
+        default=None,
+        help="FedOpt beta2 parameter used only if strategy is given and that it is a fedopt strategy",
     )
     parser.add_argument(
         "--strategy",

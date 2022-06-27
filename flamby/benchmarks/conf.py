@@ -136,6 +136,9 @@ def get_strategies(config, learning_rate=None, args={}):
                 "learning_rate",
                 "optimizer_class",
                 "deterministic",
+                "tau",
+                "beta1",
+                "beta2",
             ] and (v is not None):
                 strategies[args["strategy"]][k] = v
         if args["strategy"] != "Cyclic":
