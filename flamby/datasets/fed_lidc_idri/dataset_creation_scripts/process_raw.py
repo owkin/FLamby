@@ -10,7 +10,6 @@ import numpy as np
 import pydicom
 from scipy.spatial import cKDTree
 from skimage.draw import polygon
-from skimage.measure import label, regionprops
 from skimage.transform import resize as sk_resize
 
 
@@ -123,7 +122,13 @@ def convert_to_niftis(dicomdir, xml_path, spacing=None, force=False):
         or not os.path.exists(dicomdir + "/mask.nii.gz")
         or not os.path.exists(dicomdir + "/mask_consensus.nii.gz")
     ):
-        ct, masks, affine = build_volumes(dicomdir, xml_path)
+        try:
+            ct, masks, affine = build_volumes(dicomdir, xml_path)
+        except FileNotFoundError:
+            raise
+        except dicom_numpy.DicomImportException as e:
+            print(f"\n{e} in file {dicomdir}, xml {xml_path}). Skipping it.")
+            return False
 
         if affine is not None and ct is not None and masks:
             if spacing is not None:
@@ -146,7 +151,11 @@ def convert_to_niftis(dicomdir, xml_path, spacing=None, force=False):
 
             return True
         else:
-            print("Issue at dicomdir %s, xml %s" % (dicomdir, xml_path))
+            print(
+                "Volumes were not correctly built. build_volumes returned 'affine'",
+                "'ct' and/or 'Issue' as None."
+                "Unknown error at dicomdir %s, xml %s" % (dicomdir, xml_path),
+            )
             return False
     else:
         return True
@@ -253,121 +262,80 @@ def build_volumes(dicomdir, xml_path):
     dcms = glob.glob(dicomdir + "/*.dcm")
     dicoms = [pydicom.read_file(dcm, stop_before_pixels=False) for dcm in dcms]
     dicoms = sorted(dicoms, key=lambda x: float(x.ImagePositionPatient[-1]))
+    voxel_ndarray, ijk_to_xyz = dicom_numpy.combine_slices(dicoms)
+    voxel_ndarray = correct_ct_intensity(voxel_ndarray)
 
-    try:
-        voxel_ndarray, ijk_to_xyz = dicom_numpy.combine_slices(dicoms)
-        voxel_ndarray = correct_ct_intensity(voxel_ndarray)
+    def opNN(nonNodule):
+        z = float(nonNodule.findtext("{http://www.nih.gov}imageZposition"))
 
-        # get the offsets
-        _, _, offset_z = ijk_to_xyz[:3, -1]
+        # pylidc trick !
+        locz = np.abs(
+            [z - float(dicom.ImagePositionPatient[-1]) for dicom in dicoms]
+        ).argmin()
 
-        def opNN(nonNodule):
-            z = float(nonNodule.findtext("{http://www.nih.gov}imageZposition"))
+        locx = int(
+            nonNodule.findtext("{http://www.nih.gov}locus/{http://www.nih.gov}xCoord")
+        )
+        locy = int(
+            nonNodule.findtext("{http://www.nih.gov}locus/{http://www.nih.gov}yCoord")
+        )
 
-            # pylidc trick !
+        out = np.array([locy, locx, locz]).reshape(-1, 1)
+
+        return out.astype(np.int64)
+
+    def opN(Nodule):
+        xyzs = []
+
+        for roi in Nodule.iter("{http://www.nih.gov}roi"):
+            z = float(roi.findtext("{http://www.nih.gov}imageZposition"))
             locz = np.abs(
                 [z - float(dicom.ImagePositionPatient[-1]) for dicom in dicoms]
             ).argmin()
 
-            locx = int(
-                nonNodule.findtext(
-                    "{http://www.nih.gov}locus/{http://www.nih.gov}xCoord"
-                )
-            )
-            locy = int(
-                nonNodule.findtext(
-                    "{http://www.nih.gov}locus/{http://www.nih.gov}yCoord"
-                )
-            )
+            xs = roi.findall("{http://www.nih.gov}edgeMap/{http://www.nih.gov}xCoord")
+            ys = roi.findall("{http://www.nih.gov}edgeMap/{http://www.nih.gov}yCoord")
+            zs = [
+                locz,
+            ] * len(xs)
 
-            out = np.array([locy, locx, locz]).reshape(-1, 1)
+            xs = np.array([int(x.text) for x in xs])
+            ys = np.array([int(y.text) for y in ys])
+            zs = np.array(zs)
 
-            return out.astype(np.int64)
+            xyzs.append(np.array([xs, ys, zs]).astype(np.int64))
 
-        def opN(Nodule):
-            xyzs = []
+        return xyzs
 
-            for roi in Nodule.iter("{http://www.nih.gov}roi"):
-                z = float(roi.findtext("{http://www.nih.gov}imageZposition"))
-                locz = np.abs(
-                    [z - float(dicom.ImagePositionPatient[-1]) for dicom in dicoms]
-                ).argmin()
+    root = ET.parse(xml_path).getroot()
 
-                xs = roi.findall(
-                    "{http://www.nih.gov}edgeMap/{http://www.nih.gov}xCoord"
-                )
-                ys = roi.findall(
-                    "{http://www.nih.gov}edgeMap/{http://www.nih.gov}yCoord"
-                )
-                zs = [
-                    locz,
-                ] * len(xs)
+    masks = []
 
-                xs = np.array([int(x.text) for x in xs])
-                ys = np.array([int(y.text) for y in ys])
-                zs = np.array(zs)
+    for i, rs in enumerate(root.iter("{http://www.nih.gov}readingSession")):
+        this_session_nodules = [
+            opN(nodule) for nodule in rs.iter("{http://www.nih.gov}unblindedReadNodule")
+        ]
+        this_session_nonnodules = [
+            opNN(nonnodule) for nonnodule in rs.iter("{http://www.nih.gov}nonNodule")
+        ]
 
-                xyzs.append(np.array([xs, ys, zs]).astype(np.int64))
+        mask = np.zeros(voxel_ndarray.shape, np.uint8)
 
-            # out = np.concatenate(xyzs, axis=1)
+        try:
+            for nodule in this_session_nodules:
+                if len(nodule) > 1:
+                    mask += render_nodule_3D(nodule, shape=mask.shape)
+                else:
+                    mask[tuple(nodule[0])] = 2
 
-            return xyzs
+            for nonnodule in this_session_nonnodules:
+                mask[tuple(nonnodule)] = 3
+        except IndexError:
+            print("Indexing issue at file %s, session %i" % (xml_path, i))
+            pass
+        masks.append(mask)
 
-        root = ET.parse(xml_path).getroot()
-
-        masks = []
-
-        for i, rs in enumerate(root.iter("{http://www.nih.gov}readingSession")):
-            this_session_nodules = [
-                opN(nodule)
-                for nodule in rs.iter("{http://www.nih.gov}unblindedReadNodule")
-            ]
-            this_session_nonnodules = [
-                opNN(nonnodule) for nonnodule in rs.iter("{http://www.nih.gov}nonNodule")
-            ]
-
-            mask = np.zeros(voxel_ndarray.shape, np.uint8)
-
-            try:
-                for nodule in this_session_nodules:
-                    if len(nodule) > 1:
-                        mask += render_nodule_3D(nodule, shape=mask.shape)
-                    else:
-                        mask[tuple(nodule[0])] = 2
-
-                for nonnodule in this_session_nonnodules:
-                    mask[tuple(nonnodule)] = 3
-            except IndexError:
-                print("Indexing issue at file %s, session %i" % (xml_path, i))
-                pass
-            masks.append(mask)
-
-        return voxel_ndarray, masks, ijk_to_xyz
-    except FileNotFoundError:
-        raise
-    except dicom_numpy.DicomImportException:
-        return None, None, None
-
-
-def process_labels_to_bounding_boxes(x, to_float=False):
-
-    labeled = label(x)
-
-    bboxes = []
-    for region in regionprops(labeled):
-
-        xmin, ymin, zmin, xmax, ymax, zmax = region.bbox
-        bboxes.append(region.bbox)
-
-    bboxes = np.array(bboxes)
-    # bboxes[:, :3] -= 10
-    # bboxes[:, 3:] += 10
-
-    return (
-        bboxes.round().astype(np.int64)
-        if not to_float
-        else bboxes / np.array(x.shape + x.shape)[np.newaxis, ...]
-    )
+    return voxel_ndarray, masks, ijk_to_xyz
 
 
 def clean_up_dicoms(dicomdir):

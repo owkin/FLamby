@@ -130,7 +130,7 @@ def download_LIDC(output_folder, debug=False):
     """
 
     # Creating config file with path to dataset
-    dict, config_file = create_config(output_folder, debug, "fed_lidc_idri")
+    _, config_file = create_config(output_folder, debug, "fed_lidc_idri")
 
     # Get patient X study
     patientXstudy = pd.read_json(
@@ -144,6 +144,21 @@ def download_LIDC(output_folder, debug=False):
 
     # Join both of them
     patientXseries = patientXstudy.merge(series).iloc[:]
+
+    # there are some images with missing slices. We remove them
+    # for reference their loc: 385, 471, 890, 129, 110, 245, 80, 618, 524
+    bad_patientID = [
+        "LIDC-IDRI-0418",
+        "LIDC-IDRI-0514",
+        "LIDC-IDRI-0672",
+        "LIDC-IDRI-0146",
+        "LIDC-IDRI-0123",
+        "LIDC-IDRI-0267",
+        "LIDC-IDRI-0085",
+        "LIDC-IDRI-0979",
+        "LIDC-IDRI-0572",
+    ]
+    patientXseries = patientXseries[~patientXseries["PatientID"].isin(bad_patientID)]
 
     if debug:
         patientXseries = patientXseries[:10]
@@ -176,11 +191,11 @@ def download_LIDC(output_folder, debug=False):
 
     for zipped_f in zipped_folders:
         with zipfile.ZipFile(zipped_f, "r") as zip_ref:
-            try:
-                os.makedirs(re.sub(".zip", "", zipped_f), exist_ok=False)
-                zip_ref.extractall(re.sub(".zip", "", zipped_f))
-            except FileExistsError:
-                pass
+            zip_file_name = re.sub(".zip", "", zipped_f)
+            # extract only if it does not exist or it is empty
+            if not os.path.isdir(zip_file_name) or len(os.listdir(zip_file_name)) == 0:
+                os.makedirs(re.sub(".zip", "", zipped_f), exist_ok=True)
+                zip_ref.extractall(zip_file_name)
         os.remove(zipped_f)
 
     # For each patient we record the location of its DICOM
@@ -200,7 +215,6 @@ def download_LIDC(output_folder, debug=False):
 
     # Update yaml file
     write_value_in_config(config_file, "download_complete", True)
-
     return patientXseries
 
 
@@ -219,22 +233,18 @@ def LIDC_to_niftis(extraction_results_dataframe, spacing=[1.0, 1.0, 1.0], debug=
     pd.DataFrame
         The dataframe of the data that could be successfully converted to nifti formats.
     """
-
     loop = map(
         lambda t: t[1][["extraction_location", "annotation_file"]].values,
         extraction_results_dataframe.iterrows(),
     )
-
     progbar = tqdm.tqdm(
         loop,
         total=extraction_results_dataframe.shape[0],
         desc="Converting to NiFTIs...",
     )
-
     converted_dicoms = Parallel(n_jobs=1, prefer="processes")(
         delayed(convert_to_niftis)(*t, spacing=spacing) for t in progbar
     )
-
     initial_shape = extraction_results_dataframe.shape[0]
     extraction_results_dataframe = extraction_results_dataframe[converted_dicoms]
     final_shape = extraction_results_dataframe.shape[0]
@@ -249,9 +259,11 @@ def LIDC_to_niftis(extraction_results_dataframe, spacing=[1.0, 1.0, 1.0], debug=
 
 def main(output_folder, debug=False, keep_dicoms=False):
     accept_license(
-        "https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI#1966254a2b592e6fba14f949f6e23bb1b7804cc",
-        "fed_lidc_idri"
+        "https://wiki.cancerimagingarchive.net/display/Public/"
+        "LIDC-IDRI#1966254a2b592e6fba14f949f6e23bb1b7804cc",
+        "fed_lidc_idri",
     )
+    print("Downloading LIDC-IDRI dataset. This may take a while")
     patientXseries = download_LIDC(output_folder, debug)
     LIDC_to_niftis(patientXseries, debug=debug)
 

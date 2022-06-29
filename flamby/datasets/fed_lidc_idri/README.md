@@ -46,8 +46,8 @@ of the dataset.
 
 This dataset was used in the [Luna16 challenge](https://luna16.grand-challenge.org/Home/).
 Note that contrary to the challenge, in which slides with thickness larger than 3 mm were removed,
-the present dataset contains all 1018 slides from [LIDC-IDRI](https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI).
-Additionally here we preprocess the dataset to create nifti files and retrieve the per-center metadata.
+the present dataset contains 1026 scans (almost all scans from
+[LIDC-IDRI](https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI), 9 scans are removed due to missing slices).
 
 The data is split in a training and testing sets containing 80% and 20% of the available scans respectively.
 This split is stratified according to the centers (the manufacturers of the CT-scan apparatus),
