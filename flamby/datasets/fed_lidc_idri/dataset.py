@@ -62,6 +62,9 @@ class LidcIdriRaw(Dataset):
         Default is (384, 384, 384).
     debug : bool, optional
         Whether the dataset was downloaded in debug mode. Defaults to false.
+    data_path: str
+        If data_path is given it wil ignore the config file and look for the
+        dataset directly in data_path. Defaults to None.
     """
 
     def __init__(
@@ -72,6 +75,7 @@ class LidcIdriRaw(Dataset):
         sampler=Sampler(),
         transform=ClipNorm(),
         debug=False,
+        data_path=None,
     ):
         """
         Cf class docstring
@@ -91,11 +95,13 @@ class LidcIdriRaw(Dataset):
         self.features_sets = []
         self.debug = debug
         self.sampler = sampler
-
-        config_dict = check_dataset_from_config(
-            dataset_name="fed_lidc_idri", debug=debug
-        )
-        self.ctscans_dir = Path(config_dict["dataset_path"])
+        if data_path is None:
+            config_dict = check_dataset_from_config(
+                dataset_name="fed_lidc_idri", debug=debug
+            )
+            self.ctscans_dir = Path(config_dict["dataset_path"])
+        else:
+            self.ctscans_dir = Path(data_path)
 
         for ctscan in self.ctscans_dir.rglob("*patient.nii.gz"):
             ctscan_name = os.path.basename(os.path.dirname(ctscan))
@@ -160,6 +166,9 @@ class FedLidcIdri(LidcIdriRaw):
         If True, supersedes center argument. Defaults to False.
     debug : bool, optional
         Whether the dataset was downloaded in debug mode. Defaults to false.
+    data_path: str
+        If data_path is given it wil ignore the config file and look for the
+        dataset directly in data_path. Defaults to None.
     """
 
     def __init__(
@@ -173,6 +182,7 @@ class FedLidcIdri(LidcIdriRaw):
         train=True,
         pooled=False,
         debug=False,
+        data_path=None,
     ):
         """
         Cf class docstring
@@ -185,6 +195,7 @@ class FedLidcIdri(LidcIdriRaw):
             sampler=sampler,
             transform=transform,
             debug=debug,
+            data_path=data_path,
         )
 
         assert center in [0, 1, 2, 3]

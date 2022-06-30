@@ -42,12 +42,20 @@ class SyntheticRaw(Dataset):
     debug : bool, optional,
         Whether or not to use only the part of the dataset downloaded in
         debug mode. Defaults to False.
+    data_path: str
+        If data_path is given it wil ignore the config file and look for the
+        dataset directly in data_path. Defaults to None.
     """
 
-    def __init__(self, X_dtype=torch.float32, y_dtype=torch.float32, debug=False):
+    def __init__(
+        self, X_dtype=torch.float32, y_dtype=torch.float32, debug=False, data_path=None
+    ):
         """See class docstring"""
-        dict = check_dataset_from_config("fed_synthetic", debug)
-        self.data_dir = Path(dict["dataset_path"])
+        if data_path is None:
+            dict = check_dataset_from_config("fed_synthetic", debug)
+            self.data_dir = Path(dict["dataset_path"])
+        else:
+            self.data_dir = Path(data_path)
 
         self.X_dtype = X_dtype
         self.y_dtype = y_dtype
@@ -145,6 +153,9 @@ class FedSynthetic(SyntheticRaw):
     debug : bool, optional,
         Whether or not to use only the part of the dataset downloaded in
         debug mode. Defaults to False.
+    data_path: str
+        If data_path is given it wil ignore the config file and look for the
+        dataset directly in data_path. Defaults to None.
     """
 
     def __init__(
@@ -155,8 +166,11 @@ class FedSynthetic(SyntheticRaw):
         X_dtype=torch.float32,
         y_dtype=torch.float32,
         debug=False,
+        data_path=None,
     ):
-        super().__init__(X_dtype=X_dtype, y_dtype=y_dtype, debug=debug)
+        super().__init__(
+            X_dtype=X_dtype, y_dtype=y_dtype, debug=debug, data_path=data_path
+        )
         assert center in self.center_names
 
         self.chosen_centers = [center]

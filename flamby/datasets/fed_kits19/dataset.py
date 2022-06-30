@@ -56,17 +56,26 @@ class Kits19Raw(Dataset):
     debug : bool, optional,
         Whether or not to use only the part of the dataset downloaded in
         debug mode. Defaults to False.
+    data_path: str
+        If data_path is given it wil ignore the config file and look for the
+        dataset directly in data_path. Defaults to None.
     """
 
     def __init__(
-        self, train=True, X_dtype=torch.float32, y_dtype=torch.float32, debug=False
+        self,
+        train=True,
+        X_dtype=torch.float32,
+        y_dtype=torch.float32,
+        debug=False,
+        data_path=None,
     ):
         """See description above"""
         # set_environment_variables should be called before importing nnunet
-        set_environment_variables(debug)
+        set_environment_variables(debug, data_path=data_path)
         from nnunet.paths import preprocessing_output_dir
 
-        check_dataset_from_config("fed_kits19", debug)
+        if data_path is None:
+            check_dataset_from_config("fed_kits19", debug)
 
         plans_file = (
             preprocessing_output_dir
@@ -348,7 +357,6 @@ class FedKits19(Kits19Raw):
         super().__init__(X_dtype=X_dtype, train=train, y_dtype=y_dtype, debug=debug)
 
         key = self.train_test + "_" + str(center)
-        print(key)
         if not pooled:
             assert center in range(6)
             df = pd.read_csv(

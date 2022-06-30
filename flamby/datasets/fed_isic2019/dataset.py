@@ -30,9 +30,9 @@ class Isic2019Raw(torch.utils.data.Dataset):
     augmentations:
         image transform operations from the albumentations library,
         used for data augmentation
-    dic:
-        dictionary containing the paths to the input images and the
-        train_test_split file
+    data_path: str
+        If data_path is given it wil ignore the config file and look for the
+        dataset directly in data_path. Defaults to None.
 
     Parameters
     ----------
@@ -46,12 +46,17 @@ class Isic2019Raw(torch.utils.data.Dataset):
         X_dtype=torch.float32,
         y_dtype=torch.int64,
         augmentations=None,
+        data_path=None,
     ):
         """
         Cf class docstring
         """
-        dict = check_dataset_from_config(dataset_name="fed_isic2019", debug=False)
-        input_path = dict["dataset_path"]
+        if data_path is None:
+            dict = check_dataset_from_config(dataset_name="fed_isic2019", debug=False)
+            input_path = dict["dataset_path"]
+        else:
+            input_path = data_path
+
         dir = str(Path(os.path.realpath(__file__)).parent.resolve())
         self.dic = {
             "input_preprocessed": os.path.join(
@@ -116,6 +121,9 @@ class FedIsic2019(Isic2019Raw):
         Default to torch.float32
     y_dtype : torch.dtype, optional
         Default to torch.int64
+    data_path: str
+        If data_path is given it wil ignore the config file and look for the
+        dataset directly in data_path. Defaults to None.
     """
 
     def __init__(
@@ -126,6 +134,7 @@ class FedIsic2019(Isic2019Raw):
         debug: bool = False,
         X_dtype: torch.dtype = torch.float32,
         y_dtype: torch.dtype = torch.int64,
+        data_path: str = None,
     ):
         """Cf class docstring"""
         sz = 200
@@ -154,6 +163,7 @@ class FedIsic2019(Isic2019Raw):
             X_dtype=X_dtype,
             y_dtype=y_dtype,
             augmentations=augmentations,
+            data_path=data_path,
         )
 
         self.center = center

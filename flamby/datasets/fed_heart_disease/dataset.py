@@ -42,12 +42,20 @@ class HeartDiseaseRaw(Dataset):
         The dtype of the y label output
     debug: bool
         Whether or not we use the dataset with only part of the features
+    data_path: str
+        If data_path is given it wil ignore the config file and look for the
+        dataset directly in data_path. Defaults to None.
     """
 
-    def __init__(self, X_dtype=torch.float32, y_dtype=torch.float32, debug=False):
+    def __init__(
+        self, X_dtype=torch.float32, y_dtype=torch.float32, debug=False, data_path=None
+    ):
         """See description above"""
-        dict = check_dataset_from_config("fed_heart_disease", debug)
-        self.data_dir = Path(dict["dataset_path"])
+        if data_path is None:
+            dict = check_dataset_from_config("fed_heart_disease", debug)
+            self.data_dir = Path(dict["dataset_path"])
+        else:
+            self.data_dir = Path(data_path)
 
         self.X_dtype = X_dtype
         self.y_dtype = y_dtype
@@ -158,6 +166,9 @@ class FedHeartDisease(HeartDiseaseRaw):
     debug : bool, optional,
         Whether or not to use only the part of the dataset downloaded in
         debug mode. Defaults to False.
+    data_path: str
+        If data_path is given it wil ignore the config file and look for the
+        dataset directly in data_path. Defaults to None.
     """
 
     def __init__(
@@ -168,10 +179,13 @@ class FedHeartDisease(HeartDiseaseRaw):
         X_dtype: torch.dtype = torch.float32,
         y_dtype: torch.dtype = torch.float32,
         debug: bool = False,
+        data_path: str = None,
     ):
         """Cf class description"""
 
-        super().__init__(X_dtype=X_dtype, y_dtype=y_dtype, debug=debug)
+        super().__init__(
+            X_dtype=X_dtype, y_dtype=y_dtype, debug=debug, data_path=data_path
+        )
         assert center in [0, 1, 2, 3]
 
         self.chosen_centers = [center]
