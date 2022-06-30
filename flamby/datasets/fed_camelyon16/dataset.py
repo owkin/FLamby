@@ -23,6 +23,9 @@ class Camelyon16Raw(Dataset):
     debug : bool, optional,
         Whether or not to use only the part of the dataset downloaded in
         debug mode. Defaults to False.
+    data_path: str
+        If data_path is given it wil ignore the config file and look for the
+        dataset directly in data_path. Defaults to None.
 
     Attributes
     ----------
@@ -48,10 +51,16 @@ class Camelyon16Raw(Dataset):
         Whether or not we use the dataset with only part of the features
     """
 
-    def __init__(self, X_dtype=torch.float32, y_dtype=torch.float32, debug=False):
+    def __init__(
+        self, X_dtype=torch.float32, y_dtype=torch.float32, debug=False, data_path=None
+    ):
         """See description above"""
-        dict = check_dataset_from_config("fed_camelyon16", debug)
-        self.tiles_dir = Path(dict["dataset_path"])
+        if data_path is None:
+            dict = check_dataset_from_config("fed_camelyon16", debug)
+            self.tiles_dir = Path(dict["dataset_path"])
+        else:
+            self.tiles_dir = Path(data_path)
+
         path_to_labels_file = str(
             Path(
                 os.path.dirname(flamby.datasets.fed_camelyon16.__file__)
@@ -171,6 +180,9 @@ class FedCamelyon16(Camelyon16Raw):
     debug : bool, optional,
         Whether or not to use only the part of the dataset downloaded in
         debug mode. Defaults to False.
+    data_path: str
+        If data_path is given it wil ignore the config file and look for the
+        dataset directly in data_path. Defaults to None.
 
     """
 
@@ -182,11 +194,14 @@ class FedCamelyon16(Camelyon16Raw):
         X_dtype: torch.dtype = torch.float32,
         y_dtype: torch.dtype = torch.float32,
         debug: bool = False,
+        data_path: str = None,
     ):
         """
         Cf class docstring
         """
-        super().__init__(X_dtype=X_dtype, y_dtype=y_dtype, debug=debug)
+        super().__init__(
+            X_dtype=X_dtype, y_dtype=y_dtype, debug=debug, data_path=data_path
+        )
         assert center in [0, 1]
         self.centers = [center]
         if pooled:

@@ -36,13 +36,19 @@ class IXITinyRaw(Dataset):
         PyTorch Transform to process the data or augment it. Default to None
     debug : bool, optional
         Default to False
+    data_path: str
+        If data_path is given it wil ignore the config file and look for the
+        dataset directly in data_path. Defaults to None.
     """
 
     CENTER_LABELS = {"Guys": 0, "HH": 1, "IOP": 2}
 
-    def __init__(self, transform=None, debug=False):
-        dict = check_dataset_from_config("fed_ixi", debug)
-        self.root_folder = Path(dict["dataset_path"])
+    def __init__(self, transform=None, debug=False, data_path=None):
+        if data_path is None:
+            dict = check_dataset_from_config("fed_ixi", debug)
+            self.root_folder = Path(dict["dataset_path"])
+        else:
+            self.root_folder = Path(data_path)
 
         self.image_url = (
             "https://md-datasets-cache-zipfiles-prod.s3.eu-west-1"
@@ -176,13 +182,28 @@ class FedIXITiny(IXITinyRaw):
     pooled : bool, optional
         Whether to take all data from the 3 centers into one dataset.
         If True, supersedes center argument. Defaults to False.
+    debug : bool, optional
+        Default to False.
+    data_path: str
+        If data_path is given it wil ignore the config file and look for the
+        dataset directly in data_path. Defaults to None.
     """
 
-    def __init__(self, transform=None, center=0, train=True, pooled=False):
+    def __init__(
+        self,
+        transform=None,
+        center=0,
+        train=True,
+        pooled=False,
+        debug=False,
+        data_path=None,
+    ):
         """
         Cf class docstring
         """
-        super(FedIXITiny, self).__init__(transform=transform)
+        super(FedIXITiny, self).__init__(
+            transform=transform, debug=debug, data_path=data_path
+        )
 
         self.modality = "T1"
         self.centers = [center]
