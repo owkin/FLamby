@@ -103,7 +103,7 @@ by running in a python shell:
 from flamby.datasets.fed_camelyon16 import FedCamelyon16, Camelyon16Raw
 
 # To load the first center
-center1 = FedCamelyon16(center=0, train=True)
+center0 = FedCamelyon16(center=0, train=True)
 # To load the second center
 center1 = FedCamelyon16(center=1, train=True)
 ```
