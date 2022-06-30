@@ -180,6 +180,38 @@ def _extract_center_name_from_filename(filename: str):
     # We decided to wrap a function for this for clarity and easier modularity for future expansion
     return filename.split('-')[1]
 
+def _load_nifti_image_and_label_by_path(
+        image_path, label_path, modality) -> Tuple[nib.Nifti1Header, numpy.ndarray, numpy.ndarray]:
+    """Loads NIFTI files.
+
+    Parameters
+    ----------
+    image_path : str
+        Path to the image
+    label_path : str
+        Path to the label
+    modality : str
+        MRI modality (e.g. `'T1'`).
+
+    Returns
+    -------
+    header_img : Nifti1Header
+        NIFTI headers proceeding from the image.
+    img : ndarray
+        NumPy array containing the intensities of the voxels.
+    label : ndarray
+        NumPy array containing the intensities of the voxels.
+    """
+    nii_img = nib.load(image_path)
+    nii_label = nib.load(label_path)
+    # nii_img = nib.as_closest_canonical(nii_img)
+    # nii_img = processing.conform(nii_img) #, out_shape=nii_img.shape)
+    img = nii_img.get_fdata()
+    label = nii_label.get_fdata()
+    header_img = nii_img.get_header()
+    #header_label = label.get_header()
+
+    return header_img, img, label
 
 def _load_nifti_image_by_id(
         tar_file: TarFile,

@@ -21,7 +21,7 @@ from flamby.datasets.fed_ixi.utils import (
     _extract_center_name_from_filename,
     _get_center_name_from_center_id,
     _get_id_from_filename,
-    _load_nifti_image_and_label_by_id,
+    _load_nifti_image_and_label_by_path,
 )
 from flamby.utils import check_dataset_from_config
 
@@ -95,11 +95,6 @@ class IXITinyRaw(Dataset):
         self.filenames = [filename.name for filename in self.images_paths]
         self.subject_ids = tuple(map(_get_id_from_filename, self.filenames))
 
-    @property
-    def zip_file(self) -> ZipFile:
-        zf = self.root_folder.joinpath("7kd5wj7v7p-1.zip")
-        return ZipFile(zf)
-
     def _validate_center(self) -> None:
         """
         Asserts permitted image center keys.
@@ -125,9 +120,11 @@ class IXITinyRaw(Dataset):
         )
 
     def __getitem__(self, item) -> Tuple[Tensor, Dict]:
-        patient_id = self.subject_ids[item]
-        header_img, img, label, center_name = _load_nifti_image_and_label_by_id(
-            zip_file=self.zip_file, patient_id=patient_id, modality=self.modality
+        image_path = self.images_paths[item]
+        label_path = self.labels_paths[item]
+
+        _, img, label = _load_nifti_image_and_label_by_path(
+            image_path, label_path, modality=self.modality
         )
 
         default_transform = Compose(
