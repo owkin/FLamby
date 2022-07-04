@@ -1,12 +1,15 @@
 import torch
 
 from flamby.utils import get_config_file_path, read_config
+from flamby.datasets.fed_synthetic.dataset import FedSynthetic
 
 NUM_CLIENTS = 4
 BATCH_SIZE = 8
 NUM_EPOCHS_POOLED = 10
 LR = 0.005
 Optimizer = torch.optim.Adam
+
+FedClass = FedSynthetic
 
 
 def get_nb_max_rounds(num_updates, batch_size=BATCH_SIZE):

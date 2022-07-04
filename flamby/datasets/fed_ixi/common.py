@@ -1,4 +1,5 @@
 import torch
+from flamby.datasets.fed_ixi.dataset import FedIXITiny
 
 NUM_CLIENTS = 3
 BATCH_SIZE = 2
@@ -8,6 +9,8 @@ NUM_EPOCHS_POOLED = 10
 LR = 0.001
 
 Optimizer = torch.optim.AdamW
+
+FedClass = FedIXITiny
 
 
 def get_nb_max_rounds(num_updates, batch_size=BATCH_SIZE):
