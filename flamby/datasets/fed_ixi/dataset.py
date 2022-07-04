@@ -185,7 +185,7 @@ class FedIXITiny(IXITinyRaw):
     debug : bool, optional
         Default to False.
     data_path: str
-        If data_path is given it wil ignore the config file and look for the
+        If data_path is given it will ignore the config file and look for the
         dataset directly in data_path. Defaults to None.
     """
 
