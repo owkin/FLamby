@@ -32,6 +32,25 @@ Raw TCGA-BRCA data can be viewed and downloaded [here](https://portal.gdc.cancer
 ## Data
 Preprocessed data is stored in this repo in the file ```brca.csv```, so the dataset does not need to be downloaded. The medical centers (with their geographic regions) are stored in the file ```centers.csv```. From this file and the patients' TCGA barcodes, we can extract the region of origin of each patient's tissue sort site (TSS). The numbers of sites being too large (64) we regroup them in 6 different regions (Northeast, South, West, Midwest, Europe, Canada). The patients' stratified split by region is static and stored in the train_test_split.csv file.
 
+## Using the dataset
+
+Now that the dataset is ready for use you can load it using the low or high-level API
+by doing:
+```python
+from flamby.datasets.fed_tcga_brca import FedTcgaBrca
+
+# To load the first center as a pytorch dataset
+center0 = FedTcgaBrca(center=0, train=True)
+# To load the second center as a pytorch dataset
+center1 = FedTcgaBrca(center=1, train=True)
+# To sample batches from each of the local datasets use the traditional pytorch API
+from torch.utils.data import DataLoader as dl
+
+X, y = iter(dl(center0, batch_size=16, shuffle=True, num_workers=0)).next()
+```
+More informations on how to train model and handle flamby datasets in general are available in the [Getting Started section](../../../Quickstart.md)
+
+
 ## Baseline training and evaluation in a pooled setting
 To train and evaluate a model for the pooled dataset, run:
 ```
