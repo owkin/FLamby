@@ -101,6 +101,8 @@ class LidcIdriRaw(Dataset):
             )
             self.ctscans_dir = Path(config_dict["dataset_path"])
         else:
+            if not (os.path.exists(data_path)):
+                raise ValueError(f"The string {data_path} is not a valid path.")
             self.ctscans_dir = Path(data_path)
 
         for ctscan in self.ctscans_dir.rglob("*patient.nii.gz"):

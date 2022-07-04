@@ -55,6 +55,8 @@ class Isic2019Raw(torch.utils.data.Dataset):
             dict = check_dataset_from_config(dataset_name="fed_isic2019", debug=False)
             input_path = dict["dataset_path"]
         else:
+            if not (os.path.exists(data_path)):
+                raise ValueError(f"The string {data_path} is not a valid path.")
             input_path = data_path
 
         dir = str(Path(os.path.realpath(__file__)).parent.resolve())

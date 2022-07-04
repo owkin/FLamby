@@ -48,6 +48,8 @@ class IXITinyRaw(Dataset):
             dict = check_dataset_from_config("fed_ixi", debug)
             self.root_folder = Path(dict["dataset_path"])
         else:
+            if not (os.path.exists(data_path)):
+                raise ValueError(f"The string {data_path} is not a valid path.")
             self.root_folder = Path(data_path)
 
         self.image_url = (

@@ -71,6 +71,9 @@ class Kits19Raw(Dataset):
     ):
         """See description above"""
         # set_environment_variables should be called before importing nnunet
+        if data_path is not None:
+            if not (os.path.exists(data_path)):
+                raise ValueError(f"The string {data_path} is not a valid path.")
         set_environment_variables(debug, data_path=data_path)
         from nnunet.paths import preprocessing_output_dir
 
@@ -301,7 +304,7 @@ class Kits19Raw(Dataset):
                 (-min(0, bbox_z_lb), max(bbox_z_ub - shape[2], 0)),
             ),
             self.pad_mode,
-            **self.pad_kwargs_data
+            **self.pad_kwargs_data,
         )
 
         seg[0] = np.pad(
@@ -313,7 +316,7 @@ class Kits19Raw(Dataset):
                 (-min(0, bbox_z_lb), max(bbox_z_ub - shape[2], 0)),
             ),
             "constant",
-            **{"constant_values": -1}
+            **{"constant_values": -1},
         )
 
         return {"data": data, "seg": seg}

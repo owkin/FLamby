@@ -59,6 +59,8 @@ class Camelyon16Raw(Dataset):
             dict = check_dataset_from_config("fed_camelyon16", debug)
             self.tiles_dir = Path(dict["dataset_path"])
         else:
+            if not (os.path.exists(data_path)):
+                raise ValueError(f"The string {data_path} is not a valid path.")
             self.tiles_dir = Path(data_path)
 
         path_to_labels_file = str(
