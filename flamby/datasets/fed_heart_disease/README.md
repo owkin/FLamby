@@ -47,10 +47,14 @@ by doing:
 ```python
 from flamby.datasets.fed_heart_disease import FedHeartDisease, HeartDiseaseRaw
 
-# To load the first center
+# To load the first center as a pytorch dataset
 center0 = FedHeartDisease(center=0, train=True)
-# To load the second center
+# To load the second center as a pytorch dataset
 center1 = FedHeartDisease(center=1, train=True)
+# To sample batches from each of the local datasets use the traditional pytorch API
+from torch.utils.data import DataLoader as dl
+
+X, y = iter(dl(center0, batch_size=16, shuffle=True, num_workers=0)).next()
 ```
 
 ## Benchmarking the baseline on a pooled setting
