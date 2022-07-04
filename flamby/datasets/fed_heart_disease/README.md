@@ -56,6 +56,7 @@ from torch.utils.data import DataLoader as dl
 
 X, y = iter(dl(center0, batch_size=16, shuffle=True, num_workers=0)).next()
 ```
+More informations on how to train model and handle flamby datasets in general are available in the [Getting Started section](../../../Quickstart.md)
 
 ## Benchmarking the baseline on a pooled setting
 
