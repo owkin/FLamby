@@ -211,8 +211,12 @@ def download_LIDC(output_folder, debug=False):
         lambda d: d["annotation_file"].apply(get_SeriesUID_from_xml)
     ).compute(scheduler="processes")
     df = df[df.SeriesInstanceUID != "not found"]
+    df = df[df.SeriesInstanceUID != "notfound"]
+    # there are several xml files which have the same seriesInstanceUID
+    # but the same content, therefore here df has len of 1026.
+    # Next, we are removing the duplicates. The correct number of files will be now 1018
     patientXseries = df.merge(patientXseries, on="SeriesInstanceUID")
-
+    df = df.drop_duplicates(subset=["SeriesInstanceUID"], keep="first")
     # Update yaml file
     write_value_in_config(config_file, "download_complete", True)
     return patientXseries
@@ -263,7 +267,7 @@ def main(output_folder, debug=False, keep_dicoms=False):
         "LIDC-IDRI#1966254a2b592e6fba14f949f6e23bb1b7804cc",
         "fed_lidc_idri",
     )
-    print("Downloading LIDC-IDRI dataset. This may take a while")
+    print("Downloading LIDC-IDRI dataset. This may take few hours")
     patientXseries = download_LIDC(output_folder, debug)
     LIDC_to_niftis(patientXseries, debug=debug)
 
