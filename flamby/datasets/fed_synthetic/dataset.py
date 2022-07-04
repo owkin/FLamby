@@ -55,6 +55,8 @@ class SyntheticRaw(Dataset):
             dict = check_dataset_from_config("fed_synthetic", debug)
             self.data_dir = Path(dict["dataset_path"])
         else:
+            if not (os.path.exists(data_path)):
+                raise ValueError(f"The string {data_path} is not a valid path.")
             self.data_dir = Path(data_path)
 
         self.X_dtype = X_dtype
