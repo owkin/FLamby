@@ -23,28 +23,24 @@ class HeartDiseaseRaw(Dataset):
     debug : bool, optional,
         Whether or not to use only the part of the dataset downloaded in
         debug mode. Defaults to False.
-
     Attributes
     ----------
-    data_dir : str
+    data_dir: str
         Where data files are located
-    data_paths: list[str]
-        The list with the path towards all features.
-    features_labels: list[int]
-        The list with all classification labels for all features
-    features_centers: list[int]
-        The list for all centers for all features
-    features_sets: list[str]
-        The list for all sets (train/test) for all features
+    labels : pd.DataFrame
+        The labels as a dataframe.
+    features: pd.DataFrame
+        The features as a dataframe.
+    centers: list[int]
+        The list with the center ids associated with the dataframes.
+    sets: list[str]
+        For each sample if it is from the train or the test.
     X_dtype: torch.dtype
         The dtype of the X features output
     y_dtype: torch.dtype
         The dtype of the y label output
     debug: bool
         Whether or not we use the dataset with only part of the features
-    data_path: str
-        If data_path is given it will ignore the config file and look for the
-        dataset directly in data_path. Defaults to None.
     """
 
     def __init__(
