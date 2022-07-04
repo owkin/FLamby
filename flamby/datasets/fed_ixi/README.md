@@ -140,6 +140,9 @@ The following arguments can be passed to FedIXITiny:
 - 'train', whether we want to load the train or test set
 - 'pooled' loads data from all the centers (overwriting previous center argument)
 
+More informations on how to train model and handle flamby datasets in general are available in the [Getting Started section](../../../Quickstart.md)
+
+
 ### Benchmarking the baseline on a pooled setting
 
 Once the download is completed and the federated classes are set up, we can benchmark the baseline regarding our prediction task on the pooled dataset: `python benchmark.py`
