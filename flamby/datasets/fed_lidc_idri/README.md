@@ -38,7 +38,7 @@ of the dataset.
 |                   | Dataset description |
 | ----------------- | -----------------------------------------------|
 | Description       | This is the dataset from LIDC-IDRI study |
-| Dataset           | 1018 CT-scans with masks (GE MEDICAL SYSTEMS 670 (536 / 134), SIEMENS 205 (164, 41), TOSHIBA 69 (55 / 14), Philips 74 (59 / 15) |
+| Dataset           | 1009 CT-scans with masks (GE MEDICAL SYSTEMS 661 (530 / 131), SIEMENS 205 (164, 41), TOSHIBA 69 (55 / 14), Philips 74 (59 / 15) |
 | Centers           | Manufacturer of the CT-scans (GE MEDICAL SYSTEMS, SIEMENS, TOSHIBA, Philips) |
 | Permission        | Public |
 | Task              | Segmentation |
@@ -46,8 +46,8 @@ of the dataset.
 
 This dataset was used in the [Luna16 challenge](https://luna16.grand-challenge.org/Home/).
 Note that contrary to the challenge, in which slides with thickness larger than 3 mm were removed,
-the present dataset contains 1026 scans (almost all scans from
-[LIDC-IDRI](https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI), 9 scans are removed due to missing slices).
+the present dataset contains 1009 scans (almost all scans from
+[LIDC-IDRI](https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI), and 9 scans are removed due to missing slices).
 
 The data is split in a training and testing sets containing 80% and 20% of the available scans respectively.
 This split is stratified according to the centers (the manufacturers of the CT-scan apparatus),
