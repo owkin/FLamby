@@ -98,6 +98,25 @@ While running ``download_ct_scans.py``, it may happen that the TCIA client stall
 In that case, you should kill the python process and run ``download_ct_scans.py`` again, with the same arguments.
 Files that were correctly downloaded will not be downloaded again.
 
+## Using the dataset
+
+Now that the dataset is ready for use you can load it using the low or high-level API
+by doing:
+```python
+from flamby.datasets.fed_lidc_idri import FedLidcIdri
+
+# To load the first center as a pytorch dataset
+center0 = FedLidcIdri(center=0, train=True)
+# To load the second center as a pytorch dataset
+center1 = FeddLidcIdri(center=1, train=True)
+# To sample batches from each of the local datasets use the traditional pytorch API
+from torch.utils.data import DataLoader as dl
+
+X, y = iter(dl(center0, batch_size=2, shuffle=True, num_workers=0)).next()
+```
+More informations on how to train model and handle flamby datasets in general are available in the [Getting Started section](../../../Quickstart.md)
+
+
 ## Baseline model
 
 The baseline model is a V-Net (see [V-Net: Fully Convolutional Neural Networks for Volumetric Medical Image Segmentation
