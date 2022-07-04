@@ -124,12 +124,17 @@ Once the dataset is ready for use, you can load it the following way:
 ```python
 from flamby.datasets.fed_ixi import FedIXITiny
 
-# To load the first center
+# To load the first center as a pytorch dataset
 center0 = FedIXITiny(transform=None, center=0, train=True, pooled=False)
-# To load the second center
-center1 = FedIXITiny(transform=None, center=1, train=True, pooled=False)
-```
+# To load the second center as a pytorch dataset
+center1 = FedIXITiny(transform=None, center=1, train=True, pooled=False). 
 
+# To sample batches from each of the local datasets use the traditional pytorch API
+from torch.utils.data import DataLoader as dl
+
+X, y = iter(dl(center0, batch_size=16, shuffle=True, num_workers=0)).next()
+```
+The following arguments can be passed to FedIXITiny:
 - 'transform' allows to perform a specific transformation on the brain images (e. g. with the MONAI library).
 - 'center' allows center indexation, must be in `[0, 1, 2]` or in `['Guys', 'HH', 'IOP']`.
 - 'train', whether we want to load the train or test set
