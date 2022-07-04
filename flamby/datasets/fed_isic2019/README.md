@@ -60,7 +60,30 @@ python resize_images.py
 This script will resize all images so that the shorter edge of the resized image is 224px and the aspect ratio of the input image is maintained.
 [Color constancy](https://en.wikipedia.org/wiki/Color_constancy) is added in the preprocessing.
 
-**Be careful: in order to allow for augmentations, images aspect ratios are conserved in the preprocessing so images are rectangular with a fixed width so they all have different heights. As a result they cannot be batched without cropping them to a square. An example of such a cropping strategy can be found in the following benchmark script.**
+**Be careful: in order to allow for augmentations, images aspect ratios are conserved in the preprocessing so images are rectangular with a fixed width so they all have different heights. As a result they cannot be batched without cropping them to a square. An example of such a cropping strategy can be found in the benchmark found below.**
+
+## Using the dataset
+
+Now that the dataset is ready for use you can load it using the low or high-level API
+by running in a python shell:
+
+```python
+from flamby.datasets.fed_isic2019 import FedIsic2019
+
+# To load the first center as a pytorch dataset
+center0 = FedIsic2019(center=0, train=True)
+# To load the second center as a pytorch dataset
+center1 = FedIsic2019(center=1, train=True)
+# To load the 3rd center ...
+
+# To sample batches from each of the local datasets use the traditional pytorch API
+from torch.utils.data import DataLoader as dl
+
+X, y = iter(dl(center0, batch_size=16, shuffle=True, num_workers=0)).next()
+
+```
+
+More informations on how to train model and handle flamby datasets in general are available in the [Getting Started section](../../../Quickstart.md)
 
 ## Baseline training and evaluation in a pooled setting
 To train and evaluate a classification model for the pooled dataset, run:
