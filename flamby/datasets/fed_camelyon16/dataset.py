@@ -49,6 +49,8 @@ class Camelyon16Raw(Dataset):
         The dtype of the y label output
     debug: bool
         Whether or not we use the dataset with only part of the features
+    perms: dict
+        The dictionary of all generated permutations for each slide.
     """
 
     def __init__(
@@ -82,6 +84,7 @@ class Camelyon16Raw(Dataset):
         self.features_labels = []
         self.features_centers = []
         self.features_sets = []
+        self.perms = {}
         for slide in self.tiles_dir.glob("*.npy"):
             slide_name = os.path.basename(slide).split(".")[0]
             slide_id = int(slide_name.split("_")[1])
@@ -155,7 +158,10 @@ class Camelyon16Raw(Dataset):
         X = np.load(self.features_paths[idx])[:, start:]
         X = torch.from_numpy(X).to(self.X_dtype)
         y = torch.from_numpy(np.asarray(self.features_labels[idx])).to(self.y_dtype)
-        return X, y
+        if idx not in self.perms:
+            self.perms[idx] = np.random.default_rng(42).permutation(X.shape[0])
+
+        return X, y, self.perms[idx]
 
 
 class FedCamelyon16(Camelyon16Raw):
@@ -232,7 +238,7 @@ class FedCamelyon16(Camelyon16Raw):
         ]
 
 
-def collate_fn(dataset_elements_list, max_tiles=10000):
+def collate_fn(dataset_elements_list, max_tiles=1000):
     """Helper function to correctly batch samples from
     a Camelyon16Dataset accomodating for the uneven number of tiles per slide.
 
@@ -250,15 +256,15 @@ def collate_fn(dataset_elements_list, max_tiles=10000):
         (len(dataset_elements_list),)
     """
     n = len(dataset_elements_list)
-    X0, y0 = dataset_elements_list[0]
+    X0, y0, _ = dataset_elements_list[0]
     X_dtype = X0.dtype
     y_dtype = y0.dtype
     X = torch.zeros((n, max_tiles, 2048), dtype=X_dtype)
     y = torch.empty((n, 1), dtype=y_dtype)
 
     for i in range(n):
-        X_current, y_current = dataset_elements_list[i]
+        X_current, y_current, perm = dataset_elements_list[i]
         ntiles_min = min(max_tiles, X_current.shape[0])
-        X[i, :ntiles_min, :] = X_current[:ntiles_min, :]
+        X[i, :ntiles_min, :] = X_current[perm[:ntiles_min], :]
         y[i] = y_current
     return X, y
