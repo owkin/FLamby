@@ -34,7 +34,15 @@ from flamby.datasets.fed_heart_disease import FedSynthetic, SyntheticRaw
 center0 = FedSynthetic(center=0, train=True)
 # To load the second center
 center1 = FedSynthetic(center=1, train=True)
+# To sample batches from each of the local datasets use the traditional pytorch API
+from torch.utils.data import DataLoader as dl
+
+
+X, y = iter(dl(center0, batch_size=16, shuffle=True, num_workers=0)).next()
+
 ```
+More informations on how to train model and handle flamby datasets in general are available in the [Getting Started section](../../../Quickstart.md)
+
 
 ## Benchmarking the baseline on a pooled setting
 
