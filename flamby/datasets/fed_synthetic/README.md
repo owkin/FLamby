@@ -30,9 +30,9 @@ by doing:
 ```python
 from flamby.datasets.fed_heart_disease import FedSynthetic, SyntheticRaw
 
-# To load the first center
+# To load the first center as a pytorch dataset
 center0 = FedSynthetic(center=0, train=True)
-# To load the second center
+# To load the second center as a pytorch dataset
 center1 = FedSynthetic(center=1, train=True)
 # To sample batches from each of the local datasets use the traditional pytorch API
 from torch.utils.data import DataLoader as dl
