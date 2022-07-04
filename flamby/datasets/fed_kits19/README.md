@@ -81,7 +81,27 @@ python3 run_nnUNet_plan_and_preprocess.py --num_threads 1
 Similarly, you should add the option '--debug' if you used it on the previous steps.
 
 **Warning:** If you use more threads than your machine has available CPUs it, the preprocessing can halt indefinitely.
-With this preprocessing, running the experiments can be very time efficient as it saves the preprocessing time for every experiment run.
+With this preprocessing, running the experiments can be very time efficient as it saves the preprocessing time for every experiment run.  
+
+## Using the dataset
+
+Now that the dataset is ready for use you can load it using the low or high-level API
+by doing:
+```python
+from flamby.datasets.fed_kits19 import FedKits19
+
+# To load the first center as a pytorch dataset
+center0 = FedKits19(center=0, train=True)
+# To load the second center as a pytorch dataset
+center1 = FedKits19(center=1, train=True)
+# To load the 3rd center ...
+
+# To sample batches from each of the local datasets use the traditional pytorch API
+from torch.utils.data import DataLoader as dl
+
+X, y = iter(dl(center0, batch_size=16, shuffle=True, num_workers=0)).next()
+```
+More informations on how to train model and handle flamby datasets in general are available in the [Getting Started section](../../../Quickstart.md)
 
 ## Pooled Experiment
 To run a pooled strategy with GPUs, run the following command in the 'flamby/datasets/fed_kits19' directory,
