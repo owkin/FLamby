@@ -102,11 +102,20 @@ by running in a python shell:
 ```python
 from flamby.datasets.fed_camelyon16 import FedCamelyon16, Camelyon16Raw
 
-# To load the first center
+# To load the first center as a pytorch dataset
 center0 = FedCamelyon16(center=0, train=True)
-# To load the second center
+# To load the second center as a pytorch dataset
 center1 = FedCamelyon16(center=1, train=True)
+
+# To sample batches from each of the local datasets use the traditional pytorch API
+from torch.utils.data import DataLoader as dl
+# For this specific dataset samples do not have the same size and therefore batching requires padding implemented in collate_fn
+from flamby.datasets.fed_camelyon16 import collate_fn
+
+X, y = iter(dl(center0, batch_size=16, shuffle=True, num_workers=0, collate_fn=collate_fn)).next()
+
 ```
+More informations on how to train model and handle flamby datasets in general are available in the [Getting Started section](../../../Quickstart.md)
 
 ## Benchmarking the baseline in a pooled setting
 
@@ -116,7 +125,7 @@ In order to benchmark the baseline on the pooled dataset one needs to download a
 python benchmark.py --log --num-workers-torch 10 
 ```
 
-This will launch 5 runs and store log results for training in ./runs/seed42-47 and testing in ./runs/tests-seed42-47.
+This will launch 5 single-centric runs and store log results for training in ./runs/seed42-47 and testing in ./runs/tests-seed42-47.
 The command:
 
 ```bash
