@@ -43,7 +43,7 @@ class HeartDiseaseRaw(Dataset):
     debug: bool
         Whether or not we use the dataset with only part of the features
     data_path: str
-        If data_path is given it wil ignore the config file and look for the
+        If data_path is given it will ignore the config file and look for the
         dataset directly in data_path. Defaults to None.
     """
 
