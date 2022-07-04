@@ -117,7 +117,6 @@ class Kits19Raw(Dataset):
         self.debug = debug
         self.train_test = "train" if train else "test"
 
-        print(self.train_test)
 
         df = pd.read_csv(
             Path(os.path.dirname(flamby.datasets.fed_kits19.__file__))
