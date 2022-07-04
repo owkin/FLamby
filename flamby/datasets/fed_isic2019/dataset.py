@@ -122,7 +122,7 @@ class FedIsic2019(Isic2019Raw):
     y_dtype : torch.dtype, optional
         Default to torch.int64
     data_path: str
-        If data_path is given it wil ignore the config file and look for the
+        If data_path is given it will ignore the config file and look for the
         dataset directly in data_path. Defaults to None.
     """
 
