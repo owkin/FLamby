@@ -16,6 +16,8 @@ def set_seed(seed):
     seed : int
         The seed to set.
     """
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
     torch.manual_seed(seed)
     np.random.seed(seed)
 
@@ -174,6 +176,11 @@ def find_xps_in_df(df, hyperparameters, sname, num_updates):
     return index_of_interest
 
 
+def seed_worker(worker_id):
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed)
+
+
 def init_data_loaders(
     dataset,
     pooled=False,
@@ -189,6 +196,10 @@ def init_data_loaders(
     if (not pooled) and num_clients is None:
         raise ValueError("num_clients must be specified for the non-pooled data")
     batch_size_test = batch_size if batch_size_test is None else batch_size_test
+
+    g = torch.Generator()
+    g.manual_seed(0)
+
     if not pooled:
         training_dls = [
             dl(
@@ -197,6 +208,8 @@ def init_data_loaders(
                 shuffle=True,
                 num_workers=num_workers,
                 collate_fn=collate_fn,
+                worker_init_fn=seed_worker,
+                generator=g,
             )
             for i in range(num_clients)
         ]
@@ -207,6 +220,8 @@ def init_data_loaders(
                 shuffle=False,
                 num_workers=num_workers,
                 collate_fn=collate_fn,
+                worker_init_fn=seed_worker,
+                generator=g,
             )
             for i in range(num_clients)
         ]
@@ -218,6 +233,8 @@ def init_data_loaders(
             shuffle=True,
             num_workers=num_workers,
             collate_fn=collate_fn,
+            worker_init_fn=seed_worker,
+            generator=g,
         )
         test_pooled = dl(
             dataset(train=False, pooled=True),
@@ -225,6 +242,8 @@ def init_data_loaders(
             shuffle=False,
             num_workers=num_workers,
             collate_fn=collate_fn,
+            worker_init_fn=seed_worker,
+            generator=g,
         )
         return train_pooled, test_pooled
 
