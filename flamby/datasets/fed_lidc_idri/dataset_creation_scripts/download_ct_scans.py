@@ -215,8 +215,8 @@ def download_LIDC(output_folder, debug=False):
     # there are several xml files which have the same seriesInstanceUID
     # but the same content, therefore here df has len of 1026.
     # Next, we are removing the duplicates. The correct number of files will be now 1018
-    patientXseries = df.merge(patientXseries, on="SeriesInstanceUID")
     df = df.drop_duplicates(subset=["SeriesInstanceUID"], keep="first")
+    patientXseries = df.merge(patientXseries, on="SeriesInstanceUID")
     # Update yaml file
     write_value_in_config(config_file, "download_complete", True)
     return patientXseries
