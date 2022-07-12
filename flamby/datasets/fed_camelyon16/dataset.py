@@ -3,6 +3,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import random
 import torch
 from torch.utils.data import Dataset
 
@@ -85,7 +86,11 @@ class Camelyon16Raw(Dataset):
         self.features_centers = []
         self.features_sets = []
         self.perms = {}
-        for slide in self.tiles_dir.glob("*.npy"):
+        # We need this ist to be sorted for reproducibility but shuffled to avoid weirdness
+        npys_list = sorted(self.tiles_dir.glob("*.npy"))
+        random.seed(0)
+        random.shuffle(npys_list)
+        for slide in npys_list:
             slide_name = os.path.basename(slide).split(".")[0]
             slide_id = int(slide_name.split("_")[1])
             label_from_metadata = int(
