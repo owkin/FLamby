@@ -146,7 +146,7 @@ python plot_results.py
 ```
 which produces the plot at the end of the main article.    
 
-In order to re-run each of the benchmark, first download the dataset you are interested in and to recreate the resuts file run the following command replacing `config_dataset.json` by one of the listed config files (`config_camelyon16.json`, `config_heart_disease.json`, `config_isic2019.json`, `config_ixi.json`, `config_kits19.json`, `config_lidc_idri.json`, `config_tcga_brca.json`):
+In order to re-run each of the benchmark on your machine, first download the dataset you are interested in and then run the following command replacing `config_dataset.json` by one of the listed config files (`config_camelyon16.json`, `config_heart_disease.json`, `config_isic2019.json`, `config_ixi.json`, `config_kits19.json`, `config_lidc_idri.json`, `config_tcga_brca.json`):
 ```
 cd flamby/benchmarks
 python fed_benchmarks.py --seed 42 -cfp ../config_dataset.json
