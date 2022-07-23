@@ -50,9 +50,9 @@ camelyon16 = [
 ]
 heart = ["wget"]
 isic2019 = ["albumentations", "efficientnet-pytorch", "requests", "wget"]
-ixi = ["monai", "nibabel"]
-kits19 = ["batchgenerators", "nibabel", "nnunet==1.7.0"]
-lidc = ["dask", "dicom-numpy", "nibabel", "pydicom", "scipy"]
+ixi = ["monai", "nibabel==3.2.2"]
+kits19 = ["batchgenerators", "nibabel==3.2.2", "nnunet==1.7.0"]
+lidc = ["dask", "dicom-numpy", "nibabel==3.2.2", "pydicom", "scipy"]
 tcga = ["lifelines"]
 docs = [
     "albumentations",
