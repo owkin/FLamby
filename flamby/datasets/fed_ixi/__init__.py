@@ -6,6 +6,7 @@ from flamby.datasets.fed_ixi.common import (
     SEEDS,
     Optimizer,
     get_nb_max_rounds,
+    FedClass,
 )
 from flamby.datasets.fed_ixi.dataset import FedIXITiny, IXITinyRaw
 from flamby.datasets.fed_ixi.loss import BaselineLoss

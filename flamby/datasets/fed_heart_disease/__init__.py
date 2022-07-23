@@ -5,6 +5,7 @@ from flamby.datasets.fed_heart_disease.common import (
     NUM_EPOCHS_POOLED,
     Optimizer,
     get_nb_max_rounds,
+    FedClass,
 )
 from flamby.datasets.fed_heart_disease.dataset import FedHeartDisease, HeartDiseaseRaw
 from flamby.datasets.fed_heart_disease.loss import BaselineLoss

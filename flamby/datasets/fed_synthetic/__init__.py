@@ -5,6 +5,7 @@ from flamby.datasets.fed_synthetic.common import (
     NUM_EPOCHS_POOLED,
     Optimizer,
     get_nb_max_rounds,
+    FedClass,
 )
 from flamby.datasets.fed_synthetic.dataset import FedSynthetic, SyntheticRaw
 from flamby.datasets.fed_synthetic.loss import BaselineLoss

@@ -5,6 +5,7 @@ from flamby.datasets.fed_tcga_brca.common import (
     NUM_EPOCHS_POOLED,
     Optimizer,
     get_nb_max_rounds,
+    FedClass,
 )
 from flamby.datasets.fed_tcga_brca.dataset import FedTcgaBrca, TcgaBrcaRaw
 from flamby.datasets.fed_tcga_brca.metric import metric

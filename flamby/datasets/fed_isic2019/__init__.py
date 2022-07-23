@@ -5,6 +5,7 @@ from flamby.datasets.fed_isic2019.common import (
     NUM_EPOCHS_POOLED,
     Optimizer,
     get_nb_max_rounds,
+    FedClass,
 )
 from flamby.datasets.fed_isic2019.dataset import FedIsic2019, Isic2019Raw
 from flamby.datasets.fed_isic2019.metric import metric
