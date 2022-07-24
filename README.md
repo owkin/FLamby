@@ -136,6 +136,59 @@ all the datasets you are interested in by following the instructions provided in
 
 Follow the [quickstart section](./Quickstart.md) to learn how to get started with FLamby.
 
+## Reproduce benchmark and figures from the companion article  
+
+### Benchmarks
+The results are stored in flamby/results in corresponding subfolders `results_benchmark_fed_dataset` for each dataset.
+These results can be plotted using:  
+```
+python plot_results.py
+```
+which produces the plot at the end of the main article.    
+
+In order to re-run each of the benchmark on your machine, first download the dataset you are interested in and then run the following command replacing `config_dataset.json` by one of the listed config files (`config_camelyon16.json`, `config_heart_disease.json`, `config_isic2019.json`, `config_ixi.json`, `config_kits19.json`, `config_lidc_idri.json`, `config_tcga_brca.json`):
+```
+cd flamby/benchmarks
+python fed_benchmarks.py --seed 42 -cfp ../config_dataset.json
+python fed_benchmarks.py --seed 43 -cfp ../config_dataset.json
+python fed_benchmarks.py --seed 44 -cfp ../config_dataset.json
+python fed_benchmarks.py --seed 45 -cfp ../config_dataset.json
+python fed_benchmarks.py --seed 46 -cfp ../config_dataset.json
+```
+We have observed that results vary from machine to machine and are sensitive to GPU randomness. However you should be able to reproduce the results up to some variance and results on the same machine should be perfecty reproducible. Please open an issue if it is not the case.
+The script `extract_config.py` allows to go from a results file to a `config.py`.
+See the [quickstart section](./Quickstart.md) to change parameters.
+
+### Heterogeneity plots
+
+Most plots from the article can be reproduced using the following commands after having downloaded the corresponding datasets:
+- [Fed-TCGA-BRCA](./flamby/datasets/fed_tcga_brca/README.md)
+```
+cd flamby/datasets/fed_tcga_brca
+python plot_kms.py
+```
+- [Fed-LIDC-IDRI](./flamby/datasets/fed_lidc_idri/README.md)
+```
+cd flamby/datasets/fed_lidc_idri
+python lidc_heterogeneity_plot.py 
+```
+- [Fed-ISIC2019](./flamby/datasets/fed_isic2019/README.md)
+```
+cd flamby/datasets/fed_isic2019
+python heterogeneity_pic.py 
+```
+- [Fed-IXITiny](./flamby/datasets/fed_ixi/README.md)
+```
+cd flamby/datasets/fed_ixi
+python ixi_plotting.py
+```
+- [Fed-KITS2019](./flamby/datasets/fed_kits19/README.md)
+```
+cd flamby/datasets/fed_kits19/dataset_creation_scripts
+python kits19_heterogenity_plot.py
+```
+  
+  
 ## Deploy documentations
 
 We use [sphinx](https://www.sphinx-doc.org/en/master/) to create FLamby's documentation.
