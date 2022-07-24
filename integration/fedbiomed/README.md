@@ -13,21 +13,21 @@ For instance, in the case of IXI, there are **3** centers, meaning that **3** no
 Enter this command to create a **1st** node : `${FEDBIOMED_DIR}/scripts/fedbiomed_run node add`
 
 Select flamby option and the IXI dataset through the CLI menu.
-The name and the description can be filled as you want. The tag has to be set the same as it will be defined in this notebook (enter `ixi`).
+The name and the description can be filled as you want. The tag has to be set the same as it will be defined in the example notebook (enter `ixi`).
 A center id will also be asked. Center ids for IXI are ranged between **0** and **2**. Enter **0** for this 1st node.
 
 You can now launch this node with the following command: `${FEDBIOMED_DIR}/scripts/fedbiomed_run node start`
 
-A **2nd** and a **3rd** node now have to be created. Open a new terminal for each of them.
+To complete the procedure, a **2nd** and a **3rd** node have to be created. Open a new terminal for each of them.
 The only thing that will differ is the specification of a different (non-default) configuration file, to tell that we want to perform operations on a different node:
 
 `${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config2.ini add`
 
 `${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config3.ini add`
 
-Center id will be set as **1** and **2**, respectively to the **2nd** and **3rd** node. The tag has to defined identically to the 1st node, `ixi`.
+Center id will be set as **1** and **2**, respectively to the **2nd** and **3rd** node. The tag has to be defined identically to the 1st node, `ixi`.
 
-These two nodes can now be started:
+To start these two nodes, simply execute:
 
 `${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config2.ini start`
 
