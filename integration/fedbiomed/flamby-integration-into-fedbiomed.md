@@ -135,28 +135,21 @@ fed_model_ixi.load_state_dict(exp.aggregated_params()[num_rounds - 1]['params'])
 - Evaluation
 
 ```python
-import torch
-from tqdm import tqdm
 from torch.utils.data import DataLoader
+from flamby.utils import evaluate_model_on_tests
 from flamby.datasets.fed_ixi import (metric as ixi_metric,
-                                     FedClass as ixi_fed)
-                                     
-def compute_test_performance(model, data_loader, metric, batch_size):
-    print("Test set size:", len(data_loader))
-    model.eval()
-    computed_performances = []
-    device = "cpu"
-    
-    with torch.no_grad():
-        for idx, (data, target) in tqdm(enumerate(DataLoader(dataset=data_loader,batch_size=batch_size))):
-            data, target = data.to(device), target.to(device)    
-            output = model(data)        
-            target, output = target.numpy(), output.numpy()
-            performance = metric(target, output)
-            computed_performances.append(performance)
-          
-    print("Test mean performance:", torch.mean(torch.tensor(computed_performances)))
-    
-test_dataloader_ixi = ixi_fed(train=False, pooled=True)
-compute_test_performance(fed_model_ixi, test_dataloader_ixi, ixi_metric, ixi_batch_size)
+                                     FedClass as ixi_fed,
+                                     BATCH_SIZE as ixi_batch_size)
+
+test_dataloader_ixi_pooled = DataLoader(dataset=ixi_fed(train=False, pooled=True),batch_size=ixi_batch_size)
+test_dataloader_ixi_client0 = DataLoader(dataset=ixi_fed(center=0, train=False),batch_size=ixi_batch_size)
+test_dataloader_ixi_client1 = DataLoader(dataset=ixi_fed(center=1, train=False),batch_size=ixi_batch_size)
+test_dataloader_ixi_client2 = DataLoader(dataset=ixi_fed(center=2, train=False),batch_size=ixi_batch_size)
+
+evaluate_model_on_tests(fed_model_ixi,
+                        [test_dataloader_ixi_pooled,
+                         test_dataloader_ixi_client0,
+                         test_dataloader_ixi_client1,
+                         test_dataloader_ixi_client2],
+                        ixi_metric)
 ```
