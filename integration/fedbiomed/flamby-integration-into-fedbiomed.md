@@ -4,7 +4,17 @@ This document highlights how to interface FLamby with [Fed-BioMed](https://gitla
 
 ## Fed-BioMed installation
 
-Before running the examples in the notebook, it is necessary to have Fed-BioMed installed on your machine. An easy-to-follow guide is available [here](https://fedbiomed.gitlabpages.inria.fr/latest/tutorials/installation/0-basic-software-installation/) to help you with the process: .
+Before running the examples in the notebook, it is necessary to have Fed-BioMed installed on your machine. An easy-to-follow guide is available [here](https://fedbiomed.gitlabpages.inria.fr/latest/tutorials/installation/0-basic-software-installation/) to help you with the process.
+
+Additionnal notes:
+
+- To make the integration work at the moment, it is necessary to have a local version of the FLamby package on your computer.
+
+- Replace the path to this local package in fedbiomed-node.yaml or fedbiomed-node-macosx.yaml & fedbiomed-researcher.yaml or fedbiomed-researcher-macosx.yaml (these environment files are located in `/fedbiomed/envs/development/conda/`) with the one on your computer.
+
+- Run the dataset creation scripts of any FLamby dataset you want to make available to Fed-BioMed (the process is detailed in a doc file for each dataset).
+
+- You can now follow the next steps to launch Fed-BioMed components.
 
 ## Launching Fed-BioMed components (FLamby datasets configuration)
  
@@ -12,7 +22,7 @@ An important thing to know is that the procedure to configure all FLamby dataset
 
 The first step is the network launching, by entering the following command on your terminal : `${FEDBIOMED_DIR}/scripts/fedbiomed_run network`
 
-Now, you will have to create as many nodes as there are centers in your specific FLamby dataset .
+Now, you will have to create as many nodes as there are centers in your specific FLamby dataset.
 For instance, in the case of IXI, there are **3** centers, meaning that **3** nodes have to be created.
 
 Enter this command to create a **1st** node : `${FEDBIOMED_DIR}/scripts/fedbiomed_run node add`
