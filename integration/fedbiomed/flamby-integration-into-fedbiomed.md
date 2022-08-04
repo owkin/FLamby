@@ -4,7 +4,7 @@ This document highlights how to interface FLamby with [Fed-BioMed](https://gitla
 
 ## Fed-BioMed installation
 
-Before running the examples in the notebook, it is necessary to have Fed-BioMed installed on your machine. An easy-to-follow guide is available here to help you with the process: https://fedbiomed.gitlabpages.inria.fr/latest/tutorials/installation/0-basic-software-installation/.
+Before running the examples in the notebook, it is necessary to have Fed-BioMed installed on your machine. An easy-to-follow guide is available [here](https://fedbiomed.gitlabpages.inria.fr/latest/tutorials/installation/0-basic-software-installation/) to help you with the process: .
 
 ## Launching Fed-BioMed components (FLamby datasets configuration)
  
