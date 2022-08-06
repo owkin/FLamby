@@ -4,55 +4,112 @@ This document highlights how to interface FLamby with [Fed-BioMed](https://gitla
 
 ## Fed-BioMed installation
 
-Before running the examples in the notebook, it is necessary to have Fed-BioMed installed on your machine. An easy-to-follow guide is available [here](https://fedbiomed.gitlabpages.inria.fr/latest/tutorials/installation/0-basic-software-installation/) to help you with the process.
+Before running the examples below, it is necessary to have Fed-BioMed installed on your machine. An easy-to-follow guide is available [here](https://fedbiomed.gitlabpages.inria.fr/latest/tutorials/installation/0-basic-software-installation/) to help you with the process.
+Please use the branch `flamby_poc`:
+```
+git checkout flamby_poc
+```
 
-Additional notes:
+In addition, it is also necessary to have a local version of the FLamby package on your computer already installed in editable mode and to have downloaded
+the required dataset.s (see Getting started section).
 
-- To make the integration work at the moment, it is necessary to have a local version of the FLamby package on your computer.
-
-- Replace the path to this local package in fedbiomed-node.yaml or fedbiomed-node-macosx.yaml & fedbiomed-researcher.yaml or fedbiomed-researcher-macosx.yaml (these environment files are located in `/fedbiomed/envs/development/conda/`) with the one on your computer.
-
-- Run the dataset creation scripts of any FLamby dataset you want to make available to Fed-BioMed (the process is detailed in a doc file for each dataset).
-
-- You can now follow the next steps to launch Fed-BioMed components.
-
+Once Fed-BioMed is installed alongside FLamby, we need to first update all fedbiomed's conda environments' yaml config files.
+Go to the fedbiomed directory and cd into the conda environments folder:
+```
+cd /path/where/is/installed/fedbiomed/envs/development/conda/
+```
+Open both fedbiomed-node(-macosx).yaml & fedbiomed-researcher(-macosx).yaml into a text editor or IDE and add the following line under pip:
+```
+      - -e /path/towards/your/editable/installation/of/FLamby
+```
+Then run:
+```
+${FEDBIOMED_DIR}/scripts/fedbiomed_environment clean
+${FEDBIOMED_DIR}/scripts/configure_conda
+ ```
+ At the end you should have access to 3 new conda environments.
+ You can test your installation by doing:
+ ```
+conda activate fedbiomed-researcher
+ipython
+import flamby
+exit()
+```
+If the import goes through the installation is working.
 ## Launching Fed-BioMed components (FLamby datasets configuration)
  
 An important thing to know is that the procedure to configure all FLamby datasets in Fed-BioMed is similar. Regardless of the dataset, the same components will be set up each time (the network, a certain number of nodes, and the researcher).
 
-The first step is the network launching, by entering the following command on your terminal : `${FEDBIOMED_DIR}/scripts/fedbiomed_run network`
+Firstable, make sure you have downloaded and installed the FLamby dataset you want to use: there should be a `dataset_location.yaml` file
+inside the FLamby repository in the `dataset_creation_scripts` folder of the corresponding dataset.
+```
+cat /path/towards/flamby/as/given/to/conda/FLamby/flamby/datasets/fed_ixi/dataset_creation_scripts
+````
+Should display:
+```
+dataset_path: /path/towards/downloaded/ixi
+download_complete: true
+preprocessing_complete: true
+```
 
-Now, you will have to create as many nodes as there are centers in your specific FLamby dataset.
-For instance, in the case of IXI, there are **3** centers, meaning that **3** nodes have to be created.
+The first step is to launch the network, by entering the following command on your terminal: 
+```
+${FEDBIOMED_DIR}/scripts/fedbiomed_run network
+```
 
-Enter this command to create a **1st** node : `${FEDBIOMED_DIR}/scripts/fedbiomed_run node add`
+Once the network is deployed, you will have to create as many nodes as there are centers in the FLamby dataset you want to use.
+In this example we'll use IXI that has **3** centers, meaning that **3** nodes have to be created.
 
-Select FLamby option and the IXI dataset through the CLI menu.
-The name and the description can be filled as you want. The tag has to be set the same as it will be defined in the example notebook (let's enter `ixi`).
-A center id will also be asked. Center ids for IXI are ranged between **0** and **2**. Enter **0** for this 1st node.
+### First node
 
-You can now launch this node with the following command: `${FEDBIOMED_DIR}/scripts/fedbiomed_run node start`
+Enter this command to create the **1st** node : 
+```
+${FEDBIOMED_DIR}/scripts/fedbiomed_run node add
+```
 
-To complete the procedure, a **2nd** and a **3rd** node have to be created. Open a new terminal for each of them.
-The only thing that will differ is the specification of a different (non-default) configuration file, to tell that we want to perform operations on a different node:
+Select FLamby option (6) and the IXI dataset (5) through the CLI menu.
+Then enter a name and a description. You are free to write anything that goes through your mind except for the **tag**.
+**All nodes need to share the same tag** and this tag needs to be passed to the experiment.
+In this example we will choose `ixi` for the tag, so write ixi in the CLI and enter.
+The last step is to input the center id of the center corresponding to the node, as this is the first node we'll write 0 as FLamby uses python indexing. So write 0 and enter.
+Once everything is validated you can now launch this node with the following command: 
+```
+${FEDBIOMED_DIR}/scripts/fedbiomed_run node start
+```
+We will now do the same for the second and 3rd node, however it is of the utmost importance to **use different shells for each node**.
+### Second node
 
-`${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config2.ini add`
+Open a new terminal and run:
+```
+${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config2.ini add
+```
+As with the first node select FLamby and IXI dataset, enter a name and a description. Enter `ixi`for the tag and select 1 for the center id to deploy the second node.
+Then similarly run:
+```
+${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config2.ini start
+```
+### 3rd node
+Open a new terminal and run:
+```
+${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config3.ini add
+```
+As with the first node select FLamby and IXI dataset, enter a name and a description. Enter `ixi`for the tag and select 2 for the center id to deploy the third and final node.
+Then similarly run:
+```
+${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config3.ini start
+```
 
-`${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config3.ini add`
-
-Center ids need to be set as **1** and **2**, respectively to the **2nd** and **3rd** node. The tag has to be defined identically to the 1st node, `ixi`.
-
-To start these two nodes, simply execute:
-
-`${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config2.ini start`
-
-`${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config3.ini start`
-
-The only thing remaining is to launch the researcher (jupyter notebook console). Open a new terminal and execute the following command: `${FEDBIOMED_DIR}/scripts/fedbiomed_run researcher`
-
-Congratulations, the IXI example in the researcher notebook can now be run! Feel free to follow the same steps to configure all the others!
+Congratulations, the IXI example in the researcher notebook can now be run!  
+Feel free to follow the same steps to configure other FLamby datasets.  
 
 ## Notebook (researcher side)
+
+We need to send commands to the nodes that are already up we wil use the researcher environment.
+You can now activate the conda environment of the researcher by running:
+```
+conda activate fedbiomed-researcher
+```
+Then the simplest way is to use ipython or jupyter to copy-paste the commands below:
 
 The first step is to create a class inheriting from Fed-BioMed's `TorchTrainingPlan`.
 This class should have different attributes: 
@@ -101,8 +158,10 @@ class FLambyTrainingPlan(TorchTrainingPlan):
         loss = self.loss(output, target)
         return loss
 ```
+You can go and copy-paste the code above in ipython.
 
 Fed-BioMed requires to pass the `batch_size`, `learning rate` and number of local `epochs` directly into the experiment abstraction. In FLamby the strategies abstraction fuse the TrainingPlan and the experiment.
+Copy-paste the code below in your notebook or interactive shell:
 ```python
 # We create a dictionnary of FedBioMed kwargs with the: batch_size, learning-rate and epochs.
 # Be careful, Fed-BioMed doesn't count count local training steps in batch-updates but in local epochs !
@@ -115,13 +174,14 @@ training_args = {
 }
 ```
 
-We are now ready to launch an experiment doing 50 rounds of FederatedAveraging.
-We will the experiment abstraction and pass to it, the class from above, the `training_args` and the `FedAverage` aggregator.
+We are now ready to launch an experiment doing 5 rounds of FederatedAveraging.
+We will instantiate the experiment abstraction and give it: the class from above, the `training_args` and the `FedAverage` aggregator.
+Copy-paste and execute the code below:
 
 ```python
 from fedbiomed.researcher.experiment import Experiment
 from fedbiomed.researcher.aggregators.fedavg import FedAverage
-# This is just a handle to retrieve models and performances, later
+# This is just a handle to access the available nodes that we tagged with ixi
 tags =  ['ixi']
 num_rounds = 5
 exp = Experiment(tags=tags,
@@ -130,36 +190,39 @@ exp = Experiment(tags=tags,
                  round_limit=num_rounds,
                  aggregator=FedAverage(),
                 )
-# This command runs the experiment, the model and results are stored
+
+```
+Now the last step to launch the simulated Federated Learning between the different nodes is to run the experiment:
+```
 exp.run()
 ```
-We can now load the resulting model and evaluate its performances:
+Once the nodew have finished training the model, we can load it in the researcher runtime and evaluate its performances:
 
-- Loading
 
 ```python
+# We retrieve the model architecture from the experiment:
 fed_model_ixi = exp.model_instance()
+# We load the weights corresponding to the last round
 fed_model_ixi.load_state_dict(exp.aggregated_params()[num_rounds - 1]['params'])
 ```
 
-- Evaluation
+We can then evaluate it using traditional FLamby's evaluation scripts:
 
 ```python
 from torch.utils.data import DataLoader
 from flamby.utils import evaluate_model_on_tests
-from flamby.datasets.fed_ixi import (metric as ixi_metric,
-                                     FedClass as ixi_fed,
-                                     BATCH_SIZE as ixi_batch_size)
+from flamby.datasets.fed_ixi import metric, BATCH_SIZE, FedIxi
 
-test_dataloader_ixi_pooled = DataLoader(dataset=ixi_fed(train=False, pooled=True),batch_size=ixi_batch_size)
-test_dataloader_ixi_client0 = DataLoader(dataset=ixi_fed(center=0, train=False),batch_size=ixi_batch_size)
-test_dataloader_ixi_client1 = DataLoader(dataset=ixi_fed(center=1, train=False),batch_size=ixi_batch_size)
-test_dataloader_ixi_client2 = DataLoader(dataset=ixi_fed(center=2, train=False),batch_size=ixi_batch_size)
+# We load the test datasets
+test_dataloader_ixi_client0 = DataLoader(dataset=FedIxi(center=0, train=False),batch_size=BATCH_SIZE)
+test_dataloader_ixi_client1 = DataLoader(dataset=FedIxi(center=1, train=False),batch_size=BATCH_SIZE)
+test_dataloader_ixi_client2 = DataLoader(dataset=FedIxi(center=2, train=False),batch_size=BATCH_SIZE)
 
+# We evaluate the model on them
 evaluate_model_on_tests(fed_model_ixi,
-                        [test_dataloader_ixi_pooled,
-                         test_dataloader_ixi_client0,
+                        [test_dataloader_ixi_client0,
                          test_dataloader_ixi_client1,
                          test_dataloader_ixi_client2],
-                        ixi_metric)
+                        metric)
 ```
+One can change the number of round or the number of updates and continue launching jobs. One can also use clean the environment and get ready t use other datasets.
