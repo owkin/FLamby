@@ -123,7 +123,7 @@ from fedbiomed.researcher.experiment import Experiment
 from fedbiomed.researcher.aggregators.fedavg import FedAverage
 # This is just a handle to retrieve models and performances, later
 tags =  ['ixi']
-num_rounds = 50
+num_rounds = 5
 exp = Experiment(tags=tags,
                  model_class=FLambyTrainingPlan,
                  training_args=training_args,
