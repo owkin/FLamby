@@ -69,7 +69,7 @@ In order to do that we just have to copy the FLamby's import and to give it to t
 # We import the TorchTrainingPlan class from fedbiomed
 from fedbiomed.common.training_plans import TorchTrainingPlan
 # We import all flamby utilities, the model, loss, batch_size and optimizer details
-from flamby.datasets.fed_ixi import (Baseline, BaselineLoss, Optimizer BATCH_SIZE, LR, get_nb_max_rounds)
+from flamby.datasets.fed_ixi import (Baseline, BaselineLoss, Optimizer, BATCH_SIZE, LR, get_nb_max_rounds)
 # We create a class inheriting from TorchTrainingPlan reimplementing
 # the training step method and filling the necesssary class attributes from FLamby
 # information
