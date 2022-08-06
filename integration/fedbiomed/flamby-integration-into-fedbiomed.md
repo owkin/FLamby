@@ -211,12 +211,12 @@ We can then evaluate it using traditional FLamby's evaluation scripts:
 ```python
 from torch.utils.data import DataLoader
 from flamby.utils import evaluate_model_on_tests
-from flamby.datasets.fed_ixi import metric, BATCH_SIZE, FedIxi
+from flamby.datasets.fed_ixi import metric, BATCH_SIZE, FedIXITiny
 
 # We load the test datasets
-test_dataloader_ixi_client0 = DataLoader(dataset=FedIxi(center=0, train=False),batch_size=BATCH_SIZE)
-test_dataloader_ixi_client1 = DataLoader(dataset=FedIxi(center=1, train=False),batch_size=BATCH_SIZE)
-test_dataloader_ixi_client2 = DataLoader(dataset=FedIxi(center=2, train=False),batch_size=BATCH_SIZE)
+test_dataloader_ixi_client0 = DataLoader(dataset=FedIXITiny(center=0, train=False),batch_size=BATCH_SIZE)
+test_dataloader_ixi_client1 = DataLoader(dataset=FedIXITiny(center=1, train=False),batch_size=BATCH_SIZE)
+test_dataloader_ixi_client2 = DataLoader(dataset=FedIXITiny(center=2, train=False),batch_size=BATCH_SIZE)
 
 # We evaluate the model on them
 evaluate_model_on_tests(fed_model_ixi,
