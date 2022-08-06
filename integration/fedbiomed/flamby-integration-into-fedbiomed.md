@@ -111,7 +111,7 @@ Fed-BioMed requires to pass the `batch_size`, `learning rate` and number of loca
 training_args = {
     'batch_size': BATCH_SIZE,
     'lr': LR,
-    'epochs': 10,
+    'epochs': 2,
 }
 ```
 
