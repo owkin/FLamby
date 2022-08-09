@@ -83,7 +83,7 @@ Open a new terminal and run:
 ```
 ${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config2.ini add
 ```
-As with the first node select FLamby and IXI dataset, enter a name and a description. Enter `ixi`for the tag and select 1 for the center id to deploy the second node.
+As with the first node select FLamby and IXI dataset, enter a name and a description. Enter `ixi` for the tag and select 1 for the center id to deploy the second node.
 Then similarly run:
 ```
 ${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config2.ini start
@@ -93,7 +93,7 @@ Open a new terminal and run:
 ```
 ${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config3.ini add
 ```
-As with the first node select FLamby and IXI dataset, enter a name and a description. Enter `ixi`for the tag and select 2 for the center id to deploy the third and final node.
+As with the first node select FLamby and IXI dataset, enter a name and a description. Enter `ixi` for the tag and select 2 for the center id to deploy the third and final node.
 Then similarly run:
 ```
 ${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config3.ini start
@@ -164,7 +164,7 @@ Fed-BioMed requires to pass the `batch_size`, `learning rate` and number of loca
 Copy-paste the code below in your notebook or interactive shell:
 ```python
 # We create a dictionnary of FedBioMed kwargs with the: batch_size, learning-rate and epochs.
-# Be careful, Fed-BioMed doesn't count count local training steps in batch-updates but in local epochs !
+# Be careful, Fed-BioMed doesn't count local training steps in batch-updates but in local epochs !
 # In this example we do 2 epochs on each of the local datasets (which amounts to different
 # number of batch-updates per client) so cannot be reproduced using FLamby internal strategies
 training_args = {
@@ -225,4 +225,4 @@ evaluate_model_on_tests(fed_model_ixi,
                          test_dataloader_ixi_client2],
                         metric)
 ```
-One can change the number of round or the number of updates and continue launching jobs. One can also use clean the environment and get ready t use other datasets.
+One can change the number of round or the number of updates and continue launching jobs. One can also use clean the environment and get ready to use other datasets.
