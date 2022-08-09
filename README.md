@@ -159,6 +159,13 @@ We have observed that results vary from machine to machine and are sensitive to 
 The script `extract_config.py` allows to go from a results file to a `config.py`.
 See the [quickstart section](./Quickstart.md) to change parameters.
 
+
+### Using FLamby with FL-frameworks
+
+FLamby can be easily adapted to different frameworks as the pytorch abstractions
+are quite flexible.
+We give an example of interfacing with [Fed-BioMed](https://gitlab.inria.fr/fedbiomed/fedbiomed), [here](./integration/fedbiomed/flamby-integration-into-fedbiomed.md).
+
 ### Heterogeneity plots
 
 Most plots from the article can be reproduced using the following commands after having downloaded the corresponding datasets:

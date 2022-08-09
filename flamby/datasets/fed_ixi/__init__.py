@@ -1,4 +1,4 @@
-from .common import (
+from flamby.datasets.fed_ixi.common import (
     BATCH_SIZE,
     LR,
     NUM_CLIENTS,
@@ -6,9 +6,10 @@ from .common import (
     SEEDS,
     Optimizer,
     get_nb_max_rounds,
+    FedClass,
 )
-from .dataset import FedIXITiny, IXITinyRaw
-from .loss import BaselineLoss
-from .metric import metric
-from .model import Baseline
+from flamby.datasets.fed_ixi.dataset import FedIXITiny, IXITinyRaw
+from flamby.datasets.fed_ixi.loss import BaselineLoss
+from flamby.datasets.fed_ixi.metric import metric
+from flamby.datasets.fed_ixi.model import Baseline
 

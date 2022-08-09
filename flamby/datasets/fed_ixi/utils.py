@@ -254,8 +254,8 @@ def _load_nifti_image_and_label_by_id(
         # nii_img = processing.conform(nii_img) #, out_shape=nii_img.shape)
         img = nii_img.get_fdata()
         label = nii_label.get_fdata()
-        header_img = nii_img.get_header()
-        #header_label = label.get_header()
+        header_img = nii_img.header
+        #header_label = label.header
 
     return header_img, img, label, _extract_center_name_from_filename(Path(img_filename).name)
 
