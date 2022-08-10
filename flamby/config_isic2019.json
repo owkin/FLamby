@@ -35,6 +35,11 @@
             "learning_rate": 0.01,
             "optimizer_class": "torch.optim.SGD",
             "server_learning_rate": 1.0
+        },
+        "FedAvgFineTuning": {
+            "learning_rate": 0.01,
+            "optimizer_class": "torch.optim.SGD",
+            "num_ft_steps": 3
         }
     }
 }

@@ -72,7 +72,8 @@ def main(args_cli):
             f"({hyperparameters_changed} in your case) in a global fashion for"
             " all strategies, please use the keyword strategy to specify the "
             "strategy you want to affect by writing: "
-            "--strategy [FedAvg, FedProx, FedAdam, FedAdagrad, FedYogi, Cyclic]"
+            "--strategy [FedAvg, FedProx, FedAdam, FedAdagrad, FedYogi, "
+            "Cyclic, FedAvgFineTuning]"
             ", otherwise modify the config file directly."
         )
     # Find a way to provide it through hyperparameters
@@ -113,7 +114,7 @@ def main(args_cli):
     # We can now instantiate the dataset specific model on CPU
     global_init = Baseline()
 
-    # We pparse the hyperparams from the config or from the CLI if strategy is given
+    # We parse the hyperparams from the config or from the CLI if strategy is given
     strategy_specific_hp_dicts = get_strategies(
         config, learning_rate=LR, args=vars(args_cli)
     )
@@ -507,21 +508,24 @@ if __name__ == "__main__":
         "-tau",
         type=float,
         default=None,
-        help="FedOpt tau parameter used only if strategy is given and that it is a fedopt strategy",
+        help="FedOpt tau parameter used only if strategy is given and "
+        "that it is a fedopt strategy",
     )
     parser.add_argument(
         "--beta1",
         "-b1",
         type=float,
         default=None,
-        help="FedOpt beta1 parameter used only if strategy is given and that it is a fedopt strategy",
+        help="FedOpt beta1 parameter used only if strategy is given"
+        " and that it is a fedopt strategy",
     )
     parser.add_argument(
         "--beta2",
         "-b2",
         type=float,
         default=None,
-        help="FedOpt beta2 parameter used only if strategy is given and that it is a fedopt strategy",
+        help="FedOpt beta2 parameter used only if strategy is given and "
+        "that it is a fedopt strategy",
     )
     parser.add_argument(
         "--strategy",
@@ -538,6 +542,7 @@ if __name__ == "__main__":
             "FedAvg",
             "Cyclic",
             "FedProx",
+            "FedAvgFineTuning",
         ],
     )
     parser.add_argument(
