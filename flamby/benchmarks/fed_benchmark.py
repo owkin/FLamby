@@ -504,6 +504,15 @@ if __name__ == "__main__":
         help="FedProx mu parameter if strategy is given and that it is FedProx",
     )
     parser.add_argument(
+        "--num_ft_steps",
+        "-nft",
+        type=int,
+        default=None,
+        help="The number of SGD fine-tuning updates to be"
+        "performed on the model at the personalization step,"
+        "if strategy is given and that it is FedAvgFineTuning",
+    )
+    parser.add_argument(
         "--tau",
         "-tau",
         type=float,

@@ -10,9 +10,9 @@ class FedAvgFineTuning(FedAvg):
     """Federated Averaging with Fine-Tuning Strategy class.
 
     Federated Averaging with fine tuning is the most simple personalized FL strategy.
-    First, all clients collaborate to lear a global model using FedAvg, then each
+    First, all clients collaborate to learn a global model using FedAvg, then each
     client, independently, fine-tunes the parameters of the global model through
-    stochastic gradient descent for few epochs using it local dataset
+    stochastic gradient descent for few epochs using it local dataset.
 
     References
     ----------
@@ -36,7 +36,7 @@ class FedAvgFineTuning(FedAvg):
     nrounds : int
         The number of communication rounds to do.
     num_ft_steps: int
-        THe number of SGD fine-tuning updates to be performed on the
+        The number of SGD fine-tuning updates to be performed on the
          model at the personalization step.
     log: bool, optional
         Whether or not to store logs in tensorboard. Defaults to False.
