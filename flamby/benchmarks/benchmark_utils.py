@@ -2,11 +2,12 @@ import copy
 
 import numpy as np
 import pandas as pd
+import torch
 from torch.utils.data import DataLoader as dl
 from tqdm import tqdm
 
 from flamby.utils import evaluate_model_on_tests
-import torch
+
 
 def set_seed(seed):
     """Set both numpy and torch seed
@@ -95,7 +96,7 @@ def find_xps_in_df(df, hyperparameters, sname, num_updates):
         The name of the FL strategy to investigate.
         Should be in the following list:
         ["FedAvg", "Scaffold", "FedProx", "Cyclic", "FedAdam", "FedAdagrad",
-        'FedYogi']
+        'FedYogi', FedAvgFineTuning,]
     num_udpates: int
         The number of batch updates used in the strategy.
     """
@@ -119,6 +120,7 @@ def find_xps_in_df(df, hyperparameters, sname, num_updates):
         "FedAdam",
         "FedAdagrad",
         "FedYogi",
+        "FedAvgFineTuning",
     ], f"Strategy name {sname} not recognized."
     found_xps = df[list(hyperparameters)]
 
@@ -441,7 +443,8 @@ def init_xp_plan(
     if strategy is not None:
         if compute_ensemble_perf:
             print(
-                "WARNING: by providing a strategy argument you will not be able to compute ensemble performance."
+                "WARNING: by providing a strategy argument you will not"
+                "be able to compute ensemble performance."
             )
             compute_ensemble_perf = False
         for k, _ in do_baselines.items():
@@ -489,7 +492,8 @@ def ensemble_perf_from_predictions(
                 y_true_dicts[f"Local {0}"][f"client_test_{testset_idx}"]
                 == y_true_dicts[f"Local {model_idx}"][f"client_test_{testset_idx}"]
             ).all(), "Models in the ensemble have different ground truths"
-        # Since they are all the same we use the first one for this specific tests as the ground truth
+        # Since they are all the same we use the first one for this specific
+        # tests as the ground truth
         ensemble_true = y_true_dicts["Local 0"][f"client_test_{testset_idx}"]
 
         # Accumulating predictions

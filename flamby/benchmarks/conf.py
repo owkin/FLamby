@@ -134,6 +134,7 @@ def get_strategies(config, learning_rate=None, args={}):
                 "mu",
                 "server_learning_rate",
                 "learning_rate",
+                "num_fine_tuning_steps",
                 "optimizer_class",
                 "deterministic",
                 "tau",
@@ -184,6 +185,12 @@ def get_strategies(config, learning_rate=None, args={}):
 
         if (sname == "FedProx") and "mu" not in sparams:
             raise ValueError("If using FedProx you should provide a value for mu.")
+
+        if (sname == "FedAvgFineTuning") and "num_fine_tuning_steps" not in sparams:
+            raise ValueError(
+                "If using FedAvgFineTuning you should provide a value"
+                "for num_fine_tuning_steps (number of fine tuning step)."
+            )
 
     return strategies
 
