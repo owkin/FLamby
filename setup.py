@@ -105,6 +105,7 @@ setup(
         "torchvision",
         "tqdm",
         "umap-learn",
+        "opacus",
     ],
     extras_require={
         "cam16": camelyon16,

@@ -1,8 +1,10 @@
 import copy
+import time
 
 import numpy as np
 import pandas as pd
 import torch
+from opacus import PrivacyEngine
 from torch.utils.data import DataLoader as dl
 from tqdm import tqdm
 
@@ -339,9 +341,12 @@ def train_single_centric(
     learning_rate,
     loss_class,
     num_epochs,
-    return_pred=False,
+    dp_target_epsilon=None,
+    dp_target_delta=None,
+    dp_max_grad_norm=None,
+    seed=None,
 ):
-    """Train the global_init model usiing train_dl and defaut parameters.
+    """Train the global_init model using train_dl and default parameters.
 
     Parameters
     ----------
@@ -361,17 +366,52 @@ def train_single_centric(
         A callable return a pytorch loss.
     num_epochs: int
          The number of epochs on which to train.
+    dp_target_epsilon: float
+        The target epsilon for (epsilon, delta)-differential private guarantee.
+        Defaults to None.
+    dp_target_delta: float
+        The target delta for (epsilon, delta)-differential private guarantee.
+         Defaults to None.
+    dp_max_grad_norm: float
+        The maximum L2 norm of per-sample gradients; used to enforce
+        differential privacy. Defaults to None.
+
     Returns
     -------
     torch.nn.Module
        The trained model.
     """
+    apply_dp = (
+        (dp_target_epsilon is not None)
+        and (dp_max_grad_norm is not None)
+        and (dp_target_delta is not None)
+    )
+
+    device = "cpu"
     model = copy.deepcopy(global_init)
     if use_gpu:
         model.cuda()
+        device = "cuda"
+
     bloss = loss_class()
     opt = opt_class(model.parameters(), lr=learning_rate)
-    print(name)
+
+    if apply_dp:
+        seed = seed if seed is not None else int(time.time())
+        privacy_engine = PrivacyEngine()
+
+        model, opt, _ = privacy_engine.make_private_with_epsilon(
+            module=model,
+            optimizer=opt,
+            data_loader=train_dl,
+            epochs=num_epochs,
+            target_epsilon=dp_target_epsilon,
+            target_delta=dp_target_delta,
+            max_grad_norm=dp_max_grad_norm,
+            noise_generator=torch.Generator(device).manual_seed(seed),
+        )
+
+    grad_norm_history = []
     for _ in tqdm(range(num_epochs)):
         for X, y in train_dl:
             if use_gpu:
@@ -383,6 +423,12 @@ def train_single_centric(
             loss = bloss(y_pred, y)
             loss.backward()
             opt.step()
+
+            grad_norm = 0
+            for param in model.parameters():
+                grad_norm += torch.linalg.norm(param.grad)
+            grad_norm_history.append(grad_norm)
+
     return model
 
 
@@ -443,8 +489,8 @@ def init_xp_plan(
     if strategy is not None:
         if compute_ensemble_perf:
             print(
-                "WARNING: by providing a strategy argument you will not"
-                "be able to compute ensemble performance."
+                "WARNING: by providing a strategy argument you will"
+                " not be able to compute ensemble performance."
             )
             compute_ensemble_perf = False
         for k, _ in do_baselines.items():
@@ -492,8 +538,9 @@ def ensemble_perf_from_predictions(
                 y_true_dicts[f"Local {0}"][f"client_test_{testset_idx}"]
                 == y_true_dicts[f"Local {model_idx}"][f"client_test_{testset_idx}"]
             ).all(), "Models in the ensemble have different ground truths"
-        # Since they are all the same we use the first one for this specific
-        # tests as the ground truth
+
+        # Since they are all the same we use the first one
+        # for this specific tests as the ground truth
         ensemble_true = y_true_dicts["Local 0"][f"client_test_{testset_idx}"]
 
         # Accumulating predictions

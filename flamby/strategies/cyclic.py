@@ -42,6 +42,18 @@ class Cyclic:
     nrounds: int
           The number of communication rounds to do.
 
+    dp_target_epsilon: float
+        The target epsilon for (epsilon, delta)-differential
+         private guarantee. Defaults to None.
+
+    dp_target_delta: float
+        The target delta for (epsilon, delta)-differential
+         private guarantee. Defaults to None.
+
+    dp_max_grad_norm: float
+        The maximum L2 norm of per-sample gradients;
+         used to enforce differential privacy. Defaults to None.
+
     log: bool, optional
          Whether or not to store logs in tensorboard.
 
@@ -74,6 +86,9 @@ class Cyclic:
         learning_rate: float,
         num_updates: int,
         nrounds: int,
+        dp_target_epsilon: float = None,
+        dp_target_delta: float = None,
+        dp_max_grad_norm: float = None,
         log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
@@ -90,6 +105,10 @@ class Cyclic:
         self.training_sizes = [len(e) for e in self.training_dataloaders_with_memory]
         self.total_number_of_samples = sum(self.training_sizes)
 
+        self.dp_target_epsilon = dp_target_epsilon
+        self.dp_target_delta = dp_target_delta
+        self.dp_max_grad_norm = dp_max_grad_norm
+
         self.log = log
         self.log_period = log_period
         self.log_basename = log_basename + f"-deterministic{deterministic_cycle}"
@@ -100,14 +119,19 @@ class Cyclic:
                 model=model,
                 optimizer_class=optimizer_class,
                 lr=learning_rate,
+                train_dl=_train_dl,
+                dp_target_epsilon=self.dp_target_epsilon,
+                dp_target_delta=self.dp_target_delta,
+                dp_max_grad_norm=self.dp_max_grad_norm,
                 loss=loss,
+                nrounds=nrounds,
                 log=self.log,
                 client_id=i,
                 log_period=self.log_period,
                 log_basename=self.log_basename,
                 logdir=self.logdir,
             )
-            for i in range(len(training_dataloaders))
+            for i, _train_dl in enumerate(training_dataloaders)
         ]
 
         self.num_clients = len(training_dataloaders)
