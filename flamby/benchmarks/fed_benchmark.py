@@ -122,6 +122,9 @@ def main(args_cli):
         "optimizer_class": Optimizer,
         "learning_rate": LR,
         "seed": args_cli.seed,
+        "dp_target_epsilon": args_cli.dp_target_epsilon,
+        "dp_target_delta": args_cli.dp_target_delta,
+        "dp_max_grad_norm": args_cli.dp_max_grad_norm,
     }
     main_columns_names = ["Test", "Method", "Metric", "seed"]
 
@@ -217,6 +220,10 @@ def main(args_cli):
             pooled_hyperparameters["learning_rate"],
             BaselineLoss,
             NUM_EPOCHS_POOLED,
+            dp_target_epsilon=pooled_hyperparameters["dp_target_epsilon"],
+            dp_target_delta=pooled_hyperparameters["dp_target_delta"],
+            dp_max_grad_norm=pooled_hyperparameters["dp_max_grad_norm"],
+            seed=args_cli.seed,
         )
         (
             perf_dict,
@@ -291,6 +298,10 @@ def main(args_cli):
                     pooled_hyperparameters["learning_rate"],
                     BaselineLoss,
                     NUM_EPOCHS_POOLED,
+                    dp_target_epsilon=pooled_hyperparameters["dp_target_epsilon"],
+                    dp_target_delta=pooled_hyperparameters["dp_target_delta"],
+                    dp_max_grad_norm=pooled_hyperparameters["dp_max_grad_norm"],
+                    seed=args_cli.seed,
                 )
                 (
                     perf_dict,
@@ -517,31 +528,31 @@ if __name__ == "__main__":
         "-tau",
         type=float,
         default=None,
-        help="FedOpt tau parameter used only if strategy is given and "
-        "that it is a fedopt strategy",
+        help="FedOpt tau parameter used only if strategy is "
+        "given and that it is a fedopt strategy",
     )
     parser.add_argument(
         "--beta1",
         "-b1",
         type=float,
         default=None,
-        help="FedOpt beta1 parameter used only if strategy is given"
-        " and that it is a fedopt strategy",
+        help="FedOpt beta1 parameter used only if strategy is "
+        "given and that it is a fedopt strategy",
     )
     parser.add_argument(
         "--beta2",
         "-b2",
         type=float,
         default=None,
-        help="FedOpt beta2 parameter used only if strategy is given and "
-        "that it is a fedopt strategy",
+        help="FedOpt beta2 parameter used only if strategy is"
+        " given and that it is a fedopt strategy",
     )
     parser.add_argument(
         "--strategy",
         "-s",
         type=str,
         default=None,
-        help="If this parameter is chosen will only run this specific strategy",
+        help="If this parameter is chosen will only run this " "specific strategy",
         choices=[
             None,
             "FedAdam",
@@ -567,6 +578,28 @@ if __name__ == "__main__":
         action="store_true",
         default=False,
         help="whether or not to use deterministic cycling for the cyclic strategy",
+    )
+    parser.add_argument(
+        "--dp_target_epsilon",
+        "-dpe",
+        type=float,
+        default=None,
+        help="the target epsilon for (epsilon, delta)-differential" "private guarantee",
+    )
+    parser.add_argument(
+        "--dp_target_delta",
+        "-dpd",
+        type=float,
+        default=None,
+        help="the target delta for (epsilon, delta)-differential" "private guarantee",
+    )
+    parser.add_argument(
+        "--dp_max_grad_norm",
+        "-mgn",
+        type=float,
+        default=None,
+        help="the maximum L2 norm of per-sample gradients; "
+        "used to enforce differential privacy",
     )
     parser.add_argument(
         "--log",

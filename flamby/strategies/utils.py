@@ -1,9 +1,11 @@
 import copy
 import os
+import time
 from datetime import datetime
 
 import numpy as np
 import torch
+from opacus import PrivacyEngine
 from torch.utils.tensorboard import SummaryWriter
 
 
@@ -61,20 +63,28 @@ class _Model:
     def __init__(
         self,
         model,
+        train_dl,
         optimizer_class,
         lr,
         loss,
+        nrounds,
         client_id=0,
+        dp_target_epsilon=None,
+        dp_target_delta=None,
+        dp_max_grad_norm=None,
         log=False,
         log_period=100,
         log_basename="local_model",
         logdir="./runs",
+        seed=None,
     ):
         """_summary_
 
         Parameters
         ----------
         model : torch.nn.Module
+            _description_
+        train_dl : torch.utils.data.DataLoader
             _description_
         optimizer_class : torch.optim
             A torch optimizer class that will be instantiated by calling:
@@ -83,18 +93,33 @@ class _Model:
             The learning rate to use with th optimizer class.
         loss : torch.nn.modules.loss._loss
             an instantiated torch loss.
+        nrounds: int
+            The number of communication rounds to do.
         log: bool
             Whether or not to log quantities with tensorboard. Defaults to False.
         client_id: int
             The id of the client for logging purposes. Default to 0.
+        dp_target_epsilon: float
+            The target epsilon for (epsilon, delta)-differential
+             private guarantee. Defaults to None.
+        dp_target_delta: float
+            The target delta for (epsilon, delta)-differential
+             private guarantee. Defaults to None.
+        dp_max_grad_norm: float
+            The maximum L2 norm of per-sample gradients;
+             used to enforce differential privacy. Defaults to None.
         log_period: int
             The period at which to log quantities. Defaults to 100.
         log_basename: str
             The basename of the created log file if log=True. Defaults to fed_avg.
         logdir: str
             Where to create the log file. Defaults to ./runs.
+        seed: int
+            Seed provided to torch.Generator. Defaults to None.
         """
         self.model = copy.deepcopy(model)
+
+        self._train_dl = train_dl
         self._optimizer = optimizer_class(self.model.parameters(), lr)
         self._loss = copy.deepcopy(loss)
         self._device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -103,12 +128,40 @@ class _Model:
         self.log = log
         self.log_period = log_period
         self.client_id = client_id
+
+        self.dp_target_epsilon = dp_target_epsilon
+        self.dp_target_delta = dp_target_delta
+        self.dp_max_grad_norm = dp_max_grad_norm
+
         if self.log:
             os.makedirs(logdir, exist_ok=True)
             date_now = str(datetime.now())
             self.writer = SummaryWriter(
                 log_dir=os.path.join(logdir, f"{log_basename}-{date_now}")
             )
+
+        self._apply_dp = (
+            (self.dp_target_epsilon is not None)
+            and (self.dp_max_grad_norm is not None)
+            and (self.dp_target_delta is not None)
+        )
+
+        if self._apply_dp:
+            seed = seed if seed is not None else int(time.time())
+
+            privacy_engine = PrivacyEngine()
+
+            (self.model, self._optimizer, _,) = privacy_engine.make_private_with_epsilon(
+                module=self.model,
+                optimizer=self._optimizer,
+                data_loader=self._train_dl,
+                epochs=nrounds,
+                target_epsilon=dp_target_epsilon,
+                target_delta=dp_target_delta,
+                max_grad_norm=dp_max_grad_norm,
+                noise_generator=torch.Generator(self._device).manual_seed(seed),
+            )
+
         self.current_epoch = 0
         self.batch_size = None
         self.num_batches_per_epoch = None

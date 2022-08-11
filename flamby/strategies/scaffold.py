@@ -42,6 +42,15 @@ class Scaffold(FedAvg):
         The number of updates to do on each client at each round.
     nrounds : int
         The number of communication rounds to do.
+    dp_target_epsilon: float
+        The target epsilon for (epsilon, delta)-differential
+        private guarantee. Defaults to None.
+    dp_target_delta: float
+        The target delta for (epsilon, delta)-differential
+         private guarantee. Defaults to None.
+    dp_max_grad_norm: float
+        The maximum L2 norm of per-sample gradients;
+         used to enforce differential privacy. Defaults to None.
     server_learning_rate : float
         The learning rate with which the server's updates are aggregated.
         Defaults to 1.
@@ -70,6 +79,9 @@ class Scaffold(FedAvg):
         learning_rate: float,
         num_updates: int,
         nrounds: int,
+        dp_target_epsilon: float = None,
+        dp_target_delta: float = None,
+        dp_max_grad_norm: float = None,
         server_learning_rate: float = 1,
         log: bool = False,
         log_period: int = 100,
@@ -77,8 +89,7 @@ class Scaffold(FedAvg):
         logdir: str = "./runs",
         log_basename: str = "scaffold",
     ):
-        """Cf class docstring
-        """
+        """Cf class docstring"""
 
         assert (
             optimizer_class == torch.optim.SGD
@@ -92,6 +103,9 @@ class Scaffold(FedAvg):
             learning_rate,
             num_updates,
             nrounds,
+            dp_target_epsilon,
+            dp_target_delta,
+            dp_max_grad_norm,
             log,
             log_period,
             bits_counting_function,
