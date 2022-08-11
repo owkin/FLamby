@@ -503,3 +503,6 @@ flamby/datasets/fed_camelyon16/dataset_creation_scripts/camelyon16_dataset
 
 # tensorboard log files
 events.out.tfevents.*
+
+# License agreements should not be tracked
+flamby/datasets/*/dataset_creation_scripts/license_agreement*
