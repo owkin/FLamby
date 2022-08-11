@@ -552,7 +552,7 @@ if __name__ == "__main__":
         "-s",
         type=str,
         default=None,
-        help="If this parameter is chosen will only run this " "specific strategy",
+        help="If this parameter is chosen will only run this specific strategy",
         choices=[
             None,
             "FedAdam",

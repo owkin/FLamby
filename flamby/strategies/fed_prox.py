@@ -38,7 +38,7 @@ class FedProx(FedAvg):
         The number of communication rounds to do.
     dp_target_epsilon: float
         The target epsilon for (epsilon, delta)-differential
-         private guarantee. Defaults to None.tee
+         private guarantee. Defaults to None.
     dp_target_delta: float
         The target delta for (epsilon, delta)-differential
          private guarantee. Defaults to None.
