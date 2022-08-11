@@ -504,7 +504,7 @@ if __name__ == "__main__":
         help="FedProx mu parameter if strategy is given and that it is FedProx",
     )
     parser.add_argument(
-        "--num_ft_steps",
+        "--num_fine_tuning_steps",
         "-nft",
         type=int,
         default=None,

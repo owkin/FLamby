@@ -12,7 +12,7 @@ class FedAvgFineTuning(FedAvg):
     Federated Averaging with fine tuning is the most simple personalized FL strategy.
     First, all clients collaborate to learn a global model using FedAvg, then each
     client, independently, fine-tunes the parameters of the global model through
-    stochastic gradient descent for few epochs using it local dataset.
+    few stochastic gradient descent steps using it local dataset.
 
     References
     ----------
@@ -35,7 +35,7 @@ class FedAvgFineTuning(FedAvg):
         The number of updates to do on each client at each round.
     nrounds : int
         The number of communication rounds to do.
-    num_ft_steps: int
+    num_fine_tuning_steps: int
         The number of SGD fine-tuning updates to be performed on the
          model at the personalization step.
     log: bool, optional
@@ -63,7 +63,7 @@ class FedAvgFineTuning(FedAvg):
         learning_rate: float,
         num_updates: int,
         nrounds: int,
-        num_ft_steps: int,
+        num_fine_tuning_steps: int,
         log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
@@ -85,7 +85,7 @@ class FedAvgFineTuning(FedAvg):
             logdir=logdir,
         )
 
-        self.num_ft_steps = num_ft_steps
+        self.num_fine_tuning_steps = num_fine_tuning_steps
 
     def run(self):
         """This method performs self.nrounds rounds of averaging
@@ -97,6 +97,6 @@ class FedAvgFineTuning(FedAvg):
         for _model, dataloader_with_memory in zip(
             self.models_list, self.training_dataloaders_with_memory
         ):
-            _model._local_train(dataloader_with_memory, self.num_ft_steps)
+            _model._local_train(dataloader_with_memory, self.num_fine_tuning_steps)
 
         return [m.model for m in self.models_list]
