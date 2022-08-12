@@ -5,9 +5,9 @@ This document highlights how to interface FLamby with [Fed-BioMed](https://gitla
 ## Fed-BioMed installation
 
 Before running the examples below, it is necessary to have Fed-BioMed installed on your machine. An easy-to-follow guide is available [here](https://fedbiomed.gitlabpages.inria.fr/latest/tutorials/installation/0-basic-software-installation/) to help you with the process.
-Please use the branch `flamby_poc`:
+Please use the branch `poc/flamby`:
 ```
-git checkout flamby_poc
+git checkout poc/flamby
 ```
 
 In addition, it is also necessary to have a local version of the FLamby package on your computer already installed in editable mode and to have downloaded
