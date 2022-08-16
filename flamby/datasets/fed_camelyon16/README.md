@@ -93,7 +93,7 @@ Put all the resulting files into a single folder.
 You should end up with 399 `.tif` files in a given folder `PATH-TO-FOLDER`.
 
 The last step consists in creating a metadata file that will be used by the
-preprocessing step. Create a file name `dataset_metadata.yaml` under
+preprocessing step. Create a file name `dataset_location.yaml` under
 `flamby/datasets/fed_camelyon16/dataset_creation_scripts/` with the following content:
 
 ```yaml
