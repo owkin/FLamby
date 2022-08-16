@@ -1,7 +1,8 @@
 ## Camelyon16
 
 Camelyon16 as Camelyon17 are open access (CC0), the original dataset is accessible [here](https://camelyon17.grand-challenge.org/Data/).
-We will use the [Google-Drive-API-v3](https://developers.google.com/drive/api/v3/quickstart/python) in order to fetch the slides from the public Google Drive and will then tile the matter using a feature extractor producing a bag of features for each slide.
+We will first fetch the slides from the public Google Drive, and will then tile
+the matter using a feature extractor, producing a bag of features for each slide.
 
 ## Dataset description
 
@@ -16,19 +17,29 @@ We will use the [Google-Drive-API-v3](https://developers.google.com/drive/api/v3
 | Task               | Weakly Supervised (Binary) Classification.
 
 
-## Download and preprocessing instructions
+## Download instructions
 
 ### Introduction
-In order to use the Google Drive API you need to have a google account and to access the [google developpers console](https://console.cloud.google.com/apis/credentials/consent?authuser=1) in order to get a json containing an OAuth2.0 secret.  
+The dataset is hosted on a [several mirrors](https://camelyon17.grand-challenge.org/Data/) (GigaScience, Google Drive, Baidu Pan).
+We provide below some scripts to automatically download the dataset
+based on the Google Drive API, which requires a Google Account.
+If you do not have a Google account, you can alternatively download
+manually the dataset through one of the mirrors.
+You will find below detailed instructions for each method.
+In both cases, make sure you have enough space to store the raw dataset (~900GB).
+
+### Method A: Automatic download with the Google Drive API
+
+In order to use the Google Drive API you need to have a google account and to access the [google developpers console](https://console.cloud.google.com/apis/credentials/consent?authuser=1) in order to get a json containing an OAuth2.0 secret.
 
 All steps necessary to obtain the JSON are described in numerous places in the internet such as in pydrive's [quickstart](https://pythonhosted.org/PyDrive/quickstart.html), or in this [very nice tutorial's first 5 minutes](https://www.youtube.com/watch?v=1y0-IfRW114) on Youtube.
 It should not take more than 5 minutes. The important steps are listed below.
 
-### Step 1: Setting up Google App and associated secret
+#### Step 1: Setting up Google App and associated secret
 
 1. Create a project in [Google console](https://console.cloud.google.com/apis/credentials/consent?authuser=1). For instance, you can call it `flamby`.
 2. Go to Oauth2 consent screen (on the left of the webpage), choose a name for your app and publish it for external use.
-3. Go to Credentials, create an id, then client oauth id  
+3. Go to Credentials, create an id, then client oauth id
 4. Choose Web app, go through the steps and **allow URI redirect** towards http://localhost:6006 and http://localhost:6006/ (notice the last backslash)
 5. Retrieve the secrets in JSON by clicking on Download icon at the end of the process.
 6. Enable Google Drive API for this project, by clicking on "API and services" on the left panel
@@ -39,12 +50,12 @@ Then copy-paste your secrets to the directory you want:
 cp ~/Downloads/code_secret_client_bignumber.apps.googleusercontent.com.json client_secrets.json
 ```
 
-### Step 2: Downloading the dataset
+#### Step 2: Downloading the dataset
 
 - **Remark 1: If you are downloading on a remote server**, make sure you do ssh forwarding of the port 6006 onto the port 6006 of your laptop.
-- Remark 2 : Make sure you have enough space to hold the dataset (900GB).  
-- 
-First cd into the `dataset_creation_scripts` folder:  
+- Remark 2 : Make sure you have enough space to hold the dataset (900GB).
+-
+First cd into the `dataset_creation_scripts` folder:
 ```bash
 cd flamby/datasets/fed_camelyon16/dataset_creation_scripts
 ```
@@ -67,9 +78,22 @@ imperative that you run the following script otherwise all subsequent scripts wi
 python update_config.py --new-path /new/path/towards/dataset #adding --debug if you are in debug mode
 ```
 
-### Step 3: Dataset preprocessing (tile extraction)
+### Method B: Manual download from the official mirrors
+We are interested in the Camelyon16 portion of the [Camelyon dataset](https://camelyon17.grand-challenge.org/Data/).
+In the following, we will detail the steps to manually download the dataset
+from the Google Drive repository.
+You can easily adapt the steps to the other mirrors.
 
-The next step is to tile the matter on each slide with a feature extractor pretrained on IMAGENET.  
+Camelyon16 is stored on a public [Google Drive](https://drive.google.com/drive/folders/0BzsdkU4jWx9Bb19WNndQTlUwb2M?resourcekey=0-FREBAxB4QK4bt9Zch_g5Mg).
+The dataset is pre-split into training and testing slides. The training slides
+are further divided into 2 folders: normal and tumor.
+Download all the `.tif` files in the [normal](https://drive.google.com/drive/folders/0BzsdkU4jWx9BNUFqRE81QS04eDg?resourcekey=0-p6LFOzRfCTfyi_JpshhoTQ),
+[tumor](https://drive.google.com/drive/folders/0BzsdkU4jWx9BUzVXeUg0dUNOR1U?resourcekey=0-dODmENBQPCw06DITRJfnfg) and [testing images](https://drive.google.com/drive/folders/0BzsdkU4jWx9BWk11WEtZZUNFY0U?resourcekey=0-U0E7SyHPJeQd77VAi3z15Q) folders.
+Put all the resulting files into a single folder.
+You should end up with 399 `.tif` files.
+## Dataset preprocessing (tile extraction)
+
+The next step is to tile the matter on each slide with a feature extractor pretrained on IMAGENET.
 
 We will use the [histolab package](https://github.com/histolab/histolab) to segment the matter on each slide and torchvision to download a pretrained ResNet50 that will be applied on each tile to convert each slide to a bag of numpy features.
 This package requires the installation of [Openslide](https://openslide.org/download/). The associated webpage contains instructions to install it on every major distributions. On Linux simply run:
@@ -122,7 +146,7 @@ More informations on how to train model and handle flamby datasets in general ar
 In order to benchmark the baseline on the pooled dataset one needs to download and preprocess the dataset and launch the following script:
 
 ```bash
-python benchmark.py --log --num-workers-torch 10 
+python benchmark.py --log --num-workers-torch 10
 ```
 
 This will launch 5 single-centric runs and store log results for training in ./runs/seed42-47 and testing in ./runs/tests-seed42-47.
