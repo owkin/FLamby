@@ -1,0 +1,5 @@
+FROM flamby-tcga
+
+WORKDIR /FLamby/flamby/benchmarks/
+
+ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "flamby", "python", "fed_benchmark.py", "-cfp", "../config_tcga_brca.json", "--seed", "43"]

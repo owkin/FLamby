@@ -1,0 +1,10 @@
+FROM flamby-heart
+
+SHELL ["conda", "run", "-n", "flamby", "/bin/bash", "-c"]
+# We download the dataset accepting its license
+RUN cd FLamby/flamby/datasets/fed_heart_disease/dataset_creation_scripts &&\
+    echo "yes" | python download.py --output-folder ./heart_disease_dataset
+
+WORKDIR /FLamby/flamby/benchmarks/
+
+ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "flamby", "python", "fed_benchmark.py", "-cfp", "../config_heart_disease.json", , "--seed", "43"]
