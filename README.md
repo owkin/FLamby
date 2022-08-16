@@ -168,7 +168,7 @@ docker build -t flamby-heart -f Dockerfile.base --build-arg DATASET_PREFIX="hear
 docker build -t flamby-heart-benchmark -f Dockerfile.heart .
 docker run -it flamby-heart-benchmark
 ```
-If you are convinced you will use many datasets with docker, build the base image using `all_extra` option for flambby's install, you will be able to reuse it for all datasets with multi-stage build:
+If you are convinced you will use many datasets with docker, build the base image using `all_extra` option for flamby's install, you will be able to reuse it for all datasets with multi-stage build:
 ```
 docker build -t flamby-all -f Dockerfile.base --build-arg DATASET_PREFIX="all_extra" --build-arg GIT_USER="myusername" --build-arg GIT_PWD="mypassword" .
 # modify Dockerfile.* line 1 to FROM flamby-all by replacing * with the dataset name of the dataset you are interested in
