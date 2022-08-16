@@ -90,7 +90,18 @@ are further divided into 2 folders: normal and tumor.
 Download all the `.tif` files in the [normal](https://drive.google.com/drive/folders/0BzsdkU4jWx9BNUFqRE81QS04eDg?resourcekey=0-p6LFOzRfCTfyi_JpshhoTQ),
 [tumor](https://drive.google.com/drive/folders/0BzsdkU4jWx9BUzVXeUg0dUNOR1U?resourcekey=0-dODmENBQPCw06DITRJfnfg) and [testing images](https://drive.google.com/drive/folders/0BzsdkU4jWx9BWk11WEtZZUNFY0U?resourcekey=0-U0E7SyHPJeQd77VAi3z15Q) folders.
 Put all the resulting files into a single folder.
-You should end up with 399 `.tif` files.
+You should end up with 399 `.tif` files in a given folder `PATH-TO-FOLDER`.
+
+The last step consists in creating a metadata file that will be used by the
+preprocessing step. Create a file name `dataset_metadata.yaml` under
+`flamby/datasets/fed_camelyon16/dataset_creation_scripts/` with the following content:
+
+```yaml
+dataset_path: PATH-TO-FOLDER
+download_complete: true
+```
+
+The download is now complete.
 ## Dataset preprocessing (tile extraction)
 
 The next step is to tile the matter on each slide with a feature extractor pretrained on IMAGENET.
