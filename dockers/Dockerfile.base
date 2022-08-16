@@ -1,0 +1,20 @@
+# Credit to the site https://pythonspeed.com/articles/activate-conda-dockerfile/ 
+# for providing useful tips for dealing with conda inside docker
+
+# We use an official miniconda docker image using the most lightweight distribution
+#that is alpine
+FROM continuumio/miniconda3:4.10.3p0-alpine
+
+# We define user input variables
+ARG GIT_USER
+ARG GIT_PWD
+ARG DATASET_PREFIX
+
+# install git, make, bash, libstdc++ on alpine (alpine package management system is apk)
+RUN apk update && apk add --no-cache git make libstdc++
+
+
+# clone the FLamby repo, install the library, create the virtual environment
+RUN git clone "https://${GIT_USER}:${GIT_PWD}@github.com/owkin/FLamby.git" &&\
+    cd FLamby &&\
+    make enable=$DATASET_PREFIX install
