@@ -162,7 +162,7 @@ See the [quickstart section](./Quickstart.md) to change parameters.
 ## Containerized execution
 
 A good step towards float-perfect reproducibility in your future benchmarks is to use docker. We give a base docker image and examples containing dataset download and benchmarking.
-For [Fed-Heart-Disease](./flamby/datasets/fed_heart_disease/README.md), cd to the flamby dockers folder and run:
+For [Fed-Heart-Disease](./flamby/datasets/fed_heart_disease/README.md), cd to the flamby dockers folder, replace `myusername` and `mypassword` with your git credentials (OAuth token) in the command below and run:
 ```
 docker build -t flamby-heart -f Dockerfile.base --build-arg DATASET_PREFIX="heart" --build-arg GIT_USER="myusername" --build-arg GIT_PWD="mypassword" .
 docker build -t flamby-heart-benchmark -f Dockerfile.heart .
