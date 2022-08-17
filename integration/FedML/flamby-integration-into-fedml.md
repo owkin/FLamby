@@ -8,7 +8,7 @@ The first step is to install FedML in the FLamby environment.
 
 ```bash
 conda activate flamby
-pip install fedml
+pip install fedml==0.7.290
 # necessary for the tutorial
 pip install easydict
 pip install jupyter
@@ -121,7 +121,7 @@ from easydict import EasyDict as edict
 # client_num_per_rounds is relative to client subsampling, 
 # we compute the number of rounds to do 100 updates
 NB_ROUNDS = get_nb_max_rounds(100)
-args = edict({"client_num_per_round": NUM_CLIENTS , "comm_round": NB_ROUNDS, "frequency_of_the_test": NB_ROUNDS // 10, "client_num_in_total": NUM_CLIENTS, "dataset": None})
+args = edict({"client_num_per_round": NUM_CLIENTS , "comm_round": NB_ROUNDS, "frequency_of_the_test": NB_ROUNDS // 10, "client_num_in_total": NUM_CLIENTS, "dataset": ""})
 
 ```
 
@@ -144,9 +144,11 @@ s.client_list = []
 s._setup_clients(
             s.train_data_local_num_dict, s.train_data_local_dict, s.test_data_local_dict, s.model_trainer,
         )
+# We will kill the validation as it is buggy
+s._local_test_on_all_clients = lambda x: None
 s.train()
 
-# we retrive the final global model
+# we retrieve the final global model
 final_model = s.model_trainer.model
 print(evaluate_model_on_tests(final_model, [dataset[5][i] for i in range(NUM_CLIENTS)]), metric)
 ```
@@ -187,13 +189,13 @@ If you want to run the edge server and client using MQTT, you need to run the fo
 ```bash
 python launch_client.py --run_id heart_disease --rank 0 --role server
 # in a new terminal window
-python main_fedml_heart_disease.py --cf config/fedml_config.yaml --run_id heart_disease --rank 1 --role client
+python launch_client.py --cf config/fedml_config.yaml --run_id heart_disease --rank 1 --role client
 # in a new terminal window
-python main_fedml_heart_disease.py --cf config/fedml_config.yaml --run_id heart_disease --rank 2 --role client
+python launch_client.py --cf config/fedml_config.yaml --run_id heart_disease --rank 2 --role client
 # in a new terminal window
-python main_fedml_heart_disease.py --cf config/fedml_config.yaml --run_id heart_disease --rank 3 --role client
+python launch_client.py --cf config/fedml_config.yaml --run_id heart_disease --rank 3 --role client
 # in a new terminal window
-python main_fedml_heart_disease.py --cf config/fedml_config.yaml --run_id heart_disease --rank 4 --role client
+python launch_client.py --cf config/fedml_config.yaml --run_id heart_disease --rank 4 --role client
 ```
 
 
