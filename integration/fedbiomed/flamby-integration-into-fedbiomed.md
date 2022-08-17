@@ -104,7 +104,7 @@ Feel free to follow the same steps to configure other FLamby datasets.
 
 ## Notebook (researcher side)
 
-We need to send commands to the nodes that are already up we wil use the researcher environment.
+We need to send commands to the nodes that are already up we will use the researcher environment.
 You can now activate the conda environment of the researcher by running:
 ```
 conda activate fedbiomed-researcher
@@ -128,7 +128,7 @@ from fedbiomed.common.training_plans import TorchTrainingPlan
 # We import all flamby utilities, the model, loss, batch_size and optimizer details
 from flamby.datasets.fed_ixi import (Baseline, BaselineLoss, Optimizer, BATCH_SIZE, LR, get_nb_max_rounds)
 # We create a class inheriting from TorchTrainingPlan reimplementing
-# the training step method and filling the necesssary class attributes from FLamby
+# the training step method and filling the necessary class attributes from FLamby
 # information
 class FLambyTrainingPlan(TorchTrainingPlan):
     # Init of UNetTrainingPlan
@@ -140,7 +140,7 @@ class FLambyTrainingPlan(TorchTrainingPlan):
         # As we will be serializing the instance, we need the distant machine
         # to have made the same imports as we did in order to deserialize the 
         # object without error.
-        # This will be the caqe for TorchTrainingPlan but not for FLamby
+        # This will be the case for TorchTrainingPlan but not for FLamby
         # so we add it below
         deps = ['from flamby.datasets.fed_ixi import (Baseline,\
                 BaselineLoss,\
@@ -163,7 +163,7 @@ You can go and copy-paste the code above in ipython.
 Fed-BioMed requires to pass the `batch_size`, `learning rate` and number of local `epochs` directly into the experiment abstraction. In FLamby the strategies abstraction fuse the TrainingPlan and the experiment.
 Copy-paste the code below in your notebook or interactive shell:
 ```python
-# We create a dictionnary of FedBioMed kwargs with the: batch_size, learning-rate and epochs.
+# We create a dictionary of FedBioMed kwargs with the: batch_size, learning-rate and epochs.
 # Be careful, Fed-BioMed doesn't count local training steps in batch-updates but in local epochs !
 # In this example we do 2 epochs on each of the local datasets (which amounts to different
 # number of batch-updates per client) so cannot be reproduced using FLamby internal strategies
@@ -196,7 +196,7 @@ Now the last step to launch the simulated Federated Learning between the differe
 ```
 exp.run()
 ```
-Once the nodew have finished training the model, we can load it in the researcher runtime and evaluate its performances:
+Once the nodes have finished training the model, we can load it in the researcher runtime and evaluate its performances:
 
 
 ```python
