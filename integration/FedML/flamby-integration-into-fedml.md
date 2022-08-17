@@ -9,6 +9,9 @@ The first step is to install FedML in the FLamby environment.
 ```bash
 conda activate flamby
 pip install fedml
+# necessary for the tutorial
+pip install easydict
+pip install jupyter
 ```
 ## Launching FedML in RAM  
 
@@ -70,7 +73,7 @@ We will now instantiate the FedML trainer, which is simply a cllass with  `get/s
 
 ```python
 from fedml.core.alg_frame.client_trainer import ClientTrainer
-from flamby.strategies import DataLoaderWithMemory
+from flamby.strategies.utils import DataLoaderWithMemory
 
 # We will implement a class
 class HeartDiseaseTrainer(ClientTrainer):
