@@ -1,10 +1,13 @@
-## Camelyon16
+# Camelyon16
 
 Camelyon16 as Camelyon17 are open access (CC0), the original dataset is accessible [here](https://camelyon17.grand-challenge.org/Data/).
 We will first fetch the slides from the public Google Drive, and will then tile
 the matter using a feature extractor, producing a bag of features for each slide.
 
 ## Dataset description
+Please refer to the [dataset website](https://camelyon17.grand-challenge.org/Data/)
+for an exhaustive data sheet. The table below provides a high-level description
+of the dataset.
 
 |                    | Dataset description
 |--------------------| -----------------------------------------------------------------------------------------------
@@ -15,6 +18,18 @@ the matter using a feature extractor, producing a bag of features for each slide
 | Inputs shape       | Tensor of shape (10000, 2048) (after feature extraction).
 | Total nb of points | 399 slides.
 | Task               | Weakly Supervised (Binary) Classification.
+
+### License and terms of use
+This dataset is licensed under a Creative Commons 1.0 Universal (**CC0 1.0**) license by its authors.
+*Anyone using this dataset should abide by its licence and*
+*give proper attribution to the original authors.*
+
+### Ethical approval
+As indicated by the [dataset authors](https://academic.oup.com/gigascience/article/7/6/giy065/5026175#117856619),
+> The collection of the data was approved by the local ethics committee
+> (Commissie Mensgebonden Onderzoek regio Arnhem - Nijmegen) under 2016-2761,
+> and the need for informed consent was waived.
+
 
 
 ## Download instructions
