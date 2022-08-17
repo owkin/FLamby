@@ -32,13 +32,22 @@ from flamby.datasets.fed_heart_disease import (
     get_nb_max_rounds,
     NUM_CLIENTS,
 )
+from torch.utils.data import DataLoader as dl
+
+train_data_local_dict = {}
+test_data_local_dict = {}
+train_data_local_num_dict = {}
+test_data_local_num_dict = {}
 
 for client_idx in range(NUM_CLIENTS):
     # We create the traditional FLamby datasets
     train_dataset = FedHeartDisease(center=client_idx, train=True)
     train_dataloader = dl(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=10)
     test_dataset = FedHeartDisease(center=client_idx, train=False)
-    test_dataloader = dl(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=worker_num, drop_last=True)
+    test_dataloader = dl(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=10, drop_last=True)
+    train_data_local_num_dict[client_idx] = len(train_dataset)
+    train_data_local_dict[client_idx] = train_dataloader
+    test_data_local_dict[client_idx] = test_dataloader
 
 train_data_num = sum({v for _, v in train_data_local_num_dict.items()})
 test_data_num = sum({v for _, v in test_data_local_num_dict.items()})
@@ -139,7 +148,9 @@ cd openmpi-2.0.4/
 ./configure --prefix=$HOME/opt/usr/local
 make all
 make install
-$HOME/opt/usr/local/bin/mpirun --version
+# add to your bashrc/zshrc
+alias mpirun=$HOME/opt/usr/local/bin/mpirun
+mpirun --version
 ```
 Then we install [mpi4py](https://mpi4py.readthedocs.io/en/stable/).
 ```
