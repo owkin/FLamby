@@ -135,15 +135,19 @@ from flamby.utils import evaluate_model_on_tests
 
 m = Baseline()
 trainer = HeartDiseaseTrainer(model=m, num_updates=100, args=args)
+# We instantiate a FedML FedAvg API
 s = FedAvgAPI(args, "cpu", dataset, m)
+# As we cannot control the trainer used, we'll set it ourselves
 s.model_trainer = trainer
+# WE reinitialize the client list with the new trainer manually
 s.client_list = []
 s._setup_clients(
             s.train_data_local_num_dict, s.train_data_local_dict, s.test_data_local_dict, s.model_trainer,
         )
 s.train()
 
-final_model = trainer.model
+# we retrive the final global model
+final_model = s.model_trainer.model
 print(evaluate_model_on_tests(final_model, [dataset[5][i] for i in range(NUM_CLIENTS)]), metric)
 ```
 
