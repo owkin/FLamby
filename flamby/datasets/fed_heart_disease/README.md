@@ -1,4 +1,4 @@
-## Heart Disease
+# Heart Disease
 
 The Heart Disease dataset [1] was collected in 1988 in four centers:
 Cleveland, Hungary, Switzerland and Long Beach V. We do not own the
@@ -7,8 +7,10 @@ licence and give proper attribution to the original authors. It is
 available for download
 [here](https://archive-beta.ics.uci.edu/ml/datasets/heart+disease).
 
-
 ## Dataset description
+Please refer to the [dataset website](https://archive-beta.ics.uci.edu/ml/datasets/heart+disease)
+for an exhaustive data sheet. The table below provides a high-level description
+of the dataset.
 
 |                    | Dataset description
 |--------------------| -----------------------------------------------------------------------------------------------
@@ -20,11 +22,22 @@ available for download
 | Total nb of points | 740.
 | Task               | Binary classification
 
+### License and data usage terms
+This dataset is licensed under a Creative Commons Attribution
+4.0 International (**CC-BY 4.0**) license by its authors.
+*Anyone using this dataset should abide by its*
+*licence and give proper attribution to the original authors.*
+
+### Ethics
+As per the [dataset website](https://archive-beta.ics.uci.edu/ml/datasets/heart+disease),
+sensitive entries of the dataset were removed by the original authors:
+
+> The names and social security numbers of the patients were recently removed from the database, replaced with dummy values.
 
 ## Download and preprocessing instructions
 
-To download the data, 
-First cd into the `dataset_creation_scripts` folder:  
+To download the data,
+First cd into the `dataset_creation_scripts` folder:
 ```bash
 cd flamby/datasets/fed_heart_disease/dataset_creation_scripts
 ```
