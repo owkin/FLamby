@@ -4,12 +4,11 @@ This document highlights how to interface FLamby with [FedML](https://github.com
 
 ## FedML installation
 
-The first step is to install FedML
+The first step is to install FedML in the FLamby environment.
 
 ```bash
+conda activate flamby
 pip install fedml
-DATA_PATH=$HOME/healthcare/heart_disease
-mkdir -p $DATA_PATH
 ```
 ## Launching FedML in RAM  
 
@@ -106,7 +105,10 @@ The last object to create is the args namespace:
 ```python
 from easydict import EasyDict as edict
 
-args = edict({"client_num_per_rounds": NUM_CLIENTS , "lr": LR, "comm_round": 50, "frequency_of_the_test": 10, "client_num_in_total": NUM_CLIENTS, "epochs": 10})
+# client_num_per_rounds is relative to client subsampling, 
+# we compute the number of rounds to do 100 updates
+NB_ROUNDS = get_nb_max_rounds(100)
+args = edict({"client_num_per_rounds": NUM_CLIENTS , "comm_round": NB_ROUNDS, "frequency_of_the_test": NB_ROUNDS // 10, "client_num_in_total": NUM_CLIENTS})
 
 ```
 
@@ -117,7 +119,8 @@ FedAvgAPI:
 ```python
 from fedml.simulation.sp.fedavg.fedavg_api import FedAvgAPI
 from flamby.utils import evaluate_model_on_tests
-trainer = HeartDiseaseTrainer(model=model, args=args)
+trainer = HeartDiseaseTrainer(model=model, num_updates=100, args=args)
+
 s = FedAvgAPI(dataset, "cpu", args, trainer)
 s.train()
 final_model = trainer.model
