@@ -3,6 +3,8 @@ The dataset used in this repo comes from the [ISIC2019 challenge](https://challe
 We do not own the copyright of the data, everyone using those datasets should abide by their licences (see below) and give proper attribution to the original authors.
 
 ## Dataset description
+The following table provides a data sheet:
+
 |                   | Dataset description
 | ----------------- | -----------------------------------------------------------------------------------------------
 | Description       | Dataset from the ISIC 2019 challenge, we keep images for which the datacenter can be extracted.
