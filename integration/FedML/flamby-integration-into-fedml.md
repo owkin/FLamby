@@ -126,8 +126,7 @@ args = edict({"client_num_per_round": NUM_CLIENTS , "comm_round": NB_ROUNDS, "fr
 ```
 
 
-Now we can put everything together: we first instantiate a trainer and we'll use the
-FedAvgAPI:
+Now we can put everything together: we first instantiate a trainer and we'll use the args and datasets alongside the `FedAvgAPI` abstraction:
 
 ```python
 from fedml.simulation.sp.fedavg.fedavg_api import FedAvgAPI
@@ -150,11 +149,13 @@ s.train()
 
 # we retrieve the final global model
 final_model = s.model_trainer.model
-print(evaluate_model_on_tests(final_model, [dataset[5][i] for i in range(NUM_CLIENTS)]), metric)
+print(evaluate_model_on_tests(final_model, [dataset[6][i] for i in range(NUM_CLIENTS)], metric))
 ```
 
+## FedML: FL communications outside of RAM thanks to the MPI backend
 
-## Setup the MPI backend
+**WARNING: This part is not functional yet and is a Work In Progress !**
+### Setup the MPI backend
 
 Install MPI by following instructions [here](https://www.open-mpi.org/faq/?category=building#easy-build).
 This is quite a long process, for which we provide detailed Mac instructions below:
@@ -173,21 +174,24 @@ Then we install [mpi4py](https://mpi4py.readthedocs.io/en/stable/).
 ```
 conda install mpi4py
 ```
+### Start the simulation
 
-2. Run the MPI simulation
+We launch the `launch_client.py` script for the first time launching
+`num_workers + 1` processes with MPI.
 
 ```bash
-(which mpirun) -np $PROCESS_NUM python launch_client.py
+hostname > mpi_host_file
+(which mpirun) -np 5 python launch_client.py --cf config/fedml_config.yaml 
 ```
 
-There are only 4 center in this case, so the maximum number of clients is 4.
+Then we up the server and the clients using the same script:
 
-3. Run the edge server and client using MQTT or on MLOps
-
-If you want to run the edge server and client using MQTT, you need to run the following commands.
 
 ```bash
-python launch_client.py --run_id heart_disease --rank 0 --role server
+python launch_client.py --cf config/fedml_config.yaml --run_id heart_disease --rank 0 --role server
+````
+
+```
 # in a new terminal window
 python launch_client.py --cf config/fedml_config.yaml --run_id heart_disease --rank 1 --role client
 # in a new terminal window
@@ -197,7 +201,7 @@ python launch_client.py --cf config/fedml_config.yaml --run_id heart_disease --r
 # in a new terminal window
 python launch_client.py --cf config/fedml_config.yaml --run_id heart_disease --rank 4 --role client
 ```
-
+Then the training will occur.
 
 
 ## Citation:
