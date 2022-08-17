@@ -74,6 +74,8 @@ We will now instantiate the FedML trainer, which is simply a cllass with  `get/s
 ```python
 from fedml.core.alg_frame.client_trainer import ClientTrainer
 from flamby.strategies.utils import DataLoaderWithMemory
+from torch.optim import SGD
+import logging
 
 # We will implement a class
 class HeartDiseaseTrainer(ClientTrainer):
@@ -100,9 +102,8 @@ class HeartDiseaseTrainer(ClientTrainer):
         # it to use a different optimizer or do epochs instead of updates
 
         self.model = self.model.train()
-        for idx, _batch in enumerate(range(num_updates)):
+        for idx, _batch in enumerate(range(self.num_updates)):
             X, y = self.dl_with_memory.get_samples()
-            X, y = X.to(self._device), y.to(self._device)
             # Compute prediction and loss
             _pred = self.model(X)
             _loss = self._loss(_pred, y)
@@ -120,7 +121,7 @@ from easydict import EasyDict as edict
 # client_num_per_rounds is relative to client subsampling, 
 # we compute the number of rounds to do 100 updates
 NB_ROUNDS = get_nb_max_rounds(100)
-args = edict({"client_num_per_rounds": NUM_CLIENTS , "comm_round": NB_ROUNDS, "frequency_of_the_test": NB_ROUNDS // 10, "client_num_in_total": NUM_CLIENTS})
+args = edict({"client_num_per_round": NUM_CLIENTS , "comm_round": NB_ROUNDS, "frequency_of_the_test": NB_ROUNDS // 10, "client_num_in_total": NUM_CLIENTS, "dataset": None})
 
 ```
 
@@ -131,10 +132,17 @@ FedAvgAPI:
 ```python
 from fedml.simulation.sp.fedavg.fedavg_api import FedAvgAPI
 from flamby.utils import evaluate_model_on_tests
-trainer = HeartDiseaseTrainer(model=model, num_updates=100, args=args)
 
-s = FedAvgAPI(dataset, "cpu", args, trainer)
+m = Baseline()
+trainer = HeartDiseaseTrainer(model=m, num_updates=100, args=args)
+s = FedAvgAPI(args, "cpu", dataset, m)
+s.model_trainer = trainer
+s.client_list = []
+s._setup_clients(
+            s.train_data_local_num_dict, s.train_data_local_dict, s.test_data_local_dict, s.model_trainer,
+        )
 s.train()
+
 final_model = trainer.model
 print(evaluate_model_on_tests(final_model, [dataset[5][i] for i in range(NUM_CLIENTS)]), metric)
 ```
