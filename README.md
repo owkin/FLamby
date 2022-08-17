@@ -9,13 +9,16 @@
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
+- [FAQ](#FAQ)
 
 
 ## Overview
-FLamby is a benchmark for cross-silo Federated Learning with natural partitioning.
+FLamby is a benchmark for cross-silo Federated Learning with natural partitioning,
+currently focused in healthcare applications.
 It spans multiple data modalities and should allow easy interfacing with most
-Federated-Learning frameworks ([Fed-BioMed](https://gitlab.inria.fr/fedbiomed/fedbiomed), [FedML](https://github.com/FedML-AI/FedML), [Substra](https://github.com/Substra/substra), ...). It contains implementations of different
-standard strategies.
+Federated Learning frameworks (including [Fed-BioMed](https://gitlab.inria.fr/fedbiomed/fedbiomed), [FedML](https://github.com/FedML-AI/FedML), [Substra](https://github.com/Substra/substra), ...).
+It contains implementations of different
+standard federated learning strategies.
 
 The FLamby package contains:
 
@@ -23,8 +26,7 @@ The FLamby package contains:
 - Evaluation functions to evaluate trained models on the different tracks as defined in the companion paper.
 - Benchmark code using the utilities below to obtain the performances of baselines using different strategies.
 
-It does not contain datasets, which have to be downloaded separately.
-See the section below.
+It does not contain datasets, which have to be downloaded separately (see the section below).
 
 FLamby was tested on Ubuntu and MacOS environment. If you are facing any problems installing or executing FLamby code
 please help us improve it by filing an issue on FLamby github page ensuring to explain it in detail.
@@ -136,15 +138,15 @@ all the datasets you are interested in by following the instructions provided in
 
 Follow the [quickstart section](./Quickstart.md) to learn how to get started with FLamby.
 
-## Reproduce benchmark and figures from the companion article  
+## Reproduce benchmark and figures from the companion article
 
 ### Benchmarks
 The results are stored in flamby/results in corresponding subfolders `results_benchmark_fed_dataset` for each dataset.
-These results can be plotted using:  
+These results can be plotted using:
 ```
 python plot_results.py
 ```
-which produces the plot at the end of the main article.    
+which produces the plot at the end of the main article.
 
 In order to re-run each of the benchmark on your machine, first download the dataset you are interested in and then run the following command replacing `config_dataset.json` by one of the listed config files (`config_camelyon16.json`, `config_heart_disease.json`, `config_isic2019.json`, `config_ixi.json`, `config_kits19.json`, `config_lidc_idri.json`, `config_tcga_brca.json`):
 ```
@@ -177,7 +179,7 @@ docker build -t flamby-all -f Dockerfile.base --build-arg DATASET_PREFIX="all_ex
 #docker run -it flamby-*-benchmark
 ```
 
-Checkout `Dockerfile.tcga`. 
+Checkout `Dockerfile.tcga`.
 Similar dockerfiles can be theoretically easily built for the other datasets as well by
 replicating instructions found in each dataset folder following the model of `Dockerfile.heart`.
 Note that for bigger datasets execution can be prohibitively slow and docker can run out of time/memory.
@@ -201,12 +203,12 @@ python plot_kms.py
 - [Fed-LIDC-IDRI](./flamby/datasets/fed_lidc_idri/README.md)
 ```
 cd flamby/datasets/fed_lidc_idri
-python lidc_heterogeneity_plot.py 
+python lidc_heterogeneity_plot.py
 ```
 - [Fed-ISIC2019](./flamby/datasets/fed_isic2019/README.md)
 ```
 cd flamby/datasets/fed_isic2019
-python heterogeneity_pic.py 
+python heterogeneity_pic.py
 ```
 - [Fed-IXITiny](./flamby/datasets/fed_ixi/README.md)
 ```
@@ -218,8 +220,8 @@ python ixi_plotting.py
 cd flamby/datasets/fed_kits19/dataset_creation_scripts
 python kits19_heterogenity_plot.py
 ```
-  
-  
+
+
 ## Deploy documentations
 
 We use [sphinx](https://www.sphinx-doc.org/en/master/) to create FLamby's documentation.
@@ -278,11 +280,11 @@ and try running your make installation option again.
 
 ### I or someone else already downloaded a dataset using another copy of the flamby repository, my copy of flamby cannot find it and I don't want to download it again, what can I do ?
 
-There are two options. The safest one is to cd to the flamby directory and run: 
+There are two options. The safest one is to cd to the flamby directory and run:
 ```
 python create_config_dataset.py --dataset-name fed_camelyon16/fed_heart_disease/... --path /path/where/the/dataset/is/located
 ```
-This will create the required `dataset_location.yaml` file in your copy of the repository allowing FLamby to find it.  
+This will create the required `dataset_location.yaml` file in your copy of the repository allowing FLamby to find it.
 
 One can also directly pass the `data_path` argument when instantiating the dataset but this is not recommended.
 ```python
@@ -291,10 +293,10 @@ center0 = FedHeartDisease(center=0, train=True, data_path="/path/where/the/datas
 ```
 ### Collaborative work on FLamby: I am working with FLamby on a server with other users, how can we share the datasets efficiently ?
 
-The basic answer is to use the answer just above to recreate the config file in every copy of the repository.  
+The basic answer is to use the answer just above to recreate the config file in every copy of the repository.
 
-It can possibly become more seamless in the future if we introduce checks for environment variables in FLamby, which would allow to setup a general server-wise config so that all users of the server have access to all needed paths. 
-In the meantime one can fill/comment the following bash script after downloading the dataset and share it with all users of the server:  
+It can possibly become more seamless in the future if we introduce checks for environment variables in FLamby, which would allow to setup a general server-wise config so that all users of the server have access to all needed paths.
+In the meantime one can fill/comment the following bash script after downloading the dataset and share it with all users of the server:
 
 ```bash
 python create_config_dataset.py --dataset-name fed_camelyon16. --path TOFILL
@@ -306,8 +308,15 @@ python create_config_dataset.py --dataset-name fed_ixi --path TOFILL
 ```
 Which allows users to set all necessary paths in their local copies.
 
+### Can I run clients in different threads with FLamby? How does it run under the hood?
 
+FLamby is a lightweight and simple solution, designed to allow researchers
+to quickly use cleaned datasets with a standard API.
+As a consequence, the benchmark code performing the FL simulation is minimalistic.
+All clients run sequentially in the same python environment, without multithreading.
+Datasets are assigned to clients as different python objects.
 
+### Does FLamby support GPU acceleration?
 
-
-
+FLamby supports GPU acceleration thanks to the underlying deep learning backend
+(pytorch for now).
