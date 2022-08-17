@@ -6,7 +6,7 @@ the matter using a feature extractor, producing a bag of features for each slide
 
 ## Dataset description
 Please refer to the [dataset website](https://camelyon17.grand-challenge.org/Data/)
-for an exhaustive data sheet. The table below provides a high-level description
+for an [exhaustive data sheet](https://academic.oup.com/gigascience/article/7/6/giy065/5026175#117856577). The table below provides a high-level description
 of the dataset.
 
 |                    | Dataset description
@@ -29,8 +29,6 @@ As indicated by the [dataset authors](https://academic.oup.com/gigascience/artic
 > The collection of the data was approved by the local ethics committee
 > (Commissie Mensgebonden Onderzoek regio Arnhem - Nijmegen) under 2016-2761,
 > and the need for informed consent was waived.
-
-
 
 ## Download instructions
 
