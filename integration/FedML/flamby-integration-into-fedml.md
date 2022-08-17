@@ -172,15 +172,10 @@ Then we install [mpi4py](https://mpi4py.readthedocs.io/en/stable/).
 conda install mpi4py
 ```
 
-
-
-
-
-
 2. Run the MPI simulation
 
 ```bash
-bash run_simulation.sh [CLIENT_NUM]
+(which mpirun) -np $PROCESS_NUM python launch_client.py
 ```
 
 There are only 4 center in this case, so the maximum number of clients is 4.
@@ -190,13 +185,17 @@ There are only 4 center in this case, so the maximum number of clients is 4.
 If you want to run the edge server and client using MQTT, you need to run the following commands.
 
 ```bash
-bash run_server.sh
-
+python launch_client.py --run_id heart_disease --rank 0 --role server
 # in a new terminal window
-bash run_client.sh [CLIENT_ID]
+python main_fedml_heart_disease.py --cf config/fedml_config.yaml --run_id heart_disease --rank 1 --role client
+# in a new terminal window
+python main_fedml_heart_disease.py --cf config/fedml_config.yaml --run_id heart_disease --rank 2 --role client
+# in a new terminal window
+python main_fedml_heart_disease.py --cf config/fedml_config.yaml --run_id heart_disease --rank 3 --role client
+# in a new terminal window
+python main_fedml_heart_disease.py --cf config/fedml_config.yaml --run_id heart_disease --rank 4 --role client
 ```
 
-Client ID is the id of the client from 1 to 4.
 
 
 ## Citation:
