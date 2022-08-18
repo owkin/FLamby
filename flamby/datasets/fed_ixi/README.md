@@ -1,12 +1,23 @@
 # IXI Dataset
 
-### Data Citation
+## Data Citation and License
 
 The IXI dataset is made available under the Creative Commons [CC BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/legalcode). If you use the IXI data please acknowledge the source of the IXI data, e.g. the following website: https://brain-development.org/ixi-dataset/
 
 IXI Tiny is derived from the same source. Acknowledge the following reference on TorchIO : https://torchio.readthedocs.io/datasets.html#ixitiny
 
-### Publication Citation
+## Ethics
+The dataset website does not provide any information regarding data collection ethics.
+However, the original dataset was collected as part of the
+IXI - Information eXtraction from Images (EPSRC GR/S21533/02) project,
+and thus funded by [UK Research and Innovation (UKRI)](https://www.ukri.org/).
+As part of its [terms and conditions](https://www.ukri.org/wp-content/uploads/2022/04/UKRI-050422-FullEconomicCostingGrantTermsConditions-Apr2022.pdf),
+the UKRI demands that all funded
+projects are "carried out in accordance with all applicable ethical, legal and
+regulatory requirements" (RGC 2.2).
+
+
+## Publication Citation
 
 Pérez-García F, Sparks R, Ourselin S. TorchIO: a Python library for efficient loading, preprocessing, augmentation and patch-based sampling of medical images in deep learning. arXiv:2003.04696 [cs, eess, stat]. 2020. https://doi.org/10.48550/arXiv.2003.04696
 
@@ -77,33 +88,33 @@ The structure of the archive containing the dataset has been modified, making it
 
 E.g.
 ```
-IXI_sample   
+IXI_sample
 │
 └───IXI002-Guys-0828
-│   │  
+│   │
 │   └───label
 │   │   │   IXI002-Guys-0828_label.nii.gz
-│   │  
+│   │
 │   └───T1
 │   │   │   IXI002-Guys-0828_image.nii.gz
-│   │  
+│   │
 │   └───T2
 │   │   │   IXI002-Guys-0828_image.nii.gz
-│   │ 
-│   └───... 
+│   │
+│   └───...
 │
 └───IXI012-HH-1211
-│   │  
+│   │
 │   └───label
 │   │   │   IXI012-HH-1211_label.nii.gz
-│   │  
+│   │
 │   └───T1
 │   │   │   IXI012-HH-1211_image.nii.gz
-│   │  
+│   │
 │   └───T2
 │   │   │   IXI012-HH-1211_image.nii.gz
-│   │ 
-│   └───... 
+│   │
+│   └───...
 │
 │
 └───...
@@ -127,7 +138,7 @@ from flamby.datasets.fed_ixi import FedIXITiny
 # To load the first center as a pytorch dataset
 center0 = FedIXITiny(transform=None, center=0, train=True, pooled=False)
 # To load the second center as a pytorch dataset
-center1 = FedIXITiny(transform=None, center=1, train=True, pooled=False). 
+center1 = FedIXITiny(transform=None, center=1, train=True, pooled=False).
 
 # To sample batches from each of the local datasets use the traditional pytorch API
 from torch.utils.data import DataLoader as dl
