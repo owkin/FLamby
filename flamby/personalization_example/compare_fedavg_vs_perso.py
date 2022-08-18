@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader as dl
+from tqdm import tqdm
 
 # from flamby.datasets.fed_camelyon16 import LR as fedcam16_lr
 from flamby.datasets.fed_camelyon16 import BATCH_SIZE as fedcam16_batch_size
@@ -97,97 +98,96 @@ seeds = np.arange(42, 42 + n_repetitions).tolist()
 
 results_all_reps = []
 
-for se in seeds:
-    for dn in datasets_names:
-        for se in seeds:
-            # We set model and dataloaders to be the same for each rep
-            global_init = models_architectures[dn]()
-            torch.manual_seed(se)
-            if dn == "Fed-Camelyon16":
-                training_dls = [
-                    dl(
-                        datasets_classes[dn](center=i, train=True),
-                        batch_size=datasets_batch_sizes[dn],
-                        shuffle=True,
-                        num_workers=0,
-                        collate_fn=collate_fn,
-                    )
-                    for i in range(datasets_num_clients[dn])
-                ]
-                test_dls = [
-                    dl(
-                        datasets_classes[dn](center=i, train=False),
-                        batch_size=datasets_batch_sizes[dn],
-                        shuffle=True,
-                        num_workers=0,
-                        collate_fn=collate_fn,
-                    )
-                    for i in range(datasets_num_clients[dn])
-                ]
-            else:
-                training_dls = [
-                    dl(
-                        datasets_classes[dn](center=i, train=True),
-                        batch_size=datasets_batch_sizes[dn],
-                        shuffle=True,
-                        num_workers=0,
-                    )
-                    for i in range(datasets_num_clients[dn])
-                ]
-                test_dls = [
-                    dl(
-                        datasets_classes[dn](center=i, train=False),
-                        batch_size=datasets_batch_sizes[dn],
-                        shuffle=True,
-                        num_workers=0,
-                    )
-                    for i in range(datasets_num_clients[dn])
-                ]
-
-            args = {
-                "loss": generic_args["loss"][dn],
-                "optimizer_class": torch.optim.SGD,
-                "learning_rate": generic_args["learning_rate"][dn],
-                "num_updates": num_updates,
-                "nrounds": generic_args["nrounds"][dn],
-            }
-            args["training_dataloaders"] = training_dls
-            current_args = copy.deepcopy(args)
-            current_args["model"] = copy.deepcopy(global_init)
-
-            # We run FedAvg wo DP
-            s = FedAvg(**current_args, log=False)
-            cm = s.run()[0]
-            mean_perf = np.array(
-                [
-                    v
-                    for _, v in evaluate_model_on_tests(
-                        cm, test_dls, datasets_metrics[dn]
-                    ).items()
-                ]
-            ).mean()
-            results_all_reps.append(
-                {"perf": mean_perf, "dataset": "heart", "finetune": False, "s": se}
-            )
-
-            # We run FedAvg with fine-tuning
-            current_args = copy.deepcopy(args)
-            current_args["model"] = copy.deepcopy(global_init)
-            current_args["num_ft_steps"] = 100
-
-            s = FedAvgFineTuning(**current_args, log=False)
-            cms = s.run()
-            # We test each personalized model on its corresponding test set
-            perfs = []
-            for i in range(datasets_num_clients[dn]):
-                perf_dict = evaluate_model_on_tests(
-                    cms[i], test_dls, datasets_metrics[dn]
+for dn in tqdm(datasets_names):
+    for se in tqdm(seeds):
+        # We set model and dataloaders to be the same for each rep
+        global_init = models_architectures[dn]()
+        torch.manual_seed(se)
+        if dn == "Fed-Camelyon16":
+            training_dls = [
+                dl(
+                    datasets_classes[dn](center=i, train=True),
+                    batch_size=datasets_batch_sizes[dn],
+                    shuffle=True,
+                    num_workers=0,
+                    collate_fn=collate_fn,
                 )
-                perfs.append(perf_dict[list(perf_dict.keys())[i]])
-            mean_perf = np.array(perfs).mean()
-            results_all_reps.append(
-                {"perf": mean_perf, "dataset": "heart", "finetune": True, "s": se}
-            )
+                for i in range(datasets_num_clients[dn])
+            ]
+            test_dls = [
+                dl(
+                    datasets_classes[dn](center=i, train=False),
+                    batch_size=datasets_batch_sizes[dn],
+                    shuffle=True,
+                    num_workers=0,
+                    collate_fn=collate_fn,
+                )
+                for i in range(datasets_num_clients[dn])
+            ]
+        else:
+            training_dls = [
+                dl(
+                    datasets_classes[dn](center=i, train=True),
+                    batch_size=datasets_batch_sizes[dn],
+                    shuffle=True,
+                    num_workers=0,
+                )
+                for i in range(datasets_num_clients[dn])
+            ]
+            test_dls = [
+                dl(
+                    datasets_classes[dn](center=i, train=False),
+                    batch_size=datasets_batch_sizes[dn],
+                    shuffle=True,
+                    num_workers=0,
+                )
+                for i in range(datasets_num_clients[dn])
+            ]
+
+        args = {
+            "loss": generic_args["loss"][dn],
+            "optimizer_class": torch.optim.SGD,
+            "learning_rate": generic_args["learning_rate"][dn],
+            "num_updates": num_updates,
+            "nrounds": generic_args["nrounds"][dn],
+        }
+        args["training_dataloaders"] = training_dls
+        current_args = copy.deepcopy(args)
+        current_args["model"] = copy.deepcopy(global_init)
+
+        # We run FedAvg wo DP
+        s = FedAvg(**current_args, log=False)
+        cm = s.run()[0]
+        mean_perf = np.array(
+            [
+                v
+                for _, v in evaluate_model_on_tests(
+                    cm, test_dls, datasets_metrics[dn]
+                ).items()
+            ]
+        ).mean()
+        current_row = {"perf": mean_perf, "dataset": dn, "finetune": False, "s": se}
+        print(current_row)
+
+        results_all_reps.append(current_row)
+
+        # We run FedAvg with fine-tuning
+        current_args = copy.deepcopy(args)
+        current_args["model"] = copy.deepcopy(global_init)
+        current_args["num_fine_tuning_steps"] = 100
+
+        s = FedAvgFineTuning(**current_args, log=False)
+        cms = s.run()
+        # We test each personalized model on its corresponding test set
+        perfs = []
+        for i in range(datasets_num_clients[dn]):
+            perf_dict = evaluate_model_on_tests(cms[i], test_dls, datasets_metrics[dn])
+            perfs.append(perf_dict[list(perf_dict.keys())[i]])
+        mean_perf = np.array(perfs).mean()
+        current_row = {"perf": mean_perf, "dataset": dn, "finetune": True, "s": se}
+        print(current_row)
+
+        results_all_reps.append(current_row)
 
 results = pd.DataFrame.from_dict(results_all_reps)
 results.to_csv("results_perso_vs_normal.csv", index=False)
