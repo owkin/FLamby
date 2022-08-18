@@ -39,7 +39,7 @@
         "FedAvgFineTuning": {
             "learning_rate": 1e-05,
             "optimizer_class": "torch.optim.SGD",
-            "num_ft_steps": 3
+            "num_fine_tuning_steps": 3
         }
     }
 }
