@@ -1,5 +1,6 @@
 # Plot
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 
@@ -15,19 +16,17 @@ linestyle_str = [
 ]
 linestyle_tuple = [
     ("loosely dotted", (0, (1, 10))),
-    ("dotted", (0, (1, 1))),
     ("densely dotted", (0, (1, 1))),
     ("loosely dashed", (0, (5, 10))),
-    ("dashed", (0, (5, 5))),
     ("densely dashed", (0, (5, 1))),
     ("loosely dashdotted", (0, (3, 10, 1, 10))),
-    ("dashdotted", (0, (3, 5, 1, 5))),
     ("densely dashdotted", (0, (3, 1, 1, 1))),
     ("dashdotdotted", (0, (3, 5, 1, 5, 1, 5))),
     ("loosely dashdotdotted", (0, (3, 10, 1, 10, 1, 10))),
     ("densely dashdotdotted", (0, (3, 1, 1, 1, 1, 1))),
 ]
-deltas = [d for d in results["d"].unique() if d is not None]
+linestyles = linestyle_tuple + linestyle_str
+deltas = [d for d in results["d"].unique() if not (np.isnan(d))]
 fig, ax = plt.subplots()
 for i, d in enumerate(deltas):
     cdf = results.loc[results["d"] == d]
@@ -36,17 +35,16 @@ for i, d in enumerate(deltas):
         x="e",
         y="perf",
         label=f"delta={d}",
-        linestyle=linestyle_str[::-1][i][1],
+        linestyle=linestyles[::-1][i][1],
         ax=ax,
     )
 ax.set_xscale("log")
-ax.set_xticks(
-    [d for d in results["e"].unique() if d is not None],
-    labels=[str(d) for d in results["e"].unique() if d is not None],
+xtick_values = [d for d in results["e"].unique() if not (np.isnan(d))]
+xlabels = [str(v) for v in xtick_values]
+ax.set_xticks(xtick_values, xlabels)
+ax.axhline(
+    np.array(results.loc[results["d"].isnull(), "perf"].tolist()).mean(), color="black"
 )
-# fig.axhline(
-#     np.array(results.loc[results[d].isnull(), "d"].tolist()).mean(), color="black"
-# )
 plt.legend()
 plt.xlabel("epsilon")
 plt.ylabel("Perf")
