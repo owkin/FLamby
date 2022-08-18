@@ -1,6 +1,7 @@
 import copy
 
 import numpy as np
+import pandas as pd
 import torch
 from torch.utils.data import DataLoader as dl
 
@@ -94,9 +95,10 @@ datasets_metrics = {
 datasets_names = list(models_architectures.keys())
 seeds = np.arange(42, 42 + n_repetitions).tolist()
 
+results_all_reps = []
+
 for se in seeds:
     for dn in datasets_names:
-        results_all_reps = []
         for se in seeds:
             # We set model and dataloaders to be the same for each rep
             global_init = models_architectures[dn]()
@@ -171,10 +173,11 @@ for se in seeds:
             # We run FedAvg with fine-tuning
             current_args = copy.deepcopy(args)
             current_args["model"] = copy.deepcopy(global_init)
+            current_args["num_ft_steps"] = 100
 
             s = FedAvgFineTuning(**current_args, log=False)
             cms = s.run()
-            # We test each peprsonalized model on its corresponding test set
+            # We test each personalized model on its corresponding test set
             perfs = []
             for i in range(datasets_num_clients[dn]):
                 perf_dict = evaluate_model_on_tests(
@@ -185,3 +188,6 @@ for se in seeds:
             results_all_reps.append(
                 {"perf": mean_perf, "dataset": "heart", "finetune": True, "s": se}
             )
+
+results = pd.DataFrame.from_dict(results_all_reps)
+results.to_csv("results_perso_vs_normal.csv", index=False)
