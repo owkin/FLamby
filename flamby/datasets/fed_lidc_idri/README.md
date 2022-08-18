@@ -30,6 +30,10 @@ In particular, as stated in the dataset publication, data was anonymized
 in each local center before being uploaded to the central repository.
 
 ## Dataset description
+The table below provides summary information on the dataset.
+Please refer to the [original article](https://doi.org/10.1118/1.3528204)
+for a more in-depth presentation
+of the dataset.
 
 |                   | Dataset description |
 | ----------------- | -----------------------------------------------|
