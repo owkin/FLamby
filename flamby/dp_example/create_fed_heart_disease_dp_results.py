@@ -66,7 +66,7 @@ for se in seeds:
             FedHeartDisease(center=i, train=True),
             batch_size=BATCH_SIZE,
             shuffle=True,
-            num_workers=8,
+            num_workers=0,
             # collate_fn=collate_fn,
         )
         for i in range(NUM_CLIENTS)

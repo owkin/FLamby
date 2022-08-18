@@ -45,6 +45,7 @@ ax.set_xticks(xtick_values, xlabels)
 ax.axhline(
     np.array(results.loc[results["d"].isnull(), "perf"].tolist()).mean(), color="black"
 )
+ax.set_xlim(0.1, 50)
 plt.legend()
 plt.xlabel("epsilon")
 plt.ylabel("Perf")
