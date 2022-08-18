@@ -48,4 +48,4 @@ ax.axhline(
 plt.legend()
 plt.xlabel("epsilon")
 plt.ylabel("Perf")
-plt.savefig("trial.png", dpi=100, bbox_inches="tight")
+plt.savefig("perf_function_of_dp_heart_disease.pdf", dpi=100, bbox_inches="tight")
