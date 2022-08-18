@@ -45,6 +45,8 @@ from flamby.strategies import FedAvg, FedAvgFineTuning
 # evaluation
 from flamby.utils import evaluate_model_on_tests
 
+torch.multiprocessing.set_sharing_strategy("file_system")
+
 num_updates = 100
 n_repetitions = 5
 
