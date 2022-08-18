@@ -7,6 +7,13 @@ We use the official KiTS19 repository (https://github.com/neheller/kits19) to do
 The dataset is provided under the [CC-BY-NC-SA-4.0 license](https://data.donders.ru.nl/doc/dua/CC-BY-NC-SA-4.0.html?0).
 Please ensure you comply with this license and the [dataset terms](https://kits19.grand-challenge.org/data/)
 before using this dataset.
+
+## Ethics
+As stated in the [official manuscript](https://arxiv.org/pdf/1904.00445.pdf),
+the dataset collection was
+
+>reviewed and approved by the Institutional Review Board at the University of Minnesoty as Study 1611M00821
+
 ## Acknowledgements
 See below the full citations:
 ```bash
