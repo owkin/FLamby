@@ -1,11 +1,13 @@
-## KiTS19
+# KiTS19
 
 KiTS19 dataset is an open access Kidney Tumor Segmentation dataset that was made public in 2019 for a segmentation Challenge (https://kits19.grand-challenge.org/data/).
-We use the official KiTS19 repository (https://github.com/neheller/kits19) to download the dataset. 
+We use the official KiTS19 repository (https://github.com/neheller/kits19) to download the dataset.
 
-#License and Citations:
-Find attached the link to [the full license](https://data.donders.ru.nl/doc/dua/CC-BY-NC-SA-4.0.html?0) and [dataset terms](https://kits19.grand-challenge.org/data/).
-
+## License and dataset terms of use
+The dataset is provided under the [CC-BY-NC-SA-4.0 license](https://data.donders.ru.nl/doc/dua/CC-BY-NC-SA-4.0.html?0).
+Please ensure you comply with this license and the [dataset terms](https://kits19.grand-challenge.org/data/)
+before using this dataset.
+## Acknowledgements
 See below the full citations:
 ```bash
 @article{heller2020state,
@@ -26,11 +28,13 @@ See below the full citations:
 ```
 
 ## Dataset Description
+The table below provides summary information.
+Please refer to the [data manuscript](https://arxiv.org/pdf/1904.00445.pdf) for a more in-depth data sheet.
 
-|                   | Dataset description 
+|                   | Dataset description
 | ----------------- | -----------------------------------------------
 | Description       | This is the dataset from KiTS19 Challenge.
-| Dataset           | 210 CT scans with segmentation masks as Train Data and 90 CT scans with no segmentations as Test Data. Since Test data does not have ground truth segmentation masks, we cannot use it for training/testing. Therefore, we will use only 210 CT scans in our exploration of this dataset. 
+| Dataset           | 210 CT scans with segmentation masks as Train Data and 90 CT scans with no segmentations as Test Data. Since Test data does not have ground truth segmentation masks, we cannot use it for training/testing. Therefore, we will use only 210 CT scans in our exploration of this dataset.
 | Centers           | Data comes from 87 different centers. The sites information can be found in fed_kits19/dataset_creation_scripts/anony_sites.csv file. We include only those silos (total of 6) that have greater than 10 data samples (images), which leaves us with 96 patients data samples.
 | Task              | Supervised Segmentation
 
@@ -53,17 +57,17 @@ cd kits19
 pip3 install -r requirements.txt
 python3 -m starter_code.get_imaging
 ```
-These commands will populate the data folder (given in the kits19 repository) with the imaging data. 
+These commands will populate the data folder (given in the kits19 repository) with the imaging data.
 
 4. To configure the KiTS19 data path so that it can be accessed by the Flamby library, run the following command in the directory `flamby/datasets/fed_kits19/dataset_creation_scripts/`,
 ```bash
-python3 create_config.py --output_folder "path_towards_kits19_repository" 
+python3 create_config.py --output_folder "path_towards_kits19_repository"
 ```
-You can add an option '--debug', if you want to run the whole pipeline on only a part of the dataset. Note that "path_towards_kits19_repository" should contain the path to the kits19 git repository, for example, '~/Desktop/kits19' can be an example of the "path_towards_kits19_repository" given you cloned the kits19 git repository in the Desktop folder and the data folder containing KiTS19 dataset resides in this kits19 git repository.  
+You can add an option '--debug', if you want to run the whole pipeline on only a part of the dataset. Note that "path_towards_kits19_repository" should contain the path to the kits19 git repository, for example, '~/Desktop/kits19' can be an example of the "path_towards_kits19_repository" given you cloned the kits19 git repository in the Desktop folder and the data folder containing KiTS19 dataset resides in this kits19 git repository.
 
-## Data Preprocessing   
+## Data Preprocessing
 For preprocessing, we use [nnunet](https://github.com/MIC-DKFZ/nnUNet) library and [batchgenerators](https://github.com/MIC-DKFZ/batchgenerators) packages. We exploit nnunet preprocessing pipeline
-to apply intensity normalization, voxel and foreground resampling. In addition, we apply extensive transformations such as random crop, rotation, scaling, mirror etc from the batchgenerators package. 
+to apply intensity normalization, voxel and foreground resampling. In addition, we apply extensive transformations such as random crop, rotation, scaling, mirror etc from the batchgenerators package.
 
 1. To run preprocessing, first step is dataset conversion. For this step, go to the following directory from the fed_kits19 directory
 ```bash
@@ -71,9 +75,9 @@ cd dataset_creation_scripts
 ```
 and run the following command to prepare the data for preprocessing.
 ```bash
-python3 parsing_and_adding_metadata.py 
+python3 parsing_and_adding_metadata.py
 ```
-You should add the option '--debug', if you already did so during the step 3 of the data download. 
+You should add the option '--debug', if you already did so during the step 3 of the data download.
 2. After data conversion, next step is to run the preprocessing which involves, data intensity normalization and voxel resampling. To run preprocessing, run the following command to go to the right directory from fed_kits19 directory
 ```bash
 python3 run_nnUNet_plan_and_preprocess.py --num_threads 1
@@ -81,7 +85,7 @@ python3 run_nnUNet_plan_and_preprocess.py --num_threads 1
 Similarly, you should add the option '--debug' if you used it on the previous steps.
 
 **Warning:** If you use more threads than your machine has available CPUs it, the preprocessing can halt indefinitely.
-With this preprocessing, running the experiments can be very time efficient as it saves the preprocessing time for every experiment run.  
+With this preprocessing, running the experiments can be very time efficient as it saves the preprocessing time for every experiment run.
 
 ## Using the dataset
 
@@ -108,10 +112,10 @@ To run a pooled strategy with GPUs, run the following command in the 'flamby/dat
 ```bash
 python3 benchmark.py --GPU $GPU_ID
 ```
-$GPU_ID should contain the GPU number that will be used to perform training, for example, 3 can be an example of $GPU_ID if you want to run the pooled strategy on 'cuda:3'. 
+$GPU_ID should contain the GPU number that will be used to perform training, for example, 3 can be an example of $GPU_ID if you want to run the pooled strategy on 'cuda:3'.
 If you don't have a GPU, then --GPU argument can be skipped and the following command can be used,
 ```bash
-python3 benchmark.py 
+python3 benchmark.py
 ```
 Note that estimated memory requirement for this training is around 14.5 GB.
 
@@ -130,4 +134,3 @@ Note that estimated memory requirement for this training is around 14.5 GB.
   year={2020}
 }
 ```
-
