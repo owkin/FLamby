@@ -4,12 +4,13 @@
 
 ## Table of Contents
 - [Overview](#overview)
-- [Source datasets](#source-datasets)
-- [Extending FLamby](#extending-flamby)
+- [Dataset suite](#dataset-suite)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [FAQ](#FAQ)
+- [Team](#team)
+- [Acknowledgements](#acknowledgements)
 
 
 ## Overview
@@ -31,19 +32,18 @@ It does not contain datasets, which have to be downloaded separately (see the se
 FLamby was tested on Ubuntu and MacOS environment. If you are facing any problems installing or executing FLamby code
 please help us improve it by filing an issue on FLamby github page ensuring to explain it in detail.
 
-## Source datasets
-We do not distribute datasets in this repository. **The use of any of the datasets
+## Dataset suite
+FLamby is a dataset **suite** instead of a repository.
+We provide code to easily access existing datasets stored in other repositories.
+In particular, we do not distribute datasets in this repository,
+and we do not own copyrights on any of the datasets.
+
+**The use of any of the datasets
 included in FLamby requires accepting its corresponding license on the original
-website.**
-We do not own copyrights on any of the datasets.
-For any problem or question with respect to any license related matters please open a github issue on this repository.
+website.** We refer to each dataset's README for more details.
 
-
-## Extending FLamby
-
-If you would like to add another cross-silo dataset **with natural splits** please fork the repository
-and do a Pull-Request following the Contributing guidelines described below.
-Similarly one can add the results of a new strategy or training algorithm.
+For any problem or question with respect to any license related matters,
+please open a github issue on this repository.
 
 ## Installation
 
@@ -239,6 +239,19 @@ open _build/html/index.html
 ```
 ## Contributing
 
+### Extending FLamby
+
+FLamby is a living project and contributions by the FL community are welcome.
+
+If you would like to add another cross-silo dataset **with natural splits**,
+please fork the repository
+and do a Pull-Request following the guidelines described below.
+
+Similarly, you can propose pull requests introducing novel training algorithms
+or models.
+
+### Guidelines
+
 After installing the package in dev mode (``pip install -e .[all_extra]``)
 You should also initialize ``pre-commit`` by running:
 ```
@@ -322,3 +335,19 @@ Datasets are assigned to clients as different python objects.
 
 FLamby supports GPU acceleration thanks to the underlying deep learning backend
 (pytorch for now).
+
+## Team
+
+This repository was made possible thanks to numerous contributors.
+We list them in the order of the companion article, following the [CREDIT framework](https://credit.niso.org/):
+[Jean Ogier du Terrail](https://github.com/jeandut), [Samy-Safwan Ayed](https://github.com/AyedSamy), [Edwige Cyffers](https://github.com/totilas), [Felix Grimberg](https://github.com/Grim-bot), [Chaoyang He](https://github.com/chaoyanghe), [Régis Loeb](https://github.com/regloeb), [Paul Mangold](https://github.com/pmangold), [Tanguy Marchand](https://github.com/tanguy-marchand), [Othmane Marfoq](https://github.com/omarfoq/), [Erum Mushtaq](https://github.com/ErumMushtaq), [Boris Muzellec](https://github.com/BorisMuzellec), [Constantin Philippenko](https://github.com/philipco), [Santiago Silva](https://github.com/sssilvar), [Maria Telenczuk](https://github.com/maikia), [Shadi Albarqouni](https://albarqouni.github.io/), [Salman Avestimehr](https://www.avestimehr.com/), [Aurélien Bellet](http://researchers.lille.inria.fr/abellet/), [Aymeric Dieuleveut](http://www.cmap.polytechnique.fr/~aymeric.dieuleveut/), [Martin Jaggi](https://people.epfl.ch/martin.jaggi), [Sai Praneeth Karimireddy](https://github.com/Saipraneet), [Marco Lorenzi](https://marcolorenzi.github.io/publications.html), [Giovanni Neglia](http://www-sop.inria.fr/members/Giovanni.Neglia/publications.htm), [Marc Tommasi](http://researchers.lille.inria.fr/tommasi/#publications), [Mathieu Andreux](https://github.com/mandreux-owkin).
+
+## Acknowledgements
+FLamby was made possible thanks to the support of the following institutions:
+- [Owkin](www.owkin.com)
+- [Inria](www.inria.fr)
+- [Ecole polytechnique](www.polytechnique.edu)
+- [University of California - Berkeley](https://www.berkeley.edu/)
+- [University of Southern California (USC)](https://www.usc.edu/)
+- [Ecole Polytechnique Fédérale de Lausanne (EPFL)](www.epfl.ch)
+- [Universitäts Klikikum Bonn](https://www.ukbonn.de/patient_innen/international/english/)
