@@ -58,8 +58,8 @@ generic_args = {
     },
     "optimizer_class": torch.optim.SGD,
     "learning_rate": {
-        "Fed-Heart-Disease": 0.01,
-        "Fed-Camelyon16": 0.01,
+        "Fed-Heart-Disease": 0.00316227,
+        "Fed-Camelyon16": 0.316227,
         "Fed-ISIC2019": 0.01,
     },
     "num_updates": num_updates,
