@@ -26,7 +26,7 @@ class HeartDiseaseRaw(Dataset):
     data_path: str
         If data_path is given it will ignore the config file and look for the
         dataset directly in data_path. Defaults to None.
-        
+
     Attributes
     ----------
     data_dir: str
@@ -132,13 +132,20 @@ class HeartDiseaseRaw(Dataset):
         self.labels.where(self.labels == 0, 1, inplace=True)
         self.labels = torch.from_numpy(self.labels.values).to(self.X_dtype)
 
+        # Normalization much needed
+        self.features_tensor = torch.cat(
+            [self.features[i][None, :] for i in range(len(self.features))], axis=0
+        )
+        self.mean_of_features = self.features_tensor.mean(axis=0)
+        self.std_of_features = self.features_tensor.std(axis=0)
+
     def __len__(self):
         return len(self.labels)
 
     def __getitem__(self, idx):
         assert idx < len(self.features), "Index out of range."
 
-        X = self.features[idx]
+        X = (self.features[idx] - self.mean_of_features) / self.std_of_features
         y = self.labels[idx]
 
         return X, y
