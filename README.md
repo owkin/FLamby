@@ -350,4 +350,12 @@ FLamby was made possible thanks to the support of the following institutions:
 - [University of California - Berkeley](https://www.berkeley.edu/)
 - [University of Southern California (USC)](https://www.usc.edu/)
 - [Ecole Polytechnique Fédérale de Lausanne (EPFL)](www.epfl.ch)
-- [Universitäts Klikikum Bonn](https://www.ukbonn.de/patient_innen/international/english/)
+- [Universitätsklinikum Bonn](https://www.ukbonn.de/patient_innen/international/english/)
+
+![owkin-logo](docs/img/Owkin_Logo_Black.png)
+![inria-logo](docs/img/inr_logo_rouge.jpg)
+![ecole-polytechnique-logo](docs/img/ecole_polytechnique.png)
+![University of California - Berkeley](docs/img/Berkeley_wordmark_blue.png)
+![University of Southern California (USC)](docs/img/usc-logo.png)
+![epfl-logo](docs/img/logo-epfl-1024x576.png)
+![Universitätsklinikum Bonn](docs/img/ukb-logo.png)
