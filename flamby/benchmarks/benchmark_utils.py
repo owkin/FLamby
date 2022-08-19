@@ -388,9 +388,9 @@ def train_single_centric(
     )
     if (not apply_dp) and (dp_target_epsilon is not None):
         raise ValueError("Missing argument for DP")
-    if apply_dp and (dp_max_grad_norm is None):
+    if (not apply_dp) and (dp_max_grad_norm is not None):
         raise ValueError("Missing argument for DP")
-    if apply_dp and (dp_target_delta is None):
+    if (not apply_dp) and (dp_target_delta is not None):
         raise ValueError("Missing argument for DP")
 
     device = "cpu"
