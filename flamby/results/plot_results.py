@@ -65,13 +65,15 @@ for dir in dirs_multiple_seeds:
     results.append(df)
     dataset_names.append("_".join(dir.split("/")[-1].split(".")[0].split("_")[2:]))
 
-fig, axs = plt.subplots(2, 4, sharey=True, figsize=(40, 13), dpi=80)
+fig, axs = plt.subplots(3, 3, sharey=True, figsize=(40, 40), dpi=80)
 # Keep Room for Strategy labels
 fig.subplots_adjust(hspace=5.0)
 flattened_axs = axs.flatten()
 
-palette = sns.color_palette("mako")
+palette = sns.color_palette("mako", 14)
 for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)):
+    if name == dataset_names[-1]:
+        ax = flattened_axs[7]
     # Remove pooled results
     res = res.loc[res["Test"] != "Pooled Test"]
     # if "lidc" in name.lower():
@@ -105,6 +107,8 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
 
     # Messing with palettes to keep the same color for pooled and strategies
     current_palette = [palette[0]] + palette[1 : (current_num_clients + 1)] + palette[7:]
+    assert len(current_palette) == len(current_methods_display)
+    # print(current_palette[len(current_methods_display) -1])
     sns.barplot(
         ax=ax,
         x="Training Method",
@@ -135,9 +139,9 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
 
     # We only display the xlabel on figures from the second row except the 4th one because it has no counterpart(label can be removed entirely)
     # and y label on the first figure of each row
-    if idx < 3:
+    if idx < 3 or idx == 4:
         ax.set(xlabel=None)
-    if idx not in [0, 4]:
+    if idx not in [0, 3, 7]:
         ax.set(ylabel=None)
 
     # ugly but no time
@@ -155,6 +159,7 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
     ax.set_title(current_title, fontsize=35, fontweight="heavy")
 
 # Hide the last plot
+flattened_axs[-3].set_visible(False)
 flattened_axs[-1].set_visible(False)
 plt.tight_layout()
 plt.savefig("plot_results_benchmarks.png")
