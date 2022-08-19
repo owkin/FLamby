@@ -106,7 +106,7 @@ def split_indices_dirichlet(
         # For each original center
         for orig_center_idx in orig_centers_indices:
             # Get the ones corresponding to this value
-            idx_samples_in_orig = original_table[split][0] == orig_center_idx
+            idx_samples_in_orig = original_table[split][0, :] == orig_center_idx
             assignment_new_client[idx_samples_in_orig] = np.random.choice(
                 np.arange(num_target_centers),
                 p=proba_new_centers[orig_center_idx],
