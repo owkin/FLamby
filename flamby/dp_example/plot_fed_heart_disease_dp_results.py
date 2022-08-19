@@ -8,6 +8,7 @@ sns.set_theme(style="darkgrid")
 
 
 results = pd.read_csv("results_fed_heart_disease.csv")
+results = results.rename(columns={"perf": "Performance"})
 linestyle_str = [
     ("solid", "solid"),  # Same as (0, ()) or '-'
     ("dotted", "dotted"),  # Same as (0, (1, 1)) or ':'
@@ -33,7 +34,7 @@ for i, d in enumerate(deltas):
     sns.lineplot(
         data=cdf,
         x="e",
-        y="perf",
+        y="Performance",
         label=f"delta={d}",
         linestyle=linestyles[::-1][i][1],
         ax=ax,
@@ -43,10 +44,12 @@ xtick_values = [d for d in results["e"].unique() if not (np.isnan(d))]
 xlabels = [str(v) for v in xtick_values]
 ax.set_xticks(xtick_values, xlabels)
 ax.axhline(
-    np.array(results.loc[results["d"].isnull(), "perf"].tolist()).mean(), color="black"
+    np.array(results.loc[results["d"].isnull(), "Performance"].tolist()).mean(),
+    color="black",
+    label="Baseline wo DP",
 )
 ax.set_xlim(0.1, 50)
 plt.legend()
 plt.xlabel("epsilon")
-plt.ylabel("Perf")
+plt.ylabel("Performance")
 plt.savefig("perf_function_of_dp_heart_disease.pdf", dpi=100, bbox_inches="tight")
