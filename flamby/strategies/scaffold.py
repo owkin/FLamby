@@ -1,3 +1,4 @@
+import warnings
 from typing import List
 
 import torch
@@ -112,6 +113,10 @@ class Scaffold(FedAvg):
             log_basename=log_basename,
             logdir=logdir,
         )
+
+        # Add a warning if user wants to make DP
+        if dp_target_epsilon is not None:
+            warnings.warn("Warning, the DP bounds passed are not valid for Scaffold.")
 
         # initialize the previous state of each client
         self.previous_client_state_list = [
