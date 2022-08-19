@@ -1,10 +1,10 @@
 import os
 import re
-from glob import glob
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
-import numpy as np
+
+# import numpy as np
 import pandas as pd
 import seaborn as sns
 
@@ -47,23 +47,23 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 #     df.to_csv(os.path.join(dir_path, f"results_benchmark_{name}.csv"), index=False)
 
 dataset_names = []
-results =[]
+results = []
 # directory names should be as below
 dirs_multiple_seeds = [
-            os.path.join(dir_path, "results_benchmark_fed_camelyon16"),
-            os.path.join(dir_path, "results_benchmark_fed_lidc_idri"),
-            os.path.join(dir_path, "results_benchmark_fed_ixi"),
-            os.path.join(dir_path, "results_benchmark_fed_tcga_brca"),
-            os.path.join(dir_path, "results_benchmark_fed_kits19"),
-            os.path.join(dir_path, "results_benchmark_fed_isic2019"),
-            os.path.join(dir_path, "results_benchmark_fed_heart_disease"),
-            ]
+    os.path.join(dir_path, "results_benchmark_fed_camelyon16"),
+    os.path.join(dir_path, "results_benchmark_fed_lidc_idri"),
+    os.path.join(dir_path, "results_benchmark_fed_ixi"),
+    os.path.join(dir_path, "results_benchmark_fed_tcga_brca"),
+    os.path.join(dir_path, "results_benchmark_fed_kits19"),
+    os.path.join(dir_path, "results_benchmark_fed_isic2019"),
+    os.path.join(dir_path, "results_benchmark_fed_heart_disease"),
+]
 for dir in dirs_multiple_seeds:
-    csv_files = [os.path.join(dir,f) for f in os.listdir(dir)]
+    csv_files = [os.path.join(dir, f) for f in os.listdir(dir)]
     result_pds = [pd.read_csv(f) for f in csv_files]
     df = pd.concat(result_pds, ignore_index=True)
     results.append(df)
-    dataset_names.append( "_".join(dir.split("/")[-1].split(".")[0].split("_")[2:]) )
+    dataset_names.append("_".join(dir.split("/")[-1].split(".")[0].split("_")[2:]))
 
 fig, axs = plt.subplots(2, 4, sharey=True, figsize=(40, 13), dpi=80)
 # Keep Room for Strategy labels
@@ -74,7 +74,10 @@ palette = sns.color_palette("mako")
 for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)):
     # Remove pooled results
     res = res.loc[res["Test"] != "Pooled Test"]
-    res = res[["Method", "Metric"]]
+    # if "lidc" in name.lower():
+    #     res = res[["Method", "Metric"]]
+    # else:
+    #     res = res[["Method", "Metric", "seed"]]
 
     current_num_clients = get_nb_clients_from_dataset(name)
     current_methods = (
@@ -84,20 +87,16 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
     )
 
     res = res.loc[res["Method"].isin(current_methods)]
-    # TODO remove try except when we have full results
-    try:
-        assert len(res["Method"].unique()) == len(current_methods)
-    except AssertionError:
-        for c in current_methods:
-            if c not in res["Method"].unique().tolist():
-                print(c)
-                dictdf = res.to_dict("records")
-                for i in range(current_num_clients):
-                    dictdf.append({"Method": c, "Metric": np.nan})
-                res = pd.DataFrame.from_dict(dictdf)
 
-    #for m in current_methods:
-    #    assert len(res.loc[res["Method"] == m].index) == current_num_clients
+    assert len(res["Method"].unique()) == len(current_methods)
+
+    if not ("lidc" in name.lower()):
+        assert len(res["seed"].unique()) == 5
+        for m in current_methods:
+            assert len(res.loc[res["Method"] == m].index) == (current_num_clients * 5)
+    else:
+        for m in current_methods:
+            assert len(res.loc[res["Method"] == m].index) == (current_num_clients)
 
     # Pretiifying render
     res = res.rename(columns={"Method": "Training Method"})
@@ -142,16 +141,16 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
         ax.set(ylabel=None)
 
     # ugly but no time
-    #current_title = " ".join([word.capitalize() for word in name.split("_")])
+    # current_title = " ".join([word.capitalize() for word in name.split("_")])
     title_dicts = {
-                'fed_camelyon16': 'Fed-Camelyon16',
-                'fed_lidc_idri': 'Fed-LIDC-IDRI',
-                'fed_ixi': 'Fed-IXI',
-                'fed_tcga_brca': 'Fed-TCGA-BRCA',
-                'fed_kits19': 'Fed-KITS2019',
-                'fed_isic2019': 'Fed-ISIC2019',
-                'fed_heart_disease': 'Fed-Heart-Disease',
-                }
+        "fed_camelyon16": "Fed-Camelyon16",
+        "fed_lidc_idri": "Fed-LIDC-IDRI",
+        "fed_ixi": "Fed-IXI",
+        "fed_tcga_brca": "Fed-TCGA-BRCA",
+        "fed_kits19": "Fed-KITS2019",
+        "fed_isic2019": "Fed-ISIC2019",
+        "fed_heart_disease": "Fed-Heart-Disease",
+    }
     current_title = title_dicts[name]
     ax.set_title(current_title, fontsize=35, fontweight="heavy")
 
