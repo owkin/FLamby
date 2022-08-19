@@ -1,4 +1,4 @@
-# Using FLamby with Fed-BioMed
+# Using FLamby with FedML
 
 This document highlights how to interface FLamby with [FedML](https://github.com/FedML-AI/FedML).
 
