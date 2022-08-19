@@ -344,12 +344,12 @@ We list them in the order of the companion article, following the [CREDIT framew
 
 ## Acknowledgements
 FLamby was made possible thanks to the support of the following institutions:
-- [Owkin](www.owkin.com)
-- [Inria](www.inria.fr)
-- [Ecole polytechnique](www.polytechnique.edu)
+- [Owkin](https://www.owkin.com)
+- [Inria](https://www.inria.fr)
+- [Ecole polytechnique](https://ww.polytechnique.edu)
 - [University of California - Berkeley](https://www.berkeley.edu/)
 - [University of Southern California (USC)](https://www.usc.edu/)
-- [EPFL](www.epfl.ch)
+- [EPFL](https://www.epfl.ch)
 - [Universitätsklinikum Bonn](https://www.ukbonn.de/patient_innen/international/english/)
 
 <img src="docs/img/Owkin_Logo_Black.png" alt="owkin-logo" width="200"/><img src="docs/img/inr_logo_rouge.jpg" alt="inria-logo" width="200"/><img src="docs/img/ecole_polytechnique.png" alt="ecole-polytechnique-logo" width="200"/><img src="docs/img/Berkeley_wordmark_blue.png" alt="berkeley-logo" width="200"/>
