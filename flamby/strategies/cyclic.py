@@ -109,6 +109,7 @@ class Cyclic:
         self.dp_target_epsilon = dp_target_epsilon
         self.dp_target_delta = dp_target_delta
         self.dp_max_grad_norm = dp_max_grad_norm
+        self._seed = seed
 
         self.log = log
         self.log_period = log_period
