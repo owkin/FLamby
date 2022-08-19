@@ -151,7 +151,11 @@ class _Model:
 
             privacy_engine = PrivacyEngine()
 
-            (self.model, self._optimizer, _,) = privacy_engine.make_private_with_epsilon(
+            (
+                self.model,
+                self._optimizer,
+                self._train_dl,
+            ) = privacy_engine.make_private_with_epsilon(
                 module=self.model,
                 optimizer=self._optimizer,
                 data_loader=self._train_dl,

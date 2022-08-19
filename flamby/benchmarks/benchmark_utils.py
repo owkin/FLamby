@@ -409,7 +409,7 @@ def train_single_centric(
         # put model in train mode if not already the case
         model.train()
 
-        model, opt, _ = privacy_engine.make_private_with_epsilon(
+        model, opt, train_dl = privacy_engine.make_private_with_epsilon(
             module=model,
             optimizer=opt,
             data_loader=train_dl,
