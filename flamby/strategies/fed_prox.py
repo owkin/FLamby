@@ -79,6 +79,7 @@ class FedProx(FedAvg):
         dp_target_epsilon: float = None,
         dp_target_delta: float = None,
         dp_max_grad_norm: float = None,
+        seed=None,
         log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
