@@ -131,6 +131,7 @@ class FedOpt:
                 log_period=self.log_period,
                 log_basename=self.log_basename,
                 logdir=self.logdir,
+                seed=self._seed,
             )
             for i, _train_dl in enumerate(training_dataloaders)
         ]
