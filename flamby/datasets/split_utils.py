@@ -1,13 +1,43 @@
 import torch
 from torch.utils.data import Dataset
 
+# def split_indices():
+
+
+def get_client_sizes(dataset_class, num_original_centers, debug=False):
+    """Gets size of each client in dataset class
+
+    Parameters
+    ----------
+    dataset_class : Dataset class
+        Pytorch class (uninstantiated)
+    num_original_centers : int
+        Number of original centers
+    debug : bool, optional
+        Whether to proceed in debug mode, by default False
+
+    Returns
+    -------
+    dict[List]
+        Dictionary with entries "train" and "test", each containing a list
+        with the size of each client
+    """
+    dataset_sizes = {"train": [], "test": []}
+    for idx_client in range(num_original_centers):
+        for split, is_train in [("train", True), ("test", False)]:
+            current_dataset = dataset_class(
+                center=idx_client, train=is_train, debug=debug
+            )
+            dataset_sizes[split].append(len(current_dataset))
+    return dataset_sizes
+
 
 def split_dataset(dataset_class, num_original_centers, num_target_centers, debug=False):
     """This function uses the original natural splits found inside the provided
     FLamby dataset class and create a class with num_target_centers by splitting
     the original centers (both train and test) into several fake centers to
-    match the target number of centers to create. The train-test split is kept
-    the same.
+    match the target number of centers to create.
+    The train-test split is kept the same.
     The resulting class cannot be used in pooled mode.
 
     Parameters
@@ -35,28 +65,14 @@ def split_dataset(dataset_class, num_original_centers, num_target_centers, debug
     if num_target_centers == num_original_centers:
         return dataset_class
     else:
-        datasets = []
-        for i in range(num_original_centers):
-            current_dataset_train = dataset_class(center=i, train=True, debug=debug)
-            current_dataset_test = dataset_class(center=i, train=False, debug=debug)
-            datasets.append(
-                {
-                    "train": {
-                        "dataset": current_dataset_train,
-                        "size": len(current_dataset_train),
-                    },
-                    "test": {
-                        "dataset": current_dataset_test,
-                        "size": len(current_dataset_test),
-                    },
-                }
-            )
+        dataset_sizes = get_client_sizes(
+            dataset_class, num_original_centers, debug=debug
+        )
+        total_sizes = {key: sum(lengths) for key, lengths in dataset_sizes.items()}
 
-        total_size_train = sum([d["train"]["size"] for d in datasets])
-        total_size_test = sum([d["test"]["size"] for d in datasets])
         assert num_target_centers < min(
-            total_size_test, total_size_train
-        ), f"There is not enough samples to create {num_target_centers}"
+            total_sizes.values()
+        ), f"There are not enough samples to create {num_target_centers}"
 
         class SplitDataset(Dataset):
             """This class is basically a dataset_class but can be instantiated
@@ -82,15 +98,16 @@ def split_dataset(dataset_class, num_original_centers, num_target_centers, debug
                 ]
                 self.center = center
                 split_key = "train" if train else "test"
-                datasets_sizes = [d[split_key]["size"] for d in datasets]
-                total_size = sum(datasets_sizes)
+                total_size = sum(dataset_sizes[split_key])
                 # We flatten all the original datasets one after the other
                 self.ids_datasets = []
                 self.indices_in_orig_center = []
-                for didx in range(len(datasets_sizes)):
-                    for i in range(datasets_sizes[didx]):
-                        self.ids_datasets.append(didx)
-                        self.indices_in_orig_center.append(i)
+                for idx_original_client in range(len(dataset_sizes[split_key])):
+                    for idx_sample in range(
+                        dataset_sizes[split_key][idx_original_client]
+                    ):
+                        self.ids_datasets.append(idx_original_client)
+                        self.indices_in_orig_center.append(idx_sample)
 
                 # every dataset has size
                 self.mean_dataset_size = total_size // num_target_centers
@@ -134,6 +151,7 @@ if __name__ == "__main__":
         dl(FedHeartDisease(center=i, train=False), batch_size=BATCH_SIZE, shuffle=False)
         for i in range(NUM_CLIENTS)
     ]
+    print("Finished loading origiinal datasets")
     # new dataset
     FedHeartDiseaseSplit20 = split_dataset(FedHeartDisease, NUM_CLIENTS, ntarget)
     new_train_dls = [
@@ -152,7 +170,7 @@ if __name__ == "__main__":
         )
         for i in range(ntarget)
     ]
-
+    print("created new datasets")
     assert sum([len(t.dataset) for t in train_dls]) == sum(
         [len(t.dataset) for t in new_train_dls]
     )
