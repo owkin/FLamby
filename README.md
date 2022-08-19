@@ -354,3 +354,15 @@ FLamby was made possible thanks to the support of the following institutions:
 
 <img src="docs/img/Owkin_Logo_Black.png" alt="owkin-logo" width="200"/><img src="docs/img/inr_logo_rouge.jpg" alt="inria-logo" width="200"/><img src="docs/img/ecole_polytechnique.png" alt="ecole-polytechnique-logo" width="200"/><img src="docs/img/Berkeley_wordmark_blue.png" alt="berkeley-logo" width="200"/>
 <img src="docs/img/usc-logo.png" alt="usc-logo" width="200"/><img src="docs/img/logo-epfl-1024x576.png" alt="epfl-logo" width="200"/><img src="docs/img/ukb-logo.png" alt="ukb-logo" width="200"/>
+
+## Citing FLamby
+
+```bibtex
+@misc{flamby,
+    title={FLamby: Datasets and Benchmarks for Cross-Silo Federated Learning in Realistic Healthcare Settings},
+    authors={
+        Ogier du Terrail, Jean and Ayed, Samy-Safwan and Cyffers, Edwige and Grimberg, Felix and He, Chaoyang and Loeb, Regis and Mangold, Paul and Marchand, Tanguy and Marfoq, Othmane and Mushtaq, Erum and Muzellec, Boris and Philippenko, Constantin and  Silva,Santiago and Teleńczuk, Maria and Albarqouni, Shadi and Avestimehr, Salman and Bellet, Aurélien and Dieuleveut, Aymeric and Jaggi, Martin and Karimireddy, Sai Praneeth and Lorenzi, Marco and Neglia, Giovanni and Tommasi, Marc and Andreux, Mathieu
+    },
+    year={2022}
+}
+```
