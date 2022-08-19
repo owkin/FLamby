@@ -346,7 +346,7 @@ We list them in the order of the companion article, following the [CREDIT framew
 FLamby was made possible thanks to the support of the following institutions:
 - [Owkin](https://www.owkin.com)
 - [Inria](https://www.inria.fr)
-- [Ecole polytechnique](https://ww.polytechnique.edu)
+- [Ecole polytechnique](https://www.polytechnique.edu)
 - [University of California - Berkeley](https://www.berkeley.edu/)
 - [University of Southern California (USC)](https://www.usc.edu/)
 - [EPFL](https://www.epfl.ch)
