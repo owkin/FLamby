@@ -43,7 +43,7 @@
         "Scaffold": {
             "learning_rate": 0.001,
             "optimizer_class": "torch.optim.SGD",
-            "server_learning_rate": 0.01
+            "server_learning_rate": 1.0
         }
     }
 }
