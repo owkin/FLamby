@@ -386,12 +386,12 @@ def train_single_centric(
         and (dp_max_grad_norm is not None)
         and (dp_target_delta is not None)
     )
-    if apply_dp and (dp_target_epsilon is None):
-        raise ValueError("Cannot apply DP with dp_target_epsilon to None")
+    if (not apply_dp) and (dp_target_epsilon is not None):
+        raise ValueError("Missing argument for DP")
     if apply_dp and (dp_max_grad_norm is None):
-        raise ValueError("Cannot apply DP with dp_max_grad_norm to None")
+        raise ValueError("Missing argument for DP")
     if apply_dp and (dp_target_delta is None):
-        raise ValueError("Cannot apply DP with dp_target_delta to None")
+        raise ValueError("Missing argument for DP")
 
     device = "cpu"
     model = copy.deepcopy(global_init)
