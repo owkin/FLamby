@@ -406,6 +406,9 @@ def train_single_centric(
         seed = seed if seed is not None else int(time.time())
         privacy_engine = PrivacyEngine()
 
+        # put model in train mode if not already the case
+        model.train()
+
         model, opt, _ = privacy_engine.make_private_with_epsilon(
             module=model,
             optimizer=opt,
