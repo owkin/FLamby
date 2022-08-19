@@ -36,6 +36,15 @@ class FedProx(FedAvg):
         The number of updates to do on each client at each round.
     nrounds : int
         The number of communication rounds to do.
+    dp_target_epsilon: float
+        The target epsilon for (epsilon, delta)-differential
+         private guarantee. Defaults to None.
+    dp_target_delta: float
+        The target delta for (epsilon, delta)-differential
+         private guarantee. Defaults to None.
+    dp_max_grad_norm: float
+        The maximum L2 norm of per-sample gradients;
+        used to enforce differential privacy. Defaults to None.
     mu: float
         The mu parameter involved in the proximal term. If mu = 0, then FedProx
         is reduced to FedAvg. Need to be tuned, there are no default mu values
@@ -67,14 +76,17 @@ class FedProx(FedAvg):
         num_updates: int,
         nrounds: int,
         mu: float,
+        dp_target_epsilon: float = None,
+        dp_target_delta: float = None,
+        dp_max_grad_norm: float = None,
+        seed=None,
         log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
         log_basename: str = "fed_prox",
         logdir: str = "./runs",
     ):
-        """ Cf class docstring
-        """
+        """Cf class docstring"""
         super().__init__(
             training_dataloaders,
             model,
@@ -83,11 +95,15 @@ class FedProx(FedAvg):
             learning_rate,
             num_updates,
             nrounds,
+            dp_target_epsilon,
+            dp_target_delta,
+            dp_max_grad_norm,
             log,
             log_period,
             bits_counting_function,
             log_basename=log_basename,
             logdir=logdir,
+            seed=seed,
         )
         self.mu = mu
 

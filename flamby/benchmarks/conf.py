@@ -140,6 +140,9 @@ def get_strategies(config, learning_rate=None, args={}):
                 "tau",
                 "beta1",
                 "beta2",
+                "dp_target_epsilon",
+                "dp_target_delta",
+                "dp_max_grad_norm",
             ] and (v is not None):
                 strategies[args["strategy"]][k] = v
         if args["strategy"] != "Cyclic":
