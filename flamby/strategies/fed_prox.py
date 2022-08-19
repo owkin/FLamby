@@ -103,6 +103,7 @@ class FedProx(FedAvg):
             bits_counting_function,
             log_basename=log_basename,
             logdir=logdir,
+            seed=seed,
         )
         self.mu = mu
 
