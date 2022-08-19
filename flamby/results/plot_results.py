@@ -65,7 +65,7 @@ for dir in dirs_multiple_seeds:
     results.append(df)
     dataset_names.append("_".join(dir.split("/")[-1].split(".")[0].split("_")[2:]))
 
-fig, axs = plt.subplots(3, 3, sharey=True, figsize=(40, 40), dpi=80)
+fig, axs = plt.subplots(3, 3, sharey=True, figsize=(30, 22), dpi=80)
 # Keep Room for Strategy labels
 fig.subplots_adjust(hspace=5.0)
 flattened_axs = axs.flatten()
@@ -131,11 +131,11 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
 
     ax.yaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
     label_format = "{:.1f}"
-    ax.set_yticklabels([label_format.format(y) for y in ticks_loc], fontsize=25)
+    ax.set_yticklabels([label_format.format(y) for y in ticks_loc], fontsize=35)
 
-    ax.set_xticklabels(labels, rotation=90, fontsize=25, fontweight="heavy")
-    ax.set_xlabel(ax.get_xlabel(), fontsize=25, fontweight="heavy")
-    ax.set_ylabel(ax.get_ylabel(), fontsize=25, fontweight="heavy")
+    ax.set_xticklabels(labels, rotation=90, fontsize=35, fontweight="heavy")
+    ax.set_xlabel(ax.get_xlabel(), fontsize=35, fontweight="heavy")
+    ax.set_ylabel(ax.get_ylabel(), fontsize=35, fontweight="heavy")
 
     # We only display the xlabel on figures from the second row except the 4th one because it has no counterpart(label can be removed entirely)
     # and y label on the first figure of each row
@@ -156,7 +156,7 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
         "fed_heart_disease": "Fed-Heart-Disease",
     }
     current_title = title_dicts[name]
-    ax.set_title(current_title, fontsize=35, fontweight="heavy")
+    ax.set_title(current_title, fontsize=45, fontweight="heavy")
 
 # Hide the last plot
 flattened_axs[-3].set_visible(False)
