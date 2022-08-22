@@ -81,8 +81,11 @@ def split_indices_dirichlet(
     orig_centers_indices = np.unique(original_table["train"][0])
     num_orig_centers = orig_centers_indices.size
 
+    # Generate random numbers with seed
+    rng = np.random.default_rng(seed)
+
     # Draw the attribution params for each dataset
-    proba_new_centers = np.random.dirichlet(
+    proba_new_centers = rng.dirichlet(
         dirichlet_param * np.ones(num_target_centers), size=(num_orig_centers)
     )
     # Check that the expected number of samples per dataset is large enough
