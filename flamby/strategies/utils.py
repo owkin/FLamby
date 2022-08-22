@@ -193,7 +193,7 @@ class _Model:
                 # edge cases with drop_last=False
                 _batch_size = X.shape[0]
                 _num_batches_per_epoch = (_size // _batch_size) + int(
-                    (_size % _batch_size) == 0
+                    (_size % _batch_size) != 0
                 )
             # Compute prediction and loss
             _pred = self.model(X)
@@ -259,7 +259,7 @@ class _Model:
                 # edge cases with drop_last=False
                 _batch_size = X.shape[0]
                 _num_batches_per_epoch = (_size // _batch_size) + int(
-                    (_size % _batch_size) == 0
+                    (_size % _batch_size) != 0
                 )
             # Compute prediction and loss
             _pred = self.model(X)
@@ -331,7 +331,7 @@ class _Model:
                 # edge cases with drop_last=False
                 _batch_size = X.shape[0]
                 _num_batches_per_epoch = (_size // _batch_size) + int(
-                    (_size % _batch_size) == 0
+                    (_size % _batch_size) != 0
                 )
             # We will implement correction by modifying loss as
             # corrected_loss = loss - correction @ model_params.
