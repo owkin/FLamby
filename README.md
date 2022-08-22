@@ -352,7 +352,11 @@ FLamby was made possible thanks to the support of the following institutions:
 - [EPFL](https://www.epfl.ch)
 - [Universitätsklinikum Bonn](https://www.ukbonn.de/patient_innen/international/english/)
 
-<img src="docs/img/Owkin_Logo_Black.png" alt="owkin-logo" width="200"/><img src="docs/img/inr_logo_rouge.jpg" alt="inria-logo" width="200"/><img src="docs/img/ecole_polytechnique.png" alt="ecole-polytechnique-logo" width="200"/><img src="docs/img/Berkeley_wordmark_blue.png" alt="berkeley-logo" width="200"/>
+<picture>
+  <source srcset="docs/img/Owkin_Logo_White.png" media="(prefers-color-scheme: dark)">
+  <img src="docs/img/Owkin_Logo_Black.png" alt="owkin-logo" width="200"/>
+</picture>
+<img src="docs/img/inr_logo_rouge.jpg" alt="inria-logo" width="200"/><img src="docs/img/ecole_polytechnique.png" alt="ecole-polytechnique-logo" width="200"/><img src="docs/img/Berkeley_wordmark_blue.png" alt="berkeley-logo" width="200"/>
 <img src="docs/img/usc-logo.png" alt="usc-logo" width="200"/><img src="docs/img/logo-epfl-1024x576.png" alt="epfl-logo" width="200"/><img src="docs/img/ukb-logo.png" alt="ukb-logo" width="200"/>
 
 ## Citing FLamby
