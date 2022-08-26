@@ -20,7 +20,8 @@ of the dataset.
 | Task               | Weakly Supervised (Binary) Classification.
 
 ### License and terms of use
-This dataset is licensed under a Creative Commons 1.0 Universal (**CC0 1.0**) license by its authors.
+This dataset is licensed under an open access Creative Commons 1.0 Universal (**CC0 1.0**)
+license by its authors.
 *Anyone using this dataset should abide by its licence and*
 *give proper attribution to the original authors.*
 

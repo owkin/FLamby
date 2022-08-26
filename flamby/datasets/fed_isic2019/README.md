@@ -24,8 +24,9 @@ through the following steps.
 ### Ethics
 As per the [Terms of Use](https://challenge.isic-archive.com/terms-of-use/) of the
 [website](https://challenge.isic-archive.com/) hosting the dataset,
-the dataset has been properly de-identified in accordance with the
-applicable requirements.
+one of the requirements for this datasets to have been hosted is that it is
+properly de-identified in accordance with the
+applicable requirements and legislations.
 
 ## Data
 To download the ISIC 2019 training data and extract the original datacenter information for each image,

@@ -23,6 +23,10 @@ users should
 As per the [TCGA policies](https://www.cancer.gov/about-nci/organization/ccg/research/structural-genomics/tcga/history/policies),
 special care was devoted to ensure privacy protection of research subjects,
 including but not limited to HIPAA compliance.
+Note that we do not use the genetic part of TCGA whose access is restricted due to its sensitivity.
+
+In particular, as per the [GDC data access policy](https://gdc.cancer.gov/about-gdc/gdc-policies),
+the terms bind users as to "not attempt to identify individual human research participants from whom the data were obtained."
 
 ## Dataset description
 
