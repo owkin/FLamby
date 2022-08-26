@@ -24,6 +24,9 @@ As per the [TCGA policies](https://www.cancer.gov/about-nci/organization/ccg/res
 special care was devoted to ensure privacy protection of research subjects,
 including but not limited to HIPAA compliance.
 
+In particular, as per the [GDC data access policy](https://gdc.cancer.gov/about-gdc/gdc-policies),
+the terms bind users as to "not attempt to identify individual human research participants from whom the data were obtained."
+
 ## Dataset description
 
 |                    | Dataset description
