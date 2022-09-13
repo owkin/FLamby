@@ -164,7 +164,8 @@ Fed-BioMed requires to pass the `batch_size`, `learning rate` and number of loca
 Copy-paste the code below in your notebook or interactive shell:
 ```python
 # We create a dictionary of FedBioMed kwargs with the: batch_size, learning-rate and epochs.
-# Fed-BioMed also count local training steps in batch-updates
+# Fed-BioMed also counts local training steps in batch-updates (change currently made in the following branch of Fed-BioMed):
+# https://gitlab.inria.fr/fedbiomed/fedbiomed/-/tree/poc/flamby (will be integrated to master very soon)
 # In this example we set this parameter to 100, as in the FLamby benchmarks
 training_args = {
     'batch_size': BATCH_SIZE,
