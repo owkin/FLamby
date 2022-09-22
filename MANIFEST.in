@@ -1,1 +1,1 @@
-recursive-include flamby/*.csv
+recursive-include flamby *.csv
