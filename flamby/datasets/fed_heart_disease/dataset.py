@@ -190,6 +190,8 @@ class HeartDiseaseRaw(Dataset):
 
         X = (self.features[idx] - self.mean_of_features[idx]) / self.std_of_features[idx]
         y = self.labels[idx]
+        X = X.reshape((-1, 13))
+        y = y.reshape((X.shape[0], 1))
 
         return X, y
 
