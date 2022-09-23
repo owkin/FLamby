@@ -192,8 +192,8 @@ class HeartDiseaseRaw(Dataset):
             self.std_of_features[idx] + 1e-9
         )
         y = self.labels[idx]
-        X = X.reshape((-1, 13))
-        y = y.reshape((X.shape[0], 1))
+        X = X.reshape((13))
+        y = y.reshape((1))
 
         return X, y
 
