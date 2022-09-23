@@ -161,6 +161,22 @@ class HeartDiseaseRaw(Dataset):
             self.mean_of_features[i] = self.centers_stats[self.centers[i]]["mean"]
             self.std_of_features[i] = self.centers_stats[self.centers[i]]["std"]
 
+        # We normalize on train only for pooled as well
+        to_select = [(self.sets[idx] == "train") for idx, _ in enumerate(self.features)]
+        features_train = [fp for idx, fp in enumerate(self.features) if to_select[idx]]
+        features_tensor_train = torch.cat(
+            [features_train[i][None, :] for i in range(len(features_train))],
+            axis=0,
+        )
+        self.mean_of_features_pooled_train = features_tensor_train.mean(axis=0)
+        self.std_of_features_pooled_train = features_tensor_train.std(axis=0)
+        self.mean_of_features_pooled_train = torch.repeat_interleave(
+            self.mean_of_features_pooled_train, len(self.features), dim=0
+        )
+        self.std_of_features_pooled_train = torch.repeat_interleave(
+            self.std_of_features_pooled_train, len(self.features), dim=0
+        )
+
     def __len__(self):
         return len(self.labels)
 
@@ -222,6 +238,9 @@ class FedHeartDisease(HeartDiseaseRaw):
         self.chosen_centers = [center]
         if pooled:
             self.chosen_centers = [0, 1, 2, 3]
+            # We set the apropriate means
+            self.mean_of_features = self.mean_of_features_pooled_train
+            self.std_of_features = self.std_of_features_pooled_train
 
         if train:
             self.chosen_sets = ["train"]
@@ -238,3 +257,9 @@ class FedHeartDisease(HeartDiseaseRaw):
         self.sets = [fp for idx, fp in enumerate(self.sets) if to_select[idx]]
         self.labels = [fp for idx, fp in enumerate(self.labels) if to_select[idx]]
         self.centers = [fp for idx, fp in enumerate(self.centers) if to_select[idx]]
+        self.mean_of_features = [
+            fp for idx, fp in enumerate(self.mean_of_features) if to_select[idx]
+        ]
+        self.std_of_features = [
+            fp for idx, fp in enumerate(self.std_of_features) if to_select[idx]
+        ]
