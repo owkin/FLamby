@@ -242,6 +242,8 @@ class FedAdam(FedOpt):
     dp_max_grad_norm: float
         The maximum L2 norm of per-sample gradients; used to enforce
         differential privacy. Defaults to None.
+    seed: int
+        Seed to use for differential privacy. Defaults to None
     log: bool, optional
         Whether or not to store logs in tensorboard. Defaults to False.
     log_period: int, optional
@@ -278,6 +280,7 @@ class FedAdam(FedOpt):
         dp_target_epsilon: float = None,
         dp_target_delta: float = None,
         dp_max_grad_norm: float = None,
+        seed: int = None,
         log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
@@ -288,7 +291,6 @@ class FedAdam(FedOpt):
         logdir="./runs",
         log_basename="fed_adam",
     ):
-
         super().__init__(
             training_dataloaders,
             model,
@@ -300,6 +302,7 @@ class FedAdam(FedOpt):
             dp_target_epsilon,
             dp_target_delta,
             dp_max_grad_norm,
+            seed,
             log,
             log_period,
             bits_counting_function,
@@ -385,6 +388,8 @@ class FedYogi(FedOpt):
     dp_max_grad_norm: float
         The maximum L2 norm of per-sample gradients;
         used to enforce differential privacy. Defaults to None.
+    seed: int
+        Seed to use for differential privacy. Defaults to None
     log: bool, optional
         Whether or not to store logs in tensorboard. Defaults to False.
     log_period: int, optional
@@ -444,6 +449,7 @@ class FedYogi(FedOpt):
             dp_target_epsilon,
             dp_target_delta,
             dp_max_grad_norm,
+            seed,
             log,
             log_period,
             bits_counting_function,
@@ -536,6 +542,8 @@ class FedAdagrad(FedOpt):
     dp_max_grad_norm: float
         The maximum L2 norm of per-sample gradients;
         used to enforce differential privacy. Defaults to None.
+    seed: int
+        Seed to use for differential privacy. Defaults to None
     log: bool, optional
          Whether or not to store logs in tensorboard. Defaults to False.
     log_period: int, optional
@@ -572,6 +580,7 @@ class FedAdagrad(FedOpt):
         dp_target_epsilon: float = None,
         dp_target_delta: float = None,
         dp_max_grad_norm: float = None,
+        seed: int = None,
         log: bool = False,
         log_period: int = 100,
         bits_counting_function: callable = None,
@@ -594,6 +603,7 @@ class FedAdagrad(FedOpt):
             dp_target_epsilon,
             dp_target_delta,
             dp_max_grad_norm,
+            seed,
             log,
             log_period,
             bits_counting_function,
