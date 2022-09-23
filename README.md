@@ -222,6 +222,11 @@ python ixi_plotting.py
 cd flamby/datasets/fed_kits19/dataset_creation_scripts
 python kits19_heterogenity_plot.py
 ```
+- [Fed-Heart-Disease](./flamby/datasets/fed_heart_disease/README.md)
+```
+cd flamby/datasets/fed_heart_disease
+python heterogeneity_plot.py
+```
 
 
 ## Deploy documentations
