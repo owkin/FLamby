@@ -188,7 +188,9 @@ class HeartDiseaseRaw(Dataset):
     def __getitem__(self, idx):
         assert idx < len(self.features), "Index out of range."
 
-        X = (self.features[idx] - self.mean_of_features[idx]) / self.std_of_features[idx]
+        X = (self.features[idx] - self.mean_of_features[idx]) / (
+            self.std_of_features[idx] + 1e-9
+        )
         y = self.labels[idx]
         X = X.reshape((-1, 13))
         y = y.reshape((X.shape[0], 1))
