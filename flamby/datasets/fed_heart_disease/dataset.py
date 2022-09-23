@@ -170,12 +170,17 @@ class HeartDiseaseRaw(Dataset):
         )
         self.mean_of_features_pooled_train = features_tensor_train.mean(axis=0)
         self.std_of_features_pooled_train = features_tensor_train.std(axis=0)
-        self.mean_of_features_pooled_train = torch.repeat_interleave(
-            self.mean_of_features_pooled_train, len(self.features), dim=0
-        )
-        self.std_of_features_pooled_train = torch.repeat_interleave(
-            self.std_of_features_pooled_train, len(self.features), dim=0
-        )
+
+        # We convert everything back into lists
+
+        self.mean_of_features = torch.split(self.mean_of_features, 1)
+        self.std_of_features = torch.split(self.std_of_features, 1)
+        self.mean_of_features_pooled_train = [
+            self.mean_of_features_pooled_train for i in range(len(self.features))
+        ]
+        self.std_of_features_pooled_train = [
+            self.std_of_features_pooled_train for i in range(len(self.features))
+        ]
 
     def __len__(self):
         return len(self.labels)
