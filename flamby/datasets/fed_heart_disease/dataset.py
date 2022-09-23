@@ -132,12 +132,55 @@ class HeartDiseaseRaw(Dataset):
         self.labels.where(self.labels == 0, 1, inplace=True)
         self.labels = torch.from_numpy(self.labels.values).to(self.X_dtype)
 
-        # Normalization much needed
-        self.features_tensor = torch.cat(
-            [self.features[i][None, :] for i in range(len(self.features))], axis=0
+        # Per-center Normalization much needed
+        self.centers_stats = {}
+        for center in [0, 1, 2, 3]:
+            # We normalize on train only
+            to_select = [
+                (self.sets[idx] == "train") and (self.centers[idx] == center)
+                for idx, _ in enumerate(self.features)
+            ]
+            features_center = [
+                fp for idx, fp in enumerate(self.features) if to_select[idx]
+            ]
+            features_tensor_center = torch.cat(
+                [features_center[i][None, :] for i in range(len(features_center))],
+                axis=0,
+            )
+            mean_of_features_center = features_tensor_center.mean(axis=0)
+            std_of_features_center = features_tensor_center.std(axis=0)
+            self.centers_stats[center] = {
+                "mean": mean_of_features_center,
+                "std": std_of_features_center,
+            }
+
+        # We finally broadcast the means and stds over all datasets
+        self.mean_of_features = torch.zeros((len(self.features), 13), dtype=self.X_dtype)
+        self.std_of_features = torch.ones((len(self.features), 13), dtype=self.X_dtype)
+        for i in range(self.mean_of_features.shape[0]):
+            self.mean_of_features[i] = self.centers_stats[self.centers[i]]["mean"]
+            self.std_of_features[i] = self.centers_stats[self.centers[i]]["std"]
+
+        # We normalize on train only for pooled as well
+        to_select = [(self.sets[idx] == "train") for idx, _ in enumerate(self.features)]
+        features_train = [fp for idx, fp in enumerate(self.features) if to_select[idx]]
+        features_tensor_train = torch.cat(
+            [features_train[i][None, :] for i in range(len(features_train))],
+            axis=0,
         )
-        self.mean_of_features = self.features_tensor.mean(axis=0)
-        self.std_of_features = self.features_tensor.std(axis=0)
+        self.mean_of_features_pooled_train = features_tensor_train.mean(axis=0)
+        self.std_of_features_pooled_train = features_tensor_train.std(axis=0)
+
+        # We convert everything back into lists
+
+        self.mean_of_features = torch.split(self.mean_of_features, 1)
+        self.std_of_features = torch.split(self.std_of_features, 1)
+        self.mean_of_features_pooled_train = [
+            self.mean_of_features_pooled_train for i in range(len(self.features))
+        ]
+        self.std_of_features_pooled_train = [
+            self.std_of_features_pooled_train for i in range(len(self.features))
+        ]
 
     def __len__(self):
         return len(self.labels)
@@ -145,8 +188,12 @@ class HeartDiseaseRaw(Dataset):
     def __getitem__(self, idx):
         assert idx < len(self.features), "Index out of range."
 
-        X = (self.features[idx] - self.mean_of_features) / self.std_of_features
+        X = (self.features[idx] - self.mean_of_features[idx]) / (
+            self.std_of_features[idx] + 1e-9
+        )
         y = self.labels[idx]
+        X = X.reshape((13))
+        y = y.reshape((1))
 
         return X, y
 
@@ -200,6 +247,9 @@ class FedHeartDisease(HeartDiseaseRaw):
         self.chosen_centers = [center]
         if pooled:
             self.chosen_centers = [0, 1, 2, 3]
+            # We set the apropriate means
+            self.mean_of_features = self.mean_of_features_pooled_train
+            self.std_of_features = self.std_of_features_pooled_train
 
         if train:
             self.chosen_sets = ["train"]
@@ -216,3 +266,9 @@ class FedHeartDisease(HeartDiseaseRaw):
         self.sets = [fp for idx, fp in enumerate(self.sets) if to_select[idx]]
         self.labels = [fp for idx, fp in enumerate(self.labels) if to_select[idx]]
         self.centers = [fp for idx, fp in enumerate(self.centers) if to_select[idx]]
+        self.mean_of_features = [
+            fp for idx, fp in enumerate(self.mean_of_features) if to_select[idx]
+        ]
+        self.std_of_features = [
+            fp for idx, fp in enumerate(self.std_of_features) if to_select[idx]
+        ]

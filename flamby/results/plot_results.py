@@ -104,11 +104,17 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
     res = res.rename(columns={"Method": "Training Method"})
     res.loc[res["Training Method"] == "Pooled Training", "Training Method"] = "Pooled"
     current_methods_display = [re.sub(" Training", "", c) for c in current_methods]
+    current_methods_display = [
+        re.sub("Local", "Center", c) for c in current_methods_display
+    ]
 
     # Messing with palettes to keep the same color for pooled and strategies
     current_palette = [palette[0]] + palette[1 : (current_num_clients + 1)] + palette[7:]
     assert len(current_palette) == len(current_methods_display)
     # print(current_palette[len(current_methods_display) -1])
+    res["Training Method"] = [
+        re.sub("Local", "Center", m) for m in res["Training Method"].tolist()
+    ]
     sns.barplot(
         ax=ax,
         x="Training Method",
