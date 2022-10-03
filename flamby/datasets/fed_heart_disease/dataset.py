@@ -46,7 +46,10 @@ class HeartDiseaseRaw(Dataset):
     debug: bool
         Whether or not we use the dataset with only part of the features
     normalize: bool
-        Whether or not to normalize the features. Default to True.
+        Whether or not to normalize the features. We use the corresponding
+        training client to compute the mean and std per feature used to
+        normalize.
+        Defaults to True.
     """
 
     def __init__(
@@ -237,7 +240,11 @@ class FedHeartDisease(HeartDiseaseRaw):
         If data_path is given it will ignore the config file and look for the
         dataset directly in data_path. Defaults to None.
     normalize: bool
-        Whether or not to normalize the features. Default to True.
+        Whether or not to normalize the features. We use the corresponding
+        training client to compute the mean and std per feature used to
+        normalize. When using pooled=True, we use the training part of the full
+        dataset to compute the statistics, in order to reflect the differences
+        between available informations in FL and pooled mode. Defaults to True.
     """
 
     def __init__(
