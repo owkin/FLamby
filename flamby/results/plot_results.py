@@ -9,6 +9,7 @@ import pandas as pd
 import seaborn as sns
 
 sns.set()
+SHAREY = False
 
 
 # utils to fetch number of clients from each dataset names
@@ -34,18 +35,6 @@ strategies = [strat + str(100) for strat in strategies_names]
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-# TODO remove only there for debugging purposes
-# for name in ["fed_lidc_idri", "fed_ixi", "fed_camelyon16"]:
-#     current_num_clients = get_nb_clients_from_dataset(name)
-#     methods = strategies + ['Pooled Training'] +  ["Local " + str(i) for i in range(current_num_clients)]
-#     # duplicate methods
-#     methods = [m for m in methods for _ in range(current_num_clients)]
-#     nrows = len(methods)
-#     metrics = np.random.uniform(0, 1, nrows)
-#     tests = [""] * nrows
-#     df = pd.DataFrame({"Method": methods, "Metric": metrics, "Test": tests})
-#     df.to_csv(os.path.join(dir_path, f"results_benchmark_{name}.csv"), index=False)
-
 dataset_names = []
 results = []
 # directory names should be as below
@@ -65,11 +54,40 @@ for dir in dirs_multiple_seeds:
     results.append(df)
     dataset_names.append("_".join(dir.split("/")[-1].split(".")[0].split("_")[2:]))
 
-fig, axs = plt.subplots(3, 3, sharey=True, figsize=(30, 22), dpi=80)
+fig, axs = plt.subplots(3, 3, figsize=(30, 22), dpi=80)
+
+
+def partial_share_y_axes(axs):
+    # Manage share using grouper objects
+    for row_idx in range(axs.shape[0]):
+        target = axs[row_idx, 0]
+        for col_idx in range(1, axs.shape[1]):
+            ax = axs[row_idx, col_idx]
+            target.get_shared_y_axes().join(target, ax)
+
+    # Turn off y tick labels and offset text for all but the left most column
+    for ax in axs[:, 1:].flat:
+        ax.yaxis.set_tick_params(which="both", labelleft=False, labelright=False)
+        ax.yaxis.offsetText.set_visible(False)
+
+
+if SHAREY:
+    # We share y axis for the first 2 rows
+    partial_share_y_axes(axs[:2, :])
+
 # Keep Room for Strategy labels
 fig.subplots_adjust(hspace=5.0)
 flattened_axs = axs.flatten()
 
+METRICS_NAMES = {
+    "fed_camelyon16": "AUC",
+    "fed_lidc_idri": "DICE",
+    "fed_ixi": "DICE",
+    "fed_tcga_brca": "C-index",
+    "fed_kits19": "DICE",
+    "fed_isic2019": "Balanced Accuracy",
+    "fed_heart_disease": "Accuracy",
+}
 palette = sns.color_palette("mako", 14)
 for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)):
     if name == dataset_names[-1]:
@@ -100,7 +118,7 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
         for m in current_methods:
             assert len(res.loc[res["Method"] == m].index) == (current_num_clients)
 
-    # Pretiifying render
+    # Prettifying render
     res = res.rename(columns={"Method": "Training Method"})
     res.loc[res["Training Method"] == "Pooled Training", "Training Method"] = "Pooled"
     current_methods_display = [re.sub(" Training", "", c) for c in current_methods]
@@ -109,7 +127,8 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
     ]
 
     # Messing with palettes to keep the same color for pooled and strategies
-    current_palette = [palette[0]] + palette[1 : (current_num_clients + 1)] + palette[7:]
+    current_palette = [palette[0]] + palette[1 : (current_num_clients + 1)]
+    current_palette += palette[7:]
     assert len(current_palette) == len(current_methods_display)
     # print(current_palette[len(current_methods_display) -1])
     res["Training Method"] = [
@@ -131,7 +150,8 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
     labels = [re.sub("100", "", item.get_text()) for item in ax.get_xticklabels()]
 
     # TODO cannot make fontsize change effective on those labels for some reasons
-
+    if SHAREY:
+        ax.set_ylim(0.0, 1.0)
     ax.yaxis.set_major_locator(mticker.MaxNLocator(5))
     ticks_loc = ax.get_yticks().tolist()
 
@@ -141,14 +161,19 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
 
     ax.set_xticklabels(labels, rotation=90, fontsize=35, fontweight="heavy")
     ax.set_xlabel(ax.get_xlabel(), fontsize=35, fontweight="heavy")
-    ax.set_ylabel(ax.get_ylabel(), fontsize=35, fontweight="heavy")
+    if SHAREY:
+        ax.set_ylabel(ax.get_ylabel(), fontsize=35, fontweight="heavy")
+    else:
+        ax.set_ylabel(METRICS_NAMES[name], fontsize=35, fontweight="heavy")
 
-    # We only display the xlabel on figures from the second row except the 4th one because it has no counterpart(label can be removed entirely)
-    # and y label on the first figure of each row
+    # We only display the xlabel on figures from the second row except the 4th
+    # one because it has no counterpart(label can be removed entirely) and y
+    # label on the first figure of each row
     if idx < 3 or idx == 4:
         ax.set(xlabel=None)
-    if idx not in [0, 3, 7]:
-        ax.set(ylabel=None)
+    if SHAREY:
+        if idx not in [0, 3, 6]:
+            ax.set(ylabel=None)
 
     # ugly but no time
     # current_title = " ".join([word.capitalize() for word in name.split("_")])
@@ -164,9 +189,12 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
     current_title = title_dicts[name]
     ax.set_title(current_title, fontsize=45, fontweight="heavy")
 
-# Hide the last plot
+# Hide the two plots on the last row
 flattened_axs[-3].set_visible(False)
 flattened_axs[-1].set_visible(False)
+
+# No idea why I need to add that probably because of sharey on the last row
+
 plt.tight_layout()
 plt.savefig("plot_results_benchmarks.png")
 plt.savefig("plot_results_benchmarks.eps")
