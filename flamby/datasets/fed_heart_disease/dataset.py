@@ -45,10 +45,17 @@ class HeartDiseaseRaw(Dataset):
         The dtype of the y label output
     debug: bool
         Whether or not we use the dataset with only part of the features
+    normalize: bool
+        Whether or not to normalize the features. Default to True.
     """
 
     def __init__(
-        self, X_dtype=torch.float32, y_dtype=torch.float32, debug=False, data_path=None
+        self,
+        X_dtype=torch.float32,
+        y_dtype=torch.float32,
+        debug=False,
+        data_path=None,
+        normalize=True,
     ):
         """See description above"""
         if data_path is None:
@@ -181,16 +188,20 @@ class HeartDiseaseRaw(Dataset):
         self.std_of_features_pooled_train = [
             self.std_of_features_pooled_train for i in range(len(self.features))
         ]
+        self.normalize = normalize
 
     def __len__(self):
         return len(self.labels)
 
     def __getitem__(self, idx):
         assert idx < len(self.features), "Index out of range."
+        if self.normalize:
+            X = (self.features[idx] - self.mean_of_features[idx]) / (
+                self.std_of_features[idx] + 1e-9
+            )
+        else:
+            X = self.features[idx]
 
-        X = (self.features[idx] - self.mean_of_features[idx]) / (
-            self.std_of_features[idx] + 1e-9
-        )
         y = self.labels[idx]
         X = X.reshape((13))
         y = y.reshape((1))
@@ -225,6 +236,8 @@ class FedHeartDisease(HeartDiseaseRaw):
     data_path: str
         If data_path is given it will ignore the config file and look for the
         dataset directly in data_path. Defaults to None.
+    normalize: bool
+        Whether or not to normalize the features. Default to True.
     """
 
     def __init__(
@@ -236,18 +249,23 @@ class FedHeartDisease(HeartDiseaseRaw):
         y_dtype: torch.dtype = torch.float32,
         debug: bool = False,
         data_path: str = None,
+        normalize: bool = True,
     ):
         """Cf class description"""
 
         super().__init__(
-            X_dtype=X_dtype, y_dtype=y_dtype, debug=debug, data_path=data_path
+            X_dtype=X_dtype,
+            y_dtype=y_dtype,
+            debug=debug,
+            data_path=data_path,
+            normalize=normalize,
         )
         assert center in [0, 1, 2, 3]
 
         self.chosen_centers = [center]
         if pooled:
             self.chosen_centers = [0, 1, 2, 3]
-            # We set the apropriate means
+            # We set the apropriate statistics
             self.mean_of_features = self.mean_of_features_pooled_train
             self.std_of_features = self.std_of_features_pooled_train
 
