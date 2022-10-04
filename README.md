@@ -17,7 +17,7 @@
 FLamby is a benchmark for cross-silo Federated Learning with natural partitioning,
 currently focused in healthcare applications.
 It spans multiple data modalities and should allow easy interfacing with most
-Federated Learning frameworks (including [Fed-BioMed](https://gitlab.inria.fr/fedbiomed/fedbiomed), [FedML](https://github.com/FedML-AI/FedML), [Substra](https://github.com/Substra/substra), ...).
+Federated Learning frameworks (including [Substra](https://docs.substra.org/en/stable/), [Fed-BioMed](https://gitlab.inria.fr/fedbiomed/fedbiomed), [FedML](https://github.com/FedML-AI/FedML)...).
 It contains implementations of different
 standard federated learning strategies.
 
@@ -190,8 +190,8 @@ Note that for bigger datasets execution can be prohibitively slow and docker can
 
 FLamby can be easily adapted to different frameworks as the pytorch abstractions
 are quite flexible.
-We give an example of interfacing with [Fed-BioMed](https://gitlab.inria.fr/fedbiomed/fedbiomed), [here](./integration/fedbiomed/flamby-integration-into-fedbiomed.md) and an example of interfacing with [FedML](https://github.com/FedML-AI/FedML), [there](./integration/fedbiomed/flamby-integration-into-fedbml.md).
-Integration was also tested with [substra](https://github.com/Substra/substra). All major FL-frameworks should be compatible with FLamby modulo some glue code.
+We give an example of interfacing with [Substra](https://docs.substra.org/en/stable/) [here](./integration/Substra/flamby-integration-into-substra.md), [Fed-BioMed](https://gitlab.inria.fr/fedbiomed/fedbiomed) [here](./integration/fedbiomed/flamby-integration-into-fedbiomed.md) and an example of interfacing with [FedML](https://github.com/FedML-AI/FedML), [there](./integration/fedbiomed/flamby-integration-into-fedbml.md).
+All major FL-frameworks should be compatible with FLamby modulo some glue code.
 If you have a working example of using FLamby with another FL-framework please open a PR.
 
 ### Heterogeneity plots
