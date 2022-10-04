@@ -191,5 +191,6 @@ for dn in tqdm(datasets_names):
 
         results_all_reps.append(current_row)
 
+
 results = pd.DataFrame.from_dict(results_all_reps)
 results.to_csv("results_perso_vs_normal.csv", index=False)
