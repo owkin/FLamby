@@ -193,7 +193,6 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
 flattened_axs[-3].set_visible(False)
 flattened_axs[-1].set_visible(False)
 
-# No idea why I need to add that probably because of sharey on the last row
 
 plt.tight_layout()
 plt.savefig("plot_results_benchmarks.png")
