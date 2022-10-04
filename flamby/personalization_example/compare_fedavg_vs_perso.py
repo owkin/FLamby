@@ -100,7 +100,7 @@ seeds = np.arange(42, 42 + n_repetitions).tolist()
 
 results_all_reps = []
 
-for dn in tqdm([datasets_names[0]]):
+for dn in tqdm(datasets_names):
     for se in tqdm(seeds):
         # We set model and dataloaders to be the same for each rep
         global_init = models_architectures[dn]()
