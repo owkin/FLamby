@@ -42,7 +42,8 @@ args = {
 
 epsilons = [0.1, 1.0, 5.0, 10.0, 50.0][::-1]
 deltas = [10 ** (-i) for i in range(1, 5)]
-seeds = np.arange(42, 42 + n_repetitions).tolist()
+START_SEED = 42
+seeds = np.arange(START_SEED, START_SEED + n_repetitions).tolist()
 
 test_dls = [
     dl(
