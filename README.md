@@ -302,7 +302,7 @@ and try running your make installation option again.
 
 There are two options. The safest one is to cd to the flamby directory and run:
 ```
-python create_config_dataset.py --dataset-name fed_camelyon16/fed_heart_disease/... --path /path/where/the/dataset/is/located
+python create_dataset_config.py --dataset-name fed_camelyon16 OR fed_heart_disease OR ... --path /path/where/the/dataset/is/located
 ```
 This will create the required `dataset_location.yaml` file in your copy of the repository allowing FLamby to find it.
 
@@ -319,12 +319,12 @@ It can possibly become more seamless in the future if we introduce checks for en
 In the meantime one can fill/comment the following bash script after downloading the dataset and share it with all users of the server:
 
 ```bash
-python create_config_dataset.py --dataset-name fed_camelyon16. --path TOFILL
-python create_config_dataset.py --dataset-name fed_heart_disease --path TOFILL
-python create_config_dataset.py --dataset-name fed_lidc_idri --path TOFILL
-python create_config_dataset.py --dataset-name fed_kits19 --path TOFILL
-python create_config_dataset.py --dataset-name fed_isic2019 --path TOFILL
-python create_config_dataset.py --dataset-name fed_ixi --path TOFILL
+python create_dataset_config.py --dataset-name fed_camelyon16 --path TOFILL
+python create_dataset_config.py --dataset-name fed_heart_disease --path TOFILL
+python create_dataset_config.py --dataset-name fed_lidc_idri --path TOFILL
+python create_dataset_config.py --dataset-name fed_kits19 --path TOFILL
+python create_dataset_config.py --dataset-name fed_isic2019 --path TOFILL
+python create_dataset_config.py --dataset-name fed_ixi --path TOFILL
 ```
 Which allows users to set all necessary paths in their local copies.
 
