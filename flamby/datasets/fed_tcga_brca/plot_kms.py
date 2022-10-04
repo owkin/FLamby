@@ -3,14 +3,14 @@ import re
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
 from lifelines import KaplanMeierFitter
 from lifelines.statistics import logrank_test
 from torch.utils.data import DataLoader as dl
 
 from flamby.datasets.fed_tcga_brca import NUM_CLIENTS, FedTcgaBrca
+from flamby.utils import seaborn_styling
 
-sns.set()
+seaborn_styling()
 
 pooled_training = FedTcgaBrca(train=True, pooled=True)
 _, yp = [
@@ -38,17 +38,19 @@ kmf = KaplanMeierFitter()
 
 # Pooled plot
 kmf.fit(yp[:, 1], yp[:, 0].astype("uint8"), label="KM Estimate for OS")
-kmf.plot()
-plt.savefig("pooled_km.png")
+ax = kmf.plot()
+ax.set_ylabel("Survival Probability")
+plt.savefig("pooled_km.png", bbox_inches="tight")
 
 plt.clf()
 # Per center plot
 kms = [
-    KaplanMeierFitter().fit(y[:, 1], y[:, 0].astype("uint8"), label=f"Local {idx}")
+    KaplanMeierFitter().fit(y[:, 1], y[:, 0].astype("uint8"), label=f"Client {idx}")
     for idx, y in enumerate(local_ys)
 ]
-[km.plot() for km in kms]
-plt.savefig("local_kms.png", dpi=600)
+axs = [km.plot() for km in kms]
+axs[-1].set_ylabel("Survival Probability")
+plt.savefig("tcga_brca_kms.png", bbox_inches="tight")
 
 # Adding logrank test table
 columns = ["Local " + str(i) for i in range(NUM_CLIENTS)]
