@@ -193,7 +193,6 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
 flattened_axs[-3].set_visible(False)
 flattened_axs[-1].set_visible(False)
 
-
 plt.tight_layout()
 plt.savefig("plot_results_benchmarks.png")
 plt.savefig("plot_results_benchmarks.eps")
