@@ -10,9 +10,9 @@ import umap.umap_ as umap
 from efficientnet_pytorch import EfficientNet
 
 from flamby.datasets.fed_isic2019 import BATCH_SIZE, NUM_CLIENTS, FedIsic2019
+from flamby.utils import seaborn_styling
 
-
-sns.set()
+seaborn_styling()
 
 
 class model_eff_net_pretrained(nn.Module):
@@ -95,7 +95,7 @@ if __name__ == "__main__":
                     range(from_current_center.sum()),
                     color=colors[i],
                     s=0.5,
-                    label=f"Local {i}",
+                    label=f"Client {i}",
                 )
         if n_components == 2:
             fig = plt.figure()
@@ -107,7 +107,7 @@ if __name__ == "__main__":
                     u[from_current_center, 1],
                     color=colors[i],
                     s=0.5,
-                    label=f"Local {i}",
+                    label=f"Client {i}",
                 )
             plt.xlabel("Umap dimension 1")
             plt.ylabel("Umap dimension 2")
@@ -123,7 +123,7 @@ if __name__ == "__main__":
                     u[from_current_center, 2],
                     color=colors[i],
                     s=0.5,
-                    label=f"Local {i}",
+                    label=f"Client {i}",
                 )
         lgnd = plt.legend()
         for handle in lgnd.legendHandles:
