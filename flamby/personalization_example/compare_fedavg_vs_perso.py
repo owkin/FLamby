@@ -100,7 +100,7 @@ seeds = np.arange(42, 42 + n_repetitions).tolist()
 
 results_all_reps = []
 
-for dn in tqdm(datasets_names):
+for dn in tqdm([datasets_names[0]]):
     for se in tqdm(seeds):
         # We set model and dataloaders to be the same for each rep
         global_init = models_architectures[dn]()
@@ -190,6 +190,7 @@ for dn in tqdm(datasets_names):
         print(current_row)
 
         results_all_reps.append(current_row)
+
 
 results = pd.DataFrame.from_dict(results_all_reps)
 results.to_csv("results_perso_vs_normal.csv", index=False)
