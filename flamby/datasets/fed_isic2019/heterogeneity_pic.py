@@ -59,7 +59,8 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     np.random.seed(args.seed)
-    torch.manual_seed(42)
+    torch.manual_seed(args.seed)
+    random.seed(args.seed)
 
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
