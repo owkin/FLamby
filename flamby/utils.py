@@ -313,7 +313,12 @@ def accept_license(license_link, dataset_name, save_agreement=True):
 
 
 def seaborn_styling(figsize=(40, 20)):
-    """This is used to set homogeneous default params for seaborn."""
+    """This is used to set homogeneous default params for seaborn.
+    Parameters
+    ----------
+    figsize : str
+        The link towards the data terms of the original dataset.
+    """
     sns.set_theme()
     sns.set_style("darkgrid")
     plt.grid()
@@ -322,7 +327,7 @@ def seaborn_styling(figsize=(40, 20)):
     matplotlib.rc("axes", **axes)
     matplotlib.rc("figure", **figure)
     plt.rcParams["savefig.dpi"] = 300
-    plt.rc("legend", fontsize=14, weight="bold")  # using a size in points
+    plt.rc("legend", fontsize=14)  # using a size in points
     # plt.rc('legend', fontsize='medium')
     plt.rcParams["xtick.labelsize"] = 14
     plt.rcParams["ytick.labelsize"] = 14
