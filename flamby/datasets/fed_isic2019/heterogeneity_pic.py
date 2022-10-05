@@ -1,5 +1,6 @@
 import argparse
 import os
+from datetime import datetime
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,9 +11,12 @@ import umap.umap_ as umap
 from efficientnet_pytorch import EfficientNet
 
 from flamby.datasets.fed_isic2019 import BATCH_SIZE, NUM_CLIENTS, FedIsic2019
-from flamby.utils import seaborn_styling
 
-seaborn_styling()
+# from flamby.utils import seaborn_styling
+
+torch.use_deterministic_algorithms(True)
+
+# seaborn_styling()
 
 
 class model_eff_net_pretrained(nn.Module):
@@ -43,14 +47,21 @@ if __name__ == "__main__":
     parser.add_argument(
         "--workers",
         type=int,
-        default=4,
+        default=0,
         help="Numbers of workers for the dataloader",
     )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=42,
+        help="The seed for the UMPA and dataloading",
+    )
     args = parser.parse_args()
+    np.random.seed(args.seed)
+    torch.manual_seed(42)
 
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
-    torch.use_deterministic_algorithms(False)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("device", device)
 
@@ -75,7 +86,24 @@ if __name__ == "__main__":
             centers_ = i * np.ones((outputs.shape[0], 1))
             centers = np.concatenate([centers, centers_])
 
-    def draw_umap(n_neighbors=15, min_dist=0.1, n_components=2, metric="euclidean"):
+    def draw_umap(
+        n_neighbors=15, min_dist=0.1, n_components=2, metric="euclidean", seed=42
+    ):
+        """_summary_
+
+        Parameters
+        ----------
+        n_neighbors : int, optional
+            Parameter of UMAP, by default 15
+        min_dist : float, optional
+            Parameter of UMAP, by default 0.1
+        n_components : int, optional
+            The number of dimensions of the UMAP either 2 or 3, by default 2
+        metric : str, optional
+            The metric to use for the umap computation, by default "euclidean"
+        seed : int, optional
+            The random state given to umap, by default 42
+        """
         print(
             f"Computing UMAP, NN {n_neighbors}, min d {min_dist}, ncomp {n_components}"
         )
@@ -84,6 +112,7 @@ if __name__ == "__main__":
             min_dist=min_dist,
             n_components=n_components,
             metric=metric,
+            random_state=seed,
         ).fit_transform(X)
         if n_components == 1:
             fig = plt.figure()
@@ -128,26 +157,22 @@ if __name__ == "__main__":
         lgnd = plt.legend()
         for handle in lgnd.legendHandles:
             handle.set_sizes([10.0])
-        name_fig = (
-            "heterogeneity_pic_"
-            + str(n_neighbors)
-            + "_"
-            + str(min_dist)
-            + "_"
-            + str(n_components)
-            + ".png"
-        )
-        name_fig_2 = (
-            "heterogeneity_pic_"
-            + str(n_neighbors)
-            + "_"
-            + str(min_dist)
-            + "_"
-            + str(n_components)
-            + ".eps"
-        )
-        print(f"Saving {name_fig}")
-        plt.savefig(name_fig)
-        plt.savefig(name_fig_2)
 
-    draw_umap(n_neighbors=250, min_dist=0.5, n_components=2)
+        now = str(datetime.now())
+        basename = (
+            "heterogeneity_pic_"
+            + str(n_neighbors)
+            + "_"
+            + str(min_dist)
+            + "_"
+            + str(n_components)
+            + "_"
+            + str(seed)
+            + "_"
+            + now
+        )
+        print(f"Saving {basename}")
+        plt.savefig(basename + ".eps")
+        plt.savefig(basename + ".png")
+
+    draw_umap(n_neighbors=250, min_dist=0.5, n_components=2, seed=args.seed)
