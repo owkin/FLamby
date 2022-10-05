@@ -208,6 +208,7 @@ cd flamby/datasets/fed_lidc_idri
 python lidc_heterogeneity_plot.py
 ```
 - [Fed-ISIC2019](./flamby/datasets/fed_isic2019/README.md)
+**You need to deactivate color constancy normalization when preprocessing the dataset (cc=False in resize_images.py)**
 ```
 cd flamby/datasets/fed_isic2019
 python heterogeneity_pic.py
