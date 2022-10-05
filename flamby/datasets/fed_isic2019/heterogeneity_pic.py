@@ -13,12 +13,11 @@ import umap.umap_ as umap
 from efficientnet_pytorch import EfficientNet
 
 from flamby.datasets.fed_isic2019 import BATCH_SIZE, NUM_CLIENTS, FedIsic2019
-
-# from flamby.utils import seaborn_styling
+from flamby.utils import seaborn_styling
 
 torch.use_deterministic_algorithms(True)
 
-# seaborn_styling()
+seaborn_styling(figsize=(15, 15))
 
 
 class model_eff_net_pretrained(nn.Module):
@@ -134,7 +133,7 @@ if __name__ == "__main__":
                     u[from_current_center, 0],
                     range(from_current_center.sum()),
                     color=colors[i],
-                    s=0.5,
+                    s=32,
                     label=f"Client {i}",
                 )
         if n_components == 2:
@@ -146,7 +145,7 @@ if __name__ == "__main__":
                     u[from_current_center, 0],
                     u[from_current_center, 1],
                     color=colors[i],
-                    s=0.5,
+                    s=32,
                     label=f"Client {i}",
                 )
             plt.xlabel("Umap dimension 1")
@@ -166,8 +165,8 @@ if __name__ == "__main__":
                     label=f"Client {i}",
                 )
         lgnd = plt.legend()
-        for handle in lgnd.legendHandles:
-            handle.set_sizes([10.0])
+        # for handle in lgnd.legendHandles:
+        #     handle.set_sizes([10.0])
 
         now = str(datetime.now())
         basename = (
@@ -183,7 +182,7 @@ if __name__ == "__main__":
             + now
         )
         print(f"Saving {basename}")
-        plt.savefig(basename + ".eps")
-        plt.savefig(basename + ".png")
+        plt.savefig(basename + ".eps", bbox_inches="tight")
+        plt.savefig(basename + ".png", bbox_inches="tight")
 
     draw_umap(n_neighbors=250, min_dist=0.5, n_components=2, seed=args.seed)
