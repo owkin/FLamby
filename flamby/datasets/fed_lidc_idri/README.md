@@ -125,7 +125,7 @@ from flamby.datasets.fed_lidc_idri import FedLidcIdri
 # To load the first center as a pytorch dataset
 center0 = FedLidcIdri(center=0, train=True)
 # To load the second center as a pytorch dataset
-center1 = FeddLidcIdri(center=1, train=True)
+center1 = FedLidcIdri(center=1, train=True)
 # To sample batches from each of the local datasets use the traditional pytorch API
 from torch.utils.data import DataLoader as dl
 
