@@ -3,6 +3,7 @@ import os
 import random
 from datetime import datetime
 
+import albumentations
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -76,6 +77,13 @@ if __name__ == "__main__":
     colors = sns.color_palette("hls", 6)
     for i in range(NUM_CLIENTS):
         mydataset = FedIsic2019(center=i, train=True, pooled=False)
+        # We kill the augmentations to display the raw dataset, note that images
+        # have still been modified to enforce color constancy during preprocessing
+        mydataset.augmentations = albumentations.Compose(
+            [
+                albumentations.CenterCrop(200, 200),
+            ]
+        )
         dataloader = torch.utils.data.DataLoader(
             mydataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=args.workers
         )
