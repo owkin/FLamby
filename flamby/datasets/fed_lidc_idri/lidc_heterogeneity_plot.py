@@ -5,6 +5,9 @@ from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 from flamby.datasets.fed_lidc_idri import FedLidcIdri
+from flamby.utils import seaborn_styling
+
+seaborn_styling()
 
 
 def make_plot():
@@ -31,8 +34,6 @@ def make_plot():
         np.save(f"counts_center_{center}.npy", counts)
     plt.clf()
 
-    sns.set_theme(style="darkgrid")
-
     dict_center = {0: "GE MEDICAL SYSTEMS", 1: "PHILIPS", 2: "SIEMENS", 3: "TOSHIBA"}
 
     df = pd.DataFrame()
@@ -44,10 +45,9 @@ def make_plot():
     df = df.set_index("Intensity")
 
     sns.lineplot(data=df)
-    plt.xlabel("Voxels of intensity...")
+    plt.xlabel("Intensity")
     plt.ylabel("Density of voxels")
-    plt.legend(prop={"size": 8})
-    plt.savefig("fed_lidc_intensity_bis.pdf")
+    plt.savefig("fed_lidc_intensity_bis.pdf", bbox_inches="tight")
     plt.show()
 
 
