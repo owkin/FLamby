@@ -78,7 +78,7 @@ if __name__ == "__main__":
     for i in range(NUM_CLIENTS):
         mydataset = FedIsic2019(center=i, train=True, pooled=False)
         # We kill the augmentations to display the raw dataset, note that images
-        # have still been modified to enforce color constancy during preprocessing
+        # should not be undergo color-constancy, set cc=False in resize_images.py
         mydataset.augmentations = albumentations.Compose(
             [
                 albumentations.CenterCrop(200, 200),
