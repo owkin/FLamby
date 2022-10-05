@@ -82,6 +82,7 @@ if __name__ == "__main__":
         mydataset.augmentations = albumentations.Compose(
             [
                 albumentations.CenterCrop(200, 200),
+                albumentations.Normalize(always_apply=True),
             ]
         )
         dataloader = torch.utils.data.DataLoader(
