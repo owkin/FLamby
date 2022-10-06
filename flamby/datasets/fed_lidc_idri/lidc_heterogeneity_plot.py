@@ -47,7 +47,7 @@ def make_plot():
     sns.lineplot(data=df)
     plt.xlabel("Intensity")
     plt.ylabel("Density of voxels")
-    plt.savefig("fed_lidc_intensity_bis.pdf", bbox_inches="tight")
+    plt.savefig("fed_lidc_intensity.pdf", bbox_inches="tight")
     plt.show()
 
 
