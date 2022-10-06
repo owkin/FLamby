@@ -387,7 +387,7 @@ compute_plan = execute_experiment(
     Compute plan progress:   0%|          | 0/82 [00:00<?, ?it/s]
 
 
-    2022-10-06 09:19:32,325 - INFO - The compute plan has been registered to Substra, its key is a509fb03-f8c3-4fc0-ad40-f775bb6489c6.
+    2022-10-06 09:48:10,416 - INFO - The compute plan has been registered to Substra, its key is 779faf58-7664-408b-bf8b-db025a88ba03.
 
 ## Plot results
 
@@ -405,7 +405,7 @@ performance_df = pd.DataFrame(client.get_performances(compute_plan.key).dict())
 
 for i, id in enumerate(ORGS_ID):
     df = performance_df.query(f"worker == '{id}'")
-    plt.plot(df["round_idx"], df["performance"], label="Client " + str(i+1))
+    plt.plot(df["round_idx"], df["performance"], label=f"Client {i+1} ({id})")
 
 plt.legend(loc=(1.1, 0.3), title="Test set")
 plt.show()
