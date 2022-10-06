@@ -28,19 +28,19 @@ def make_plot():
             list_data.append(data)
         list_data = np.concatenate(list_data)
         counts, bins, bars = plt.hist(
-            list_data, density=True, bins=list_x, alpha=0.5, label=f"center {k+1}"
+            list_data, density=True, bins=list_x, alpha=0.5, label=f"Client {k+1}"
         )
         np.save("bins.npy", bins)
         np.save(f"counts_center_{center}.npy", counts)
     plt.clf()
 
-    dict_center = {0: "GE MEDICAL SYSTEMS", 1: "PHILIPS", 2: "SIEMENS", 3: "TOSHIBA"}
+    # dict_center = {0: "GE MEDICAL SYSTEMS", 1: "PHILIPS", 2: "SIEMENS", 3: "TOSHIBA"}
 
     df = pd.DataFrame()
     for center in [0, 1, 2, 3]:
         bins = np.load("bins.npy")
         bars = np.load(f"counts_center_{center}.npy")
-        df[dict_center[center]] = bars
+        df["Client " + str(center)] = bars
     df["Intensity"] = bins[1:]
     df = df.set_index("Intensity")
 
