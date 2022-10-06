@@ -12,7 +12,7 @@ from scipy import stats
 
 from flamby.utils import get_config_file_path, read_config, seaborn_styling
 
-seaborn_styling(figsize=(20, 10), legend_fontsize=20)
+seaborn_styling(figsize=(15, 10), legend_fontsize=20)
 
 
 def add_args(parser):
