@@ -32,7 +32,7 @@ full_y = np.array(full_y)
 center = np.array(center)
 
 # plots
-fig, ax = plt.subplots(figsize=(4, 2))
+fig, ax = plt.subplots()
 select = [0, 2, 5]  # 4]#np.arange(13)#[0, 2, 5]#, 7]
 leg = ["age", "trestbps", "thalach", "oldpeak"]
 hdls = []
