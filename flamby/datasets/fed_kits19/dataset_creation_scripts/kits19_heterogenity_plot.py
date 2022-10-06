@@ -29,7 +29,7 @@ def add_args(parser):
     return args
 
 
-def plot_histogram(axis, array, num_positions=100, label=None, alpha=1, color=None):
+def plot_histogram(axis, array, num_positions=100, label=None, alpha=0.05, color=None):
     values = array.ravel()
     kernel = stats.gaussian_kde(values)
     positions = np.linspace(values.min(), values.max(), num=num_positions)
