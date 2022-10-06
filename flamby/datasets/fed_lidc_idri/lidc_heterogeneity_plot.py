@@ -7,7 +7,7 @@ from tqdm import tqdm
 from flamby.datasets.fed_lidc_idri import FedLidcIdri
 from flamby.utils import seaborn_styling
 
-seaborn_styling()
+seaborn_styling(legend_fontsize=10)
 
 
 def make_plot():
