@@ -5,6 +5,7 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 import nibabel as nib
 import numpy as np
+import seaborn as sns
 from batchgenerators.utilities.file_and_folder_operations import *
 from matplotlib.lines import Line2D
 from scipy import stats
@@ -61,7 +62,7 @@ def read_csv_file_for_plotting(csv_file="../metadata/anony_sites.csv", base=None
 
     print(" Creating Heterogeneity Plot ")
     silo_count = 0
-    colours = ["red", "green", "blue", "black", "purple", "olive"]
+    colours = sns.color_palette("hls", 6)
 
     fig, ax = plt.subplots()
     for ID in range(0, 89):
@@ -80,8 +81,8 @@ def read_csv_file_for_plotting(csv_file="../metadata/anony_sites.csv", base=None
                 iteration += 1
             silo_count += 1
 
-    ax.set_xlabel("Intensity", fontsize=24)
-    ax.set_ylabel("Density", fontsize=24)
+    ax.set_xlabel("Intensity")
+    ax.set_ylabel("Density")
     ax.tick_params(axis="x", labelsize=19)
     ax.tick_params(axis="y", labelsize=19)
     legend_elements = [
@@ -94,7 +95,6 @@ def read_csv_file_for_plotting(csv_file="../metadata/anony_sites.csv", base=None
     ]
 
     ax.legend(handles=legend_elements, loc="upper right")
-    ax.grid()
     plt.savefig("histograms_kits19.eps", bbox_inches="tight")
 
 
