@@ -1,7 +1,6 @@
 import argparse
 import os
 import random
-from datetime import datetime
 
 import albumentations
 import matplotlib.pyplot as plt
@@ -14,6 +13,9 @@ from efficientnet_pytorch import EfficientNet
 
 from flamby.datasets.fed_isic2019 import BATCH_SIZE, NUM_CLIENTS, FedIsic2019
 from flamby.utils import seaborn_styling
+
+# from datetime import datetime
+
 
 torch.use_deterministic_algorithms(True)
 
@@ -164,11 +166,12 @@ if __name__ == "__main__":
                     s=0.5,
                     label=f"Client {i}",
                 )
-        lgnd = plt.legend()
+        plt.legend()
+        # lgnd = plt.legend()
         # for handle in lgnd.legendHandles:
         #     handle.set_sizes([10.0])
 
-        now = str(datetime.now())
+        # now = str(datetime.now())
         basename = (
             "heterogeneity_pic_"
             + str(n_neighbors)
@@ -178,8 +181,8 @@ if __name__ == "__main__":
             + str(n_components)
             + "_"
             + str(seed)
-            + "_"
-            + now
+            # + "_"
+            # + now
         )
         print(f"Saving {basename}")
         plt.savefig(basename + ".eps", bbox_inches="tight")
