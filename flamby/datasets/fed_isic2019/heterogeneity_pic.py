@@ -19,7 +19,7 @@ from flamby.utils import seaborn_styling
 
 torch.use_deterministic_algorithms(True)
 
-seaborn_styling(figsize=(15, 15))
+seaborn_styling()
 
 
 class model_eff_net_pretrained(nn.Module):
