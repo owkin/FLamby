@@ -18,7 +18,7 @@ def plot_histogram(axis, array, num_positions=100, label=None, alpha=0.05, color
     kernel = stats.gaussian_kde(values)
     positions = np.linspace(values.min(), values.max(), num=num_positions)
     histogram = kernel(positions)
-    kwargs = dict(linewidth=1, color="black" if color is None else color, alpha=alpha)
+    kwargs = dict(linewidth=2, color="black" if color is None else color, alpha=alpha)
     if label is not None:
         kwargs["label"] = label
     axis.plot(positions, histogram, **kwargs)
@@ -36,8 +36,8 @@ for path in tqdm(raw.images_paths):
     plot_histogram(ax, array, color=color)
 ax.set_xlim(-100, 2000)
 ax.set_ylim(0, 0.004)
-ax.set_xlabel("Intensity", fontsize=24)
-ax.set_ylabel("Density", fontsize=24)
+ax.set_xlabel("Intensity")
+ax.set_ylabel("Density")
 ax.tick_params(axis="x", labelsize=19)
 ax.tick_params(axis="y", labelsize=19)
 CENTER_LABELS_CORRESP = {"Guys": 0, "HH": 1, "IOP": 2}
@@ -56,5 +56,5 @@ legend_elements = [
         [0], [0], color="b", lw=4, label="Client {}".format(CENTER_LABELS_CORRESP["IOP"])
     ),
 ]
-ax.legend(handles=legend_elements, loc="upper right", fontsize=22)
+ax.legend(handles=legend_elements, loc="upper right")
 plt.savefig("histograms_ixi.pdf", bbox_inches="tight")
