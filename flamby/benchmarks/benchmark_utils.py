@@ -3,6 +3,7 @@ import time
 
 import numpy as np
 import pandas as pd
+import random
 import torch
 from opacus import PrivacyEngine
 from torch.utils.data import DataLoader as dl
@@ -12,7 +13,8 @@ from flamby.utils import evaluate_model_on_tests
 
 
 def set_seed(seed):
-    """Set both numpy and torch seed
+    """Set numpy, python and torch seed.
+    Python seed is necessary for seeding albumentations.
 
     Parameters
     ----------
@@ -21,6 +23,7 @@ def set_seed(seed):
     """
     torch.manual_seed(seed)
     np.random.seed(seed)
+    random.seed(seed)
 
 
 def fill_df_with_xp_results(
