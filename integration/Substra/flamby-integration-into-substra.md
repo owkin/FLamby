@@ -5,6 +5,7 @@
 Substra main usage is a **production one**. It has already been deployed and used by hospitals and biotech companies (see the [MELLODDY](https://www.melloddy.eu/) project for instance).
 
 Yet [**Substra**](https://docs.substra.org/en/0.21.0/) can also be used on a single machine on a virtually splitted dataset for two use cases:
+
 - debugging code before launching experiments on a real network
 - performing FL simulations
 
@@ -20,7 +21,7 @@ The objective of this example is to launch a *federated learning* experiment on 
 
 This example does not use the deployed platform of Substra and will run in local mode.
 
-## Requirements:
+## Requirements
 
 To run this example locally, please make sure to download and unzip in the same directory as this example the assets needed to run it:
 
@@ -28,7 +29,7 @@ Please ensure to have all the libraries installed, a `requirements.txt` file is 
 
 You can run the command: `pip install -r requirements.txt` to install them.
 
-## Objective:
+## Objective
 
 This example will run a federated training on all 6 centers of the TCGA BRCA [**FLamby**](https://github.com/owkin/FLamby) dataset.
 
@@ -37,8 +38,8 @@ This example shows how to interface [**Substra**](https://docs.substra.org/en/0.
 This example runs in local mode, simulating a **federated learning** experiment.
 
 # Client and data preparation
-## Imports
 
+## Imports
 
 ```python
 import os
@@ -47,10 +48,10 @@ import zipfile
 ```
 
 # Creating the Substra Client
+
 We work with six different organizations, defined by their IDs. All organizations provide a FLamby dataset configuration. One of them will also provide the algorithm and will register the machine learning tasks.
 
 Once these variables defined, we can create our different [**Substra Client**](https://docs.substra.org/en/0.21.0/documentation/references/sdk.html#client) (one for each organization/center).
-
 
 ```python
 from substra import Client
@@ -73,9 +74,8 @@ assets_directory = pathlib.Path.cwd() / "assets"
 ```
 
 # Registering assets
+
 ## Substra and Substrafl imports
-
-
 
 ```python
 from substra.sdk.schemas import (
@@ -92,10 +92,10 @@ from substrafl.nodes import TestDataNode, TrainDataNode
 ```
 
 ## Permissions
+
 As data can not be seen once it is registered on the platform, we set a [**Permissions**](https://docs.substra.org/en/0.21.0/documentation/references/sdk_schemas.html#permissions) object for each [**Assets**](https://docs.substra.org/en/0.21.0/documentation/concepts.html#assets), defining their access rights to the different data.
 
 The metadata are visible by all the users of a [**Channel**](https://docs.substra.org/en/0.21.0/additional/glossary.html#term-Channel).
-
 
 ```python
 permissions = Permissions(public=False, authorized_ids=ORGS_ID)
@@ -105,9 +105,9 @@ permissions = Permissions(public=False, authorized_ids=ORGS_ID)
 
 A metric corresponds to an algorithm used to compute the score of prediction on a **datasample**.
 Concretely, a metric corresponds to an archive *(tar or zip file)*, automatically build from:
+
 - a **Python scripts** that implement the metric computation
 - a [**Dockerfile**](https://docs.docker.com/engine/reference/builder/) to specify the required dependencies of the **Python scripts**
-
 
 ```python
 inputs_metrics = [
@@ -154,7 +154,6 @@ To interface with [**FLamby**](https://github.com/owkin/FLamby), the utilization
 As we directly load a torch dataset from Flamby, the `folders` parameters is unused and the path usually leading to the data will point out a empty folder in this example.
 
 Now that all our [**Assets**](https://docs.substra.org/en/0.21.0/documentation/concepts.html#assets) are well defined, we can create the [**TrainDataNodes**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/nodes.html#traindatanode) and the [**TestDataNodes**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/nodes.html#testdatanode) to gathered the [**Datasets**](https://docs.substra.org/en/0.21.0/documentation/concepts.html#dataset) and the **datasamples** on the specified organization.
-
 
 ```python
 train_data_nodes = list()
@@ -233,8 +232,6 @@ for ind, org_id in enumerate(ORGS_ID):
 
 ## Machine Learning specification
 
-
-
 ```python
 from flamby.datasets.fed_tcga_brca import (
     FedTcgaBrca,
@@ -252,8 +249,6 @@ criterion = BaselineLoss()
 ```
 
 ## Substrafl imports
-
-
 
 ```python
 
@@ -291,7 +286,6 @@ But as the `__getitem__` function is provided by [**FLamby**](https://github.com
 to:
 
 `for x, _ in predict_loader:`.
-
 
 ```python
 NUM_UPDATES = 16
@@ -343,7 +337,6 @@ The **dependencies** needed for the [**Torch Algorithms**](https://docs.substra.
 
 In a **local subprocess** mode (selected mode for this example), the algo dependencies are not installed as the local environment is used instead. The following cell is given as an example of use of the [**Dependency**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/dependency.html) object.
 
-
 ```python
 algo_deps = Dependency(pypi_dependencies=["torch==1.11.0"])
 ```
@@ -351,7 +344,6 @@ algo_deps = Dependency(pypi_dependencies=["torch==1.11.0"])
 ## Federated Learning strategies
 
 For this example, we choose to use the [**Federated averaging Strategy**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/strategies.html)), based on the [FedAvg paper by McMahan et al., 2017](https://arxiv.org/abs/1602.05629).
-
 
 ```python
 strategy = FedAvg()
@@ -370,8 +362,6 @@ We now have all the necessary objects to launch our experiment. Below a summary 
 - The **number of round**, a round being defined by a local training step followed by an aggregation operation
 - An **experiment folder** to save a summary of the operation made
 - The [**Dependency**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/dependency.html) to define the libraries the experiment needs to run.
-
-
 
 ```python
 aggregation_node = AggregationNode(ALGO_ORG_ID)
@@ -394,52 +384,34 @@ compute_plan = execute_experiment(
 )
 ```
 
-    2022-10-04 11:42:16,604 - INFO - Building the compute plan.
-    2022-10-04 11:42:16,612 - INFO - Registering the algorithm to Substra.
-    2022-10-04 11:42:16,642 - INFO - Registering the compute plan to Substra.
-    2022-10-04 11:42:16,644 - INFO - Experiment summary saved to /Users/tfouqueray/Documents/Substra-repository/FLamby/integration/Substra/experiment_summaries/2022_10_04_11_42_16_ecde78bc-ed8f-4dfe-82c3-ce8957a41eb7.json
-    /Users/tfouqueray/.virtualenvs/flamby_example/lib/python3.9/site-packages/substra/sdk/backends/local/backend.py:400: UserWarning: 'clean_models=True' is ignored on the local backend.
-      warnings.warn("'clean_models=True' is ignored on the local backend.")
-
-
-
     Compute plan progress:   0%|          | 0/82 [00:00<?, ?it/s]
 
 
-    2022-10-04 11:45:22,398 - INFO - The compute plan has been registered to Substra, its key is ecde78bc-ed8f-4dfe-82c3-ce8957a41eb7.
-
+    2022-10-06 09:19:32,325 - INFO - The compute plan has been registered to Substra, its key is a509fb03-f8c3-4fc0-ad40-f775bb6489c6.
 
 ## Plot results
-
-
 
 ```python
 import pandas as pd
 import matplotlib.pyplot as plt
 ```
 
-
 ```python
-plt.title("Performance evolution on each center of the baseline on Fed-Heart-Disease with Federated Averaging training")
+plt.title("Performance evolution on each center of the baseline on Fed-TCGA-BRCA with Federated Averaging training")
 plt.xlabel("Rounds")
 plt.ylabel("Metric")
 
 performance_df = pd.DataFrame(client.get_performances(compute_plan.key).dict())
 
-for id in ORGS_ID:
+for i, id in enumerate(ORGS_ID):
     df = performance_df.query(f"worker == '{id}'")
-    plt.plot(df["round_idx"], df["performance"], label=id + " test set")
+    plt.plot(df["round_idx"], df["performance"], label="Client " + str(i+1))
 
-plt.legend(loc=(1.1, 0.3))
+plt.legend(loc=(1.1, 0.3), title="Test set")
 plt.show()
 ```
 
-
-
 ![png](markdown-image/output.png)
-
-
-
 
 ```python
 
