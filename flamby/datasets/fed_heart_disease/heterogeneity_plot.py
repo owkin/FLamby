@@ -3,8 +3,9 @@ import numpy as np
 import seaborn as sns
 
 from flamby.datasets.fed_heart_disease import FedHeartDisease
+from flamby.utils import seaborn_styling
 
-sns.set_theme()
+seaborn_styling()
 palette = sns.color_palette("colorblind", n_colors=16)
 
 # get centers
