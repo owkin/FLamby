@@ -279,13 +279,7 @@ The index generator will be used a the batch sampler of the dataset, in order to
 
 Concerning the [**TorchFedAvgAlgo**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/algorithms.html#torchfedavgalgo) interaction with [**FLamby**](https://github.com/owkin/FLamby), we need to overwrite the `_local_predict` function, used to compute the predictions of the model. In the default `_local_predict`provided by **Substrafl**, we assume that the `__getitem__` of the dataset take into account the `is_inference` argument to only return the inputs samples.
 
-But as the `__getitem__` function is provided by [**FLamby**](https://github.com/owkin/FLamby), the `is_inference` argument is ignored. We need to overwrite the `_local_predict` to change the line:
-
-`for x in predict_loader:`
-
-to:
-
-`for x, _ in predict_loader:`.
+But as the `__getitem__` function is provided by [**FLamby**](https://github.com/owkin/FLamby), the `is_inference` argument is ignored. We need to overwrite the `_local_predict` to change the behavior of the function, and can use this opportunity to optimize the computation time of the function using knowledge of the ouput dimension of the TGCA-BRCA dataset.
 
 ```python
 NUM_UPDATES = 16
@@ -317,15 +311,18 @@ class MyAlgo(TorchFedAvgAlgo):
 
     def _local_predict(self, predict_dataset: torch.utils.data.Dataset, predictions_path):
 
-        predict_loader = torch.utils.data.DataLoader(predict_dataset, batch_size=self._index_generator.batch_size)
+        batch_size = self._index_generator.batch_size
+        predict_loader = torch.utils.data.DataLoader(predict_dataset, batch_size=batch_size)
 
         self._model.eval()
 
-        predictions = torch.Tensor([])
+        # The output dimension of the model is of size (1,)
+        predictions = torch.zeros((len(predict_dataset), 1))
+
         with torch.inference_mode():
-            for x, _ in predict_loader:
+            for i, (x, _) in enumerate(predict_loader):
                 x = x.to(self._device)
-                predictions = torch.cat((predictions, self._model(x)), 0)
+                predictions[i * batch_size: (i+1) * batch_size] = self._model(x)
 
         predictions = predictions.cpu().detach()
         self._save_predictions(predictions, predictions_path)
@@ -384,10 +381,15 @@ compute_plan = execute_experiment(
 )
 ```
 
+    2022-10-06 10:32:37,105 - INFO - Building the compute plan.
+    2022-10-06 10:32:37,119 - INFO - Registering the algorithm to Substra.
+    2022-10-06 10:32:37,158 - INFO - Registering the compute plan to Substra.
+    2022-10-06 10:32:37,160 - INFO - Experiment summary saved to .../FLamby/integration/Substra/experiment_summaries/YOUR_CP_KEY.json
+
     Compute plan progress:   0%|          | 0/82 [00:00<?, ?it/s]
 
 
-    2022-10-06 09:48:10,416 - INFO - The compute plan has been registered to Substra, its key is 779faf58-7664-408b-bf8b-db025a88ba03.
+    2022-10-06 10:35:08,850 - INFO - The compute plan has been registered to Substra, its key is YOUR_CP_KEY.
 
 ## Plot results
 
@@ -411,8 +413,4 @@ plt.legend(loc=(1.1, 0.3), title="Test set")
 plt.show()
 ```
 
-![png](markdown-image/output.png)
-
-```python
-
-```
+![png](markdown-image/output_28_0.png)
