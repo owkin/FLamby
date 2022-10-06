@@ -40,7 +40,7 @@ kmf = KaplanMeierFitter()
 kmf.fit(yp[:, 1], yp[:, 0].astype("uint8"), label="KM Estimate for OS")
 ax = kmf.plot()
 ax.set_ylabel("Survival Probability")
-plt.savefig("pooled_km.png", bbox_inches="tight")
+plt.savefig("pooled_km.pdf", bbox_inches="tight")
 
 plt.clf()
 # Per center plot
@@ -50,7 +50,7 @@ kms = [
 ]
 axs = [km.plot() for km in kms]
 axs[-1].set_ylabel("Survival Probability")
-plt.savefig("tcga_brca_kms.png", bbox_inches="tight")
+plt.savefig("local_kms.pdf", bbox_inches="tight")
 
 # Adding logrank test table
 columns = ["Local " + str(i) for i in range(NUM_CLIENTS)]
