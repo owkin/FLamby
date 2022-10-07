@@ -414,7 +414,7 @@ plt.show()
 ```
 
 ![png](markdown-image/output_28_0.png)
-
+The last test client has only one event, which reduces the number of admissible pairs to be formed in the concordance index computation, which explains to some extents the flat line.
 ## Download a model
 
 After the experiment, you might be interested in getting your trained model.
