@@ -5,7 +5,7 @@ import seaborn as sns
 from flamby.datasets.fed_heart_disease import FedHeartDisease
 from flamby.utils import seaborn_styling
 
-seaborn_styling(legend_fontsize=10, labelsize=12)
+seaborn_styling(figsize=(15, 10), legend_fontsize=24, labelsize=20)
 palette = sns.color_palette("colorblind", n_colors=16)
 
 # get centers
