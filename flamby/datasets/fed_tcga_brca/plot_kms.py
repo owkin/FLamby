@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader as dl
 from flamby.datasets.fed_tcga_brca import NUM_CLIENTS, FedTcgaBrca
 from flamby.utils import seaborn_styling
 
-seaborn_styling(legend_fontsize=10)
+seaborn_styling(legend_fontsize=10, labelsize=12)
 
 pooled_training = FedTcgaBrca(train=True, pooled=True)
 _, yp = [
