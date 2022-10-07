@@ -312,7 +312,7 @@ def accept_license(license_link, dataset_name, save_agreement=True):
             )
 
 
-def seaborn_styling(figsize=(40, 20), legend_fontsize=24):
+def seaborn_styling(figsize=(40, 20), legend_fontsize=24, labelsize=24):
     """This is used to set homogeneous default params for seaborn.
     Parameters
     ----------
@@ -320,12 +320,14 @@ def seaborn_styling(figsize=(40, 20), legend_fontsize=24):
         The default figure size in inches.
     legend_fontsize: int
         Default fontsize of the legends labels.
+    labelsize: int
+        Default size of labels.
     """
     sns.set_theme()
     sns.set_style("darkgrid")
     plt.grid()
     figure = {"figsize": figsize}
-    axes = {"labelsize": 24}
+    axes = {"labelsize": labelsize}
     matplotlib.rc("axes", **axes)
     matplotlib.rc("figure", **figure)
     plt.rcParams["savefig.dpi"] = 300
