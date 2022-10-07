@@ -381,15 +381,15 @@ compute_plan = execute_experiment(
 )
 ```
 
-    2022-10-06 10:32:37,105 - INFO - Building the compute plan.
-    2022-10-06 10:32:37,119 - INFO - Registering the algorithm to Substra.
-    2022-10-06 10:32:37,158 - INFO - Registering the compute plan to Substra.
-    2022-10-06 10:32:37,160 - INFO - Experiment summary saved to .../FLamby/integration/Substra/experiment_summaries/YOUR_CP_KEY.json
+    2022-10-07 11:51:32,650 - INFO - Building the compute plan.
+    2022-10-07 11:51:32,658 - INFO - Registering the algorithm to Substra.
+    2022-10-07 11:51:32,689 - INFO - Registering the compute plan to Substra.
+    2022-10-07 11:51:32,691 - INFO - Experiment summary saved to FLamby/integration/Substra/experiment_summaries/YOUR_CP_KEY.json
 
     Compute plan progress:   0%|          | 0/82 [00:00<?, ?it/s]
 
 
-    2022-10-06 10:35:08,850 - INFO - The compute plan has been registered to Substra, its key is YOUR_CP_KEY.
+    2022-10-07 11:54:35,496 - INFO - The compute plan has been registered to Substra, its key is YOUR_CP_KEY.
 
 ## Plot results
 
@@ -407,10 +407,59 @@ performance_df = pd.DataFrame(client.get_performances(compute_plan.key).dict())
 
 for i, id in enumerate(ORGS_ID):
     df = performance_df.query(f"worker == '{id}'")
-    plt.plot(df["round_idx"], df["performance"], label=f"Client {i+1} ({id})")
+    plt.plot(df["round_idx"], df["performance"], label=f"Client {i} ({id})")
 
 plt.legend(loc=(1.1, 0.3), title="Test set")
 plt.show()
 ```
 
 ![png](markdown-image/output_28_0.png)
+
+## Download a model
+
+After the experiment, you might be interested in getting your trained model.
+To do so, you will need the source code in order to reload in memory your code architecture.
+
+You have the option to choose the client and the round you are interested in.
+
+If `round_idx` is set to `None`, the last round will be selected by default.
+
+```python
+from substrafl.model_loading import download_algo_files
+from substrafl.model_loading import load_algo
+```
+
+```python
+client_to_dowload_from = ALGO_ORG_ID
+round_idx = None
+
+folder = str(pathlib.Path.cwd() / "experiment_summaries" / compute_plan.key / ALGO_ORG_ID / (round_idx or "last"))
+
+download_algo_files(
+    client=clients[client_to_dowload_from],
+    compute_plan_key=compute_plan.key,
+    round_idx=round_idx,
+    dest_folder=folder,
+)
+
+model = load_algo(input_folder=folder)._model
+
+print(model)
+print([p for p in model.parameters()])
+```
+
+    Baseline(
+      (fc): Linear(in_features=39, out_features=1, bias=True)
+    )
+    [Parameter containing:
+    tensor([[ 0.0145,  0.6920, -0.2456, -0.2081, -0.0139, -0.2052,  0.0050, -0.2389,
+             -0.5810, -0.2437, -0.6159, -0.2866, -0.0065, -0.4236, -0.4062, -0.4992,
+              0.1233,  0.3074, -0.8318, -0.0700,  0.0087, -0.1842, -0.5766,  0.2790,
+             -0.1619, -0.1921, -0.0589, -0.2146,  0.0014, -0.0935,  0.2092,  0.5909,
+             -0.5916, -0.6775, -0.4972, -0.3845, -0.4516,  0.1292,  0.3012]],
+           requires_grad=True), Parameter containing:
+    tensor([0.0324], requires_grad=True)]
+
+```python
+
+```
