@@ -208,7 +208,7 @@ cd flamby/datasets/fed_lidc_idri
 python lidc_heterogeneity_plot.py
 ```
 - [Fed-ISIC2019](./flamby/datasets/fed_isic2019/README.md)
-**You need to first deactivate color constancy normalization when preprocessing the dataset (cc=False in resize_images.py)**
+**In order to exactly reproduce the plot in the article**, one needs to first deactivate color constancy normalization when preprocessing the dataset (change `cc` to `False` in `resize_images.py`) when following download and preprocessing instructions [here](./flamby/datasets/fed_isic2019/README.md).  Hence one might have to download the dataset a second time, if it was already downloaded, and therefore to potentially update `dataset_location.yaml` files accordingly.
 ```
 cd flamby/datasets/fed_isic2019
 python heterogeneity_pic.py
