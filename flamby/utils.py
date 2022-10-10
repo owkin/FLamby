@@ -2,7 +2,10 @@ import os
 import sys
 from pathlib import Path
 
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 import torch
 import yaml
 from tqdm import tqdm
@@ -307,3 +310,27 @@ def accept_license(license_link, dataset_name, save_agreement=True):
                 " accept the license and data terms of the original data owners."
                 " Please read and accept the terms and answer yes.\n\n\n"
             )
+
+
+def seaborn_styling(figsize=(40, 20), legend_fontsize=24, labelsize=24):
+    """This is used to set homogeneous default params for seaborn.
+    Parameters
+    ----------
+    figsize : tuple
+        The default figure size in inches.
+    legend_fontsize: int
+        Default fontsize of the legends labels.
+    labelsize: int
+        Default size of labels.
+    """
+    sns.set_theme()
+    sns.set_style("darkgrid")
+    plt.grid()
+    figure = {"figsize": figsize}
+    axes = {"labelsize": labelsize}
+    matplotlib.rc("axes", **axes)
+    matplotlib.rc("figure", **figure)
+    plt.rcParams["savefig.dpi"] = 300
+    plt.rc("legend", fontsize=legend_fontsize)
+    plt.rcParams["xtick.labelsize"] = 14
+    plt.rcParams["ytick.labelsize"] = 14

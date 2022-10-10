@@ -3,8 +3,9 @@ import numpy as np
 import seaborn as sns
 
 from flamby.datasets.fed_heart_disease import FedHeartDisease
+from flamby.utils import seaborn_styling
 
-sns.set_theme()
+seaborn_styling(figsize=(15, 10), legend_fontsize=24, labelsize=20)
 palette = sns.color_palette("colorblind", n_colors=16)
 
 # get centers
@@ -31,7 +32,7 @@ full_y = np.array(full_y)
 center = np.array(center)
 
 # plots
-fig, ax = plt.subplots(figsize=(4, 2))
+fig, ax = plt.subplots()
 select = [0, 2, 5]  # 4]#np.arange(13)#[0, 2, 5]#, 7]
 leg = ["age", "trestbps", "thalach", "oldpeak"]
 hdls = []

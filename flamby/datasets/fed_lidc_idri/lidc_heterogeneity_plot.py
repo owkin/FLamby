@@ -5,6 +5,9 @@ from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 from flamby.datasets.fed_lidc_idri import FedLidcIdri
+from flamby.utils import seaborn_styling
+
+seaborn_styling(legend_fontsize=10, labelsize=12)
 
 
 def make_plot():
@@ -25,29 +28,26 @@ def make_plot():
             list_data.append(data)
         list_data = np.concatenate(list_data)
         counts, bins, bars = plt.hist(
-            list_data, density=True, bins=list_x, alpha=0.5, label=f"center {k+1}"
+            list_data, density=True, bins=list_x, alpha=0.5, label=f"Client {k+1}"
         )
         np.save("bins.npy", bins)
         np.save(f"counts_center_{center}.npy", counts)
     plt.clf()
 
-    sns.set_theme(style="darkgrid")
-
-    dict_center = {0: "GE MEDICAL SYSTEMS", 1: "PHILIPS", 2: "SIEMENS", 3: "TOSHIBA"}
+    # dict_center = {0: "GE MEDICAL SYSTEMS", 1: "PHILIPS", 2: "SIEMENS", 3: "TOSHIBA"}
 
     df = pd.DataFrame()
     for center in [0, 1, 2, 3]:
         bins = np.load("bins.npy")
         bars = np.load(f"counts_center_{center}.npy")
-        df[dict_center[center]] = bars
+        df["Client " + str(center)] = bars
     df["Intensity"] = bins[1:]
     df = df.set_index("Intensity")
 
     sns.lineplot(data=df)
-    plt.xlabel("Voxels of intensity...")
+    plt.xlabel("Intensity")
     plt.ylabel("Density of voxels")
-    plt.legend(prop={"size": 8})
-    plt.savefig("fed_lidc_intensity_bis.pdf")
+    plt.savefig("fed_lidc_intensity.pdf", bbox_inches="tight")
     plt.show()
 
 
