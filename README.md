@@ -208,7 +208,7 @@ cd flamby/datasets/fed_lidc_idri
 python lidc_heterogeneity_plot.py
 ```
 - [Fed-ISIC2019](./flamby/datasets/fed_isic2019/README.md)
-**You need to deactivate color constancy normalization when preprocessing the dataset (cc=False in resize_images.py)**
+**You need to first deactivate color constancy normalization when preprocessing the dataset (cc=False in resize_images.py)**
 ```
 cd flamby/datasets/fed_isic2019
 python heterogeneity_pic.py
@@ -228,7 +228,16 @@ python kits19_heterogenity_plot.py
 cd flamby/datasets/fed_heart_disease
 python heterogeneity_plot.py
 ```
-
+- [Fed-Camelyon16](./flamby/datasets/fed_camelyon16/README.md)
+First concatenate as many matter image patches from Hospital 0 and Hospital 1 as can be fit in
+the RAM. Then compute both histograms **per-color-channel** using 256 equally sized bins with the `np.histogram` 
+function with `density=True`. 
+Then save the results as histogram_0.npy, histogram_1.npy and bins_0.npy
+```
+cp -t flamby/datasets/fed_camelyon16 histograms_{0, 1}.npy bins_0.npy
+cd flamby/datasets/fed_camelyon16
+python plot_camelyon16_histogram.py 
+```
 
 ## Deploy documentations
 
