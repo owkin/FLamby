@@ -8,7 +8,7 @@ import numpy as np
 import seaborn as sns
 from batchgenerators.utilities.file_and_folder_operations import *
 from matplotlib.lines import Line2D
-from scipy import stats
+from numpy import random
 
 from flamby.utils import get_config_file_path, read_config, seaborn_styling
 
@@ -29,15 +29,19 @@ def add_args(parser):
     return args
 
 
-def plot_histogram(axis, array, num_positions=100, label=None, alpha=0.05, color=None):
-    values = array.ravel()
-    kernel = stats.gaussian_kde(values)
-    positions = np.linspace(values.min(), values.max(), num=num_positions)
-    histogram = kernel(positions)
+def plot_histogram(axis, array, num_positions=100, label=None, alpha=0.5, color=None):
     kwargs = dict(linewidth=1, color="black" if color is None else color, alpha=alpha)
-    if label is not None:
-        kwargs["label"] = label
-    axis.plot(positions, histogram, **kwargs)
+    # RAM and computation issues force us to subsample
+    values = random.choice(array, size=min(500000, array.shape[0]), replace=False)
+    del array
+    sns.kdeplot(
+        values,
+        color=kwargs["color"],
+        fill=kwargs["color"],
+        alpha=0.17,
+        label=label,
+        ax=axis,
+    )
 
 
 def read_csv_file_for_plotting(csv_file="../metadata/anony_sites.csv", base=None):
@@ -62,7 +66,7 @@ def read_csv_file_for_plotting(csv_file="../metadata/anony_sites.csv", base=None
 
     print(" Creating Heterogeneity Plot ")
     silo_count = 0
-    colours = sns.color_palette("hls", 6)
+    colours = sns.color_palette("colorblind", 6)
 
     fig, ax = plt.subplots()
     for ID in range(0, 89):
@@ -71,14 +75,17 @@ def read_csv_file_for_plotting(csv_file="../metadata/anony_sites.csv", base=None
             client_data_idxx = np.array([train_case_ids[i] for i in client_ids])
             print("Silo ID " + str(silo_count))
             print(client_data_idxx)
-            iteration = 0
+            silo_array = np.zeros((0,), dtype="float32")
             for CI in client_data_idxx:
                 print("Plotting ID " + str(CI))
                 curr = join(base, CI)
                 image_file = join(curr, "imaging.nii.gz")
-                array = np.array(nib.load(image_file).dataobj)
-                plot_histogram(ax, array, color=colours[silo_count])
-                iteration += 1
+                array = np.array(nib.load(image_file).dataobj).astype("float32")
+                # We have finite RAM unfortunately
+                if silo_array.shape[0] > 1e9:
+                    break
+                silo_array = np.concatenate((silo_array, array.ravel()))
+            plot_histogram(ax, silo_array, color=colours[silo_count])
             silo_count += 1
 
     ax.set_xlabel("Intensity")
@@ -95,7 +102,7 @@ def read_csv_file_for_plotting(csv_file="../metadata/anony_sites.csv", base=None
     ]
 
     ax.legend(handles=legend_elements, loc="upper right")
-    plt.savefig("histograms_kits19.eps", bbox_inches="tight")
+    plt.savefig("histograms_kits19.pdf", bbox_inches="tight")
 
 
 if __name__ == "__main__":
