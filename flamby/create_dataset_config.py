@@ -1,6 +1,6 @@
 import argparse
 
-from flamby.utils import create_config, get_config_file_path, write_value_in_config
+from flamby.utils import create_config, write_value_in_config
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -10,7 +10,12 @@ if __name__ == "__main__":
         help="The path where the dataset is located",
         required=True,
     )
-    parser.add_argument("--dataset-name", type=str, help="The name of the dataset you downloaded", required=True)
+    parser.add_argument(
+        "--dataset-name",
+        type=str,
+        help="The name of the dataset you downloaded",
+        required=True,
+    )
     parser.add_argument(
         "--debug",
         action="store_true",
