@@ -7,9 +7,15 @@ from torch.utils.data import DataLoader as dl
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
-from flamby.datasets.fed_synthetic import (BATCH_SIZE, LR, NUM_EPOCHS_POOLED,
-                                           Baseline, BaselineLoss,
-                                           FedSynthetic, metric)
+from flamby.datasets.fed_synthetic import (
+    BATCH_SIZE,
+    LR,
+    NUM_EPOCHS_POOLED,
+    Baseline,
+    BaselineLoss,
+    FedSynthetic,
+    metric,
+)
 from flamby.utils import evaluate_model_on_tests
 
 

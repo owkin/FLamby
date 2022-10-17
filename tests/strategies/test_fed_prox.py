@@ -12,8 +12,7 @@ from torch.utils.data._utils.collate import default_collate
 from torchvision import datasets
 from torchvision.transforms import ToTensor
 
-from flamby.datasets.fed_dummy_dataset import (Baseline, BaselineLoss,
-                                               FedDummyDataset)
+from flamby.datasets.fed_dummy_dataset import Baseline, BaselineLoss, FedDummyDataset
 from flamby.strategies.fed_prox import FedProx
 from flamby.utils import evaluate_model_on_tests
 
@@ -70,7 +69,9 @@ def test_fed_prox_integration(n_clients):
     mu = 0.1
     optimizer_class = torch.optim.Adam
 
-    s = FedProx(train_dataloader, m, loss, optimizer_class, lr, num_updates, nrounds, mu)
+    s = FedProx(
+        train_dataloader, m, loss, optimizer_class, lr, num_updates, nrounds, mu
+    )
     m = s.run()
 
     def accuracy(y_true, y_pred):

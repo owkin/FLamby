@@ -14,11 +14,16 @@ import requests
 import tqdm
 from joblib import Parallel, delayed
 from process_raw import clean_up_dicoms, convert_to_niftis
+
 # from sklearn.model_selection import train_test_split
 from tciaclient import TCIAClient
 
-from flamby.utils import (accept_license, create_config, get_config_file_path,
-                          write_value_in_config)
+from flamby.utils import (
+    accept_license,
+    create_config,
+    get_config_file_path,
+    write_value_in_config,
+)
 
 try:
     n_cpus = multiprocessing.cpu_count()

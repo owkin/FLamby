@@ -16,8 +16,7 @@
 # See flamby/datasets/fed_kits19/dataset_creation_scripts/LICENSE/README.md for more
 # information
 
-from nnunet.network_architecture.generic_UNet import (ConvDropoutNormNonlin,
-                                                      Generic_UNet)
+from nnunet.network_architecture.generic_UNet import ConvDropoutNormNonlin, Generic_UNet
 from nnunet.network_architecture.initialization import InitWeights_He
 from torch import nn
 

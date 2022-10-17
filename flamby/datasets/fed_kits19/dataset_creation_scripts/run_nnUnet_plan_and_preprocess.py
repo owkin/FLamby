@@ -17,8 +17,9 @@
 # information
 import sys
 
-from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.set_environment_variables import \
-    set_environment_variables
+from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.set_environment_variables import (
+    set_environment_variables,
+)
 from flamby.utils import get_config_file_path, write_value_in_config
 
 if __name__ == "__main__":
@@ -46,7 +47,14 @@ if __name__ == "__main__":
         for _ in range(2):
             sys.argv.pop(index_num_threads)
 
-    sys.argv = sys.argv + ["-t", "064", "-tf", args.num_threads, "-tl", args.num_threads]
+    sys.argv = sys.argv + [
+        "-t",
+        "064",
+        "-tf",
+        args.num_threads,
+        "-tl",
+        args.num_threads,
+    ]
 
     main()
     path_to_config_file = get_config_file_path("fed_kits19", False)

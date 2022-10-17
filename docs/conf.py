@@ -234,4 +234,3 @@ todo_include_todos = True
 # autodoc_typehints = "description" put only the type in the description
 autodoc_typehints = "description"
 autodoc_typehints_description_target = "documented"
-

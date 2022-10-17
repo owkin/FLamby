@@ -7,15 +7,29 @@ import numpy as np
 import torch
 from torch.optim import lr_scheduler
 
-from flamby.datasets.fed_kits19 import (BATCH_SIZE, LR, NUM_EPOCHS_POOLED,
-                                        Baseline, BaselineLoss, FedKits19,
-                                        evaluate_dice_on_tests, metric,
-                                        softmax_helper)
+from flamby.datasets.fed_kits19 import (
+    BATCH_SIZE,
+    LR,
+    NUM_EPOCHS_POOLED,
+    Baseline,
+    BaselineLoss,
+    FedKits19,
+    evaluate_dice_on_tests,
+    metric,
+    softmax_helper,
+)
 from flamby.utils import check_dataset_from_config
 
 
 def train_model(
-    model, optimizer, scheduler, dataloaders, dataset_sizes, device, lossfunc, num_epochs
+    model,
+    optimizer,
+    scheduler,
+    dataloaders,
+    dataset_sizes,
+    device,
+    lossfunc,
+    num_epochs,
 ):
     """Training function
     Parameters
@@ -91,7 +105,9 @@ def train_model(
             best_model_wts = copy.deepcopy(model.state_dict())
 
         print(
-            "Training Loss: {:.4f} Validation Acc: {:.4f} ".format(epoch_loss, epoch_acc)
+            "Training Loss: {:.4f} Validation Acc: {:.4f} ".format(
+                epoch_loss, epoch_acc
+            )
         )
         training_loss_list.append(epoch_loss)
         training_dice_list.append(epoch_acc)
@@ -151,7 +167,9 @@ def main(args):
 
     lossfunc = BaselineLoss()
 
-    optimizer = torch.optim.Adam(model.parameters(), LR, weight_decay=3e-5, amsgrad=True)
+    optimizer = torch.optim.Adam(
+        model.parameters(), LR, weight_decay=3e-5, amsgrad=True
+    )
     scheduler = lr_scheduler.ReduceLROnPlateau(
         optimizer,
         mode="min",

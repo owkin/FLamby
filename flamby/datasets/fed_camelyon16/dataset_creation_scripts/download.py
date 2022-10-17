@@ -68,7 +68,9 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
         downloaded_images_status_file.Slide.iloc[: len(train_df.index)] = train_df[
             "name"
         ]
-        downloaded_images_status_file.Slide.iloc[len(train_df.index) :] = test_df["name"]
+        downloaded_images_status_file.Slide.iloc[len(train_df.index) :] = test_df[
+            "name"
+        ]
         downloaded_images_status_file.to_csv(
             downloaded_images_status_file_path, index=False
         )

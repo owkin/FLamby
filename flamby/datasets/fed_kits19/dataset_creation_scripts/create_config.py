@@ -1,7 +1,6 @@
 import argparse
 
-from flamby.utils import (create_config, get_config_file_path,
-                          write_value_in_config)
+from flamby.utils import create_config, get_config_file_path, write_value_in_config
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

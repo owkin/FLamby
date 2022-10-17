@@ -11,10 +11,17 @@ from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor
 
-from flamby.datasets.fed_camelyon16 import (BATCH_SIZE, LR, NUM_CLIENTS,
-                                            Baseline, BaselineLoss,
-                                            FedCamelyon16, collate_fn,
-                                            get_nb_max_rounds, metric)
+from flamby.datasets.fed_camelyon16 import (
+    BATCH_SIZE,
+    LR,
+    NUM_CLIENTS,
+    Baseline,
+    BaselineLoss,
+    FedCamelyon16,
+    collate_fn,
+    get_nb_max_rounds,
+    metric,
+)
 from flamby.strategies.cyclic import Cyclic
 from flamby.utils import evaluate_model_on_tests
 

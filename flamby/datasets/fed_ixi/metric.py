@@ -15,6 +15,9 @@ def metric(y_true, y_pred):
     dice[union == 0] = 1
     return np.mean(dice)
 
-if __name__ == '__main__':
-    print(metric(np.ones((10,1,10,10,10)),np.ones((10,1,10,10,10))))
-    print(metric((np.random.rand(10,1,10,10,10) > 0.5),np.ones((10,1,10,10,10))))
+
+if __name__ == "__main__":
+    print(metric(np.ones((10, 1, 10, 10, 10)), np.ones((10, 1, 10, 10, 10))))
+    print(
+        metric((np.random.rand(10, 1, 10, 10, 10) > 0.5), np.ones((10, 1, 10, 10, 10)))
+    )

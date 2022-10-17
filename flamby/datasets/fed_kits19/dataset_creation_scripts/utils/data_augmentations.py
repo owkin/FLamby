@@ -18,22 +18,35 @@
 
 from batchgenerators.transforms.abstract_transforms import Compose
 from batchgenerators.transforms.channel_selection_transforms import (
-    DataChannelSelectionTransform, SegChannelSelectionTransform)
+    DataChannelSelectionTransform,
+    SegChannelSelectionTransform,
+)
 from batchgenerators.transforms.color_transforms import GammaTransform
-from batchgenerators.transforms.spatial_transforms import (MirrorTransform,
-                                                           SpatialTransform)
+from batchgenerators.transforms.spatial_transforms import (
+    MirrorTransform,
+    SpatialTransform,
+)
 from batchgenerators.transforms.utility_transforms import (
-    NumpyToTensor, RemoveLabelTransform, RenameTransform)
+    NumpyToTensor,
+    RemoveLabelTransform,
+    RenameTransform,
+)
 from nnunet.training.data_augmentation.custom_transforms import (
-    Convert2DTo3DTransform, Convert3DTo2DTransform,
-    ConvertSegmentationToRegionsTransform, MaskTransform)
+    Convert2DTo3DTransform,
+    Convert3DTo2DTransform,
+    ConvertSegmentationToRegionsTransform,
+    MaskTransform,
+)
 from nnunet.training.data_augmentation.pyramid_augmentations import (
-    ApplyRandomBinaryOperatorTransform, MoveSegAsOneHotToData,
-    RemoveRandomConnectedComponentFromOneHotEncodingTransform)
+    ApplyRandomBinaryOperatorTransform,
+    MoveSegAsOneHotToData,
+    RemoveRandomConnectedComponentFromOneHotEncodingTransform,
+)
 
 try:
-    from batchgenerators.dataloading.nondet_multi_threaded_augmenter import \
-        NonDetMultiThreadedAugmenter
+    from batchgenerators.dataloading.nondet_multi_threaded_augmenter import (
+        NonDetMultiThreadedAugmenter,
+    )
 except ImportError as ie:
     NonDetMultiThreadedAugmenter = None
 
