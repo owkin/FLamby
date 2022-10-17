@@ -5,18 +5,17 @@ A set of function that allow data management suited for the `IXI dataset <https:
 """
 
 import os
-from os import PathLike
-import numpy
-from tarfile import TarFile
-from zipfile import ZipFile
-from pathlib import Path
-
 import re
 import tempfile
-from typing import Union, List, Tuple
+from os import PathLike
+from pathlib import Path
+from tarfile import TarFile
+from typing import List, Tuple, Union
+from zipfile import ZipFile
 
 import nibabel as nib
 import nibabel.processing as processing
+import numpy
 import numpy as np
 from nibabel import Nifti1Header
 from numpy import ndarray

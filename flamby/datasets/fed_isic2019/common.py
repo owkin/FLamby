@@ -1,4 +1,5 @@
 import torch
+
 from flamby.datasets.fed_isic2019.dataset import FedIsic2019
 
 NUM_CLIENTS = 6

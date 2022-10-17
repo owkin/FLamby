@@ -3,7 +3,8 @@ from fedml import FedMLRunner
 from fedml_utils import HeartDiseaseAggregator, HeartDiseaseTrainer
 from torch.utils.data import DataLoader as dl
 
-from flamby.datasets.fed_heart_disease import BATCH_SIZE, Baseline, FedHeartDisease
+from flamby.datasets.fed_heart_disease import (BATCH_SIZE, Baseline,
+                                               FedHeartDisease)
 
 if __name__ == "__main__":
     # init FedML framework

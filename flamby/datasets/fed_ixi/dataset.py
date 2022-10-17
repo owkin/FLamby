@@ -5,24 +5,16 @@ from zipfile import ZipFile
 
 import pandas as pd
 import torch
-from monai.transforms import (
-    AddChannel,
-    AsDiscrete,
-    Compose,
-    NormalizeIntensity,
-    Resize,
-    ToTensor,
-)
+from monai.transforms import (AddChannel, AsDiscrete, Compose,
+                              NormalizeIntensity, Resize, ToTensor)
 from torch import Tensor
 from torch.utils.data import Dataset
 
 import flamby
-from flamby.datasets.fed_ixi.utils import (
-    _extract_center_name_from_filename,
-    _get_center_name_from_center_id,
-    _get_id_from_filename,
-    _load_nifti_image_and_label_by_id,
-)
+from flamby.datasets.fed_ixi.utils import (_extract_center_name_from_filename,
+                                           _get_center_name_from_center_id,
+                                           _get_id_from_filename,
+                                           _load_nifti_image_and_label_by_id)
 from flamby.utils import check_dataset_from_config
 
 

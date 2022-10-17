@@ -3,8 +3,10 @@ import os
 
 import numpy as np
 
-from flamby.datasets.fed_synthetic.synthetic_generator import generate_synthetic_dataset
-from flamby.utils import create_config, get_config_file_path, write_value_in_config
+from flamby.datasets.fed_synthetic.synthetic_generator import \
+    generate_synthetic_dataset
+from flamby.utils import (create_config, get_config_file_path,
+                          write_value_in_config)
 
 
 def main(output_folder, debug=False, **kwargs):

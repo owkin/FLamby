@@ -1,4 +1,5 @@
 import torch
+
 from flamby.datasets.fed_tcga_brca.dataset import FedTcgaBrca
 
 NUM_CLIENTS = 6

@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pandas as pd
 from google_client import create_service
-from googleapiclient.http import MediaIoBaseDownload
 from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaIoBaseDownload
 from tqdm import tqdm
 
 import flamby.datasets.fed_camelyon16.dataset_creation_scripts as dl_module

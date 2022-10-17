@@ -6,15 +6,9 @@ import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
-from flamby.datasets.fed_tcga_brca import (
-    BATCH_SIZE,
-    LR,
-    NUM_EPOCHS_POOLED,
-    Baseline,
-    BaselineLoss,
-    FedTcgaBrca,
-    metric,
-)
+from flamby.datasets.fed_tcga_brca import (BATCH_SIZE, LR, NUM_EPOCHS_POOLED,
+                                           Baseline, BaselineLoss, FedTcgaBrca,
+                                           metric)
 from flamby.utils import evaluate_model_on_tests
 
 

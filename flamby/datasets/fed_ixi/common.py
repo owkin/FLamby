@@ -1,4 +1,5 @@
 import torch
+
 from flamby.datasets.fed_ixi.dataset import FedIXITiny
 
 NUM_CLIENTS = 3

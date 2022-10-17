@@ -1,7 +1,8 @@
 import torch
 from torch.utils.data import DataLoader as dl
 
-from flamby.datasets.fed_heart_disease import BATCH_SIZE, NUM_CLIENTS, FedHeartDisease
+from flamby.datasets.fed_heart_disease import (BATCH_SIZE, NUM_CLIENTS,
+                                               FedHeartDisease)
 
 
 def test_normalization():

@@ -27,18 +27,14 @@ import pandas as pd
 import torch
 from batchgenerators.utilities.file_and_folder_operations import *
 from nnunet.training.data_augmentation.default_data_augmentation import (
-    default_3D_augmentation_params,
-    get_patch_size,
-)
+    default_3D_augmentation_params, get_patch_size)
 from torch.utils.data import Dataset
 
 import flamby.datasets.fed_kits19
-from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.data_augmentations import (
-    transformations,
-)
-from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.set_environment_variables import (
-    set_environment_variables,
-)
+from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.data_augmentations import \
+    transformations
+from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.set_environment_variables import \
+    set_environment_variables
 from flamby.utils import check_dataset_from_config
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), "")))

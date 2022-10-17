@@ -8,16 +8,10 @@ import torch.multiprocessing
 from torch.utils.data import DataLoader as dl
 from tqdm import tqdm
 
-from flamby.datasets.fed_heart_disease import (
-    BATCH_SIZE,
-    LR,
-    NUM_CLIENTS,
-    Baseline,
-    BaselineLoss,
-    FedHeartDisease,
-    get_nb_max_rounds,
-    metric,
-)
+from flamby.datasets.fed_heart_disease import (BATCH_SIZE, LR, NUM_CLIENTS,
+                                               Baseline, BaselineLoss,
+                                               FedHeartDisease,
+                                               get_nb_max_rounds, metric)
 from flamby.strategies import FedAvg
 from flamby.utils import evaluate_model_on_tests
 

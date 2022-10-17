@@ -11,15 +11,9 @@ from torch.utils.data import DataLoader as dl
 from torchvision import datasets
 from torchvision.transforms import ToTensor
 
-from flamby.datasets.fed_isic2019 import (
-    BATCH_SIZE,
-    LR,
-    NUM_CLIENTS,
-    Baseline,
-    BaselineLoss,
-    FedIsic2019,
-    metric,
-)
+from flamby.datasets.fed_isic2019 import (BATCH_SIZE, LR, NUM_CLIENTS,
+                                          Baseline, BaselineLoss, FedIsic2019,
+                                          metric)
 from flamby.datasets.fed_isic2019.common import get_nb_max_rounds
 from flamby.strategies import FedAvg
 from flamby.utils import evaluate_model_on_tests

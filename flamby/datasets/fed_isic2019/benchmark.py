@@ -9,15 +9,9 @@ import dataset
 import torch
 from sklearn import metrics
 
-from flamby.datasets.fed_isic2019 import (
-    BATCH_SIZE,
-    LR,
-    NUM_EPOCHS_POOLED,
-    Baseline,
-    BaselineLoss,
-    FedIsic2019,
-    metric,
-)
+from flamby.datasets.fed_isic2019 import (BATCH_SIZE, LR, NUM_EPOCHS_POOLED,
+                                          Baseline, BaselineLoss, FedIsic2019,
+                                          metric)
 from flamby.utils import check_dataset_from_config, evaluate_model_on_tests
 
 

@@ -1,4 +1,5 @@
 import torch
+
 from flamby.datasets.fed_kits19.dataset import FedKits19
 
 NUM_CLIENTS = 6

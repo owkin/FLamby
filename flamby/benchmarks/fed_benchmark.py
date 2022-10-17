@@ -7,23 +7,12 @@ import torch
 
 import flamby.strategies as strats
 from flamby.benchmarks.benchmark_utils import (
-    ensemble_perf_from_predictions,
-    evaluate_model_on_local_and_pooled_tests,
-    fill_df_with_xp_results,
-    find_xps_in_df,
-    get_logfile_name_from_strategy,
-    init_data_loaders,
-    init_xp_plan,
-    set_dataset_specific_config,
-    set_seed,
-    train_single_centric,
-)
-from flamby.benchmarks.conf import (
-    check_config,
-    get_dataset_args,
-    get_results_file,
-    get_strategies,
-)
+    ensemble_perf_from_predictions, evaluate_model_on_local_and_pooled_tests,
+    fill_df_with_xp_results, find_xps_in_df, get_logfile_name_from_strategy,
+    init_data_loaders, init_xp_plan, set_dataset_specific_config, set_seed,
+    train_single_centric)
+from flamby.benchmarks.conf import (check_config, get_dataset_args,
+                                    get_results_file, get_strategies)
 from flamby.gpu_utils import use_gpu_idx
 
 

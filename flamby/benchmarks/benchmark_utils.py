@@ -1,9 +1,9 @@
 import copy
+import random
 import time
 
 import numpy as np
 import pandas as pd
-import random
 import torch
 from opacus import PrivacyEngine
 from torch.utils.data import DataLoader as dl
@@ -587,7 +587,8 @@ def set_dataset_specific_config(dataset_name, compute_ensemble_perf=False, use_g
     # Instantiate all train and test dataloaders required including pooled ones
     if dataset_name == "fed_lidc_idri":
         batch_size_test = 1
-        from flamby.datasets.fed_lidc_idri import evaluate_dice_on_tests_by_chunks
+        from flamby.datasets.fed_lidc_idri import \
+            evaluate_dice_on_tests_by_chunks
 
         def evaluate_func(m, test_dls, metric, use_gpu=use_gpu, return_pred=False):
             dice_dict = evaluate_dice_on_tests_by_chunks(m, test_dls, use_gpu)

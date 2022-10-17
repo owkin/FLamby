@@ -12,36 +12,32 @@ from flamby.datasets.fed_camelyon16 import NUM_CLIENTS as fedcam16_num_clients
 from flamby.datasets.fed_camelyon16 import Baseline as FedCam16Baseline
 from flamby.datasets.fed_camelyon16 import BaselineLoss as FedCam16BaselineLoss
 from flamby.datasets.fed_camelyon16 import FedCamelyon16, collate_fn
-from flamby.datasets.fed_camelyon16 import (
-    get_nb_max_rounds as fedcam16_get_nb_max_rounds,
-)
+from flamby.datasets.fed_camelyon16 import \
+    get_nb_max_rounds as fedcam16_get_nb_max_rounds
 from flamby.datasets.fed_camelyon16 import metric as fedcam16_metric
-
 # from flamby.datasets.fed_heart_disease import LR as fedheart_lr
 from flamby.datasets.fed_heart_disease import BATCH_SIZE as fedheart_batch_size
-from flamby.datasets.fed_heart_disease import NUM_CLIENTS as fedheart_num_clients
+from flamby.datasets.fed_heart_disease import \
+    NUM_CLIENTS as fedheart_num_clients
 from flamby.datasets.fed_heart_disease import Baseline as FedHeartBaseline
-from flamby.datasets.fed_heart_disease import BaselineLoss as FedHeartBaselineLoss
+from flamby.datasets.fed_heart_disease import \
+    BaselineLoss as FedHeartBaselineLoss
 from flamby.datasets.fed_heart_disease import FedHeartDisease
-from flamby.datasets.fed_heart_disease import (
-    get_nb_max_rounds as fedheart_get_nb_max_rounds,
-)
+from flamby.datasets.fed_heart_disease import \
+    get_nb_max_rounds as fedheart_get_nb_max_rounds
 from flamby.datasets.fed_heart_disease import metric as fedheart_metric
-
 # from flamby.datasets.fed_isic2019 import LR as fedisic19_lr
 from flamby.datasets.fed_isic2019 import BATCH_SIZE as fedisic19_batch_size
 from flamby.datasets.fed_isic2019 import NUM_CLIENTS as fedisic19_num_clients
 from flamby.datasets.fed_isic2019 import Baseline as FedIsic2019Baseline
-from flamby.datasets.fed_isic2019 import BaselineLoss as FedIsic2019BBaselineLoss
+from flamby.datasets.fed_isic2019 import \
+    BaselineLoss as FedIsic2019BBaselineLoss
 from flamby.datasets.fed_isic2019 import FedIsic2019
-from flamby.datasets.fed_isic2019 import (
-    get_nb_max_rounds as fedisic19_get_nb_max_rounds,
-)
+from flamby.datasets.fed_isic2019 import \
+    get_nb_max_rounds as fedisic19_get_nb_max_rounds
 from flamby.datasets.fed_isic2019 import metric as fedisic19_metric
-
 # strategies
 from flamby.strategies import FedAvg, FedAvgFineTuning
-
 # evaluation
 from flamby.utils import evaluate_model_on_tests
 

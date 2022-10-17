@@ -6,7 +6,8 @@ import torch
 from torch.utils.data import DataLoader as dl
 from torch.utils.data._utils.collate import default_collate
 
-from flamby.datasets.fed_dummy_dataset import Baseline, BaselineLoss, FedDummyDataset
+from flamby.datasets.fed_dummy_dataset import (Baseline, BaselineLoss,
+                                               FedDummyDataset)
 from flamby.strategies.fed_opt import FedAdam
 
 

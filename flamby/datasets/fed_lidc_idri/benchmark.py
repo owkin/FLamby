@@ -8,17 +8,10 @@ from torch.utils.data import DataLoader as dl
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
-from flamby.datasets.fed_lidc_idri import (
-    BATCH_SIZE,
-    LR,
-    NUM_EPOCHS_POOLED,
-    SEEDS,
-    Baseline,
-    BaselineLoss,
-    FedLidcIdri,
-    collate_fn,
-    evaluate_dice_on_tests_by_chunks,
-)
+from flamby.datasets.fed_lidc_idri import (BATCH_SIZE, LR, NUM_EPOCHS_POOLED,
+                                           SEEDS, Baseline, BaselineLoss,
+                                           FedLidcIdri, collate_fn,
+                                           evaluate_dice_on_tests_by_chunks)
 
 
 def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False, debug=False):

@@ -7,11 +7,8 @@ import torch
 from torch.utils.data import Dataset
 
 import flamby.datasets.fed_lidc_idri
-from flamby.datasets.fed_lidc_idri.data_utils import (
-    ClipNorm,
-    Sampler,
-    resize_by_crop_or_pad,
-)
+from flamby.datasets.fed_lidc_idri.data_utils import (ClipNorm, Sampler,
+                                                      resize_by_crop_or_pad)
 from flamby.utils import check_dataset_from_config
 
 

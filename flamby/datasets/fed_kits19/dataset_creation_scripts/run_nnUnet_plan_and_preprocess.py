@@ -17,9 +17,8 @@
 # information
 import sys
 
-from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.set_environment_variables import (
-    set_environment_variables,
-)
+from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.set_environment_variables import \
+    set_environment_variables
 from flamby.utils import get_config_file_path, write_value_in_config
 
 if __name__ == "__main__":

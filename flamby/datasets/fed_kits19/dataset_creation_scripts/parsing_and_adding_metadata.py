@@ -25,16 +25,12 @@ from collections import defaultdict
 
 import numpy as np
 from batchgenerators.utilities.file_and_folder_operations import (
-    join,
-    maybe_mkdir_p,
-    save_json,
-    subfolders,
-)
+    join, maybe_mkdir_p, save_json, subfolders)
 
-from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.set_environment_variables import (
-    set_environment_variables,
-)
-from flamby.utils import get_config_file_path, read_config, write_value_in_config
+from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.set_environment_variables import \
+    set_environment_variables
+from flamby.utils import (get_config_file_path, read_config,
+                          write_value_in_config)
 
 
 def add_args(parser):

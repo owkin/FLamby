@@ -1,14 +1,11 @@
 # Copy pasted from https://github.com/nadirsaghar/TCIA-REST-API-Client/blob/master/tcia-rest-client-python/src/tciaclient.py
 # 
-import os
-
-import urllib.request, urllib.error, urllib.parse
-
-import urllib.request, urllib.parse, urllib.error
-
-import sys
-
 import math
+import os
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
 
 #
 

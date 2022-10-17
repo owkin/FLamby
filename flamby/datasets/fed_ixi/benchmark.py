@@ -5,22 +5,16 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
-from torch.utils.data import DataLoader as dl
 from monai.transforms import Compose, NormalizeIntensity
+from torch.utils.data import DataLoader as dl
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
-from flamby.datasets.fed_ixi import (
-    BATCH_SIZE,
-    NUM_EPOCHS_POOLED,
-    SEEDS,
-    Baseline,
-    BaselineLoss,
-    FedIXITiny,
-    metric,
-)
-
+from flamby.datasets.fed_ixi import (BATCH_SIZE, NUM_EPOCHS_POOLED, SEEDS,
+                                     Baseline, BaselineLoss, FedIXITiny,
+                                     metric)
 from flamby.utils import evaluate_model_on_tests
+
 
 def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
     """

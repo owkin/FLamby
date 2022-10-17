@@ -12,7 +12,8 @@ from torch.utils.data._utils.collate import default_collate
 from torchvision import datasets
 from torchvision.transforms import ToTensor
 
-from flamby.datasets.fed_dummy_dataset import Baseline, BaselineLoss, FedDummyDataset
+from flamby.datasets.fed_dummy_dataset import (Baseline, BaselineLoss,
+                                               FedDummyDataset)
 from flamby.strategies.fed_prox import FedProx
 from flamby.utils import evaluate_model_on_tests
 
