@@ -1,0 +1,31 @@
+# This is a basic workflow to help you get started with Actions
+name: linting-validation
+
+# Controls when the workflow will run
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        name: Install Python
+        with:
+          python-version: '3.7'
+
+      - name: Install dependencies
+        run: pip install isort black==22.3.0
+
+      - name: Run black
+        run: black --check .
+
+      - name: Run isort
+        run: isort .
