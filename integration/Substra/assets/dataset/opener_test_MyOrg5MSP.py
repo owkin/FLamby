@@ -1,6 +1,7 @@
-from flamby.datasets.fed_tcga_brca import FedTcgaBrca
 import substratools as tools
 from torch.utils.data import DataLoader
+
+from flamby.datasets.fed_tcga_brca import FedTcgaBrca
 
 
 class FlambyTestOpener(tools.Opener):

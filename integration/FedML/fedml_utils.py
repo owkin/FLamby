@@ -1,10 +1,12 @@
-from fedml.core import ServerAggregator
-from fedml.core.alg_frame.client_trainer import ClientTrainer # isort
-from flamby.datasets.fed_heart_disease import LR, BaselineLoss, metric
-from flamby.utils import evaluate_model_on_tests
-from torch.optim import SGD
 import logging
 import time
+
+from fedml.core import ServerAggregator
+from fedml.core.alg_frame.client_trainer import ClientTrainer  # isort
+from torch.optim import SGD
+
+from flamby.datasets.fed_heart_disease import LR, BaselineLoss, metric
+from flamby.utils import evaluate_model_on_tests
 
 
 class HeartDiseaseTrainer(ClientTrainer):

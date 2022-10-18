@@ -103,7 +103,9 @@ def read_csv_file(csv_file="../metadata/anony_sites.csv"):
                 data_length = len(client_data_idxx)
                 train_ids = int(0.8 * data_length)
                 for i in client_data_idxx[:train_ids]:
-                    writer.writerow([i, silo_count, "train", "train_" + str(silo_count)])
+                    writer.writerow(
+                        [i, silo_count, "train", "train_" + str(silo_count)]
+                    )
                 for i in client_data_idxx[train_ids:]:
                     writer.writerow([i, silo_count, "test", "test_" + str(silo_count)])
 

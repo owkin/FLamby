@@ -274,9 +274,9 @@ def fast_sampler(
     # Add noise to centroids so that the nodules are not always centered in
     # the patch:
     if not center:
-        noise = (torch.rand(centroids_1.shape[0], 3) * torch.max(patch_shape)).long() % (
-            patch_shape.div(2, rounding_mode="floor")[None, ...]
-        )
+        noise = (
+            torch.rand(centroids_1.shape[0], 3) * torch.max(patch_shape)
+        ).long() % (patch_shape.div(2, rounding_mode="floor")[None, ...])
         centroids_1 += noise - patch_shape.div(4, rounding_mode="floor")
 
     # Sample random centroids

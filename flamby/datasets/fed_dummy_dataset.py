@@ -53,7 +53,10 @@ if __name__ == "__main__":
     m = Baseline()
     lo = BaselineLoss()
     dl = DataLoader(
-        FedDummyDataset(center=1, train=True), batch_size=32, shuffle=True, num_workers=0
+        FedDummyDataset(center=1, train=True),
+        batch_size=32,
+        shuffle=True,
+        num_workers=0,
     )
     it = iter(dl)
     X, y = next(it)

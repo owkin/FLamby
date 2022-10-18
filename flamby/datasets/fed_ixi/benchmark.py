@@ -5,8 +5,8 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
-from torch.utils.data import DataLoader as dl
 from monai.transforms import Compose, NormalizeIntensity
+from torch.utils.data import DataLoader as dl
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
@@ -19,8 +19,8 @@ from flamby.datasets.fed_ixi import (
     FedIXITiny,
     metric,
 )
-
 from flamby.utils import evaluate_model_on_tests
+
 
 def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
     """
@@ -41,13 +41,17 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
 
-    training_transform = Compose([
-        NormalizeIntensity(),
-    ])
+    training_transform = Compose(
+        [
+            NormalizeIntensity(),
+        ]
+    )
 
-    validation_transform = Compose([
-        NormalizeIntensity(),
-    ])
+    validation_transform = Compose(
+        [
+            NormalizeIntensity(),
+        ]
+    )
 
     training_dl = dl(
         FedIXITiny(transform=training_transform, train=True, pooled=True),
@@ -80,16 +84,16 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
         # and training_dl is shuffled as well
         torch.manual_seed(seed)
         m = Baseline(
-                in_channels=1,
-                out_classes=2,
-                dimensions=3,
-                num_encoding_blocks=3,
-                out_channels_first_layer=8,
-                normalization='batch',
-                upsampling_type='linear',
-                padding=True,
-                activation='PReLU',
-            )
+            in_channels=1,
+            out_classes=2,
+            dimensions=3,
+            num_encoding_blocks=3,
+            out_channels_first_layer=8,
+            normalization="batch",
+            upsampling_type="linear",
+            padding=True,
+            activation="PReLU",
+        )
         # Transfer to GPU if possible
         if torch.cuda.is_available() and use_gpu:
             m = m.cuda()
@@ -148,6 +152,7 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
         print(
             f"mDICE on {len(SEEDS)} runs: {results.mean():.2%} \\pm {results.std():.2%}"
         )
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

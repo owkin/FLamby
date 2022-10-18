@@ -4,6 +4,7 @@ import albumentations
 import torch
 import torch.nn as nn
 from efficientnet_pytorch import EfficientNet
+
 from flamby.datasets.fed_isic2019 import FedIsic2019
 
 

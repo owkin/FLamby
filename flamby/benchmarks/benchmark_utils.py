@@ -1,9 +1,9 @@
 import copy
+import random
 import time
 
 import numpy as np
 import pandas as pd
-import random
 import torch
 from opacus import PrivacyEngine
 from torch.utils.data import DataLoader as dl
@@ -568,7 +568,9 @@ def ensemble_perf_from_predictions(
     return ensemble_perf
 
 
-def set_dataset_specific_config(dataset_name, compute_ensemble_perf=False, use_gpu=True):
+def set_dataset_specific_config(
+    dataset_name, compute_ensemble_perf=False, use_gpu=True
+):
     """_summary_
 
     Parameters

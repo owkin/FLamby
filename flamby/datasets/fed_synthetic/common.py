@@ -1,7 +1,7 @@
 import torch
 
-from flamby.utils import get_config_file_path, read_config
 from flamby.datasets.fed_synthetic.dataset import FedSynthetic
+from flamby.utils import get_config_file_path, read_config
 
 NUM_CLIENTS = 4
 BATCH_SIZE = 8

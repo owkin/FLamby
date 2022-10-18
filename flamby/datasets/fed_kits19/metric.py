@@ -1,14 +1,17 @@
+import numpy as np
 import torch
 import torch.nn.functional as F
-import numpy as np
 from tqdm import tqdm
 
 softmax_helper = lambda x: F.softmax(x, 1)
+
+
 def Dice_coef(output, target, eps=1e-5):  # dice score used for evaluation
     target = target.float()
     num = 2 * (output * target).sum()
     den = output.sum() + target.sum() + eps
     return num / den, den, num
+
 
 def metric(predictions, gt):
     gt = gt.float()
@@ -19,9 +22,15 @@ def metric(predictions, gt):
     tk_dice, denom, num = Dice_coef(tk_pd.float(), tk_gt.float())  # Composite
     tu_dice, denom, num = Dice_coef((predictions == 2).float(), (gt == 2).float())
 
-    return (tk_dice+tu_dice)/2
+    return (tk_dice + tu_dice) / 2
 
-def evaluate_dice_on_tests(model, test_dataloaders, metric, use_gpu=True,):
+
+def evaluate_dice_on_tests(
+    model,
+    test_dataloaders,
+    metric,
+    use_gpu=True,
+):
 
     """This function takes a pytorch model and evaluate it on a list of\
     dataloaders using the provided metric function.
@@ -64,4 +73,3 @@ def evaluate_dice_on_tests(model, test_dataloaders, metric, use_gpu=True,):
                 dice_list.append(dice_score)
             results_dict[f"client_test_{i}"] = np.mean(dice_list)
     return results_dict
-

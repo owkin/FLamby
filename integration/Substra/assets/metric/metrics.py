@@ -1,6 +1,7 @@
-import substratools as tools
-from flamby.datasets.fed_tcga_brca import metric
 import numpy as np
+import substratools as tools
+
+from flamby.datasets.fed_tcga_brca import metric
 
 
 class TCGABRCAMetrics(tools.Metrics):

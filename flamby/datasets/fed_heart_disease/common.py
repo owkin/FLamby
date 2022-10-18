@@ -1,4 +1,5 @@
 import torch
+
 from flamby.datasets.fed_heart_disease.dataset import FedHeartDisease
 
 NUM_CLIENTS = 4

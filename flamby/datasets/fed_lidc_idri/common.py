@@ -1,4 +1,5 @@
 import torch
+
 from flamby.datasets.fed_lidc_idri.dataset import FedLidcIdri
 
 NUM_CLIENTS = 4

@@ -124,7 +124,10 @@ class Scaffold(FedAvg):
         ]
         # initialize the corrections used by each client to 0s.
         self.client_corrections_state_list = [
-            [torch.zeros_like(torch.from_numpy(p)) for p in _model._get_current_params()]
+            [
+                torch.zeros_like(torch.from_numpy(p))
+                for p in _model._get_current_params()
+            ]
             for _model in self.models_list
         ]
         self.client_lr = learning_rate

@@ -165,7 +165,9 @@ class HeartDiseaseRaw(Dataset):
             }
 
         # We finally broadcast the means and stds over all datasets
-        self.mean_of_features = torch.zeros((len(self.features), 13), dtype=self.X_dtype)
+        self.mean_of_features = torch.zeros(
+            (len(self.features), 13), dtype=self.X_dtype
+        )
         self.std_of_features = torch.ones((len(self.features), 13), dtype=self.X_dtype)
         for i in range(self.mean_of_features.shape[0]):
             self.mean_of_features[i] = self.centers_stats[self.centers[i]]["mean"]

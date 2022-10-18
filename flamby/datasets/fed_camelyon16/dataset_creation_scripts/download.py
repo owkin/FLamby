@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pandas as pd
 from google_client import create_service
-from googleapiclient.http import MediaIoBaseDownload
 from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaIoBaseDownload
 from tqdm import tqdm
 
 import flamby.datasets.fed_camelyon16.dataset_creation_scripts as dl_module
@@ -68,7 +68,9 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
         downloaded_images_status_file.Slide.iloc[: len(train_df.index)] = train_df[
             "name"
         ]
-        downloaded_images_status_file.Slide.iloc[len(train_df.index) :] = test_df["name"]
+        downloaded_images_status_file.Slide.iloc[len(train_df.index) :] = test_df[
+            "name"
+        ]
         downloaded_images_status_file.to_csv(
             downloaded_images_status_file_path, index=False
         )
