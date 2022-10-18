@@ -25,7 +25,6 @@ def main(args_cli):
             "_".join(csvf.split("/")[-1].split(".")[0].split("_")[2:])
             for csvf in csv_files
         ]
-        breakpoint()
         assert all([d in datasets for d in dataset_names])
     else:
         if len(args_cli.dataset_name) == len(csv_files):
