@@ -113,6 +113,7 @@ def test_cyclic(n_clients):
     cleanup()
 
 
+@pytest.mark.skip(reason="Need of downloading dataset")
 def test_cyclic_camelyon():
     training_dls = [
         DataLoader(
