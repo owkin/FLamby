@@ -22,4 +22,6 @@ jobs:
           pip install -e ."[all_extra]"
       - name: Test with pytest
         run: |
-          pytest
+          pytest tests/strategies/
+          pytest tests/benchmarks/
+          # TODO: for now running only some tests. All tests should be run
