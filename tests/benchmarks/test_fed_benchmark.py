@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 import torch
 
+import pytest
+
 STRATS_NAMES = ["FedAvg", "FedProx", "FedAdam", "FedYogi", "FedAdagrad", "Cyclic"]
 optimizers_classes = [e[1] for e in inspect.getmembers(torch.optim, inspect.isclass)]
 
@@ -201,6 +203,7 @@ def test_tcga():
     compare_single_centric_and_strategy_vs_all("tcga_brca")
 
 
+@pytest.mark.skip(reason="Need of downloading dataset")
 def test_heart():
     seeding_performance_assert("heart_disease")
     compare_single_centric_and_strategy_vs_all("heart_disease")
