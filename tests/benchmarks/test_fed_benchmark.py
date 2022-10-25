@@ -141,7 +141,7 @@ def compare_single_centric_and_strategy_vs_all(dataset_name):
             tmp_results_file = f"local{i}_seed{s}.csv"
             cmd = (
                 Path(flamby.__file__).parent
-                / f"flamby/benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {tmp_results_file} --nlocal {i} --single-centric-baseline Local"
+                / f"benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {tmp_results_file} --nlocal {i} --single-centric-baseline Local"
             )
             cmd = "yes | python " + str(cmd)
             os.system(cmd)
