@@ -96,11 +96,10 @@ def compare_single_centric_and_strategy_vs_all(dataset_name):
             param_row.pop("Test")
             param_row.pop("Method")
             tmp_results_file = f"tmp_strategy{strat}_seed{s}.csv"
-            cmd = (
-                Path(flamby.__file__).parent
-                / f"benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {tmp_results_file} --strategy {strat}"
-            )
+            cmd = Path(flamby.__file__).parent / "benchmarks/fed_benchmark.py"
             cmd = "yes | python " + str(cmd)
+            cmd += f" --seed {s} -cfp {cfp} -rfp {tmp_results_file}"
+            cmd += f" --strategy {strat}"
             for k, v in param_row.items():
                 if k in [
                     "learning_rate",
@@ -140,11 +139,11 @@ def compare_single_centric_and_strategy_vs_all(dataset_name):
         ncenters = max(centers_indices) + 1
         for i in range(ncenters):
             tmp_results_file = f"local{i}_seed{s}.csv"
-            cmd = (
-                Path(flamby.__file__).parent
-                / f"benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {tmp_results_file} --nlocal {i} --single-centric-baseline Local"
-            )
+            cmd = Path(flamby.__file__).parent / "benchmarks/fed_benchmark.py"
             cmd = "yes | python " + str(cmd)
+
+            cmd += f"--seed {s} -cfp {cfp} -rfp {tmp_results_file} --nlocal {i}"
+            cmd += " --single-centric-baseline Local"
             subprocess.run(cmd, shell=True)
             # errfile = tmp_results_file.split(".")[0] + ".txt"
             # cmd += f" &> {errfile}"
@@ -157,11 +156,10 @@ def compare_single_centric_and_strategy_vs_all(dataset_name):
             assert_dfs_equal(local_from_all, new_r)
 
         tmp_results_file = f"pooled_seed{s}.csv"
-        cmd = (
-            Path(flamby.__file__).parent
-            / f"benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {tmp_results_file} --single-centric-baseline Pooled"
-        )
+        cmd = Path(flamby.__file__).parent / "benchmarks/fed_benchmark.py"
         cmd = "yes | python " + str(cmd)
+        cmd += f" --seed {s} -cfp {cfp} -rfp {tmp_results_file}"
+        cmd += "--single-centric-baseline Pooled"
         # errfile = tmp_results_file.split(".")[0] + ".txt"
         # cmd += f" &> {errfile}"
         subprocess.run(cmd, shell=True)
@@ -193,7 +191,7 @@ def launch_all_xps_from_config(dataset_name, nrep=2):
         The list of results pandas, filenames and the associated config file.
     """
     cfp = str(Path(flamby.__file__).parent / f"config_{dataset_name}.json")
-    nseeds = 2
+    nseeds = 3
     seeds = range(42, 42 + nseeds)
     repetitions = []
     filenames = []
@@ -201,11 +199,9 @@ def launch_all_xps_from_config(dataset_name, nrep=2):
         seeds_results = []
         for s in seeds:
             filename = f"{dataset_name}_seed{s}_rep{i}.csv"
-            cmd = (
-                Path(flamby.__file__).parent
-                / f"benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {filename}"
-            )
+            cmd = Path(flamby.__file__).parent / "benchmarks/fed_benchmark.py"
             cmd = "yes | python " + str(cmd)
+            cmd += f" --seed {s} -cfp {cfp} -rfp {filename}"
             # errfile = filename.split(".")[0] + ".txt"
             # cmd += f" &> {errfile}"
             subprocess.run(cmd, shell=True)
