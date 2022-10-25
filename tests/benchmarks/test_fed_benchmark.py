@@ -125,7 +125,7 @@ def compare_single_centric_and_strategy_vs_all(dataset_name):
                     cmd += f" --{k} {v}"
             # errfile = tmp_results_file.split(".")[0] + ".txt"
             # cmd += f" &> {errfile}"
-            subprocess.run(cmd)
+            subprocess.run(cmd, shell=True)
             rfile_paths.append(tmp_results_file)
             new_r = pd.read_csv(tmp_results_file)
             for col in strat_res.columns:
@@ -145,7 +145,7 @@ def compare_single_centric_and_strategy_vs_all(dataset_name):
                 / f"benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {tmp_results_file} --nlocal {i} --single-centric-baseline Local"
             )
             cmd = "yes | python " + str(cmd)
-            subprocess.run(cmd)
+            subprocess.run(cmd, shell=True)
             # errfile = tmp_results_file.split(".")[0] + ".txt"
             # cmd += f" &> {errfile}"
             local_from_all = r.loc[r["Method"] == f"Local {i}"]
@@ -164,7 +164,7 @@ def compare_single_centric_and_strategy_vs_all(dataset_name):
         cmd = "yes | python " + str(cmd)
         # errfile = tmp_results_file.split(".")[0] + ".txt"
         # cmd += f" &> {errfile}"
-        subprocess.run(cmd)
+        subprocess.run(cmd, shell=True)
         pooled_from_all = r.loc[r["Method"] == "Pooled Training"]
         rfile_paths.append(tmp_results_file)
         new_r = pd.read_csv(tmp_results_file)
@@ -208,7 +208,7 @@ def launch_all_xps_from_config(dataset_name, nrep=2):
             cmd = "yes | python " + str(cmd)
             # errfile = filename.split(".")[0] + ".txt"
             # cmd += f" &> {errfile}"
-            subprocess.run(cmd)
+            subprocess.run(cmd, shell=True)
 
             filenames.append(filename)
             seeds_results.append(pd.read_csv(filename))
