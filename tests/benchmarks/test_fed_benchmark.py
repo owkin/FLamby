@@ -2,12 +2,14 @@ import inspect
 import itertools
 import os
 import re
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 import torch
 
-import pytest
+import flamby
 
 STRATS_NAMES = ["FedAvg", "FedProx", "FedAdam", "FedYogi", "FedAdagrad", "Cyclic"]
 optimizers_classes = [e[1] for e in inspect.getmembers(torch.optim, inspect.isclass)]
@@ -29,9 +31,7 @@ def assert_dfs_equal(pair0, pair1, ignore_columns=[]):
     ignore_columns : list, optional
         The columns that comparison should exclude, by default []
     """
-    ignore_columns = [
-        col for col in ignore_columns if (col in pair0) and (col in pair1)
-    ]
+    ignore_columns = [col for col in ignore_columns if (col in pair0) and (col in pair1)]
     df1 = pair0.drop(columns=ignore_columns).fillna("-9")
     df2 = pair1.drop(columns=ignore_columns).fillna("-9")[df1.columns]
     assert (
@@ -42,7 +42,7 @@ def assert_dfs_equal(pair0, pair1, ignore_columns=[]):
     assert np.allclose(df1["Metric"], df2["Metric"])
 
 
-def seeding_performance_assert(dataset_name, nrep=5):
+def seeding_performance_assert(dataset_name, nrep=2):
     """Test if repeating the same xp multiple times gives the exact same results.
 
     Parameters
@@ -95,7 +95,11 @@ def compare_single_centric_and_strategy_vs_all(dataset_name):
             param_row.pop("Test")
             param_row.pop("Method")
             tmp_results_file = f"tmp_strategy{strat}_seed{s}.csv"
-            cmd = f"python ../../flamby/benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {tmp_results_file} --debug --strategy {strat}"
+            cmd = (
+                Path(flamby.__file__).parent
+                / f"benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {tmp_results_file} --strategy {strat}"
+            )
+            cmd = "yes | python " + str(cmd)
             for k, v in param_row.items():
                 if k in [
                     "learning_rate",
@@ -135,7 +139,11 @@ def compare_single_centric_and_strategy_vs_all(dataset_name):
         ncenters = max(centers_indices) + 1
         for i in range(ncenters):
             tmp_results_file = f"local{i}_seed{s}.csv"
-            cmd = f"python ../../flamby/benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {tmp_results_file} --debug --nlocal {i} --single-centric-baseline Local"
+            cmd = (
+                Path(flamby.__file__).parent
+                / f"flamby/benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {tmp_results_file} --nlocal {i} --single-centric-baseline Local"
+            )
+            cmd = "yes | python " + str(cmd)
             os.system(cmd)
             # errfile = tmp_results_file.split(".")[0] + ".txt"
             # cmd += f" &> {errfile}"
@@ -148,7 +156,11 @@ def compare_single_centric_and_strategy_vs_all(dataset_name):
             assert_dfs_equal(local_from_all, new_r)
 
         tmp_results_file = f"pooled_seed{s}.csv"
-        cmd = f"python ../../flamby/benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {tmp_results_file} --debug --single-centric-baseline Pooled"
+        cmd = (
+            Path(flamby.__file__).parent
+            / f"benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {tmp_results_file} --single-centric-baseline Pooled"
+        )
+        cmd = "yes | python " + str(cmd)
         # errfile = tmp_results_file.split(".")[0] + ".txt"
         # cmd += f" &> {errfile}"
         os.system(cmd)
@@ -163,7 +175,7 @@ def compare_single_centric_and_strategy_vs_all(dataset_name):
     cleanup(rfile_paths)
 
 
-def launch_all_xps_from_config(dataset_name, nrep=5):
+def launch_all_xps_from_config(dataset_name, nrep=2):
     """Get the associated template config from the dataset and launch
     fed_benchmark with 5 seeds repeated nrep times.
 
@@ -179,15 +191,20 @@ def launch_all_xps_from_config(dataset_name, nrep=5):
     (list, list, str)
         The list of results pandas, filenames and the associated config file.
     """
-    cfp = f"../../flamby/config_{dataset_name}.json"
-    seeds = range(42, 47)
+    cfp = str(Path(flamby.__file__).parent / f"config_{dataset_name}.json")
+    nseeds = 2
+    seeds = range(42, 42 + nseeds)
     repetitions = []
     filenames = []
     for i in range(nrep):
         seeds_results = []
         for s in seeds:
             filename = f"{dataset_name}_seed{s}_rep{i}.csv"
-            cmd = f"python ../../flamby/benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {filename} --debug"
+            cmd = (
+                Path(flamby.__file__).parent
+                / f"benchmarks/fed_benchmark.py --seed {s} -cfp {cfp} -rfp {filename}"
+            )
+            cmd = "yes | python " + str(cmd)
             # errfile = filename.split(".")[0] + ".txt"
             # cmd += f" &> {errfile}"
             os.system(cmd)
