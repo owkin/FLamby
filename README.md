@@ -234,7 +234,7 @@ python heterogeneity_plot.py
 First concatenate as many 224x224 image patches extracted from regions on the slides containing matter from Hospital 0 and Hospital 1 (see what is done in the [tiling script](./flamby/datasets/fed_camelyon16/dataset_creation_scripts/tiling_slides.py) to collect image patches) as can be fit in
 the RAM. Then compute both histograms **per-color-channel** using 256 equally sized bins with the `np.histogram` 
 function with `density=True`. 
-Then save the results as respectively: histogram_0.npy, histogram_1.npy and bins_0.npy
+Then save the results respectively as: histogram_0.npy, histogram_1.npy and bins_0.npy
 ```
 cp -t flamby/datasets/fed_camelyon16 histograms_{0, 1}.npy bins_0.npy
 cd flamby/datasets/fed_camelyon16
