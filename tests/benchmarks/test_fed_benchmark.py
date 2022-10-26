@@ -142,7 +142,7 @@ def compare_single_centric_and_strategy_vs_all(dataset_name):
             cmd = Path(flamby.__file__).parent / "benchmarks/fed_benchmark.py"
             cmd = "yes | python " + str(cmd)
 
-            cmd += f"--seed {s} -cfp {cfp} -rfp {tmp_results_file} --nlocal {i}"
+            cmd += f" --seed {s} -cfp {cfp} -rfp {tmp_results_file} --nlocal {i}"
             cmd += " --single-centric-baseline Local"
             subprocess.run(cmd, shell=True)
             # errfile = tmp_results_file.split(".")[0] + ".txt"
@@ -159,7 +159,7 @@ def compare_single_centric_and_strategy_vs_all(dataset_name):
         cmd = Path(flamby.__file__).parent / "benchmarks/fed_benchmark.py"
         cmd = "yes | python " + str(cmd)
         cmd += f" --seed {s} -cfp {cfp} -rfp {tmp_results_file}"
-        cmd += "--single-centric-baseline Pooled"
+        cmd += " --single-centric-baseline Pooled"
         # errfile = tmp_results_file.split(".")[0] + ".txt"
         # cmd += f" &> {errfile}"
         subprocess.run(cmd, shell=True)
