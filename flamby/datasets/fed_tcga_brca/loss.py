@@ -26,8 +26,14 @@ class BaselineLoss(nn.Module):
         a = torch.stack(sorted(a, key=lambda a: -a[2]))
         scores = a[:, 0]
         events = a[:, 1]
-        scores_ = scores - scores.max()
-        loss = -(scores_ - torch.log(torch.exp(scores_).cumsum(0))) * events
+        loss = torch.zeros(scores.size(0))
+        for i in range(1, scores.size(0)):
+            aux = scores[: i + 1] - scores[i]
+            m = aux.max()
+            aux_ = aux - m
+            aux_.exp_()
+            loss[i] = m + torch.log(aux_.sum(0))
+        loss *= events
         return loss.mean()
 
 
