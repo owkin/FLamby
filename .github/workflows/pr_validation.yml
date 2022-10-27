@@ -1,5 +1,5 @@
 # This is a basic workflow to help you get started with Actions
-name: linting-validation
+name: pr-validation
 
 # Controls when the workflow will run
 on:
@@ -10,22 +10,18 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  lint:
-    name: lint
+  run_tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - uses: actions/setup-python@v2
-        name: Install Python
-        with:
-          python-version: '3.7'
-
       - name: Install dependencies
-        run: pip install isort black==22.3.0
-
-      - name: Run black
-        run: black --check .
-
-      - name: Run isort
-        run: isort .
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+          pip install -e ."[all_extra]"
+      - name: Test with pytest
+        run: |
+          pytest tests/strategies/
+          pytest tests/benchmarks/
+          # TODO: for now running only some tests. All tests should be run

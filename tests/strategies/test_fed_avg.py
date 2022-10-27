@@ -92,6 +92,7 @@ class NeuralNetwork(nn.Module):
         return logits
 
 
+@pytest.mark.skip(reason="Need of downloading dataset")
 def test_fedavg_Isic():
     # tests if fedavg is not failing with ISIC
     sz = 200
