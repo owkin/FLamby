@@ -45,10 +45,10 @@ class DataLoaderWithMemory:
             a batch from the iterator
         """
         try:
-            X, y = self._iterator.next()
+            X, y = next(self._iterator)
         except StopIteration:
             self._reset_iterator()
-            X, y = self._iterator.next()
+            X, y = next(self._iterator)
         return X, y
 
 
@@ -269,9 +269,7 @@ class _Model:
             _loss = _prox_loss.detach()
 
             if mu > 0.0:
-                squared_norm = compute_model_diff_squared_norm(
-                    model_initial, self.model
-                )
+                squared_norm = compute_model_diff_squared_norm(model_initial, self.model)
                 _prox_loss += mu / 2 * squared_norm
 
             # Backpropagation
