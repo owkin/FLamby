@@ -26,7 +26,7 @@ class BaselineLoss(nn.Module):
         a = torch.stack(sorted(a, key=lambda a: -a[2]))
         scores = a[:, 0]
         events = a[:, 1]
-        loss = torch.zeros(scores.size(0))
+        loss = torch.zeros(scores.size(0)).to(device=scores.device, dtype=scores.dtype)
         for i in range(1, scores.size(0)):
             aux = scores[: i + 1] - scores[i]
             m = aux.max()
