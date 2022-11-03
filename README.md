@@ -310,6 +310,19 @@ pip3 install --upgrade pip
 ```
 and try running your make installation option again.
 
+### I am installing Flamby on a machine equipped with macOS and an intel processor
+In that case, you should use 
+```bash
+make install-mac
+```
+instead of the standard installation. If you have already installed the flamby environment, just run 
+```bash
+conda deactivate 
+make clean
+```
+before running the install-mac installation again. This is to avoid the following error, which will appear when running scripts.
+#### error : OMP: Error #15  
+
 ### I or someone else already downloaded a dataset using another copy of the flamby repository, my copy of flamby cannot find it and I don't want to download it again, what can I do ?
 
 There are two options. The safest one is to cd to the flamby directory and run:
