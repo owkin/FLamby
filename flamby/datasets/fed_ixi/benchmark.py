@@ -41,17 +41,9 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
 
-    training_transform = Compose(
-        [
-            NormalizeIntensity(),
-        ]
-    )
+    training_transform = Compose([NormalizeIntensity()])
 
-    validation_transform = Compose(
-        [
-            NormalizeIntensity(),
-        ]
-    )
+    validation_transform = Compose([NormalizeIntensity()])
 
     training_dl = dl(
         FedIXITiny(transform=training_transform, train=True, pooled=True),
@@ -128,9 +120,7 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
 
             if log:
                 writer.add_scalar(
-                    "Loss/train/client",
-                    tot_loss / num_local_steps_per_epoch,
-                    e,
+                    "Loss/train/client", tot_loss / num_local_steps_per_epoch, e
                 )
 
         # Finally, evaluate DICE
@@ -161,10 +151,7 @@ if __name__ == "__main__":
         default=1,
     )
     parser.add_argument(
-        "--gpu-id",
-        type=int,
-        default=0,
-        help="PCI Bus id of the GPU to use.",
+        "--gpu-id", type=int, default=0, help="PCI Bus id of the GPU to use."
     )
     parser.add_argument(
         "--cpu-only",
