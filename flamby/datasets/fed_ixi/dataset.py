@@ -52,10 +52,6 @@ class IXITinyRaw(Dataset):
                 raise ValueError(f"The string {data_path} is not a valid path.")
             self.root_folder = Path(data_path)
 
-        self.image_url = (
-            "https://md-datasets-cache-zipfiles-prod.s3.eu-west-1"
-            ".amazonaws.com/7kd5wj7v7p-1.zip"
-        )
         self.metadata = pd.read_csv(
             Path(os.path.dirname(flamby.datasets.fed_ixi.__file__))
             / Path("metadata")
@@ -69,7 +65,13 @@ class IXITinyRaw(Dataset):
         self.modality = "T1"
 
         # Download of the ixi tiny must be completed and extracted to run this part
-        self.parent_dir_name = os.path.join("7kd5wj7v7p-1", "IXI_sample")
+        # Deferring the import to avoid circular imports
+        from flamby.datasets.fed_ixi.common import DATASET_URL, FOLDER
+
+        self.image_url = DATASET_URL
+        self.parent_folder = FOLDER
+
+        self.parent_dir_name = os.path.join(self.parent_folder, "IXI_sample")
         self.subjects_dir = os.path.join(self.root_folder, self.parent_dir_name)
 
         # contains paths of archives which contain a nifti image for each subject
@@ -105,7 +107,7 @@ class IXITinyRaw(Dataset):
 
     @property
     def zip_file(self) -> ZipFile:
-        zf = self.root_folder.joinpath("7kd5wj7v7p-1.zip")
+        zf = self.root_folder.joinpath(self.parent_folder + ".zip")
         return ZipFile(zf)
 
     def _validate_center(self) -> None:
@@ -139,11 +141,7 @@ class IXITinyRaw(Dataset):
         )
 
         default_transform = Compose(
-            [
-                ToTensor(),
-                AddChannel(),
-                Resize(self.common_shape),
-            ]
+            [ToTensor(), AddChannel(), Resize(self.common_shape)]
         )
 
         intensity_transform = Compose([NormalizeIntensity()])
@@ -255,7 +253,4 @@ if __name__ == "__main__":
     print("First entry:", a[0])
 
 
-__all__ = [
-    "IXITinyRaw",
-    "FedIXITiny",
-]
+__all__ = ["IXITinyRaw", "FedIXITiny"]

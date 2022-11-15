@@ -10,10 +10,6 @@ from tqdm import tqdm
 
 from flamby.utils import accept_license, create_config, write_value_in_config
 
-# IXI Tiny
-
-TINY_URL = "https://md-datasets-cache-zipfiles-prod.s3.eu-west-1.amazonaws.com/7kd5wj7v7p-1.zip"
-
 
 def dl_ixi_tiny(output_folder, debug=False):
     """
@@ -38,11 +34,13 @@ def dl_ixi_tiny(output_folder, debug=False):
     if dict["download_complete"]:
         print("You have already downloaded the IXI dataset, aborting.")
         sys.exit()
+    # Deferring import to avoid circular imports
+    from flamby.datasets.fed_ixi.common import DATASET_URL
 
-    img_zip_archive_name = TINY_URL.split("/")[-1]
+    img_zip_archive_name = DATASET_URL.split("/")[-1]
     img_archive_path = Path(output_folder).joinpath(img_zip_archive_name)
 
-    with requests.get(TINY_URL, stream=True) as response:
+    with requests.get(DATASET_URL, stream=True) as response:
         # Raise error if not 200
         response.raise_for_status()
         file_size = int(response.headers.get("Content-Length", 0))
