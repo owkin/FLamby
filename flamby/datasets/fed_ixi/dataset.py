@@ -53,8 +53,8 @@ class IXITinyRaw(Dataset):
             self.root_folder = Path(data_path)
 
         self.image_url = (
-            "https://md-datasets-cache-zipfiles-prod.s3.eu-west-1"
-            ".amazonaws.com/7kd5wj7v7p-1.zip"
+            "https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1"
+            ".amazonaws.com/7kd5wj7v7p-3.zip"
         )
         self.metadata = pd.read_csv(
             Path(os.path.dirname(flamby.datasets.fed_ixi.__file__))
@@ -69,7 +69,7 @@ class IXITinyRaw(Dataset):
         self.modality = "T1"
 
         # Download of the ixi tiny must be completed and extracted to run this part
-        self.parent_dir_name = os.path.join("7kd5wj7v7p-1", "IXI_sample")
+        self.parent_dir_name = os.path.join("7kd5wj7v7p-3", "IXI_sample")
         self.subjects_dir = os.path.join(self.root_folder, self.parent_dir_name)
 
         # contains paths of archives which contain a nifti image for each subject
@@ -105,7 +105,7 @@ class IXITinyRaw(Dataset):
 
     @property
     def zip_file(self) -> ZipFile:
-        zf = self.root_folder.joinpath("7kd5wj7v7p-1.zip")
+        zf = self.root_folder.joinpath("7kd5wj7v7p-3.zip")
         return ZipFile(zf)
 
     def _validate_center(self) -> None:
