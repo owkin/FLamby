@@ -3,7 +3,6 @@ import os
 
 import numpy as np
 import torch
-import torch.nn.functional as F
 import torch.optim as optim
 from monai.transforms import Compose, NormalizeIntensity
 from torch.utils.data import DataLoader as dl
@@ -24,7 +23,8 @@ from flamby.utils import evaluate_model_on_tests
 
 def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
     """
-    Train a UNet for brain mask segmentation on IXI-Tiny by maximizing the DICE coefficient.
+    Train a UNet for brain mask segmentation on IXI-Tiny by maximizing the DICE
+    coefficient.
     Parameters
     ----------
     num_workers_torch: int
@@ -41,17 +41,9 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
 
-    training_transform = Compose(
-        [
-            NormalizeIntensity(),
-        ]
-    )
+    training_transform = Compose([NormalizeIntensity()])
 
-    validation_transform = Compose(
-        [
-            NormalizeIntensity(),
-        ]
-    )
+    validation_transform = Compose([NormalizeIntensity()])
 
     training_dl = dl(
         FedIXITiny(transform=training_transform, train=True, pooled=True),
@@ -77,7 +69,6 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
     )
 
     results = []
-    CHANNELS_DIMENSION = 1
 
     for seed in SEEDS:
         # At each new seed we re-initialize the model
@@ -129,9 +120,7 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
 
             if log:
                 writer.add_scalar(
-                    "Loss/train/client",
-                    tot_loss / num_local_steps_per_epoch,
-                    e,
+                    "Loss/train/client", tot_loss / num_local_steps_per_epoch, e
                 )
 
         # Finally, evaluate DICE
@@ -141,17 +130,16 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
         print(current_results_dict)
 
         results.append(current_results_dict["client_test_0"])
-        results = np.array(results)
 
-        if log:
-            for i in range(results.shape[0]):
-                writer = SummaryWriter(log_dir=f"./runs/tests_seed{SEEDS[i]}")
-                writer.add_scalar("DICE coefficient", results[i], 0)
+    results = np.array(results)
 
-        print("Benchmark Results on pooled IXI:")
-        print(
-            f"mDICE on {len(SEEDS)} runs: {results.mean():.2%} \\pm {results.std():.2%}"
-        )
+    if log:
+        for i in range(results.shape[0]):
+            writer = SummaryWriter(log_dir=f"./runs/tests_seed{SEEDS[i]}")
+            writer.add_scalar("DICE coefficient", results[i], 0)
+
+    print("Benchmark Results on pooled IXI:")
+    print(f"mDICE on {len(SEEDS)} runs: {results.mean():.2%} \\pm {results.std():.2%}")
 
 
 if __name__ == "__main__":
@@ -163,10 +151,7 @@ if __name__ == "__main__":
         default=1,
     )
     parser.add_argument(
-        "--gpu-id",
-        type=int,
-        default=0,
-        help="PCI Bus id of the GPU to use.",
+        "--gpu-id", type=int, default=0, help="PCI Bus id of the GPU to use."
     )
     parser.add_argument(
         "--cpu-only",
