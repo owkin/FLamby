@@ -1,6 +1,6 @@
 """Federated IXI Dataset utils
-
-A set of function that allow data management suited for the `IXI dataset <https://brain-development.org/ixi-dataset/>`_.
+A set of function that allow data management suited for the `IXI dataset
+<https://brain-development.org/ixi-dataset/>`_.
 
 """
 
@@ -14,11 +14,8 @@ from typing import List, Tuple, Union
 from zipfile import ZipFile
 
 import nibabel as nib
-import nibabel.processing as processing
 import numpy
 import numpy as np
-from nibabel import Nifti1Header
-from numpy import ndarray
 
 
 def _get_id_from_filename(x, verify_single_matches=True) -> Union[List[int], int]:
@@ -55,7 +52,8 @@ def _get_id_from_filename(x, verify_single_matches=True) -> Union[List[int], int
 def _assembly_nifti_filename_regex(
     patient_id: int, modality: str
 ) -> Union[str, PathLike, Path]:
-    """Assembles NIFTI filename regular expression using the standard in the IXI dataset based on id and modality.
+    """Assembles NIFTI filename regular expression using the standard in the
+    IXI dataset based on id and modality.
 
     Parameters
     ----------
@@ -78,7 +76,8 @@ def _assembly_nifti_filename_regex(
 def _assembly_nifti_img_and_label_regex(
     patient_id: int, modality: str
 ) -> Tuple[Union[str, PathLike, Path], Union[str, PathLike, Path]]:
-    """Assembles NIFTI filename regular expression for image and label using the standard in the IXI tiny dataset based on id and modality.
+    """Assembles NIFTI filename regular expression for image and label using
+    the standard in the IXI tiny dataset based on id and modality.
 
     Parameters
     ----------
@@ -104,7 +103,8 @@ def _assembly_nifti_img_and_label_regex(
 
 
 def _find_file_in_tar(tar_file: TarFile, patient_id: int, modality) -> str:
-    """Searches the file in a TAR file that corresponds to a particular regular expression.
+    """Searches the file in a TAR file that corresponds to a particular
+    regular expression.
 
     Parameters
     ----------
@@ -134,7 +134,8 @@ def _find_file_in_tar(tar_file: TarFile, patient_id: int, modality) -> str:
 
 
 def _find_files_in_zip(zip_file: ZipFile, patient_id: int, modality) -> Tuple[str]:
-    """Searches the files in a ZIP file that corresponds to particular regular expressions.
+    """Searches the files in a ZIP file that corresponds to particular regular
+    expressions.
 
     Parameters
     ----------
@@ -165,7 +166,7 @@ def _find_files_in_zip(zip_file: ZipFile, patient_id: int, modality) -> Tuple[st
                 result[1] = re.match(regex_label, filename).group()
             except AttributeError:
                 continue
-        if result[0] != None and result[1] != None:
+        if result[0] is not None and result[1] is not None:
             return tuple(result)
 
     raise FileNotFoundError(
@@ -176,7 +177,8 @@ def _find_files_in_zip(zip_file: ZipFile, patient_id: int, modality) -> Tuple[st
 def _extract_center_name_from_filename(filename: str):
     """Extracts center name from file dataset.
 
-    Unfortunately, IXI has the center encoded in the namefile rather than in the demographics information.
+    Unfortunately, IXI has the center encoded in the namefile rather than in
+    the demographics information.
 
     Parameters
     ----------
@@ -189,7 +191,8 @@ def _extract_center_name_from_filename(filename: str):
         Name of the center where the data comes from (e.g. Guys for the previous example)
 
     """
-    # We decided to wrap a function for this for clarity and easier modularity for future expansion
+    # We decided to wrap a function for this for clarity and easier modularity
+    # for future expansion
     return filename.split("-")[1]
 
 
@@ -201,7 +204,8 @@ def _load_nifti_image_by_id(
     Parameters
     ----------
     tar_file : TarFile
-        `TarFile <https://docs.python.org/3/library/tarfile.html#tarfile-objects>`_ object
+        `TarFile
+        <https://docs.python.org/3/library/tarfile.html#tarfile-objects>`_ object
     patient_id : int
         Patient's ID whose image is to be extracted.
     modality : str
@@ -214,7 +218,8 @@ def _load_nifti_image_by_id(
     img : ndarray
         NumPy array containing the intensities of the voxels.
     center_name : str
-        Name of the center the file comes from. In IXI this is encoded only in the filename.
+        Name of the center the file comes from. In IXI this is encoded only
+        in the filename.
     """
     filename = _find_file_in_tar(tar_file, patient_id, modality)
     with tempfile.TemporaryDirectory() as td:
@@ -237,7 +242,8 @@ def _load_nifti_image_and_label_by_id(
     Parameters
     ----------
     zip_file : ZipFile
-        `ZipFile <https://docs.python.org/3/library/zipfile.html#zipfile-objects>`_ object
+        `ZipFile
+        <https://docs.python.org/3/library/zipfile.html#zipfile-objects>`_ object
     patient_id : int
         Patient's ID whose image is to be extracted.
     modality : str
@@ -252,7 +258,8 @@ def _load_nifti_image_and_label_by_id(
     label : ndarray
         NumPy array containing the intensities of the voxels.
     center_name : str
-        Name of the center the file comes from. In IXI this is encoded only in the filename.
+        Name of the center the file comes from. In IXI this is encoded only in
+        the filename.
     """
     img_filename, label_filename = _find_files_in_zip(zip_file, patient_id, modality)
     with tempfile.TemporaryDirectory() as td:
@@ -313,11 +320,20 @@ def _create_train_test_split(
     Returns
     -------
     train_test_hh : list
-            A list containing randomly generated dichotomous values. The size is the number of images from HH hospital. Dichotomous values (train and test) follow a train test split threshold (e. g. 70%).
+            A list containing randomly generated dichotomous values.
+            The size is the number of images from HH hospital.
+            Dichotomous values (train and test) follow a train test split
+            threshold (e. g. 70%).
     train_test_guys : list
-            A list containing randomly generated dichotomous values. The size is the number of images from Guys hospital. Dichotomous values (train and test) follow a train test split threshold (e. g. 70%).
+            A list containing randomly generated dichotomous values.
+            The size is the number of images from Guys hospital.
+            Dichotomous values (train and test) follow a train test split
+            threshold (e. g. 70%).
     train_test_iop : list
-            A list containing randomly generated dichotomous values. The size is the number of images from IOP hospital. Dichotomous values (train and test) follow a train test split threshold (e. g. 70%).
+            A list containing randomly generated dichotomous values.
+            The size is the number of images from IOP hospital.
+            Dichotomous values (train and test) follow a train test split
+            threshold (e. g. 70%).
 
     """
     split_ratio = 0.8
