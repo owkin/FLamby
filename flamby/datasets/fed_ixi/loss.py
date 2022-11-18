@@ -7,7 +7,9 @@ class BaselineLoss(_Loss):
         super(BaselineLoss, self).__init__()
 
     def forward(self, output: torch.Tensor, target: torch.Tensor):
-        """Get dice loss to evaluate the semantic segmentation model. Its value lies between 0 and 1. The more the loss is close to 0, the more the performance is good.
+        """Get dice loss to evaluate the semantic segmentation model.
+        Its value lies between 0 and 1. The more the loss is close to 0,
+        the more the performance is good.
 
         Parameters
         ----------
@@ -26,7 +28,9 @@ class BaselineLoss(_Loss):
 
 
 def get_dice_score(output, target, epsilon=1e-9):
-    """Get dice score to evaluate the semantic segmentation model. Its value lies between 0 and 1. The more the score is close to 1, the more the performance is good.
+    """Get dice score to evaluate the semantic segmentation model.
+    Its value lies between 0 and 1. The more the score is close to 1,
+    the more the performance is good.
 
     Parameters
     ----------
