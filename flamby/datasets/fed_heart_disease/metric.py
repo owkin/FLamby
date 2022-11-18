@@ -1,5 +1,4 @@
 import numpy as np
-from sklearn.metrics import roc_auc_score
 
 
 def metric(y_true, y_pred):
