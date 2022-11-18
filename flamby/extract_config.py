@@ -36,9 +36,7 @@ def main(args_cli):
                 "You should provide as many dataset names as you gave results"
                 " files or 1 if they all come from the same dataset."
             )
-    optimizers_classes = [
-        e[1] for e in inspect.getmembers(torch.optim, inspect.isclass)
-    ]
+    optimizers_classes = [e[1] for e in inspect.getmembers(torch.optim, inspect.isclass)]
     csvs = [pd.read_csv(e) for e in csv_files]
     for dname, csv, csvf in zip(dataset_names, csvs, csv_files):
         config = {}

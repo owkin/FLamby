@@ -3,7 +3,21 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
-softmax_helper = lambda x: F.softmax(x, 1)
+
+def softmax_helper(x):
+    """This function computes the softmax using torch functionnal on the 1-axis.
+
+    Parameters
+    ----------
+    x : torch.Tensor
+        The input.
+
+    Returns
+    -------
+    torch.Tensor
+        Output
+    """
+    return F.softmax(x, 1)
 
 
 def Dice_coef(output, target, eps=1e-5):  # dice score used for evaluation
@@ -25,12 +39,7 @@ def metric(predictions, gt):
     return (tk_dice + tu_dice) / 2
 
 
-def evaluate_dice_on_tests(
-    model,
-    test_dataloaders,
-    metric,
-    use_gpu=True,
-):
+def evaluate_dice_on_tests(model, test_dataloaders, metric, use_gpu=True):
 
     """This function takes a pytorch model and evaluate it on a list of\
     dataloaders using the provided metric function.

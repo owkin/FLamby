@@ -25,7 +25,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import torch
-from batchgenerators.utilities.file_and_folder_operations import *
+from batchgenerators.utilities.file_and_folder_operations import (
+    isfile,
+    join,
+    load_pickle,
+)
 from nnunet.training.data_augmentation.default_data_augmentation import (
     default_3D_augmentation_params,
     get_patch_size,
@@ -33,11 +37,9 @@ from nnunet.training.data_augmentation.default_data_augmentation import (
 from torch.utils.data import Dataset
 
 import flamby.datasets.fed_kits19
-from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.data_augmentations import (
-    transformations,
-)
-from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.set_environment_variables import (
+from flamby.datasets.fed_kits19.dataset_creation_scripts.utils import (
     set_environment_variables,
+    transformations,
 )
 from flamby.utils import check_dataset_from_config
 
@@ -132,9 +134,7 @@ class Kits19Raw(Dataset):
         self.images_path = OrderedDict()
         for i in self.images:
             self.images_path[c] = OrderedDict()
-            self.images_path[c]["data_file"] = join(
-                self.dataset_directory, "%s.npz" % i
-            )
+            self.images_path[c]["data_file"] = join(self.dataset_directory, "%s.npz" % i)
             self.images_path[c]["properties_file"] = join(
                 self.dataset_directory, "%s.pkl" % i
             )
@@ -160,18 +160,10 @@ class Kits19Raw(Dataset):
         # randomly oversample the foreground classes
         if self.oversample_next_sample == 1:
             self.oversample_next_sample = 0
-            item = self.oversample_foreground_class(
-                case_all_data,
-                True,
-                properties,
-            )
+            item = self.oversample_foreground_class(case_all_data, True, properties)
         else:
             self.oversample_next_sample = 1
-            item = self.oversample_foreground_class(
-                case_all_data,
-                False,
-                properties,
-            )
+            item = self.oversample_foreground_class(case_all_data, False, properties)
 
         # apply data augmentations
         if self.train_test == "train":
@@ -181,12 +173,7 @@ class Kits19Raw(Dataset):
 
         return np.squeeze(item["data"], axis=1), np.squeeze(item["target"], axis=1)
 
-    def oversample_foreground_class(
-        self,
-        case_all_data,
-        force_fg,
-        properties,
-    ):
+    def oversample_foreground_class(self, case_all_data, force_fg, properties):
         # taken from nnunet
         data_shape = (1, 1, *self.patch_size)
         seg_shape = (1, 1, *self.patch_size)
@@ -242,7 +229,7 @@ class Kits19Raw(Dataset):
                 # all
                 selected_class = None
                 voxels_of_that_class = None
-                print("case does not contain any foreground classes", i)
+                print("case does not contain any foreground classes")
             else:
                 selected_class = np.random.choice(foreground_classes)
 

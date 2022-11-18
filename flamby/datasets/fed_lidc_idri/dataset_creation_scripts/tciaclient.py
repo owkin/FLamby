@@ -1,15 +1,16 @@
-# Copy pasted from https://github.com/nadirsaghar/TCIA-REST-API-Client/blob/master/tcia-rest-client-python/src/tciaclient.py
+# Copy pasted from
+# https://github.com/nadirsaghar/TCIA-REST-API-Client/blob/master/
+# tcia-rest-client-python/src/tciaclient.py
 #
-import math
 import os
-import sys
 import urllib.error
 import urllib.parse
 import urllib.request
 
 #
 
-# Refer https://wiki.cancerimagingarchive.net/display/Public/REST+API+Usage+Guide for complete list of API
+# Refer to https://wiki.cancerimagingarchive.net/display/
+# Public/REST+API+Usage+Guide for complete list of API
 
 #
 
@@ -141,11 +142,7 @@ class TCIAClient:
         return resp
 
     def get_patient_study(
-        self,
-        collection=None,
-        patientId=None,
-        studyInstanceUid=None,
-        outputFormat="json",
+        self, collection=None, patientId=None, studyInstanceUid=None, outputFormat="json"
     ):
 
         serviceUrl = self.baseUrl + "/query/" + self.GET_PATIENT_STUDY

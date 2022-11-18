@@ -12,7 +12,7 @@ Author: Fernando Perez-Garcia
 Requires: Python >=3.6
 """
 
-#### UNet
+# UNet
 
 
 class Baseline(nn.Module):
@@ -117,11 +117,7 @@ class Baseline(nn.Module):
         elif dimensions == 3:
             in_channels = 2 * out_channels_first_layer
         self.classifier = ConvolutionalBlock(
-            dimensions,
-            in_channels,
-            out_classes,
-            kernel_size=1,
-            activation=None,
+            dimensions, in_channels, out_classes, kernel_size=1, activation=None
         )
 
     def forward(self, x):
@@ -135,7 +131,7 @@ class Baseline(nn.Module):
         return x
 
 
-#### Conv ####
+# Conv
 
 
 class ConvolutionalBlock(nn.Module):
@@ -218,16 +214,10 @@ class ConvolutionalBlock(nn.Module):
             module_list.append(module)
 
 
-#### Decoding ####
+# Decoding
 
 CHANNELS_DIMENSION = 1
-UPSAMPLING_MODES = (
-    "nearest",
-    "linear",
-    "bilinear",
-    "bicubic",
-    "trilinear",
-)
+UPSAMPLING_MODES = ("nearest", "linear", "bilinear", "bicubic", "trilinear")
 
 
 class Decoder(nn.Module):
@@ -371,11 +361,7 @@ def get_upsampling_layer(upsampling_type: str) -> nn.Upsample:
         message = 'Upsampling type is "{}"' " but should be one of the following: {}"
         message = message.format(upsampling_type, UPSAMPLING_MODES)
         raise ValueError(message)
-    upsample = nn.Upsample(
-        scale_factor=2,
-        mode=upsampling_type,
-        align_corners=False,
-    )
+    upsample = nn.Upsample(scale_factor=2, mode=upsampling_type, align_corners=False)
     return upsample
 
 
@@ -395,7 +381,7 @@ def fix_upsampling_type(upsampling_type: str, dimensions: int):
     return upsampling_type
 
 
-#### Encoding ####
+# Encoding
 
 
 class Encoder(nn.Module):
@@ -555,9 +541,7 @@ class EncodingBlock(nn.Module):
 
 
 def get_downsampling_layer(
-    dimensions: int,
-    pooling_type: str,
-    kernel_size: int = 2,
+    dimensions: int, pooling_type: str, kernel_size: int = 2
 ) -> nn.Module:
     class_name = "{}Pool{}d".format(pooling_type.capitalize(), dimensions)
     class_ = getattr(nn, class_name)

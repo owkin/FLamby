@@ -22,14 +22,7 @@ from flamby.utils import check_dataset_from_config
 
 
 def train_model(
-    model,
-    optimizer,
-    scheduler,
-    dataloaders,
-    dataset_sizes,
-    device,
-    lossfunc,
-    num_epochs,
+    model, optimizer, scheduler, dataloaders, dataset_sizes, device, lossfunc, num_epochs
 ):
     """Training function
     Parameters
@@ -105,9 +98,7 @@ def train_model(
             best_model_wts = copy.deepcopy(model.state_dict())
 
         print(
-            "Training Loss: {:.4f} Validation Acc: {:.4f} ".format(
-                epoch_loss, epoch_acc
-            )
+            "Training Loss: {:.4f} Validation Acc: {:.4f} ".format(epoch_loss, epoch_acc)
         )
         training_loss_list.append(epoch_loss)
         training_dice_list.append(epoch_acc)
@@ -134,7 +125,7 @@ def main(args):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args.GPU)
     torch.use_deterministic_algorithms(False)
 
-    dict = check_dataset_from_config(dataset_name="fed_kits19", debug=False)
+    check_dataset_from_config(dataset_name="fed_kits19", debug=False)
 
     train_dataset = FedKits19(train=True, pooled=True)
     train_dataloader = torch.utils.data.DataLoader(
@@ -152,7 +143,6 @@ def main(args):
     dataloaders = {"train": train_dataloader, "test": test_dataloader}
     dataset_sizes = {"train": len(train_dataset), "test": len(test_dataset)}
 
-    # device = torch.device("cuda:"+str(args.GPU) if torch.cuda.is_available() else "cpu")
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("device", device)
 
@@ -167,9 +157,7 @@ def main(args):
 
     lossfunc = BaselineLoss()
 
-    optimizer = torch.optim.Adam(
-        model.parameters(), LR, weight_decay=3e-5, amsgrad=True
-    )
+    optimizer = torch.optim.Adam(model.parameters(), LR, weight_decay=3e-5, amsgrad=True)
     scheduler = lr_scheduler.ReduceLROnPlateau(
         optimizer,
         mode="min",
@@ -201,29 +189,15 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--GPU",
-        type=int,
-        default=0,
-        help="GPU to run the training on (if available)",
+        "--GPU", type=int, default=0, help="GPU to run the training on (if available)"
     )
     parser.add_argument(
-        "--workers",
-        type=int,
-        default=1,
-        help="Numbers of workers for the dataloader",
+        "--workers", type=int, default=1, help="Numbers of workers for the dataloader"
     )
     parser.add_argument(
-        "--epochs",
-        type=int,
-        default=NUM_EPOCHS_POOLED,
-        help="Numbers of Epochs",
+        "--epochs", type=int, default=NUM_EPOCHS_POOLED, help="Numbers of Epochs"
     )
-    parser.add_argument(
-        "--seed",
-        type=int,
-        default=0,
-        help="Seed",
-    )
+    parser.add_argument("--seed", type=int, default=0, help="Seed")
     args = parser.parse_args()
 
     main(args)

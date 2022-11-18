@@ -464,10 +464,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--GPU",
-        type=int,
-        default=0,
-        help="GPU to run the training on (if available)",
+        "--GPU", type=int, default=0, help="GPU to run the training on (if available)"
     )
     parser.add_argument(
         "--cpu-only",
@@ -488,10 +485,7 @@ if __name__ == "__main__":
         help="Do 0 round and 0 epoch to check if the script is working",
     )
     parser.add_argument(
-        "--workers",
-        type=int,
-        default=0,
-        help="Numbers of workers for the dataloader",
+        "--workers", type=int, default=0, help="Numbers of workers for the dataloader"
     )
     parser.add_argument(
         "--learning_rate",

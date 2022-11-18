@@ -109,9 +109,7 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False, debug=False):
 
             if log:
                 writer.add_scalar(
-                    "Loss/train/client",
-                    tot_loss / num_local_steps_per_epoch,
-                    e,
+                    "Loss/train/client", tot_loss / num_local_steps_per_epoch, e
                 )
 
         # Finally, evaluate DICE
@@ -143,10 +141,7 @@ if __name__ == "__main__":
         default=20,
     )
     parser.add_argument(
-        "--gpu-id",
-        type=int,
-        default=0,
-        help="PCI Bus id of the GPU to use.",
+        "--gpu-id", type=int, default=0, help="PCI Bus id of the GPU to use."
     )
     parser.add_argument(
         "--cpu-only",

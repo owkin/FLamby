@@ -127,9 +127,7 @@ def generate_synthetic_dataset(
     if noise_heterogeneity is None:
         snr_locs = np.ones(n_centers) * snr
     elif type(noise_heterogeneity) in [list, np.array]:
-        assert (
-            snr == 3
-        ), "Option snr is incompatible with noise_heterogeneity as a list."
+        assert snr == 3, "Option snr is incompatible with noise_heterogeneity as a list."
         snr_locs = np.array(noise_heterogeneity)
     else:
         raise ValueError(

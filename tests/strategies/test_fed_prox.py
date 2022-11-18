@@ -69,9 +69,7 @@ def test_fed_prox_integration(n_clients):
     mu = 0.1
     optimizer_class = torch.optim.Adam
 
-    s = FedProx(
-        train_dataloader, m, loss, optimizer_class, lr, num_updates, nrounds, mu
-    )
+    s = FedProx(train_dataloader, m, loss, optimizer_class, lr, num_updates, nrounds, mu)
     m = s.run()
 
     def accuracy(y_true, y_pred):

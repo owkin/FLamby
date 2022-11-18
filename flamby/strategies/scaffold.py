@@ -124,20 +124,14 @@ class Scaffold(FedAvg):
         ]
         # initialize the corrections used by each client to 0s.
         self.client_corrections_state_list = [
-            [
-                torch.zeros_like(torch.from_numpy(p))
-                for p in _model._get_current_params()
-            ]
+            [torch.zeros_like(torch.from_numpy(p)) for p in _model._get_current_params()]
             for _model in self.models_list
         ]
         self.client_lr = learning_rate
         self.server_lr = server_learning_rate
 
     def _local_optimization(
-        self,
-        _model: _Model,
-        dataloader_with_memory,
-        correction_state: List,
+        self, _model: _Model, dataloader_with_memory, correction_state: List
     ):
         """Carry out the local optimization step.
 

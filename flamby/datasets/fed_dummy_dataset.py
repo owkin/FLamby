@@ -24,8 +24,9 @@ class FedDummyDataset(Dataset):
         return self.size
 
     def __getitem__(self, idx):
-        return torch.rand(3, 224, 224).to(self.X_dtype), torch.randint(0, 2, (1,)).to(
-            self.y_dtype
+        return (
+            torch.rand(3, 224, 224).to(self.X_dtype),
+            torch.randint(0, 2, (1,)).to(self.y_dtype),
         )
 
 
@@ -53,10 +54,7 @@ if __name__ == "__main__":
     m = Baseline()
     lo = BaselineLoss()
     dl = DataLoader(
-        FedDummyDataset(center=1, train=True),
-        batch_size=32,
-        shuffle=True,
-        num_workers=0,
+        FedDummyDataset(center=1, train=True), batch_size=32, shuffle=True, num_workers=0
     )
     it = iter(dl)
     X, y = next(it)

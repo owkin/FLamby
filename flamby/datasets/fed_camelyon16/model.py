@@ -10,15 +10,13 @@ class Baseline(nn.Module):
     def __init__(self):
         super(Baseline, self).__init__()
         # As per the article
-        self.O = 2048  # Original dimension of the input embeddings
+        self.Od = 2048  # Original dimension of the input embeddings
         self.M = 128  # New dimension of the input embedding
 
         self.L = 128  # Dimension of the new features after query and value projections
         self.K = 1000  # Number of elements in each bag
 
-        self.feature_extractor_part1 = nn.Sequential(
-            nn.Linear(self.O, self.M),
-        )
+        self.feature_extractor_part1 = nn.Sequential(nn.Linear(self.Od, self.M))
         # The Gated Attention using tanh and sigmoid from Eq 9
         # from https://arxiv.org/abs/1802.04712
 

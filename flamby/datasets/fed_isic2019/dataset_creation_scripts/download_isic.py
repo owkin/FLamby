@@ -76,23 +76,17 @@ HAM10000_metadata.drop(
 for i, row in ISIC_2019_Training_Metadata.iterrows():
     if pd.isnull(row["lesion_id"]):
         image = row["image"]
-        os.system(
-            "rm " + data_directory + "/ISIC_2019_Training_Input/" + image + ".jpg"
-        )
+        os.system("rm " + data_directory + "/ISIC_2019_Training_Input/" + image + ".jpg")
         if image != ISIC_2019_Training_GroundTruth["image"][i]:
             print("Mismatch between Metadata and Ground Truth")
         ISIC_2019_Training_GroundTruth = ISIC_2019_Training_GroundTruth.drop(i)
         ISIC_2019_Training_Metadata = ISIC_2019_Training_Metadata.drop(i)
 
 # generating dataset field from lesion_id field in the metadata dataframe
-ISIC_2019_Training_Metadata["dataset"] = ISIC_2019_Training_Metadata["lesion_id"].str[
-    :4
-]
+ISIC_2019_Training_Metadata["dataset"] = ISIC_2019_Training_Metadata["lesion_id"].str[:4]
 
 # join with HAM10000 metadata in order to expand the HAM datacenters
-result = pd.merge(
-    ISIC_2019_Training_Metadata, HAM10000_metadata, how="left", on="image"
-)
+result = pd.merge(ISIC_2019_Training_Metadata, HAM10000_metadata, how="left", on="image")
 result["dataset"] = result["dataset_x"] + result["dataset_y"].astype(str)
 result.drop(["dataset_x", "dataset_y", "lesion_id"], axis=1, inplace=True)
 

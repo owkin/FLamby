@@ -48,10 +48,7 @@ class TcgaBrcaRaw(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         x = self.data.iloc[idx, 1:40]
         y = self.data.iloc[idx, 40:42]
-        return (
-            torch.tensor(x, dtype=self.X_dtype),
-            torch.tensor(y, dtype=self.y_dtype),
-        )
+        return (torch.tensor(x, dtype=self.X_dtype), torch.tensor(y, dtype=self.y_dtype))
 
 
 class FedTcgaBrca(TcgaBrcaRaw):

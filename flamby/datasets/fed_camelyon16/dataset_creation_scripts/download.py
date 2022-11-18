@@ -5,6 +5,7 @@ import re
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 from google_client import create_service
 from googleapiclient.errors import HttpError
@@ -65,12 +66,11 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
             len(train_df.index) + len(test_df.index)
         )
         downloaded_images_status_file["Slide"] = None
-        downloaded_images_status_file.Slide.iloc[: len(train_df.index)] = train_df[
-            "name"
-        ]
-        downloaded_images_status_file.Slide.iloc[len(train_df.index) :] = test_df[
-            "name"
-        ]
+        total_size = len(train_df.index) + len(test_df.index)
+        train_idxs = np.arange(0, len(train_df.index))
+        test_idxs = np.arange(len(train_df.index), total_size)
+        downloaded_images_status_file.Slide.iloc[train_idxs] = train_df["name"]
+        downloaded_images_status_file.Slide.iloc[test_idxs] = test_df["name"]
         downloaded_images_status_file.to_csv(
             downloaded_images_status_file_path, index=False
         )
@@ -92,7 +92,9 @@ def main(path_to_secret, output_folder, port=6006, debug=False):
         port=port,
     )
     regex = "(?<=https://drive.google.com/file/d/)[a-zA-Z0-9]+"
-    # Resourcekey is now mandatory (credit @Kris in: https://stackoverflow.com/questions/71343002/downloading-files-from-public-google-drive-in-python-scoping-issues)
+    # Resourcekey is now mandatory (credit @Kris in:
+    # https://stackoverflow.com/questions/71343002/
+    # downloading-files-from-public-google-drive-in-python-scoping-issues)
     regex_rkey = "(?<=resourcekey=).+"
     for current_df in [train_df, test_df]:
         for i in tqdm(range(len(current_df.index))):

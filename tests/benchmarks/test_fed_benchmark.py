@@ -32,9 +32,7 @@ def assert_dfs_equal(pair0, pair1, ignore_columns=[]):
     ignore_columns : list, optional
         The columns that comparison should exclude, by default []
     """
-    ignore_columns = [
-        col for col in ignore_columns if (col in pair0) and (col in pair1)
-    ]
+    ignore_columns = [col for col in ignore_columns if (col in pair0) and (col in pair1)]
     df1 = pair0.drop(columns=ignore_columns).fillna("-9")
     df2 = pair1.drop(columns=ignore_columns).fillna("-9")[df1.columns]
     assert (

@@ -22,14 +22,7 @@ from flamby.utils import check_dataset_from_config, evaluate_model_on_tests
 
 
 def train_model(
-    model,
-    optimizer,
-    scheduler,
-    dataloaders,
-    dataset_sizes,
-    device,
-    lossfunc,
-    num_epochs,
+    model, optimizer, scheduler, dataloaders, dataset_sizes, device, lossfunc, num_epochs
 ):
     """Training function
     Parameters
@@ -224,16 +217,10 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--GPU",
-        type=int,
-        default=0,
-        help="GPU to run the training on (if available)",
+        "--GPU", type=int, default=0, help="GPU to run the training on (if available)"
     )
     parser.add_argument(
-        "--workers",
-        type=int,
-        default=4,
-        help="Numbers of workers for the dataloader",
+        "--workers", type=int, default=4, help="Numbers of workers for the dataloader"
     )
     args = parser.parse_args()
 
@@ -243,10 +230,7 @@ if __name__ == "__main__":
 
     sz = 200
     test_aug = albumentations.Compose(
-        [
-            albumentations.CenterCrop(sz, sz),
-            albumentations.Normalize(always_apply=True),
-        ]
+        [albumentations.CenterCrop(sz, sz), albumentations.Normalize(always_apply=True)]
     )
     test_dataset = dataset.FedIsic2019(train=False, pooled=True)
     test_dataloader = torch.utils.data.DataLoader(

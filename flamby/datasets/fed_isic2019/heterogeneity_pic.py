@@ -42,22 +42,13 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--GPU",
-        type=int,
-        default=0,
-        help="GPU to run the training on (if available)",
+        "--GPU", type=int, default=0, help="GPU to run the training on (if available)"
     )
     parser.add_argument(
-        "--workers",
-        type=int,
-        default=0,
-        help="Numbers of workers for the dataloader",
+        "--workers", type=int, default=0, help="Numbers of workers for the dataloader"
     )
     parser.add_argument(
-        "--seed",
-        type=int,
-        default=42,
-        help="The seed for the UMPA and dataloading",
+        "--seed", type=int, default=42, help="The seed for the UMPA and dataloading"
     )
     args = parser.parse_args()
     np.random.seed(args.seed)

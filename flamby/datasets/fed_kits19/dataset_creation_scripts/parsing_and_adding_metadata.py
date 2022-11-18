@@ -1,4 +1,5 @@
-#    Copyright 2020 Division of Medical Image Computing, German Cancer Research Center (DKFZ), Heidelberg, Germany
+#    Copyright 2020 Division of Medical Image Computing, German Cancer Research
+# Center (DKFZ), Heidelberg, Germany
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -31,7 +32,7 @@ from batchgenerators.utilities.file_and_folder_operations import (
     subfolders,
 )
 
-from flamby.datasets.fed_kits19.dataset_creation_scripts.utils.set_environment_variables import (
+from flamby.datasets.fed_kits19.dataset_creation_scripts.utils import (
     set_environment_variables,
 )
 from flamby.utils import get_config_file_path, read_config, write_value_in_config
@@ -103,9 +104,7 @@ def read_csv_file(csv_file="../metadata/anony_sites.csv"):
                 data_length = len(client_data_idxx)
                 train_ids = int(0.8 * data_length)
                 for i in client_data_idxx[:train_ids]:
-                    writer.writerow(
-                        [i, silo_count, "train", "train_" + str(silo_count)]
-                    )
+                    writer.writerow([i, silo_count, "train", "train_" + str(silo_count)])
                 for i in client_data_idxx[train_ids:]:
                     writer.writerow([i, silo_count, "test", "test_" + str(silo_count)])
 
@@ -122,7 +121,8 @@ def read_csv_file(csv_file="../metadata/anony_sites.csv"):
 
 if __name__ == "__main__":
     """
-    This is the KiTS dataset after Nick fixed all the labels that had errors. Downloaded on Jan 6th 2020
+    This is the KiTS dataset after Nick fixed all the labels that had errors.
+    Downloaded on Jan 6th 2020
     """
 
     # parse python script input parameters
@@ -155,7 +155,7 @@ if __name__ == "__main__":
     case_ids, site_ids, unique_hospital_ids, thresholded_ids = read_csv_file()
 
     print(thresholded_ids)
-    if args.debug == True:
+    if args.debug:
         train_patients = thresholded_ids[:25]
         test_patients = all_cases[210:211]  # we do not need the test data
     else:
@@ -183,9 +183,7 @@ if __name__ == "__main__":
     json_dict["reference"] = "KiTS data for nnunet_library"
     json_dict["licence"] = ""
     json_dict["release"] = "0.0"
-    json_dict["modality"] = {
-        "0": "CT",
-    }
+    json_dict["modality"] = {"0": "CT"}
     json_dict["labels"] = {"0": "background", "1": "Kidney", "2": "Tumor"}
 
     json_dict["numTraining"] = len(train_patient_names)

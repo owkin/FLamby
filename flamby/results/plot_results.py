@@ -127,7 +127,7 @@ for idx, (ax, res, name) in enumerate(zip(flattened_axs, results, dataset_names)
     ]
 
     # Messing with palettes to keep the same color for pooled and strategies
-    current_palette = [palette[0]] + palette[1 : (current_num_clients + 1)]
+    current_palette = [palette[0]] + palette[slice(1, current_num_clients + 1)]
     current_palette += palette[7:]
     assert len(current_palette) == len(current_methods_display)
     # print(current_palette[len(current_methods_display) -1])

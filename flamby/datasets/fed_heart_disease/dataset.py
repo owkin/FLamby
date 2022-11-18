@@ -73,12 +73,7 @@ class HeartDiseaseRaw(Dataset):
         self.y_dtype = y_dtype
         self.debug = debug
 
-        self.centers_number = {
-            "cleveland": 0,
-            "hungarian": 1,
-            "switzerland": 2,
-            "va": 3,
-        }
+        self.centers_number = {"cleveland": 0, "hungarian": 1, "switzerland": 2, "va": 3}
 
         self.features = pd.DataFrame()
         self.labels = pd.DataFrame()
@@ -165,9 +160,7 @@ class HeartDiseaseRaw(Dataset):
             }
 
         # We finally broadcast the means and stds over all datasets
-        self.mean_of_features = torch.zeros(
-            (len(self.features), 13), dtype=self.X_dtype
-        )
+        self.mean_of_features = torch.zeros((len(self.features), 13), dtype=self.X_dtype)
         self.std_of_features = torch.ones((len(self.features), 13), dtype=self.X_dtype)
         for i in range(self.mean_of_features.shape[0]):
             self.mean_of_features[i] = self.centers_stats[self.centers[i]]["mean"]
@@ -177,8 +170,7 @@ class HeartDiseaseRaw(Dataset):
         to_select = [(self.sets[idx] == "train") for idx, _ in enumerate(self.features)]
         features_train = [fp for idx, fp in enumerate(self.features) if to_select[idx]]
         features_tensor_train = torch.cat(
-            [features_train[i][None, :] for i in range(len(features_train))],
-            axis=0,
+            [features_train[i][None, :] for i in range(len(features_train))], axis=0
         )
         self.mean_of_features_pooled_train = features_tensor_train.mean(axis=0)
         self.std_of_features_pooled_train = features_tensor_train.std(axis=0)

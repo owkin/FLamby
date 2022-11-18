@@ -83,10 +83,7 @@ def test_scaffold_integration(n_clients):
     cleanup()
 
 
-@pytest.mark.parametrize(
-    "seed, lr",
-    [(42, 0.01), (43, 0.001), (44, 0.0001), (45, 7e-5)],
-)
+@pytest.mark.parametrize("seed, lr", [(42, 0.01), (43, 0.001), (44, 0.0001), (45, 7e-5)])
 def test_scaffold_algorithm(seed, lr):
     r"""Scaffold should add a correction term in each of its update step.
     In the first round, this correction step is 0. In each subsequent round,

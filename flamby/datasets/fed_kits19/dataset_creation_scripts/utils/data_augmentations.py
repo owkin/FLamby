@@ -1,4 +1,5 @@
-#    Copyright 2020 Division of Medical Image Computing, German Cancer Research Center (DKFZ), Heidelberg, Germany
+#    Copyright 2020 Division of Medical Image Computing, German Cancer Research
+# Center (DKFZ), Heidelberg, Germany
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -47,16 +48,11 @@ try:
     from batchgenerators.dataloading.nondet_multi_threaded_augmenter import (
         NonDetMultiThreadedAugmenter,
     )
-except ImportError as ie:
+except ImportError:
     NonDetMultiThreadedAugmenter = None
 
 
-def transformations(
-    patch_size,
-    params,
-    border_val_seg=-1,
-    regions=None,
-):
+def transformations(patch_size, params, border_val_seg=-1, regions=None):
     assert (
         params.get("mirror") is None
     ), "old version of params, use new keyword do_mirror"
@@ -72,7 +68,8 @@ def transformations(
             SegChannelSelectionTransform(params.get("selected_seg_channels"))
         )
 
-    # don't do color augmentations while in 2d mode with 3d data because the color channel is overloaded!!
+    # don't do color augmentations while in 2d mode with 3d data because the
+    # color channel is overloaded!!
     if params.get("dummy_2D") is not None and params.get("dummy_2D"):
         tr_transforms.append(Convert3DTo2DTransform())
         patch_size_spatial = patch_size[1:]

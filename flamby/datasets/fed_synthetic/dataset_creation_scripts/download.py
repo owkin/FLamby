@@ -98,10 +98,7 @@ if __name__ == "__main__":
         default=None,
     )
     parser.add_argument(
-        "--noise-heterogeneity",
-        type=float,
-        help="Sample repartition.",
-        default=None,
+        "--noise-heterogeneity", type=float, help="Sample repartition.", default=None
     )
     parser.add_argument(
         "--features-heterogeneity",

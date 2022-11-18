@@ -145,9 +145,7 @@ class Cyclic:
 
         self.deterministic_cycle = deterministic_cycle
 
-        self._rng = (
-            rng if (rng is not None) else np.random.default_rng(int(time.time()))
-        )
+        self._rng = rng if (rng is not None) else np.random.default_rng(int(time.time()))
 
         self._clients = self._shuffle_clients()
         self._current_idx = -1

@@ -14,12 +14,7 @@ def make_plot():
     list_x = np.linspace(0, 1, num=200)
     for center in [0, 1, 2, 3]:
         print(f"doing center {center}")
-        ds = FedLidcIdri(
-            train=True,
-            pooled=False,
-            center=center,
-            debug=False,
-        )
+        ds = FedLidcIdri(train=True, pooled=False, center=center, debug=False)
         list_data = []
         for k in tqdm(range(len(ds))):
             data = ds[k][0].detach().cpu().ravel()

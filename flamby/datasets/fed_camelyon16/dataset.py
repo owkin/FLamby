@@ -86,7 +86,8 @@ class Camelyon16Raw(Dataset):
         self.features_centers = []
         self.features_sets = []
         self.perms = {}
-        # We need this ist to be sorted for reproducibility but shuffled to avoid weirdness
+        # We need this list to be sorted for reproducibility but shuffled to
+        # avoid weirdness
         npys_list = sorted(self.tiles_dir.glob("*.npy"))
         random.seed(0)
         random.shuffle(npys_list)
