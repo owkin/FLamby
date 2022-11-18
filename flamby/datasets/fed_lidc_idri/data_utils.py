@@ -184,11 +184,7 @@ def random_sampler(image, label, patch_shape=(128, 128, 128), n_samples=2):
         paddings,
         mode="reflect",
     ).squeeze()
-    label = F.pad(
-        label,
-        paddings,
-        mode="constant",
-    )
+    label = F.pad(label, paddings, mode="constant")
 
     # Extract patches, taking into account the shift in coordinates due to padding
     image_patches = extract_patches(image, centroids + patch_shape, patch_shape)
@@ -232,12 +228,7 @@ def all_sampler(X, y, patch_shape=(128, 128, 128)):
 
 
 def fast_sampler(
-    X,
-    y,
-    patch_shape=(128, 128, 128),
-    n_patches=2,
-    ratio=1.0,
-    center=False,
+    X, y, patch_shape=(128, 128, 128), n_patches=2, ratio=1.0, center=False
 ):
     """
     Parameters
@@ -274,9 +265,9 @@ def fast_sampler(
     # Add noise to centroids so that the nodules are not always centered in
     # the patch:
     if not center:
-        noise = (
-            torch.rand(centroids_1.shape[0], 3) * torch.max(patch_shape)
-        ).long() % (patch_shape.div(2, rounding_mode="floor")[None, ...])
+        noise = (torch.rand(centroids_1.shape[0], 3) * torch.max(patch_shape)).long() % (
+            patch_shape.div(2, rounding_mode="floor")[None, ...]
+        )
         centroids_1 += noise - patch_shape.div(4, rounding_mode="floor")
 
     # Sample random centroids
@@ -297,16 +288,8 @@ def fast_sampler(
 
     paddings = tuple(torch.stack([patch_shape, patch_shape], dim=-1).flatten())[::-1]
 
-    X = F.pad(
-        X[None, None, :, :, :],
-        paddings,
-        mode="reflect",
-    ).squeeze()
-    y = F.pad(
-        y,
-        paddings,
-        mode="constant",
-    )
+    X = F.pad(X[None, None, :, :, :], paddings, mode="reflect").squeeze()
+    y = F.pad(y, paddings, mode="constant")
 
     # Extract patches, taking into account the shift in coordinates due to padding
     image_patches = extract_patches(X, centroids + patch_shape, patch_shape)

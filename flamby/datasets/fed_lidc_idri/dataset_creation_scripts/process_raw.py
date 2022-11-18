@@ -295,9 +295,7 @@ def build_volumes(dicomdir, xml_path):
 
             xs = roi.findall("{http://www.nih.gov}edgeMap/{http://www.nih.gov}xCoord")
             ys = roi.findall("{http://www.nih.gov}edgeMap/{http://www.nih.gov}yCoord")
-            zs = [
-                locz,
-            ] * len(xs)
+            zs = [locz] * len(xs)
 
             xs = np.array([int(x.text) for x in xs])
             ys = np.array([int(y.text) for y in ys])

@@ -111,10 +111,7 @@ def test_fedavg_Isic():
         ]
     )
     test_aug = albumentations.Compose(
-        [
-            albumentations.CenterCrop(sz, sz),
-            albumentations.Normalize(always_apply=True),
-        ]
+        [albumentations.CenterCrop(sz, sz), albumentations.Normalize(always_apply=True)]
     )
     training_dls = [
         dl(

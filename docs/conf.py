@@ -175,7 +175,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "FLamby.tex", "FLamby Documentation", "Collaboration", "manual"),
+    (master_doc, "FLamby.tex", "FLamby Documentation", "Collaboration", "manual")
 ]
 
 
@@ -200,7 +200,7 @@ texinfo_documents = [
         "FLamby",
         "One line description of project.",
         "Miscellaneous",
-    ),
+    )
 ]
 
 

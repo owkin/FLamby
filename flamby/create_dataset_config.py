@@ -5,10 +5,7 @@ from flamby.utils import create_config, write_value_in_config
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--path",
-        type=str,
-        help="The path where the dataset is located",
-        required=True,
+        "--path", type=str, help="The path where the dataset is located", required=True
     )
     parser.add_argument(
         "--dataset-name",

@@ -20,12 +20,9 @@ def main(output_folder, debug=False):
 
     # location of the files in the UCI archive
     accept_license(
-        "https://archive-beta.ics.uci.edu/ml/datasets/heart+disease",
-        "fed_heart_disease",
+        "https://archive-beta.ics.uci.edu/ml/datasets/heart+disease", "fed_heart_disease"
     )
-    base_url = (
-        "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/"
-    )
+    base_url = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/"
     centers = ["cleveland", "hungarian", "switzerland", "va"]
     md5_hashes = [
         "2d91a8ff69cfd9616aa47b59d6f843db",
@@ -69,9 +66,7 @@ def main(output_folder, debug=False):
         sys.exit()
 
     # get status of download
-    downloaded_status_file_path = os.path.join(
-        output_folder, "download_status_file.csv"
-    )
+    downloaded_status_file_path = os.path.join(output_folder, "download_status_file.csv")
     if not (os.path.exists(downloaded_status_file_path)):
         downloaded_status_file = pd.DataFrame()
         downloaded_status_file["Status"] = ["Not found"] * 4

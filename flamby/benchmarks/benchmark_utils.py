@@ -568,9 +568,7 @@ def ensemble_perf_from_predictions(
     return ensemble_perf
 
 
-def set_dataset_specific_config(
-    dataset_name, compute_ensemble_perf=False, use_gpu=True
-):
+def set_dataset_specific_config(dataset_name, compute_ensemble_perf=False, use_gpu=True):
     """_summary_
 
     Parameters

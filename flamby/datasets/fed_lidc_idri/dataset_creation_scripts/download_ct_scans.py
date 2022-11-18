@@ -242,9 +242,7 @@ def LIDC_to_niftis(extraction_results_dataframe, spacing=[1.0, 1.0, 1.0], debug=
         extraction_results_dataframe.iterrows(),
     )
     progbar = tqdm.tqdm(
-        loop,
-        total=extraction_results_dataframe.shape[0],
-        desc="Converting to NiFTIs...",
+        loop, total=extraction_results_dataframe.shape[0], desc="Converting to NiFTIs..."
     )
     converted_dicoms = Parallel(n_jobs=1, prefer="processes")(
         delayed(convert_to_niftis)(*t, spacing=spacing) for t in progbar

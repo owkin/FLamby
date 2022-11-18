@@ -85,8 +85,7 @@ def get_dataset_args(
     for param in params:
         try:
             p = getattr(
-                __import__(f"flamby.datasets.{dataset_name}", fromlist=param),
-                param,
+                __import__(f"flamby.datasets.{dataset_name}", fromlist=param), param
             )
         except AttributeError:
             p = None

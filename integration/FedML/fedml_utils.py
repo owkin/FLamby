@@ -95,11 +95,7 @@ class HeartDiseaseAggregator(ServerAggregator):
     def _test(self, test_data, device):
         logging.info("Evaluating on Trainer ID: {}".format(self.id))
 
-        test_metrics = {
-            "test_correct": 0,
-            "test_total": 0,
-            "test_loss": 0,
-        }
+        test_metrics = {"test_correct": 0, "test_total": 0, "test_loss": 0}
 
         if not test_data:
             logging.info("No test data for this trainer")

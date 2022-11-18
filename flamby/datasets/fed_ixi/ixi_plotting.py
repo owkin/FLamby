@@ -53,11 +53,7 @@ legend_elements = [
         [0], [0], color="r", lw=4, label="Client {}".format(CENTER_LABELS_CORRESP["HH"])
     ),
     Line2D(
-        [0],
-        [0],
-        color="b",
-        lw=4,
-        label="Client {}".format(CENTER_LABELS_CORRESP["IOP"]),
+        [0], [0], color="b", lw=4, label="Client {}".format(CENTER_LABELS_CORRESP["IOP"])
     ),
 ]
 ax.legend(handles=legend_elements, loc="upper right")
