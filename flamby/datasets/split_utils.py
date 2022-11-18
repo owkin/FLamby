@@ -37,7 +37,7 @@ def split_indices_linear(original_table, dataset_sizes, num_target_centers):
         current_idx = 0
         for idx_new_client in range(num_target_centers - 1):
             assignment_new_client[
-                current_idx : current_idx + num_samples_per_new_client
+                slice(current_idx, current_idx + num_samples_per_new_client)
             ] = idx_new_client
             current_idx += num_samples_per_new_client
         assignment_new_client[current_idx:] = num_target_centers - 1
@@ -219,10 +219,10 @@ def split_dataset(
             _current_idx = 0
             for idx_client_orig, length_client in enumerate(client_size_list):
                 original_table[split][
-                    0, _current_idx : _current_idx + length_client
+                    0, np.arange(_current_idx, _current_idx + length_client)
                 ] = idx_client_orig
                 original_table[split][
-                    1, _current_idx : _current_idx + length_client
+                    1, np.arange(_current_idx, _current_idx + length_client)
                 ] = np.arange(0, length_client)
                 _current_idx += length_client
 
