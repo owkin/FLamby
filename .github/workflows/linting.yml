@@ -23,7 +23,7 @@ jobs:
 
       - name: Install dependencies
         run: pip install isort black==22.3.0
-             pip install flake8==1.2.3
+             pip install flake8==1.2
 
       - name: Run black
         run: black --check .
