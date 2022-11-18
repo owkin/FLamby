@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import nibabel as nib
 import numpy as np
 import seaborn as sns
-from batchgenerators.utilities.file_and_folder_operations import *
+from batchgenerators.utilities.file_and_folder_operations import join
 from matplotlib.lines import Line2D
 from numpy import random
 
