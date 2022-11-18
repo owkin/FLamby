@@ -30,7 +30,7 @@ jobs:
 
 
       - name: Run FLAKE8
-        run: flake8 --max-line-length=89 --per-file-ignores=*/__init__.py:F401 .
+        run: flake8 --max-line-length=89 --per-file-ignores="*/__init__.py:F401" .
 
       - name: Run isort
         run: isort .
