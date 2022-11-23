@@ -402,16 +402,9 @@ compute_plan = execute_experiment(
     2022-11-23 16:27:22,920 - INFO - Building the compute plan.
     2022-11-23 16:27:22,937 - INFO - Registering the algorithm to Substra.
     2022-11-23 16:27:22,965 - INFO - Registering the compute plan to Substra.
-    2022-11-23 16:27:22,966 - INFO - Experiment summary saved to /Users/tfouqueray/Documents/Substra-repository/FLamby/integration/Substra/experiment_summaries/2022_11_23_16_27_22_0fdc6eed-6ba1-4175-a0e9-0efa71f7f6c1.json
-
-
+    2022-11-23 16:27:22,966 - INFO - Experiment summary saved.
 
     Compute plan progress:   0%|          | 0/75 [00:00<?, ?it/s]
-
-
-    /Users/tfouqueray/.virtualenvs/flamby_example/lib/python3.9/site-packages/substra/sdk/backends/local/backend.py:599: UserWarning: `transient=True` is ignored in local mode
-      warnings.warn("`transient=True` is ignored in local mode")
-    2022-11-23 16:34:03,654 - INFO - The compute plan has been registered to Substra, its key is 0fdc6eed-6ba1-4175-a0e9-0efa71f7f6c1.
 
 ## Plot results
 
@@ -435,7 +428,7 @@ plt.legend(loc=(1.1, 0.3), title="Test set")
 plt.show()
 ```
 
-![png](output_27_0.png)
+![png](markdown-image/output_27_0.png)
 
 ## Download a model
 

@@ -32,4 +32,4 @@ This example runs in local mode, simulating a **federated learning** experiment.
 
 ## Run the example
 
-To run the example, launch `jupyter notebook` and run the cells of the `flamby-integration-into-substra.ipynb`
+To run the example, launch `jupyter notebook`, copy past and run the cells of the `flamby-integration-into-substra.md` file.
