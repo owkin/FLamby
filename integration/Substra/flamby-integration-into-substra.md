@@ -2,9 +2,10 @@
 
 [**Substra**](https://docs.substra.org/en/0.21.0/) is an **open source** federated learning framework. It provides a flexible **Python interface** and a **web app** to run federated learning training at scale.
 
-Substra main usage is a **production one**. It has already been deployed and used by hospitals and biotech companies (see the [MELLODDY](https://www.melloddy.eu/) project for instance). 
+Substra main usage is a **production one**. It has already been deployed and used by hospitals and biotech companies (see the [MELLODDY](https://www.melloddy.eu/) project for instance).
 
 Yet [**Substra**](https://docs.substra.org/en/0.21.0/) can also be used on a single machine on a virtually splitted dataset for two use cases:
+
 - debugging code before launching experiments on a real network
 - performing FL simulations
 
@@ -20,7 +21,7 @@ The objective of this example is to launch a *federated learning* experiment on 
 
 This example does not use the deployed platform of Substra and will run in local mode.
 
-## Requirements:
+## Requirements
 
 To run this example locally, please make sure to download and unzip in the same directory as this example the assets needed to run it:
 
@@ -28,19 +29,19 @@ Please ensure to have all the libraries installed, a `requirements.txt` file is 
 
 You can run the command: `pip install -r requirements.txt` to install them.
 
-## Objective:
+## Objective
 
 This example will run a federated training on all 6 centers of the TCGA BRCA [**FLamby**](https://github.com/owkin/FLamby) dataset.
 
-This example shows how to interface [**Substra**](https://docs.substra.org/en/0.21.0/) with [**FLamby**](https://github.com/owkin/FLamby). 
+This example shows how to interface [**Substra**](https://docs.substra.org/en/0.21.0/) with [**FLamby**](https://github.com/owkin/FLamby).
 
 This example runs in local mode, simulating a **federated learning** experiment.
 
 # Setup
+
 We work with seven different organizations, defined by their IDs. Six organizations provide a FLamby dataset configuration. The last one provide the algorithm and will register the machine learning tasks.
 
 Once these variables defined, we can create our different [**Substra Clients**](https://docs.substra.org/en/0.21.0/documentation/references/sdk.html#client) (one for each organization/center).
-
 
 ```python
 from substra import Client
@@ -66,6 +67,7 @@ ALGO_ORG_ID = algo_provider_client.organization_info().organization_id
 # Data and metrics
 
 ## Dataset registration
+
 A [**Dataset**](https://docs.substra.org/en/0.21.0/documentation/concepts.html#dataset) is composed of an **opener**, which is a Python script with the instruction of *how to load the data* from the files in memory, and a **description markdown** file.
 
 The [**Dataset**](https://docs.substra.org/en/0.21.0/documentation/concepts.html#dataset) object itself does not contain the data. The proper asset to access them is the **datasample asset**.
@@ -77,7 +79,6 @@ To interface with [**FLamby**](https://github.com/owkin/FLamby), the utilization
 As we directly load a torch dataset from Flamby, the `folders` parameters is unused and the path usually leading to the data will point out a empty folder in this example.
 
 As data can not be seen once it is registered on the platform, we set a [**Permissions**](https://docs.substra.org/en/0.21.0/documentation/references/sdk_schemas.html#permissions) object for each [**Assets**](https://docs.substra.org/en/0.21.0/documentation/concepts.html#assets), defining their access rights to the different data.
-
 
 ```python
 import pathlib
@@ -100,12 +101,12 @@ test_datasample_keys = {}
 
 for ind, org_id in enumerate(DATA_PROVIDER_ORGS_ID):
     client = data_provider_clients[org_id]
-    
+
 
     # DatasetSpec is the specification of a dataset. It makes sure every field
     # is well defined, and that our dataset is ready to be registered.
     # The real dataset object is created in the add_dataset method.
-    
+
     dataset = DatasetSpec(
         name="FLamby",
         type="torchDataset",
@@ -114,13 +115,13 @@ for ind, org_id in enumerate(DATA_PROVIDER_ORGS_ID):
         permissions=permissions_dataset,
         logs_permission=permissions_dataset,
     )
-    
+
     # Add the dataset to the client to provide access to the opener in each organization.
     train_dataset_key = client.add_dataset(dataset)
     assert train_dataset_key, "Missing data manager key"
 
     train_dataset_keys[org_id] = train_dataset_key
-    
+
     # Add the training data on each organization.
     data_sample = DataSampleSpec(
         data_manager_keys=[train_dataset_key],
@@ -173,9 +174,6 @@ When using a Torch SubstraFL algorithm, the predictions are saved in the predict
 
 After defining the metrics dependencies and permissions, we use the add_metric function to register the metric. This metric will be used on the test datasamples to evaluate the model performances.
 
-
-
-
 ```python
 import numpy as np
 
@@ -186,12 +184,12 @@ from substrafl.remote.register import add_metric
 
 
 def tgca_brca_metric(datasamples, predictions_path):
-    
+
     config = datasamples
-    
+
     dataset = fed_tcga_brca.FedTcgaBrca(**config)
     dataloader = data.DataLoader(dataset, batch_size=len(dataset))
-    
+
     y_true =  next(iter(dataloader))[1]
     y_pred = np.load(predictions_path)
 
@@ -199,7 +197,7 @@ def tgca_brca_metric(datasamples, predictions_path):
 
 # The Dependency object is instantiated in order to install the right libraries in
 # the Python environment of each organization.
-metric_deps = Dependency(pypi_dependencies=["torch==1.11.0","numpy==1.23.1"], 
+metric_deps = Dependency(pypi_dependencies=["torch==1.11.0","numpy==1.23.1"],
                          local_dependencies=[pathlib.Path.cwd().parent.parent], # Flamby dependency
                         )
 permissions_metric = Permissions(public = False, authorized_ids = DATA_PROVIDER_ORGS_ID + [ALGO_ORG_ID])
@@ -213,20 +211,16 @@ metric_key = add_metric(
 ```
 
 # Specify the machine learning components
-This section uses the PyTorch based **SubstraFL** API to simplify the machine learning components definition. 
+
+This section uses the PyTorch based **SubstraFL** API to simplify the machine learning components definition.
 
 However, **SubstraFL** is compatible with any machine learning framework.
 
-
-```python
-from flamby.datasets import fed_tcga_brca
-```
-
 ## Specifying on how much data to train
-To specify on how much data to train at each round, we use the [**Index Generator**](https://docs.substra.org/en/latest/substrafl_doc/substrafl_overview.html#index-generator) object. 
+
+To specify on how much data to train at each round, we use the [**Index Generator**](https://docs.substra.org/en/latest/substrafl_doc/substrafl_overview.html#index-generator) object.
 
 We specify the batch size and the number of batches to consider for each round (called `num_updates`).
-
 
 ```python
 from substrafl.index_generator import NpIndexGenerator
@@ -241,14 +235,14 @@ index_generator = NpIndexGenerator(
 ```
 
 ## Torch Dataset definition
-To instantiate a Substrafl [**Torch Algorithm**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/algorithms.html#torch-algorithms), you need to define a torch Dataset with a specific `__init__` signature, that must contain (self, datasamples, is_inference). 
+
+To instantiate a Substrafl [**Torch Algorithm**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/algorithms.html#torch-algorithms), you need to define a torch Dataset with a specific `__init__` signature, that must contain (self, datasamples, is_inference).
 
 This torch Dataset is normally useful to preprocess your data on the `__getitem__` function.
 
-
 ```python
 class TorchDataset(fed_tcga_brca.FedTcgaBrca):
-    
+
     def __init__(self, datasamples, is_inference):
         config = datasamples
         super().__init__(**config)
@@ -261,10 +255,9 @@ A SubstraFL Algo gathers all the elements that we defined that run locally in ea
 The torch dataset is passed **as a class** to the [**Torch Algorithms**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/algorithms.html#torch-algorithms).
 Indeed, this torch Dataset will be instantiated within the algorithm, using the opener functions as **datasamples** parameters.
 
-Concerning the [**TorchFedAvgAlgo**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/algorithms.html#torchfedavgalgo) interaction with [**FLamby**](https://github.com/owkin/FLamby), we need to overwrite the `_local_predict` function, used to compute the predictions of the model. In the default `_local_predict`provided by **Substrafl**, we assume that the `__getitem__` of the dataset take into account the `is_inference` argument to only return the inputs samples. 
+Concerning the [**TorchFedAvgAlgo**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/algorithms.html#torchfedavgalgo) interaction with [**FLamby**](https://github.com/owkin/FLamby), we need to overwrite the `_local_predict` function, used to compute the predictions of the model. In the default `_local_predict`provided by **Substrafl**, we assume that the `__getitem__` of the dataset take into account the `is_inference` argument to only return the inputs samples.
 
 But as the `__getitem__` function is provided by [**FLamby**](https://github.com/owkin/FLamby), the `is_inference` argument is ignored. We need to overwrite the `_local_predict` to change the behavior of the function, and can use this opportunity to optimize the computation time of the function using knowledge of the ouput dimension of the TGCA-BRCA dataset.
-
 
 ```python
 import torch
@@ -285,15 +278,15 @@ class MyAlgo(TorchFedAvgAlgo):
         )
 
     def _local_predict(self, predict_dataset: torch.utils.data.Dataset, predictions_path):
-        
+
         batch_size = self._index_generator.batch_size
         predict_loader = torch.utils.data.DataLoader(predict_dataset, batch_size=batch_size)
 
         self._model.eval()
-        
+
         # The output dimension of the model is of size (1,)
         predictions = torch.zeros((len(predict_dataset), 1))
-        
+
         with torch.inference_mode():
             for i, (x, _) in enumerate(predict_loader):
                 x = x.to(self._device)
@@ -309,7 +302,6 @@ A FL strategy specifies how to train a model on distributed data. The most well 
 
 For this example, we choose to use the [**Federated averaging Strategy**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/strategies.html), based on the [FedAvg paper by McMahan et al., 2017](https://arxiv.org/abs/1602.05629).
 
-
 ```python
 from substrafl.strategies import FedAvg
 
@@ -321,7 +313,6 @@ strategy = FedAvg()
 We specify on which data we want to train our model, using the [**TrainDataNodes**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/nodes.html#traindatanode) objets. Here we train on the two datasets that we have registered earlier.
 
 The [**AggregationNode**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/nodes.html#aggregationnode) specifies the organization on which the aggregation operation will be computed.
-
 
 ```python
 from substrafl.nodes import TrainDataNode
@@ -344,10 +335,10 @@ for org_id in DATA_PROVIDER_ORGS_ID:
 ```
 
 ## Where and when to test
+
 With the same logic as the train nodes, we create [**TestDataNodes**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/nodes.html#testdatanode) to specify on which data we want to test our model.
 
 The [**Evaluation Strategy**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/evaluation_strategy.html) defines where and at which frequency we evaluate the model, using the given metric(s) that you registered in a previous section.
-
 
 ```python
 from substrafl.nodes import TestDataNode
@@ -384,8 +375,6 @@ We now have all the necessary objects to launch our experiment. Below a summary 
 - The **number of round**, a round being defined by a local training step followed by an aggregation operation
 - An **experiment folder** to save a summary of the operation made
 - The [**Dependency**](https://docs.substra.org/en/0.21.0/substrafl_doc/api/dependency.html) to define the libraries the experiment needs to run.
-
-
 
 ```python
 from substrafl.experiment import execute_experiment
@@ -424,16 +413,12 @@ compute_plan = execute_experiment(
       warnings.warn("`transient=True` is ignored in local mode")
     2022-11-23 16:34:03,654 - INFO - The compute plan has been registered to Substra, its key is 0fdc6eed-6ba1-4175-a0e9-0efa71f7f6c1.
 
-
 ## Plot results
-
-
 
 ```python
 import pandas as pd
 import matplotlib.pyplot as plt
 ```
-
 
 ```python
 plt.title("Performance evolution on each center of the baseline on Fed-TCGA-BRCA with Federated Averaging training")
@@ -445,26 +430,21 @@ performance_df = pd.DataFrame(client.get_performances(compute_plan.key).dict())
 for i, id in enumerate(DATA_PROVIDER_ORGS_ID):
     df = performance_df.query(f"worker == '{id}'")
     plt.plot(df["round_idx"], df["performance"], label=f"Client {i} ({id})")
-    
+
 plt.legend(loc=(1.1, 0.3), title="Test set")
 plt.show()
 ```
 
-
-    
 ![png](output_27_0.png)
-    
-
 
 ## Download a model
 
 After the experiment, you might be interested in getting your trained model.
-To do so, you will need the source code in order to reload in memory your code architecture. 
+To do so, you will need the source code in order to reload in memory your code architecture.
 
 You have the option to choose the client and the round you are interested in.
 
 If `round_idx` is set to `None`, the last round will be selected by default.
-
 
 ```python
 from substrafl.model_loading import download_algo_files
@@ -499,8 +479,6 @@ print([p for p in model.parameters()])
              -0.5587, -0.6355, -0.6012, -0.1639, -0.3266,  0.0889,  0.2282]],
            requires_grad=True), Parameter containing:
     tensor([-0.3652], requires_grad=True)]
-
-
 
 ```python
 
