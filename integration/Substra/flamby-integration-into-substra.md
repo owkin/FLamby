@@ -197,6 +197,8 @@ def tgca_brca_metric(datasamples, predictions_path):
 
 # The Dependency object is instantiated in order to install the right libraries in
 # the Python environment of each organization.
+# The local dependencies are local packages to be installed using the command `pip install -e .`.
+# Flamby is a local dependency. We put as argument the path to the `setup.py` file.
 metric_deps = Dependency(pypi_dependencies=["torch==1.11.0","numpy==1.23.1"],
                          local_dependencies=[pathlib.Path.cwd().parent.parent], # Flamby dependency
                         )
@@ -384,6 +386,8 @@ NUM_ROUNDS = 3
 
 # The Dependency object is instantiated in order to install the right libraries in
 # the Python environment of each organization.
+# The local dependencies are local packages to be installed using the command `pip install -e .`.
+# Flamby is a local dependency. We put as argument the path to the `setup.py` file.
 algo_deps = Dependency(pypi_dependencies=["torch==1.11.0"], local_dependencies=[pathlib.Path.cwd().parent.parent])
 
 compute_plan = execute_experiment(
