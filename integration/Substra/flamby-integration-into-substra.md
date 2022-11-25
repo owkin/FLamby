@@ -255,7 +255,7 @@ A SubstraFL Algo gathers all the elements that we defined that run locally in ea
 The torch dataset is passed **as a class** to the [**Torch Algorithms**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/algorithms.html#torch-algorithms).
 Indeed, this torch Dataset will be instantiated within the algorithm, using the opener functions as **datasamples** parameters.
 
-Concerning the [**TorchFedAvgAlgo**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/algorithms.html#torchfedavgalgo) interaction with [**FLamby**](https://github.com/owkin/FLamby), we need to overwrite the `_local_predict` function, used to compute the predictions of the model. In the default `_local_predict`provided by **Substrafl**, we assume that the `__getitem__` of the dataset take into account the `is_inference` argument to only return the inputs samples.
+Concerning the [**TorchFedAvgAlgo**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/algorithms.html#torchfedavgalgo) interaction with [**FLamby**](https://github.com/owkin/FLamby), we need to overwrite the `_local_predict` function, used to compute the predictions of the model. In the default `_local_predict`provided by **Substrafl**, we assume that the `__getitem__` method of the dataset has a keyword argument `is_inference` used to only return X (and not the tuple X, y).
 
 But as the `__getitem__` function is provided by [**FLamby**](https://github.com/owkin/FLamby), the `is_inference` argument is ignored. We need to overwrite the `_local_predict` to change the behavior of the function, and can use this opportunity to optimize the computation time of the function using knowledge of the ouput dimension of the TGCA-BRCA dataset.
 
