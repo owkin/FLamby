@@ -74,7 +74,7 @@ The [**Dataset**](https://docs.substra.org/en/0.23.0/documentation/concepts.html
 
 A **datasample** contains a local path to the data, and the key identifying the [**Dataset**](https://docs.substra.org/en/0.23.0/documentation/concepts.html#dataset) in order to have access to the proper `opener.py` file.
 
-To interface with [**FLamby**](https://github.com/owkin/FLamby), the utilization of the opener and datasample is a bit bypassed here. [**Substra**](https://docs.substra.org/en/0.23.0/) is a library built to be deployed on a real federated networks, where the path to the data is provided to the opener in order to load and read them in a personalized way directly on the organization.
+To interface with [**FLamby**](https://github.com/owkin/FLamby), in the simple case of a single machine and a single runtime where clients are simple Python objects, the utilization of the opener and associated datasample method is implemented as a simple lookup table to indicate which center lives in which client. [**Substra**](https://docs.substra.org/en/0.23.0/) is a library built to be deployed on a real federated network, where the path to the data is to the opener in order to load and read the data in a personalized way on the premises of the organization that owns the data.
 
 As we directly load a torch dataset from Flamby, the `folders` parameters is unused and the path usually leading to the data will point out a empty folder in this example.
 
