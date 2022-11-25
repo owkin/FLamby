@@ -5,21 +5,9 @@ from flamby.datasets.fed_tcga_brca import FedTcgaBrca
 
 
 class FlambyTestOpener(tools.Opener):
-    def get_X(self, folders):
-        config = self.get_config()
+    def get_data(self, folders):
+        config = {"center": 2, "train": False}
         return config
 
-    def get_y(self, folders):
-        config = self.get_config()
-        dataset = FedTcgaBrca(**config)
-        dataloader = DataLoader(dataset, batch_size=len(dataset))
-        return next(iter(dataloader))[1]
-
-    def get_config(self):
-        return {"center": 2, "train": False}
-
-    def fake_X(self, n_samples=None):
-        pass
-
-    def fake_y(self, n_samples=None):
+    def fake_data(self, n_samples=None):
         pass

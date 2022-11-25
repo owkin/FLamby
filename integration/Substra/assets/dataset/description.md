@@ -4,7 +4,6 @@ This dataset is [the FLamby TCGA BRCA dataset](https://github.com/owkin/FLamby/t
 
 ## Opener usage
 
-The opener exposes 2 methods:
+The opener exposes 1 methods:
 
-* `get_X` returns a config dictionary to instantiate a FLamby dataset.
-* `get_y` Not used in training, and return all test samples on testing.
+* `get_data` returns a config dictionary to instantiate a FLamby dataset.
