@@ -29,21 +29,33 @@ from torch.utils import data
 from substrafl.dependency import Dependency
 from substrafl.remote.register import add_metric
 
-MODE = "subprocess"
+MODE = "remote"
+urls = ['http://substra-backend.org-1.com', 'http://substra-backend.org-2.com']
 
 # Create the substra clients
-data_provider_clients = [Client(backend_type=MODE)
-                         for _ in range(fed_tcga_brca.NUM_CLIENTS)]
+data_provider_clients = [Client(backend_type=MODE, url=urls[idx])
+                         for idx in range(fed_tcga_brca.NUM_CLIENTS)]
+
+for idx, client in enumerate(data_provider_clients):
+    client.login(username="org-{}".format(idx + 1),
+                 password="p@sswr0d4{}".format(idx + 4))
+
+print("All clients are logged in")
+
 data_provider_clients = {client.organization_info(
 ).organization_id: client for client in data_provider_clients}
 
-algo_provider_client = Client(backend_type=MODE)
+
+algo_provider_client = Client(backend_type='subprocess')
 
 # Store their IDs
 DATA_PROVIDER_ORGS_ID = list(data_provider_clients.keys())
 
 # The org id on which your computation tasks are registered
 ALGO_ORG_ID = algo_provider_client.organization_info().organization_id
+
+print("Algo provider client is logged in", ALGO_ORG_ID)
+print("Data provider clients are logged in", DATA_PROVIDER_ORGS_ID)
 
 assets_directory = pathlib.Path.cwd() / "assets"
 empty_path = assets_directory / "empty_datasamples"
@@ -74,7 +86,6 @@ for ind, org_id in enumerate(DATA_PROVIDER_ORGS_ID):
     )
 
     # Add the dataset to the client to provide access to the opener in each organization.
-    print("Adding dataset", dataset)
     train_dataset_key = client.add_dataset(dataset)
     assert train_dataset_key, "Missing data manager key"
 
