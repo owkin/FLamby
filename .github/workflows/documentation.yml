@@ -1,4 +1,6 @@
 name: Docs
+env: 
+  SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL: True
 on: [push, pull_request, workflow_dispatch]
 jobs:
   docs:
