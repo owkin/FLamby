@@ -196,13 +196,15 @@ You can instantiate this dataset as you did FedTcgaBrca by executing:
    # Center 1 train dataset
    mydataset_local1= FedHeartDisease(center=1, train=True, pooled=False)
 
-Other datasets downloads and instantiations follow a similar pattern, please find instructions for each of the dataset in their corresponding sections:  
+Other datasets downloads and instantiations follow a similar pattern, please find instructions for each of the dataset in their corresponding sections.
+Note however that you certainly do not have to download them all as each takes some non negligible disk space. 
 
-* :any:`fed_camelyon`.
-* :any:`fed_isic`.
-* :any:`fed_kits19`.
-* :any:`fed_lidc`.
 * :any:`fed_ixi`.
+* :any:`fed_isic`.
+* :any:`fed_camelyon`.
+* :any:`fed_lidc`.
+* :any:`fed_kits19`.
+
 
 Training and evaluation in a pooled setting
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
