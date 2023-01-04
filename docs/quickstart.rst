@@ -2,20 +2,22 @@
 Quickstart
 ----------
 
-We will start with the Fed-TCGA-BRCA dataset because it requires no downloading or preprocessing and is very lightweight.
+We will start with the :any:`fed_tcga_brca` dataset because it requires no downloading or preprocessing and is very lightweight.
 Therefore it provides a good introduction to navigating Flamby.
 This tutorial does not require the use of a GPU.
 
 Dataset example
 ^^^^^^^^^^^^^^^
 
-We do provide users with two dataset abstractions: RawDataset and FedDataset.
-The recommended one is FedDataset: it is compatible with the rest of the repository's code.
+We do provide users with two dataset abstractions: ``RawDataset`` and ``FedDataset``.
+The recommended one is ``FedDataset`` as it is compatible with the rest of the repository's code.
 This class allows to instantiate either the single-centric version of the dataset using the argument ``pooled = True``\ , or the different local datasets belonging to each client by providing the client index in the arguments (e.g. ``center = 2, pooled = False``\ ).
 The arguments ``train = True`` and ``train = False`` allow to instantiate train or test sets (in both pooled or local cases).
-We also provide RawDataset objects which are less easy to work with but that should provide all metadata required for experienced users that find the FedDataset abstraction not flexible enough for their specific use-cases.
+It is important to understand that ``FedDataset`` is simply a wrapper around a `a map-style pytorch's dataset <https://pytorch.org/docs/stable/data.html#map-style-datasets>`_ and thus data can be accessed
+the usual way by doing ``fed_dataset[i]`` where ``i`` belongs to ``[0, len(fed_dataset) - 1]``.
+We also provide ``RawDataset`` objects which are less easy to work with but that should provide all metadata required for power users that find the ``FedDataset`` abstraction not flexible enough for their specific use-cases.
 
-To instantiate the raw TCGA-BRCA or the Fed-TCGA-BRCA dataset, install FLamby and execute the following lines either in the python console, a notebook or a python script:
+To instantiate the raw TCGA-BRCA or the Fed-TCGA-BRCA dataset, install FLamby (see :any:`installation`) and execute the following lines either in the python console, a notebook or a python script:
 
 .. code-block:: python
 
@@ -31,10 +33,17 @@ To instantiate the raw TCGA-BRCA or the Fed-TCGA-BRCA dataset, install FLamby an
    # Center 2 train dataset
    mydataset_local2= FedTcgaBrca(center=2, train=True, pooled=False)
 
+   # Computing the length of mydataset_local2
+   N = len(my_dataset_local2)
+
+   # Accessing individual samples
+   X, y = mydataset_local2[N // 2]
+
 Local training example
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Below is an example of how to train the chosen baseline model with default settings on one local train set and evaluate it on all the local test sets:
+Below is an example of how to train the chosen baseline model with default settings on one local train set and evaluate it on all the local test sets.
+The code is identical to the ones would use on any pytorch dataset.
 
 .. code-block:: python
 
@@ -58,8 +67,12 @@ Below is an example of how to train the chosen baseline model with default setti
    # Instantiation of local train set (and data loader)), baseline loss function, baseline model, default optimizer
    train_dataset = FedDataset(center=0, train=True, pooled=False)
    train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
+   # This is the dataset's loss implementing in torch.nn's style (https://pytorch.org/docs/stable/_modules/torch/nn/modules/loss.html#BCELoss)
+   # therefore it needs to be instantiated
    lossfunc = BaselineLoss()
+   # This is simply a pytorch model
    model = Baseline()
+   # This is simply a pytorch optimizer
    optimizer = Optimizer(model.parameters(), lr=LR)
 
    # Traditional pytorch training loop
@@ -82,7 +95,8 @@ Below is an example of how to train the chosen baseline model with default setti
                )
                for i in range(NUM_CLIENTS)
            ]
-   # Function performing the evaluation
+   # Helper function performing the evaluation on a list of dataloaders
+   # it can also be done manually
    dict_cindex = evaluate_model_on_tests(model, test_dataloaders, metric)
    print(dict_cindex)
 
@@ -158,11 +172,11 @@ See below an example of how to train a baseline model on the Fed-TCGA-BRCA datas
 
 Note that other models and loss functions compatible with the dataset can be used as long as they inherit from torch.nn.Module.
 
-Downloading a dataset
-^^^^^^^^^^^^^^^^^^^^^
+Using other FLamby's datasets
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 We will follow up on how to download datasets that are not hosted on this repository.
-We will use the example of Fed-Heart-Disease as its download process is simple and it requires no preprocessing.
+We will use the example of :any:`fed_heart` as its download process is simple and it requires no preprocessing.
 Please run:
 
 .. code-block::
@@ -182,7 +196,13 @@ You can instantiate this dataset as you did FedTcgaBrca by executing:
    # Center 1 train dataset
    mydataset_local1= FedHeartDisease(center=1, train=True, pooled=False)
 
-Other datasets downloads and instantiations follow a similar pattern, please find instructions for each of the dataset in their corresponding sections.
+Other datasets downloads and instantiations follow a similar pattern, please find instructions for each of the dataset in their corresponding sections:  
+
+* :any:`fed_camelyon`.
+* :any:`fed_isic`.
+* :any:`fed_kits19`.
+* :any:`fed_lidc`.
+* :any:`fed_ixi`.
 
 Training and evaluation in a pooled setting
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -215,9 +235,18 @@ The results are stored in the csv file specified either in the config file or wi
 FL training and evaluation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In order to train and evaluate the baseline model with a specific FL strategy and associated hyperparameters, one can run the following command (in this case the strategy specific HPs in the config file are ignored and the HPs used are given by the user or take the default values given in this script):
+In order to train and evaluate the baseline model with a specific FL strategy and associated hyperparameters, one can run the following command:
 
 .. code-block::
 
    python fed_benchmark.py --strategy FedProx --mu 1.0 --learning_rate 0.05 --config-file-path ../config_heart_disease.json \
     --results-file-path ./test_res1.csv --seed 1
+
+In this case the strategy specific HPs in the config file are ignored and the HPs used are given by the user or take the default values given in this script.
+
+Going further
+^^^^^^^^^^^^^
+If you made it here please consider contributing to FLamby by either opening `issues <https://github.com/owkin/FLamby/issues>`_  
+on pain-points you might have encountered or on things you do not understand after having consulted the :any:`faq`.
+If you think you can fix the issue yourself or want to add new distributed datasets with natural splits follow the steps
+outlined in :any:`contributing`

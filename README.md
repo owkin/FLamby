@@ -14,6 +14,9 @@
 
 
 ## Overview
+
+:arrow_right:[The API doc is available here](https://owkin.github.io/FLamby):arrow_left:
+
 FLamby is a benchmark for cross-silo Federated Learning with natural partitioning,
 currently focused in healthcare applications.
 It spans multiple data modalities and should allow easy interfacing with most
