@@ -32,7 +32,7 @@ The following table provides a data sheet:
 License
 ~~~~~~~
 
-The `full licence <https://challenge.isic-archive.com/data/#2019>`__ for
+The `full licence <https://challenge.isic-archive.com/data/>`__ for
 ISIC2019 is CC-BY-NC 4.0.
 
 In order to extract the origins of the images in the HAM10000 Dataset

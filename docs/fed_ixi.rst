@@ -1,5 +1,5 @@
-Fed-IXI Dataset
-===============
+Fed-IXI
+=======
 
 Data Citation and License
 -------------------------
@@ -22,7 +22,7 @@ collection ethics. However, the original dataset was collected as part
 of the IXI - Information eXtraction from Images (EPSRC GR/S21533/02)
 project, and thus funded by `UK Research and Innovation
 (UKRI) <https://www.ukri.org/>`__. As part of its `terms and
-conditions <https://www.ukri.org/wp-content/uploads/2022/04/UKRI-050422-FullEconomicCostingGrantTermsConditions-Apr2022.pdf>`__,
+conditions <https://www.ukri.org/apply-for-funding/before-you-apply/your-responsibilities-if-you-get-funding/previous-terms-and-conditions-for-research-and-training-grants/>`__,
 the UKRI demands that all funded projects are "carried out in accordance
 with all applicable ethical, legal and regulatory requirements" (RGC
 2.2).

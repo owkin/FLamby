@@ -12,8 +12,7 @@ Dataset description
 
 Please refer to the `dataset
 website <https://camelyon17.grand-challenge.org/Data/>`__ for an
-`exhaustive data
-sheet <https://academic.oup.com/gigascience/article/7/6/giy065/5026175#117856577>`__.
+exhaustive data sheet (``https://academic.oup.com/gigascience/article/7/6/giy065/5026175#117856577``).
 The table below provides a high-level description of the dataset.
 
 +--------------+-------------------------------------------------------------+
@@ -47,8 +46,7 @@ original authors.*
 Ethical approval
 ~~~~~~~~~~~~~~~~
 
-As indicated by the `dataset
-authors <https://academic.oup.com/gigascience/article/7/6/giy065/5026175#117856619>`__,
+As indicated by the dataset authors (``https://academic.oup.com/gigascience/article/7/6/giy065/5026175#117856619``),
 > The collection of the data was approved by the local ethics committee
 > (Commissie Mensgebonden Onderzoek regio Arnhem - Nijmegen) under
 2016-2761, > and the need for informed consent was waived.
@@ -95,7 +93,7 @@ Step 1: Setting up Google App and associated secret
    name for your app and publish it for external use.
 3. Go to Credentials, create an id, then client oauth id
 4. Choose Web app, go through the steps and **allow URI redirect**
-   towards http://localhost:6006 and http://localhost:6006/ (notice the
+   towards ``http://localhost:6006`` and ``http://localhost:6006/`` (notice the
    last backslash)
 5. Retrieve the secrets in JSON by clicking on Download icon at the end
    of the process.

@@ -2,7 +2,7 @@ Fed-LIDC-IDRI
 =============
 
 This dataset comes from the `TCIA GDC data
-portal <https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI#1966254a2b592e6fba14f949f6e23bb1b7804cc>`__.
+portal <https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=1966254>`__.
 
 Terms of use
 ------------
@@ -12,7 +12,7 @@ License
 
 We do not own the copyright of the data. As indicated on the `dataset's
 data usage
-policy <https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI#1966254a2b592e6fba14f949f6e23bb1b7804cc>`__,
+policy <https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=1966254>`__,
 users of this data must abide by the `TCIA Data Usage
 Policy <https://wiki.cancerimagingarchive.net/x/c4hF>`__ and the
 `Creative Commons Attribution 3.0 Unported
@@ -103,7 +103,7 @@ challenge <https://luna16.grand-challenge.org/Home/>`__. Note that
 contrary to the challenge, in which slides with thickness larger than 3
 mm were removed, the present dataset contains 1009 scans (almost all
 scans from
-`LIDC-IDRI <https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI>`__,
+`LIDC-IDRI <https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=1966254>`__,
 and 9 scans are removed due to missing slices).
 
 The data is split in a training and testing sets containing 80% and 20%

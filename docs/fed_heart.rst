@@ -6,13 +6,13 @@ Cleveland, Hungary, Switzerland and Long Beach V. We do not own the
 copyright of the data: everyone using this dataset should abide by its
 licence and give proper attribution to the original authors. It is
 available for download
-`here <https://archive-beta.ics.uci.edu/ml/datasets/heart+disease>`__.
+`here <https://archive-beta.ics.uci.edu/dataset/45/heart+disease>`__.
 
 Dataset description
 -------------------
 
 Please refer to the `dataset
-website <https://archive-beta.ics.uci.edu/ml/datasets/heart+disease>`__
+website <https://archive-beta.ics.uci.edu/dataset/45/heart+disease>`__
 for an exhaustive data sheet. The table below provides a high-level
 description of the dataset.
 
@@ -46,7 +46,7 @@ Ethics
 ~~~~~~
 
 As per the `dataset
-website <https://archive-beta.ics.uci.edu/ml/datasets/heart+disease>`__,
+website <https://archive-beta.ics.uci.edu/dataset/45/heart+disease>`__,
 sensitive entries of the dataset were removed by the original authors:
 
     The names and social security numbers of the patients were recently
@@ -112,7 +112,7 @@ download and preprocess the dataset and launch the following script:
 
 This will train a logistic regression classifier (which is the strongest
 baseline according to `UCI ML
-Repository <https://archive-beta.ics.uci.edu/ml/datasets/heart+disease>`__.
+Repository <https://archive-beta.ics.uci.edu/dataset/45/heart+disease>`__.
 
 References
 ----------
