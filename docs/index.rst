@@ -113,6 +113,14 @@ Bonn <https://www.ukbonn.de/patient_innen/international/english/>`__
 
 .. toctree::
    :maxdepth: 0
+   :caption: Integration with existing FL-frameworks
+   
+   substra
+   fedbiomed
+   fedml
+
+.. toctree::
+   :maxdepth: 0
    :caption: FAQ
 
    faq
