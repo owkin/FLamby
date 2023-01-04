@@ -35,6 +35,50 @@ If you use FLamby please consider citing it::
 Before jumping to the :any:`quickstart` , make sure FLamby is properly installed
 following the steps highlighted in :any:`installation`
 
+Team
+----
+
+This repository was created thanks to the contributions of many researchers and engineers. 
+We list them in the order of the companion article, following the `CREDIT
+framework <https://credit.niso.org/>`__: `Jean Ogier du
+Terrail <https://github.com/jeandut>`__, `Samy-Safwan
+Ayed <https://github.com/AyedSamy>`__, `Edwige
+Cyffers <https://github.com/totilas>`__, `Felix
+Grimberg <https://github.com/Grim-bot>`__, `Chaoyang
+He <https://github.com/chaoyanghe>`__, `Régis
+Loeb <https://github.com/regloeb>`__, `Paul
+Mangold <https://github.com/pmangold>`__, `Tanguy
+Marchand <https://github.com/tanguy-marchand>`__, `Othmane
+Marfoq <https://github.com/omarfoq/>`__, `Erum
+Mushtaq <https://github.com/ErumMushtaq>`__, `Boris
+Muzellec <https://github.com/BorisMuzellec>`__, `Constantin
+Philippenko <https://github.com/philipco>`__, `Santiago
+Silva <https://github.com/sssilvar>`__, `Maria
+Telenczuk <https://github.com/maikia>`__, `Shadi
+Albarqouni <https://albarqouni.github.io/>`__, `Salman
+Avestimehr <https://www.avestimehr.com/>`__, `Aurélien
+Bellet <http://researchers.lille.inria.fr/abellet/>`__, `Aymeric
+Dieuleveut <http://www.cmap.polytechnique.fr/~aymeric.dieuleveut/>`__,
+`Martin Jaggi <https://people.epfl.ch/martin.jaggi>`__, `Sai Praneeth
+Karimireddy <https://github.com/Saipraneet>`__, `Marco
+Lorenzi <https://marcolorenzi.github.io/publications.html>`__, `Giovanni
+Neglia <http://www-sop.inria.fr/members/Giovanni.Neglia/publications.htm>`__,
+`Marc
+Tommasi <http://researchers.lille.inria.fr/tommasi/#publications>`__,
+`Mathieu Andreux <https://github.com/mandreux-owkin>`__.
+
+Acknowledgements
+----------------
+
+FLamby's initiative was made possible thanks to the support of the following
+institutions: - `Owkin <https://www.owkin.com>`__ -
+`Inria <https://www.inria.fr>`__ - `Ecole
+polytechnique <https://www.polytechnique.edu>`__ - `University of
+California - Berkeley <https://www.berkeley.edu/>`__ - `University of
+Southern California (USC) <https://www.usc.edu/>`__ -
+`EPFL <https://www.epfl.ch>`__ - `Universitätsklinikum
+Bonn <https://www.ukbonn.de/patient_innen/international/english/>`__
+
 .. rubric:: Footnotes
 
 .. [#flamby] `Federated Learning AMple Benchmark of Your cross-silo strategies`
@@ -55,6 +99,30 @@ following the steps highlighted in :any:`installation`
    quickstart
 
 
+.. toctree::
+   :maxdepth: 0
+   :caption: Datasets informations
+   
+   fed_tcga_brca
+   fed_heart
+   fed_ixi
+   fed_isic
+   fed_camelyon
+   fed_lidc
+   fed_kits19
+
+.. toctree::
+   :maxdepth: 0
+   :caption: FAQ
+
+   faq
+
+
+.. toctree::
+   :maxdepth: 0
+   :caption: Extending FLamby
+
+   contributing
 
 
 .. toctree::
