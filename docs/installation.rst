@@ -86,10 +86,15 @@ using comma (',') (no space), eg:
 
    pip install -e .[cam16,ixi]
 
-Accepting data licensing
-^^^^^^^^^^^^^^^^^^^^^^^^
+Datasets
+^^^^^^^^
 
-Then proceed to read and accept the different licenses and download the data from
-all the datasets you are interested in by following the instructions provided in each
-dataset folder. The datasets folder are listed in the README.md at the root of
-the repository.
+All datasets but one have to be downloaded and preprocessed to be accessible. Refer either to the :any:`quickstart` or
+directly to the datasets' sections:
+
+* :any:`fed_heart`.
+* :any:`fed_ixi`.
+* :any:`fed_isic`.
+* :any:`fed_camelyon`.
+* :any:`fed_lidc`.
+* :any:`fed_kits19`.
