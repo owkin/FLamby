@@ -1,4 +1,5 @@
 
+.. _quickstart:
 Quickstart
 ----------
 
@@ -13,6 +14,9 @@ We do provide users with two dataset abstractions: RawDataset and FedDataset.
 The recommended one is FedDataset: it is compatible with the rest of the repository's code.
 This class allows to instantiate either the single-centric version of the dataset using the argument ``pooled = True``\ , or the different local datasets belonging to each client by providing the client index in the arguments (e.g. ``center = 2, pooled = False``\ ).
 The arguments ``train = True`` and ``train = False`` allow to instantiate train or test sets (in both pooled or local cases).
+It is important to understand that FedDataset is simply a wrapper around a `a map-style pytorch's dataset`_ and thus data can be accessed
+by using ``fed_dataset[i]`` where i belongs to ``[0, len(fed_dataset) - 1]``.
+.. _a map-style pytorch's dataset: https://pytorch.org/docs/stable/data.html#map-style-datasets
 We also provide RawDataset objects which are less easy to work with but that should provide all metadata required for experienced users that find the FedDataset abstraction not flexible enough for their specific use-cases.
 
 To instantiate the raw TCGA-BRCA or the Fed-TCGA-BRCA dataset, install FLamby and execute the following lines either in the python console, a notebook or a python script:
@@ -31,10 +35,17 @@ To instantiate the raw TCGA-BRCA or the Fed-TCGA-BRCA dataset, install FLamby an
    # Center 2 train dataset
    mydataset_local2= FedTcgaBrca(center=2, train=True, pooled=False)
 
+   # Computing the length of mydataset_local2
+   N = len(my_dataset_local2)
+
+   # Accessing individual samples
+   X, y = mydataset_local2[0]
+
 Local training example
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Below is an example of how to train the chosen baseline model with default settings on one local train set and evaluate it on all the local test sets:
+Below is an example of how to train the chosen baseline model with default settings on one local train set and evaluate it on all the local test sets.
+The code is identical to the ones would use on any pytorch dataset.
 
 .. code-block:: python
 
@@ -58,8 +69,12 @@ Below is an example of how to train the chosen baseline model with default setti
    # Instantiation of local train set (and data loader)), baseline loss function, baseline model, default optimizer
    train_dataset = FedDataset(center=0, train=True, pooled=False)
    train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
+   # This is the dataset's loss implementing in torch.nn's style (https://pytorch.org/docs/stable/_modules/torch/nn/modules/loss.html#BCELoss)
+   # therefore it needs to be instantiated
    lossfunc = BaselineLoss()
+   # This is simply a pytorch model
    model = Baseline()
+   # This is simply a pytorch optimizer
    optimizer = Optimizer(model.parameters(), lr=LR)
 
    # Traditional pytorch training loop
@@ -82,7 +97,8 @@ Below is an example of how to train the chosen baseline model with default setti
                )
                for i in range(NUM_CLIENTS)
            ]
-   # Function performing the evaluation
+   # Helper function performing the evaluation on a list of dataloaders
+   # it can also be done manually
    dict_cindex = evaluate_model_on_tests(model, test_dataloaders, metric)
    print(dict_cindex)
 
