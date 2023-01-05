@@ -1,10 +1,10 @@
 <img src="markdown-image/Substra-logo-colour.svg" alt="Drawing" style="width: 600px;"/>
 
-[**Substra**](https://docs.substra.org/en/0.23.0/) is an **open source** federated learning framework. It provides a flexible **Python interface** and a **web app** to run federated learning training at scale.
+[**Substra**](https://docs.substra.org/en/0.23.1/) is an **open source** federated learning framework. It provides a flexible **Python interface** and a **web app** to run federated learning training at scale.
 
 Substra main usage is a **production one**. It has already been deployed and used by hospitals and biotech companies (see the [MELLODDY](https://www.melloddy.eu/) project for instance).
 
-Yet [**Substra**](https://docs.substra.org/en/0.23.0/) can also be used on a single machine on a virtually splitted dataset for two use cases:
+Yet [**Substra**](https://docs.substra.org/en/0.23.1/) can also be used on a single machine on a virtually splitted dataset for two use cases:
 
 - debugging code before launching experiments on a real network
 - performing FL simulations
@@ -33,7 +33,7 @@ You can run the command: `pip install -r requirements.txt` to install them.
 
 This example will run a federated training on all 6 centers of the TCGA BRCA [**FLamby**](https://github.com/owkin/FLamby) dataset.
 
-This example shows how to interface [**Substra**](https://docs.substra.org/en/0.23.0/) with [**FLamby**](https://github.com/owkin/FLamby).
+This example shows how to interface [**Substra**](https://docs.substra.org/en/0.23.1/) with [**FLamby**](https://github.com/owkin/FLamby).
 
 This example runs in local mode, simulating a **federated learning** experiment.
 
@@ -41,7 +41,7 @@ This example runs in local mode, simulating a **federated learning** experiment.
 
 We work with seven different organizations, defined by their IDs. Six organizations provide a FLamby dataset configuration. The last one provide the algorithm and will register the machine learning tasks.
 
-Once these variables defined, we can create our different [**Substra Clients**](https://docs.substra.org/en/0.23.0/documentation/references/sdk.html#client) (one for each organization/center).
+Once these variables defined, we can create our different [**Substra Clients**](https://docs.substra.org/en/0.23.1/documentation/references/sdk.html#client) (one for each organization/center).
 
 ```python
 from substra import Client
@@ -68,17 +68,17 @@ ALGO_ORG_ID = algo_provider_client.organization_info().organization_id
 
 ## Dataset registration
 
-A [**Dataset**](https://docs.substra.org/en/0.23.0/documentation/concepts.html#dataset) is composed of an **opener**, which is a Python script with the instruction of *how to load the data* from the files in memory, and a **description markdown** file.
+A [**Dataset**](https://docs.substra.org/en/0.23.1/documentation/concepts.html#dataset) is composed of an **opener**, which is a Python script with the instruction of *how to load the data* from the files in memory, and a **description markdown** file.
 
-The [**Dataset**](https://docs.substra.org/en/0.23.0/documentation/concepts.html#dataset) object itself does not contain the data. The proper asset to access them is the **datasample asset**.
+The [**Dataset**](https://docs.substra.org/en/0.23.1/documentation/concepts.html#dataset) object itself does not contain the data. The proper asset to access them is the **datasample asset**.
 
-A **datasample** contains a local path to the data, and the key identifying the [**Dataset**](https://docs.substra.org/en/0.23.0/documentation/concepts.html#dataset) in order to have access to the proper `opener.py` file.
+A **datasample** contains a local path to the data, and the key identifying the [**Dataset**](https://docs.substra.org/en/0.23.1/documentation/concepts.html#dataset) in order to have access to the proper `opener.py` file.
 
-To interface with [**FLamby**](https://github.com/owkin/FLamby), in the simple case of a single machine and a single runtime where clients are simple Python objects, the utilization of the opener and associated datasample method is implemented as a simple lookup table to indicate which center lives in which client. [**Substra**](https://docs.substra.org/en/0.23.0/) is a library built to be deployed on a real federated network, where the path to the data is to the opener in order to load and read the data in a personalized way on the premises of the organization that owns the data.
+To interface with [**FLamby**](https://github.com/owkin/FLamby), in the simple case of a single machine and a single runtime where clients are simple Python objects, the utilization of the opener and associated datasample method is implemented as a simple lookup table to indicate which center lives in which client. [**Substra**](https://docs.substra.org/en/0.23.1/) is a library built to be deployed on a real federated network, where the path to the data is to the opener in order to load and read the data in a personalized way on the premises of the organization that owns the data.
 
 As we directly load a torch dataset from Flamby, the `folders` parameters is unused and the path usually leading to the data will point out to an empty folder in this example.
 
-As data can not be seen once it is registered on the platform, we set a [**Permissions**](https://docs.substra.org/en/0.23.0/documentation/references/sdk_schemas.html#permissions) object for each [**Assets**](https://docs.substra.org/en/0.23.0/documentation/concepts.html#assets), defining their access rights to the different data.
+As data can not be seen once it is registered on the platform, we set a [**Permissions**](https://docs.substra.org/en/0.23.1/documentation/references/sdk_schemas.html#permissions) object for each [**Assets**](https://docs.substra.org/en/0.23.1/documentation/concepts.html#assets), defining their access rights to the different data.
 
 ```python
 import pathlib
@@ -238,7 +238,7 @@ index_generator = NpIndexGenerator(
 
 ## Torch Dataset definition
 
-To instantiate a Substrafl [**Torch Algorithm**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/algorithms.html#torch-algorithms), you need to define a torch Dataset with a specific `__init__` signature, that must contain (self, datasamples, is_inference).
+To instantiate a Substrafl [**Torch Algorithm**](https://docs.substra.org/en/0.23.1/substrafl_doc/api/algorithms.html#torch-algorithms), you need to define a torch Dataset with a specific `__init__` signature, that must contain (self, datasamples, is_inference).
 
 This torch Dataset is normally useful to preprocess your data on the `__getitem__` function.
 
@@ -254,10 +254,10 @@ class TorchDataset(fed_tcga_brca.FedTcgaBrca):
 
 A SubstraFL Algo gathers all the elements that we defined that run locally in each organization. This is the only SubstraFL object that is framework specific (here PyTorch specific).
 
-The torch dataset is passed **as a class** to the [**Torch Algorithms**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/algorithms.html#torch-algorithms).
+The torch dataset is passed **as a class** to the [**Torch Algorithms**](https://docs.substra.org/en/0.23.1/substrafl_doc/api/algorithms.html#torch-algorithms).
 Indeed, this torch Dataset will be instantiated within the algorithm, using the opener functions as **datasamples** parameters.
 
-Concerning the [**TorchFedAvgAlgo**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/algorithms.html#torchfedavgalgo) interaction with [**FLamby**](https://github.com/owkin/FLamby), we need to overwrite the `_local_predict` function, used to compute the predictions of the model. In the default `_local_predict`provided by **Substrafl**, we assume that the `__getitem__` method of the dataset has a keyword argument `is_inference` used to only return X (and not the tuple X, y).
+Concerning the [**TorchFedAvgAlgo**](https://docs.substra.org/en/0.23.1/substrafl_doc/api/algorithms.html#torchfedavgalgo) interaction with [**FLamby**](https://github.com/owkin/FLamby), we need to overwrite the `_local_predict` function, used to compute the predictions of the model. In the default `_local_predict`provided by **Substrafl**, we assume that the `__getitem__` method of the dataset has a keyword argument `is_inference` used to only return X (and not the tuple X, y).
 
 But as the `__getitem__` function is provided by [**FLamby**](https://github.com/owkin/FLamby), the `is_inference` argument is ignored. We need to overwrite the `_local_predict` to change the behavior of the function, and can use this opportunity to optimize the computation time of the function using knowledge of the ouput dimension of the TGCA-BRCA dataset.
 
@@ -302,7 +302,7 @@ class MyAlgo(TorchFedAvgAlgo):
 
 A FL strategy specifies how to train a model on distributed data. The most well known strategy is the Federated Averaging strategy: train locally a model on every organization, then aggregate the weight updates from every organization, and then apply locally at each organization the averaged updates.
 
-For this example, we choose to use the [**Federated averaging Strategy**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/strategies.html), based on the [FedAvg paper by McMahan et al., 2017](https://arxiv.org/abs/1602.05629).
+For this example, we choose to use the [**Federated averaging Strategy**](https://docs.substra.org/en/0.23.1/substrafl_doc/api/strategies.html), based on the [FedAvg paper by McMahan et al., 2017](https://arxiv.org/abs/1602.05629).
 
 ```python
 from substrafl.strategies import FedAvg
@@ -312,9 +312,9 @@ strategy = FedAvg()
 
 ## Where to train where to aggregate
 
-We specify on which data we want to train our model, using the [**TrainDataNodes**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/nodes.html#traindatanode) objets. Here we train on the two datasets that we have registered earlier.
+We specify on which data we want to train our model, using the [**TrainDataNodes**](https://docs.substra.org/en/0.23.1/substrafl_doc/api/nodes.html#traindatanode) objets. Here we train on the two datasets that we have registered earlier.
 
-The [**AggregationNode**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/nodes.html#aggregationnode) specifies the organization on which the aggregation operation will be computed.
+The [**AggregationNode**](https://docs.substra.org/en/0.23.1/substrafl_doc/api/nodes.html#aggregationnode) specifies the organization on which the aggregation operation will be computed.
 
 ```python
 from substrafl.nodes import TrainDataNode
@@ -338,9 +338,9 @@ for org_id in DATA_PROVIDER_ORGS_ID:
 
 ## Where and when to test
 
-With the same logic as the train nodes, we create [**TestDataNodes**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/nodes.html#testdatanode) to specify on which data we want to test our model.
+With the same logic as the train nodes, we create [**TestDataNodes**](https://docs.substra.org/en/0.23.1/substrafl_doc/api/nodes.html#testdatanode) to specify on which data we want to test our model.
 
-The [**Evaluation Strategy**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/evaluation_strategy.html) defines where and at which frequency we evaluate the model, using the given metric(s) that you registered in a previous section.
+The [**Evaluation Strategy**](https://docs.substra.org/en/0.23.1/substrafl_doc/api/evaluation_strategy.html) defines where and at which frequency we evaluate the model, using the given metric(s) that you registered in a previous section.
 
 ```python
 from substrafl.nodes import TestDataNode
@@ -368,15 +368,15 @@ my_eval_strategy = EvaluationStrategy(test_data_nodes=test_data_nodes, rounds=1)
 
 We now have all the necessary objects to launch our experiment. Below a summary of all the objects we created so far:
 
-- A [**Client**](https://docs.substra.org/en/0.23.0/documentation/references/sdk.html#client) to orchestrate all the assets of our project, using their keys to identify them
-- An [**Torch Algorithms**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/algorithms.html#torch-algorithms), to define the training parameters *(optimizer, train function, predict function, etc...)*
-- A [**Strategies**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/strategies.html), to specify the federated learning aggregation operation
-- [**TrainDataNode**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/nodes.html#traindatanode), to indicate where we can process training task, on which data and using which *opener*
-- An [**Evaluation Strategy**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/evaluation_strategy.html), to define where and at which frequency we evaluate the model
-- An [**AggregationNode**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/nodes.html#aggregationnode), to specify the node on which the aggregation operation will be computed
+- A [**Client**](https://docs.substra.org/en/0.23.1/documentation/references/sdk.html#client) to orchestrate all the assets of our project, using their keys to identify them
+- An [**Torch Algorithms**](https://docs.substra.org/en/0.23.1/substrafl_doc/api/algorithms.html#torch-algorithms), to define the training parameters *(optimizer, train function, predict function, etc...)*
+- A [**Strategies**](https://docs.substra.org/en/0.23.1/substrafl_doc/api/strategies.html), to specify the federated learning aggregation operation
+- [**TrainDataNode**](https://docs.substra.org/en/0.23.1/substrafl_doc/api/nodes.html#traindatanode), to indicate where we can process training task, on which data and using which *opener*
+- An [**Evaluation Strategy**](https://docs.substra.org/en/0.23.1/substrafl_doc/api/evaluation_strategy.html), to define where and at which frequency we evaluate the model
+- An [**AggregationNode**](https://docs.substra.org/en/0.23.1/substrafl_doc/api/nodes.html#aggregationnode), to specify the node on which the aggregation operation will be computed
 - The **number of round**, a round being defined by a local training step followed by an aggregation operation
 - An **experiment folder** to save a summary of the operation made
-- The [**Dependency**](https://docs.substra.org/en/0.23.0/substrafl_doc/api/dependency.html) to define the libraries the experiment needs to run.
+- The [**Dependency**](https://docs.substra.org/en/0.23.1/substrafl_doc/api/dependency.html) to define the libraries the experiment needs to run.
 
 ```python
 from substrafl.experiment import execute_experiment
