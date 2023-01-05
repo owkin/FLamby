@@ -17,8 +17,8 @@ FLamby
 
 
 
-FLamby [#flamby]_ is a repository regrouping several distributed datasets with natural splits \
-whose aim is to facilitate benchmarking new cross-silo FL strategies on realistic problems.
+`FLamby <https://github.com/owkin/FLamby>`_ [#flamby_meaning]_ is a repository regrouping several distributed datasets
+with natural splits whose aim is to facilitate benchmarking new cross-silo FL strategies on realistic problems.
 
 You can find a link to the companion paper published at NeurIPS 2022 in the 
 Dataset and Benchmark track `here <https://arxiv.org/abs/2210.04620>`_
@@ -32,8 +32,18 @@ If you use FLamby please consider citing it::
       year={2022}
     }
 
-Before jumping to the :any:`quickstart` , make sure FLamby is properly installed
-following the steps highlighted in :any:`installation`
+FLamby is more a dataset suite than a pure code repository. Mainly we provide code to easily access datasets stored in other
+repositories and make them FL-ready. In particular, we do not distribute datasets in this repository, and we do not own
+copyrights on any of the datasets.
+
+The use of any of the datasets included in FLamby requires accepting its corresponding license on the original website. 
+We refer to each corresponding dataset's sections for more informations on its terms of use.
+
+For any problem or question with respect to any license related matters, please open `a github issue <https://github.com/owkin/FLamby/issues>`_ 
+on this repository.  
+
+Before jumping to the :any:`quickstart` , make sure FLamby is properly installed following the steps highlighted in 
+:any:`installation`
 
 Team
 ----
@@ -81,7 +91,7 @@ Bonn <https://www.ukbonn.de/patient_innen/international/english/>`__
 
 .. rubric:: Footnotes
 
-.. [#flamby] `Federated Learning AMple Benchmark of Your cross-silo strategies`
+.. [#flamby_meaning] `Federated Learning AMple Benchmark of Your cross-silo strategies`
 
 
 
@@ -118,6 +128,18 @@ Bonn <https://www.ukbonn.de/patient_innen/international/english/>`__
    substra
    fedbiomed
    fedml
+
+.. toctree::
+   :maxdepth: 0
+   :caption: Reproducible results with docker
+   
+   docker
+
+.. toctree::
+   :maxdepth: 0
+   :caption: Benchmarking FL strategies
+   
+   benchmark
 
 .. toctree::
    :maxdepth: 0
