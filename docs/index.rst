@@ -137,9 +137,9 @@ Bonn <https://www.ukbonn.de/patient_innen/international/english/>`__
 
 .. toctree::
    :maxdepth: 0
-   :caption: Benchmarking FL strategies
+   :caption: Reproducing results
    
-   benchmark
+   reproducing
 
 .. toctree::
    :maxdepth: 0
