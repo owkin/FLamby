@@ -26,9 +26,8 @@ commands after having downloaded the corresponding datasets:
 **In order to exactly reproduce the plot in the article**, one needs to
 first deactivate color constancy normalization when preprocessing the
 dataset (change ``cc`` to ``False`` in ``resize_images.py``) while
-following download and preprocessing instructions
-`here <./flamby/datasets/fed_isic2019/README.md>`__. Hence one might
-have to download the dataset a second time, if it was already
+following download and preprocessing instructions (in :any:`fed_isic`). 
+Hence one might have to download the dataset a second time, if it was already
 downloaded, and therefore to potentially update
 ``dataset_location.yaml`` files accordingly.
 
@@ -124,6 +123,6 @@ for full convergence of the model. A quick fix would be simply to use more round
 (see the :any:`quickstart` section to learn how to change parameters).
 Otherwise try different parameters such as learning rates !
 All strategy-specific HP can be found in the :any:`strategies` API doc.  
- 
+
 More involved modifications such as using learning rate schedulers might be needed to
 obtain optimal results but it would require to slightly modify the strategy code.
