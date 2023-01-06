@@ -100,6 +100,7 @@ The code is identical to the ones would use on any pytorch dataset.
    dict_cindex = evaluate_model_on_tests(model, test_dataloaders, metric)
    print(dict_cindex)
 
+
 Federated Learning training example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -177,14 +178,18 @@ Using other FLamby's datasets
 
 We will follow up on how to download datasets that are not hosted on this repository.
 We will use the example of :any:`fed_heart` as its download process is simple and it requires no preprocessing.
-Please run:
+Note that to use each new dataset if you had chosen the lightweight install you might need to install additional requirements
+by rerunning ``pip install -e`` using different options (``[cam16, heart, isic2019, ixi, kits19, lidc, tcga]``).
+In this case if you had done ``pip install -e .[tcga]`` then run ``pip install -e .[heart]``
+Then please run:
+
 
 .. code-block::
 
    cd flamby/datasets/fed_heart_disease/dataset_creation_scripts
    python download.py --output-folder ./heart_disease_dataset
 
-You can instantiate this dataset as you did FedTcgaBrca by executing:
+You can instantiate this dataset as you did ``FedTcgaBrca`` by executing:
 
 .. code-block:: python
 
@@ -219,20 +224,28 @@ To train and evaluate the baseline model for the pooled Heart Disease dataset us
 Benchmarking FL strategies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The command below allows to reproduce the article's results for a given seed:
+The command below allows to reproduce the article's results for a given seed aka:
+
+* train a model on the pooled dataset and evaluate it on all test sets (local and pooled).
+* train models on all local datasets and evaluate them on all test sets (local and pooled).
+* train models in a federated way for all FL strategies with associated hyperparameters in corresponding config files
+  and evaluate them on all test sets (local and pooled).
 
 
-* train a model on the pooled dataset and evaluate it on all test sets (local and pooled)
-* train models on all local datasets and evaluate them on all test sets (local and pooled)
-* train models in a federated way for all FL strategies with associated hyperparameters and evaluate them on all test sets (local and pooled)
-
-The config files given in the repository (\ ``flamby/config_*.json``\ ) hold the different HPs sets used in the companion article for the FL strategies on the different datasets.
+The config files given in the repository (\ ``flamby/config_*.json``\ ) hold the different HPs sets used in the companion 
+article for the FL strategies on the different datasets.
 The results are stored in the csv file specified either in the config file or with the --results-file-path option.
 
 .. code-block::
 
    cd flamby/benchmarks
    python fed_benchmark.py --config-file-path ../config_heart_disease.json --results-file-path ./test_res_0.csv --seed 0
+
+Note that 1. this script might take a long time for large datasets 2. the communication budget (the number of rounds used)
+might be insufficient for full convergence. For tighter control over the parameters return to subsection `Federated Learning training example`_.
+and follow instructions.  
+
+For more details about how to reproduce results in the article go to :any:`reproducing`
 
 FL training and evaluation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
