@@ -37,7 +37,7 @@ the terms bind users as to "not attempt to identify individual human research pa
 | Centers            | 6 regions - Northeast, South, West, Midwest, Europe, Canada.
 | Records per center | Train/Test: 248/63, 156/40, 164/42, 129/33, 129/33, 40/11.
 | Inputs shape       | 39 features (tabular data).
-| Targets shape      | (E,T). E: relative risk, continuous variable. T: ground truth, at 0 or 1.
+| Targets shape      | (E,T). E: relative risk, continuous variable. T: event observed (1) or censorship (0)
 | Total nb of points | 1088.
 | Task               | Survival analysis.
 
