@@ -73,8 +73,8 @@ Dataset description
 +--------------+-------------------------------------------------------------+
 | Inputs shape | 39 features (tabular data).                                 |
 +--------------+-------------------------------------------------------------+
-| Targets      | (E,T). E: relative risk, continuous variable. T: ground     |
-| shape        | truth, at 0 or 1.                                           |
+| Targets      | (E,T). E: relative risk, continuous variable. T: T: event   |
+| shape        | observed (1) or censorship (0)                              |
 +--------------+-------------------------------------------------------------+
 | Total nb of  | 1088.                                                       |
 | points       |                                                             |
