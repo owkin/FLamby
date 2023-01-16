@@ -27,10 +27,10 @@ class TcgaBrcaRaw(torch.utils.data.Dataset):
     """
 
     def __init__(self, X_dtype=torch.float32, y_dtype=torch.float32):
-        accept_license(
-            "https://gdc.cancer.gov/access-data/data-access-processes-and-tools",
-            "fed_tcga_brca",
-        )
+        # accept_license(
+        #     "https://gdc.cancer.gov/access-data/data-access-processes-and-tools",
+        #     "fed_tcga_brca",
+        # )
         input_path = Path(os.path.realpath(__file__)).parent.resolve()
         self.dic = {
             "input_preprocessed": os.path.join(input_path, "brca.csv"),

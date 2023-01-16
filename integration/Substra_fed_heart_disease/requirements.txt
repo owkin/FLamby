@@ -1,0 +1,5 @@
+numpy==1.23.1
+torch==1.11.0
+matplotlib==3.5.2
+pandas==1.4.3
+substrafl==0.32.0

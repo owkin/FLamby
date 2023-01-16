@@ -1,52 +1,44 @@
 
-from substrafl.model_loading import load_algo
-from substrafl.model_loading import download_algo_files
-import matplotlib.pyplot as plt
-import pandas as pd
+from substrafl.strategies import FedAvg
+import torch
 from substrafl.experiment import execute_experiment
 from substrafl.evaluation_strategy import EvaluationStrategy
 from substrafl.nodes import TestDataNode
 from substrafl.nodes import AggregationNode
 from substrafl.nodes import TrainDataNode
-from substrafl.strategies import FedAvg
 from substrafl.algorithms.pytorch import TorchFedAvgAlgo
-import torch
 from substrafl.index_generator import NpIndexGenerator
+from substrafl.remote.register import add_metric
+from substrafl.dependency import Dependency
+from torch.utils import data
+import numpy as np
+from substra.sdk.schemas import Permissions
+from substra.sdk.schemas import DataSampleSpec
+from substra.sdk.schemas import DatasetSpec
+import pathlib
+import substra
 from substra import Client
-
 from flamby.datasets import fed_tcga_brca
 
-import pathlib
 
-from substra.sdk.schemas import DatasetSpec
-from substra.sdk.schemas import DataSampleSpec
-from substra.sdk.schemas import Permissions
+MODE = substra.BackendType.REMOTE
 
-import numpy as np
-
-from torch.utils import data
-
-from substrafl.dependency import Dependency
-from substrafl.remote.register import add_metric
-
-MODE = "remote"
-urls = ['http://substra-backend.org-1.com', 'http://substra-backend.org-2.com']
+urls = ['http://substra-backend.org-1.com',
+        'http://substra-backend.org-2.com', 'http://substra-backend.org-3.com']
 
 # Create the substra clients
 data_provider_clients = [Client(backend_type=MODE, url=urls[idx])
                          for idx in range(fed_tcga_brca.NUM_CLIENTS)]
 
 for idx, client in enumerate(data_provider_clients):
-    client.login(username="org-{}".format(idx + 1),
-                 password="p@sswr0d4{}".format(idx + 4))
-
-print("All clients are logged in")
+    client.login(username='org-{}'.format(idx + 1),
+                 password='p@sswr0d4{}'.format(idx + 4))
 
 data_provider_clients = {client.organization_info(
 ).organization_id: client for client in data_provider_clients}
 
-
-algo_provider_client = Client(backend_type='subprocess')
+algo_provider_client = Client(backend_type=MODE, url=urls[2])
+algo_provider_client.login(username='org-3', password='p@sswr0d46')
 
 # Store their IDs
 DATA_PROVIDER_ORGS_ID = list(data_provider_clients.keys())
@@ -54,8 +46,6 @@ DATA_PROVIDER_ORGS_ID = list(data_provider_clients.keys())
 # The org id on which your computation tasks are registered
 ALGO_ORG_ID = algo_provider_client.organization_info().organization_id
 
-print("Algo provider client is logged in", ALGO_ORG_ID)
-print("Data provider clients are logged in", DATA_PROVIDER_ORGS_ID)
 
 assets_directory = pathlib.Path.cwd() / "assets"
 empty_path = assets_directory / "empty_datasamples"
@@ -216,6 +206,7 @@ class MyAlgo(TorchFedAvgAlgo):
 
 strategy = FedAvg()
 
+
 aggregation_node = AggregationNode(ALGO_ORG_ID)
 
 train_data_nodes = list()
@@ -256,7 +247,7 @@ NUM_ROUNDS = 3
 # The local dependencies are local packages to be installed using the command `pip install -e .`.
 # Flamby is a local dependency. We put as argument the path to the `setup.py` file.
 algo_deps = Dependency(pypi_dependencies=["torch==1.11.0"], local_dependencies=[
-                       pathlib.Path.cwd().parent.parent])
+    pathlib.Path.cwd().parent.parent])
 
 compute_plan = execute_experiment(
     client=algo_provider_client,
@@ -269,35 +260,3 @@ compute_plan = execute_experiment(
     experiment_folder=str(pathlib.Path.cwd() / "experiment_summaries"),
     dependencies=algo_deps,
 )
-
-plt.title("Performance evolution on each center of the baseline on Fed-TCGA-BRCA with Federated Averaging training")
-plt.xlabel("Rounds")
-plt.ylabel("Metric")
-
-performance_df = pd.DataFrame(client.get_performances(compute_plan.key).dict())
-
-for i, id in enumerate(DATA_PROVIDER_ORGS_ID):
-    df = performance_df.query(f"worker == '{id}'")
-    plt.plot(df["round_idx"], df["performance"], label=f"Client {i} ({id})")
-
-plt.legend(loc=(1.1, 0.3), title="Test set")
-plt.show()
-
-
-client_to_dowload_from = DATA_PROVIDER_ORGS_ID[0]
-round_idx = None
-
-folder = str(pathlib.Path.cwd() / "experiment_summaries" /
-             compute_plan.key / ALGO_ORG_ID / (round_idx or "last"))
-
-download_algo_files(
-    client=data_provider_clients[client_to_dowload_from],
-    compute_plan_key=compute_plan.key,
-    round_idx=round_idx,
-    dest_folder=folder,
-)
-
-model = load_algo(input_folder=folder)._model
-
-print(model)
-print([p for p in model.parameters()])
