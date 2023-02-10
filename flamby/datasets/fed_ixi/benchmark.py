@@ -17,6 +17,7 @@ from flamby.datasets.fed_ixi import (
     BaselineLoss,
     FedIXITiny,
     metric,
+    Optimizer,
 )
 from flamby.utils import evaluate_model_on_tests
 
@@ -41,19 +42,16 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
 
-    training_transform = Compose([NormalizeIntensity()])
-
-    validation_transform = Compose([NormalizeIntensity()])
 
     training_dl = dl(
-        FedIXITiny(transform=training_transform, train=True, pooled=True),
+        FedIXITiny(train=True, pooled=True),
         num_workers=num_workers_torch,
         batch_size=BATCH_SIZE,
         shuffle=True,
     )
 
     test_dl = dl(
-        FedIXITiny(transform=validation_transform, train=False, pooled=True),
+        FedIXITiny(train=False, pooled=True),
         num_workers=num_workers_torch,
         batch_size=1,  # Do not change this as it would mess up DICE evaluation
         shuffle=False,
@@ -74,26 +72,15 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
         # At each new seed we re-initialize the model
         # and training_dl is shuffled as well
         torch.manual_seed(seed)
-        m = Baseline(
-            in_channels=1,
-            out_classes=2,
-            dimensions=3,
-            num_encoding_blocks=3,
-            out_channels_first_layer=8,
-            normalization="batch",
-            upsampling_type="linear",
-            padding=True,
-            activation="PReLU",
-        )
+
+            
+        m = Baseline()
         # Transfer to GPU if possible
         if torch.cuda.is_available() and use_gpu:
             m = m.cuda()
 
         loss = BaselineLoss()
-        optimizer = optim.AdamW(m.parameters())
-        scheduler = torch.optim.lr_scheduler.StepLR(
-            optimizer, 10, gamma=0.95, last_epoch=-1
-        )
+        optimizer = Optimizer(m.parameters())
 
         if log:
             # Create one SummaryWriter for each seed in order to overlay the plots
@@ -115,7 +102,6 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
 
                 tot_loss += lm.item()
 
-            scheduler.step()
             print(f"epoch {e} avg loss: {tot_loss / num_local_steps_per_epoch:.2e}")
 
             if log:
