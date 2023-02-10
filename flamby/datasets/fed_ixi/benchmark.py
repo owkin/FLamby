@@ -16,6 +16,7 @@ from flamby.datasets.fed_ixi import (
     Baseline,
     BaselineLoss,
     FedIXITiny,
+    LR,
     metric,
     Optimizer,
 )
@@ -80,7 +81,7 @@ def main(num_workers_torch, use_gpu=True, gpu_id=0, log=False):
             m = m.cuda()
 
         loss = BaselineLoss()
-        optimizer = Optimizer(m.parameters())
+        optimizer = Optimizer(m.parameters(), lr=LR)
 
         if log:
             # Create one SummaryWriter for each seed in order to overlay the plots
