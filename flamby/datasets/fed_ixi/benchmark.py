@@ -15,8 +15,6 @@ from flamby.datasets.fed_ixi import (
     Baseline,
     BaselineLoss,
     FedIXITiny,
-    LR,
-    metric,
     Optimizer,
     metric,
 )
