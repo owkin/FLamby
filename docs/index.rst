@@ -25,12 +25,18 @@ Dataset and Benchmark track `here <https://arxiv.org/abs/2210.04620>`_
 
 If you use FLamby please consider citing it::
 
-    @article{duterrail2022flamby,
-      title={FLamby: Datasets and Benchmarks for Cross-Silo Federated Learning in Realistic Healthcare Settings},
-      author={Ogier du Terrail, Jean and Ayed, Samy-Safwan and Cyffers, Edwige and Grimberg, Felix and He, Chaoyang and Loeb, Regis and Mangold, Paul and Marchand, Tanguy and Marfoq, Othmane and Mushtaq, Erum and others},
-      journal={arXiv preprint arXiv:2210.04620},
-      year={2022}
-    }
+      @inproceedings{NEURIPS2022_232eee8e,
+       author = {Ogier du Terrail, Jean and Ayed, Samy-Safwan and Cyffers, Edwige and Grimberg, Felix and He, Chaoyang and Loeb, Regis and Mangold, Paul and Marchand, Tanguy and Marfoq, Othmane and Mushtaq, Erum and Muzellec, Boris and Philippenko, Constantin and Silva, Santiago and Tele\'{n}czuk, Maria and Albarqouni, Shadi and Avestimehr, Salman and Bellet, Aur\'{e}lien and Dieuleveut, Aymeric and Jaggi, Martin and Karimireddy, Sai Praneeth and Lorenzi, Marco and Neglia, Giovanni and Tommasi, Marc and Andreux, Mathieu},
+       booktitle = {Advances in Neural Information Processing Systems},
+       editor = {S. Koyejo and S. Mohamed and A. Agarwal and D. Belgrave and K. Cho and A. Oh},
+       pages = {5315--5334},
+       publisher = {Curran Associates, Inc.},
+       title = {FLamby: Datasets and Benchmarks for Cross-Silo Federated Learning in Realistic Healthcare Settings},
+       url = {https://proceedings.neurips.cc/paper_files/paper/2022/file/232eee8ef411a0a316efa298d7be3c2b-Paper-Datasets_and_Benchmarks.pdf},
+       volume = {35},
+       year = {2022}
+      }
+
 
 FLamby is more a dataset suite than a pure code repository. Mainly we provide code to easily access datasets stored in other
 repositories and make them FL-ready. In particular, we do not distribute datasets in this repository, and we do not own
