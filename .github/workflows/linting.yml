@@ -12,14 +12,17 @@ on:
 jobs:
   lint:
     name: lint
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    matrix:
+      os: [ubuntu-latest]
+      python: ["3.7", "3.8", "3.9", "3.10", "3.11"]
     steps:
       - uses: actions/checkout@v2
 
       - uses: actions/setup-python@v2
         name: Install Python
         with:
-          python-version: '3.7'
+          python-version: ${{ matrix.python }}
 
       - name: Install dependencies
         run: pip install isort black==22.3.0
