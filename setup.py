@@ -104,7 +104,7 @@ setup(
         "scikit-learn",
         "scipy",
         "seaborn",
-        "setuptools==59.5.0",
+        "setuptools",
         "tensorboard",
         "torch",
         "torchvision",
