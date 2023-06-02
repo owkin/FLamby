@@ -21,19 +21,19 @@ histolab_dep_commands = [
 class CustomInstallCommand(install):
     def run(self):
         install.run(self)
-        os.system(histolab_dep_commands)
+        os.system(" ".join(histolab_dep_commands))
 
 
 class CustomDevelopCommand(develop):
     def run(self):
         develop.run(self)
-        os.system(histolab_dep_commands)
+        os.system(" ".join(histolab_dep_commands))
 
 
 class CustomEggInfoCommand(egg_info):
     def run(self):
         egg_info.run(self)
-        os.system(histolab_dep_commands)
+        os.system(" ".join(histolab_dep_commands))
 
 
 # datasets has a dependency that requires options
