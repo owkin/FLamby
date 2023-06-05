@@ -1,5 +1,5 @@
+import os
 import sys
-from subprocess import call, check_call
 
 from setuptools import find_packages, setup
 from setuptools.command.develop import develop
@@ -21,22 +21,19 @@ histolab_dep_commands = [
 class CustomInstallCommand(install):
     def run(self):
         install.run(self)
-        command = call(histolab_dep_commands)
-        assert command == 0
+        os.system(" ".join(histolab_dep_commands))
 
 
 class CustomDevelopCommand(develop):
     def run(self):
         develop.run(self)
-        command = call(histolab_dep_commands)
-        assert command == 0
+        os.system(" ".join(histolab_dep_commands))
 
 
 class CustomEggInfoCommand(egg_info):
     def run(self):
         egg_info.run(self)
-        command = check_call(histolab_dep_commands)
-        assert command == 0
+        os.system(" ".join(histolab_dep_commands))
 
 
 # datasets has a dependency that requires options
