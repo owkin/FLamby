@@ -23,6 +23,8 @@ It spans multiple data modalities and should allow easy interfacing with most
 Federated Learning frameworks (including [Fed-BioMed](https://gitlab.inria.fr/fedbiomed/fedbiomed), [FedML](https://github.com/FedML-AI/FedML), [Substra](https://docs.substra.org/en/stable/)...).
 It contains implementations of different
 standard federated learning strategies.
+A [companion paper](https://proceedings.neurips.cc/paper_files/paper/2022/file/232eee8ef411a0a316efa298d7be3c2b-Paper-Datasets_and_Benchmarks.pdf)
+describing it was published at NeurIPS 2022 in the Datasets & Benchmarks track.
 
 The FLamby package contains:
 
@@ -210,7 +212,7 @@ python plot_kms.py
 cd flamby/datasets/fed_lidc_idri
 python lidc_heterogeneity_plot.py
 ```
-- [Fed-ISIC2019](./flamby/datasets/fed_isic2019/README.md) 
+- [Fed-ISIC2019](./flamby/datasets/fed_isic2019/README.md)
 
 **In order to exactly reproduce the plot in the article**, one needs to first deactivate color constancy normalization when preprocessing the dataset (change `cc` to `False` in `resize_images.py`) when following download and preprocessing instructions [here](./flamby/datasets/fed_isic2019/README.md).  Hence one might have to download the dataset a second time, if it was already downloaded, and therefore to potentially update `dataset_location.yaml` files accordingly.
 ```
@@ -232,16 +234,16 @@ python kits19_heterogenity_plot.py
 cd flamby/datasets/fed_heart_disease
 python heterogeneity_plot.py
 ```
-- [Fed-Camelyon16](./flamby/datasets/fed_camelyon16/README.md) 
+- [Fed-Camelyon16](./flamby/datasets/fed_camelyon16/README.md)
 
 First concatenate as many 224x224 image patches extracted from regions on the slides containing matter from Hospital 0 and Hospital 1 (see what is done in the [tiling script](./flamby/datasets/fed_camelyon16/dataset_creation_scripts/tiling_slides.py) to collect image patches) as can be fit in
-the RAM. Then compute both histograms **per-color-channel** using 256 equally sized bins with the `np.histogram` 
-function with `density=True`. 
+the RAM. Then compute both histograms **per-color-channel** using 256 equally sized bins with the `np.histogram`
+function with `density=True`.
 Then save the results respectively as: histogram_0.npy, histogram_1.npy and bins_0.npy
 ```
 cp -t flamby/datasets/fed_camelyon16 histograms_{0, 1}.npy bins_0.npy
 cd flamby/datasets/fed_camelyon16
-python plot_camelyon16_histogram.py 
+python plot_camelyon16_histogram.py
 ```
 
 ## Deploy documentations
@@ -314,17 +316,17 @@ pip3 install --upgrade pip
 and try running your make installation option again.
 
 ### I am installing Flamby on a machine equipped with macOS and an intel processor
-In that case, you should use 
+In that case, you should use
 ```bash
 make install-mac
 ```
-instead of the standard installation. If you have already installed the flamby environment, just run 
+instead of the standard installation. If you have already installed the flamby environment, just run
 ```bash
-conda deactivate 
+conda deactivate
 make clean
 ```
 before running the install-mac installation again. This is to avoid the following error, which will appear when running scripts.
-#### error : OMP: Error #15  
+#### error : OMP: Error #15
 
 ### I or someone else already downloaded a dataset using another copy of the flamby repository, my copy of flamby cannot find it and I don't want to download it again, what can I do ?
 
