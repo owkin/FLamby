@@ -111,13 +111,13 @@ repository (https://github.com/neheller/kits19)) are as follows,
 
    .. code:: bash
 
-       python3 create_config.py --output_folder "path_towards_kits19_repository"
+       python3 create_config.py --output_folder /path/where/you/cloned_kits19/kits19
 
    You can add an option '--debug', if you want to run the whole
    pipeline on only a part of the dataset. Note that
-   "path\_towards\_kits19\_repository" should contain the path to the
+   "/path/where/you/cloned_kits19/kits19" should contain the path to the
    kits19 git repository, for example, '~/Desktop/kits19' can be an
-   example of the "path\_towards\_kits19\_repository" given you cloned
+   example of the "/path/where/you/cloned_kits19/kits19" given you cloned
    the kits19 git repository in the Desktop folder and the data folder
    containing KiTS19 dataset resides in this kits19 git repository.
 
