@@ -154,7 +154,7 @@ etc from the batchgenerators package.
 
    .. code:: bash
 
-       python3 run_nnUNet_plan_and_preprocess.py --num_threads 1
+       python3 run_nnUnet_plan_and_preprocess.py --num_threads 1
 
    Similarly, you should add the option '--debug' if you used it on the
    previous steps.
