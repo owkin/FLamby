@@ -87,7 +87,7 @@ python3 parsing_and_adding_metadata.py
 You should add the option '--debug', if you already did so during the step 3 of the data download.
 2. After data conversion, next step is to run the preprocessing which involves, data intensity normalization and voxel resampling. To run preprocessing, run the following command to go to the right directory from fed_kits19 directory
 ```bash
-python3 run_nnUNet_plan_and_preprocess.py --num_threads 1
+python3 run_nnUnet_plan_and_preprocess.py --num_threads 1
 ```
 Similarly, you should add the option '--debug' if you used it on the previous steps.
 
