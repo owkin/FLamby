@@ -68,9 +68,9 @@ These commands will populate the data folder (given in the kits19 repository) wi
 
 4. To configure the KiTS19 data path so that it can be accessed by the Flamby library, run the following command in the directory `flamby/datasets/fed_kits19/dataset_creation_scripts/`,
 ```bash
-python3 create_config.py --output_folder "path_towards_kits19_repository"
+python3 create_config.py --output_folder /path/where/you/cloned_kits19/kits19
 ```
-You can add an option '--debug', if you want to run the whole pipeline on only a part of the dataset. Note that "path_towards_kits19_repository" should contain the path to the kits19 git repository, for example, '~/Desktop/kits19' can be an example of the "path_towards_kits19_repository" given you cloned the kits19 git repository in the Desktop folder and the data folder containing KiTS19 dataset resides in this kits19 git repository.
+You can add an option '--debug', if you want to run the whole pipeline on only a part of the dataset. Note that "/path/where/you/cloned_kits19/kits19" should contain the path to the kits19 git repository, for example, '~/Desktop/kits19' can be an example of the "/path/where/you/cloned_kits19/kits19" given you cloned the kits19 git repository in the Desktop folder and the data folder containing KiTS19 dataset resides in this kits19 git repository.
 
 ## Data Preprocessing
 For preprocessing, we use [nnunet](https://github.com/MIC-DKFZ/nnUNet) library and [batchgenerators](https://github.com/MIC-DKFZ/batchgenerators) packages. We exploit nnunet preprocessing pipeline
