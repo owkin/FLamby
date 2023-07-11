@@ -99,7 +99,6 @@ class FedAvg:
         self.log_period = log_period
         self.log_basename = log_basename
         self.logdir = logdir
-
         self.models_list = [
             _Model(
                 model=model,

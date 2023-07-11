@@ -49,7 +49,6 @@ if __name__ == "__main__":
             sys.argv.pop(index_num_threads)
 
     sys.argv = sys.argv + ["-t", "064", "-tf", args.num_threads, "-tl", args.num_threads]
-
     main()
     path_to_config_file = get_config_file_path("fed_kits19", False)
     write_value_in_config(path_to_config_file, "preprocessing_complete", True)

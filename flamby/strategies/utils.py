@@ -117,13 +117,15 @@ class _Model:
         seed: int
             Seed provided to torch.Generator. Defaults to None.
         """
-        self.model = copy.deepcopy(model)
+        # Try not to overload GPU uselessly
+        self.model = copy.deepcopy(model.cpu())
 
         self._train_dl = train_dl
         self._optimizer = optimizer_class(self.model.parameters(), lr)
         self._loss = copy.deepcopy(loss)
         self._device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        self.model = self.model.to(self._device)
+        # We will defer the move to cuda to the training loop
+        #self.model = self.model.to(self._device)
         self.num_batches_seen = 0
         self.log = log
         self.log_period = log_period
@@ -184,7 +186,8 @@ class _Model:
         """
         # Local train
         _size = len(dataloader_with_memory)
-        self.model = self.model.train()
+        # Back and forth GPU/CPU
+        self.model = self.model.train().to(self._device)
         for _batch in range(num_updates):
             X, y = dataloader_with_memory.get_samples()
             X, y = X.to(self._device), y.to(self._device)
@@ -230,7 +233,10 @@ class _Model:
                             f"client{self.client_id}/{name}", p, _current_epoch
                         )
 
-            self.current_epoch = _current_epoch
+        self.current_epoch = _current_epoch
+        # Back and forth CPU/GPU
+        self.model = self.model.cpu()
+        del X, y
 
     def _prox_local_train(self, dataloader_with_memory, num_updates, mu):
         """This method trains the model using the dataloader_with_memory given
