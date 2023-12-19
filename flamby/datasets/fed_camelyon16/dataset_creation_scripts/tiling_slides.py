@@ -52,7 +52,9 @@ class DatasetFromCoords(Dataset):
 
     def __getitem__(self, idx):
         pil_image = self.slide.read_region(
-            self.coords[idx].astype("int_"), self.level, (self.tile_size, self.tile_size)
+            self.coords[idx].astype("int_"),
+            self.level,
+            (self.tile_size, self.tile_size),
         ).convert("RGB")
         if self.transform is not None:
             pil_image = self.transform(pil_image)
@@ -68,7 +70,7 @@ def save_dict_to_csv(dict_arg, file_name):
     df.to_csv(file_name, index=False)
 
 
-def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
+def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff, output_path):
     """Function tiling slides that have been downloaded using download.py.
 
     Parameters
@@ -83,8 +85,11 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
         If this option is activated we disregard the csv files with precomputed
         coordinates.
 
-    remove_big_tiff : bool
+    remove_big_tiff: bool
         Whether or not to get rid of all original slides after tiling.
+
+    output_path: str
+        An optional path to store the dataset after tiling
 
     Raises
     ------
@@ -125,6 +130,10 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
         sys.exit()
 
     slides_dir = dict["dataset_path"]
+    if output_path is not None:
+        output_slides_dir = output_path
+    else:
+        output_slides_dir = slides_dir
     slides_paths = glob(os.path.join(slides_dir, "*.tif"))
     grid_tiles_extractor = GridTiler(
         tile_size=(224, 224),
@@ -167,7 +176,7 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
 
     for sp in tqdm(slides_paths):
         slide_name = os.path.basename(sp)
-        path_to_features = os.path.join(slides_dir, slide_name + ".npy")
+        path_to_features = os.path.join(output_slides_dir, slide_name + ".npy")
         if os.path.exists(path_to_features):
             continue
         print(f"Tiling slide {sp}")
@@ -247,6 +256,8 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff):
         np.save(path_to_features, features)
 
     write_value_in_config(config_file, "preprocessing_complete", True)
+    if output_path is not None:
+        write_value_in_config(config_file, "dataset_path", output_path)
 
     if args.remove_big_tiff:
         print("Removing all slides")
@@ -279,6 +290,9 @@ if __name__ == "__main__":
         help="Whether or not to remove the original slides images that take \
             up to 800G, after computing the features using them.",
     )
+    parser.add_argument(
+        "--output-path", type=str, help="The path where to store the tiles"
+    )
 
     args = parser.parse_args()
     main(
@@ -286,4 +300,5 @@ if __name__ == "__main__":
         args.num_workers_torch,
         args.tile_from_scratch,
         args.remove_big_tiff,
+        args.output_path,
     )
