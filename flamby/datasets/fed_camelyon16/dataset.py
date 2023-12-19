@@ -1,3 +1,4 @@
+import logging
 import os
 import random
 from pathlib import Path
@@ -88,11 +89,17 @@ class Camelyon16Raw(Dataset):
         self.perms = {}
         # We need this list to be sorted for reproducibility but shuffled to
         # avoid weirdness
-        npys_list = sorted(self.tiles_dir.glob("*.npy"))
+        # filter out normal_086 and test_049 slides since they have been
+        # removed from the Camelyon16 dataset
+        npys_list = [
+            e
+            for e in sorted(self.tiles_dir.glob("*.npy"))
+            if e.name.lower() not in ("normal_086.tif.npy", "test_049.tif.npy")
+        ]
         random.seed(0)
         random.shuffle(npys_list)
         for slide in npys_list:
-            slide_name = os.path.basename(slide).split(".")[0]
+            slide_name = os.path.basename(slide).split(".")[0].lower()
             slide_id = int(slide_name.split("_")[1])
             label_from_metadata = int(
                 self.metadata.loc[
@@ -112,9 +119,9 @@ class Camelyon16Raw(Dataset):
                     "hospital_corrected",
                 ].item()
             )
-            label_from_data = int(self.labels.loc[slide.name].tumor)
+            label_from_data = int(self.labels.loc[slide.name.lower()].tumor)
 
-            if "test" not in str(slide):
+            if "test" not in str(slide).lower():
                 if slide_name.startswith("normal"):
                     # Normal slide
                     if slide_id > 100:
@@ -143,7 +150,7 @@ class Camelyon16Raw(Dataset):
             self.features_centers.append(center_from_metadata)
         if len(self.features_paths) < len(self.labels.index):
             if not (self.debug):
-                raise ValueError(
+                logging.warning(
                     f"You have {len(self.features_paths)} features found in \
                     {str(self.tiles_dir)} instead of {len(self.labels.index)} \
                 (full Camelyon16 dataset), please go back to the installation \
