@@ -101,7 +101,9 @@ def save_dict_to_csv(dict_arg, file_name):
     df.to_csv(file_name, index=False)
 
 
-def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff, output_path):
+def main(
+    batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff, output_path
+):
     """Function tiling slides that have been downloaded using download.py.
 
     Parameters
@@ -142,8 +144,8 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff, outp
             debug = True
         else:
             raise ValueError(
-                "The dataset was not downloaded in normal or debug mode, \
-                    please run the download script beforehand"
+                "The dataset was not downloaded in normal or debug mode,               "
+                "      please run the download script beforehand"
             )
 
     if debug:
@@ -188,8 +190,8 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff, outp
         net = net.cuda()
     else:
         print(
-            "Consider using an environment with GPU otherwise the process will \
-                take weeks."
+            "Consider using an environment with GPU otherwise the process will         "
+            "        take weeks."
         )
     # IMAGENET preprocessing of images scaled between 0. and 1. with ToTensor
     transform = Compose(
@@ -319,8 +321,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--remove-big-tiff",
         action="store_true",
-        help="Whether or not to remove the original slides images that take \
-            up to 800G, after computing the features using them.",
+        help=(
+            "Whether or not to remove the original slides images that take            "
+            " up to 800G, after computing the features using them."
+        ),
     )
     parser.add_argument(
         "--output-path", type=str, help="The path where to store the tiles"
