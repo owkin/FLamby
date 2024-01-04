@@ -178,6 +178,8 @@ def main(
         tissue_percent=60,
     )
 
+    # syntax with pretrained=True is now deprecated
+    # https://pytorch.org/vision/stable/models.html#initializing-pre-trained-models
     resnet_weights = models.ResNet50_Weights.IMAGENET1K_V1
     net = models.resnet50(weights=resnet_weights)
     net.fc = Identity()
