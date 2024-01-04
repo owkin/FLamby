@@ -258,21 +258,22 @@ def collate_fn(dataset_elements_list, max_tiles=10000):
     Parameters
     ----------
     dataset_elements_list : List[torch.Tensor]
-        A list of torch tensors of dimensions [n, 2048] with uneven distribution of ns.
+        A list of torch tensors of dimensions [n, m] with uneven distribution of ns.
     max_tiles : int, optional
         The nummber of tiles max by Tensor, by default 10000
 
     Returns
     -------
     Tuple(torch.Tensor, torch.Tensor)
-        X, y two torch tensors of size (len(dataset_elements_list), max_tiles, 2048) and
+        X, y two torch tensors of size (len(dataset_elements_list), max_tiles, m) and
         (len(dataset_elements_list),)
     """
     n = len(dataset_elements_list)
     X0, y0, _ = dataset_elements_list[0]
+    feature_dim = X0.size(1)
     X_dtype = X0.dtype
     y_dtype = y0.dtype
-    X = torch.zeros((n, max_tiles, 2048), dtype=X_dtype)
+    X = torch.zeros((n, max_tiles, feature_dim), dtype=X_dtype)
     y = torch.empty((n, 1), dtype=y_dtype)
 
     for i in range(n):
