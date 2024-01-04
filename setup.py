@@ -44,6 +44,7 @@ camelyon16 = [
     "histolab",
     "openslide-python",
     "requests",
+    "transformers",
 ]
 heart = ["wget"]
 isic2019 = ["albumentations", "efficientnet-pytorch", "requests", "wget"]
