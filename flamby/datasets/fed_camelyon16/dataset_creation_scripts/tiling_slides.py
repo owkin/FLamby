@@ -51,7 +51,7 @@ class SlideDataset(IterableDataset):
         # add uniform color borders to the slide to prevent artifact detection
         add_borders(slide)
         # tissue mask is needed to segment all regions
-        # some slides need a refined version of the tissue mask
+        # This custom tissue mask has proved to be much more robust on this dataset
         self.it = grid_tiles_extractor._tiles_generator(
             slide,
             extraction_mask=TissueMask(
