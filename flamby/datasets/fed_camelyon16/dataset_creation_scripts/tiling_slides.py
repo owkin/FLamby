@@ -17,6 +17,7 @@ from openslide import open_slide
 from torch.nn import Identity
 from torch.utils.data import DataLoader, Dataset, IterableDataset
 from torchvision.transforms import Compose, ToTensor
+from transformers import AutoImageProcessor, ViTModel
 from tqdm import tqdm
 from transformers import AutoImageProcessor, ViTModel
 
@@ -154,7 +155,7 @@ def main(
         else:
             raise ValueError(
                 "The dataset was not downloaded in normal or debug mode,"
-                " please run the download script beforehand"
+                "please run the download script beforehand"
             )
 
     if debug:
@@ -220,7 +221,7 @@ def main(
 
     path_to_coords_file = os.path.join(
         Path(os.path.realpath(__file__)).parent.resolve(),
-        "tiling_coordinates_camelyon16.csv",
+        "tiling_coordinates_camelyon16_histolab_60_bin1.csv",
     )
     if not (os.path.exists(path_to_coords_file)):
         df = dict_to_df({"slide_name": [], "coords_x": [], "coords_y": []})
