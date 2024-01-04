@@ -9,6 +9,8 @@ import pandas as pd
 import torch
 import torchvision.models as models
 from histolab.masks import TissueMask
+import histolab.filters.image_filters as imf
+import histolab.filters.morphological_filters as mof
 from histolab.slide import Slide
 from histolab.tiler import GridTiler
 from openslide import open_slide
@@ -20,12 +22,44 @@ from tqdm import tqdm
 from flamby.utils import read_config, write_value_in_config
 
 
+def add_borders(slide: Slide, width: int = 10):
+    """Add borders to a slide thumbnail of the mean slide color.
+
+    This helps removing artefacts on the borders and prevents histolab TissuMask to
+    make incorrect detections.
+    """
+    pixels = slide.thumbnail.load()
+    pixel_values = np.zeros((slide.thumbnail.size[0], slide.thumbnail.size[1], 3))
+    for i in range(slide.thumbnail.size[0]):
+        for j in range(slide.thumbnail.size[1]):
+            pixel_values[i, j, :] = list(pixels[i, j])
+    mean_value = tuple(int(np.mean(pixel_values[:, :, i])) for i in range(3))
+    for i in range(width):
+        for j in range(slide.thumbnail.size[1]):
+            pixels[i, j] = mean_value
+            pixels[-i, j] = mean_value
+
+    for j in range(width):
+        for i in range(slide.thumbnail.size[0]):
+            pixels[i, j] = mean_value
+            pixels[i, -j] = mean_value
+
+
 class SlideDataset(IterableDataset):
     def __init__(self, grid_tiles_extractor, slide, transform=None):
         self.transform = transform
+        # add uniform color borders to the slide to prevent artifact detection
+        add_borders(slide)
         # tissue mask is needed to segment all regions
+        # some slides need a refined version of the tissue mask
         self.it = grid_tiles_extractor._tiles_generator(
-            slide, extraction_mask=TissueMask()
+            slide,
+            extraction_mask=TissueMask(
+                imf.RgbToGrayscale(),
+                imf.OtsuThreshold(),
+                mof.BinaryDilation(disk_size=1),
+                mof.RemoveSmallObjects(min_size=100),
+            ),
         )
 
     def __iter__(self):
@@ -142,6 +176,7 @@ def main(batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff, outp
         prefix="grid/",
         check_tissue=True,
         suffix=".png",
+        tissue_percent=60,
     )
     net = models.resnet50(pretrained=True)
     net.fc = Identity()
