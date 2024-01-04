@@ -107,7 +107,7 @@ def main(
     num_workers_torch,
     tile_from_scratch,
     remove_big_tiff,
-    use_phikon,
+    use_ssl_features,
     output_path,
 ):
     """Function tiling slides that have been downloaded using download.py.
@@ -127,8 +127,8 @@ def main(
     remove_big_tiff: bool
         Whether or not to get rid of all original slides after tiling.
 
-    use_phikon: bool
-        Whether or not to use the phikon feature extractor.
+    use_ssl_features: bool
+        Whether or not to use the SSL features from the phikon feature extractor.
 
     output_path: str
         An optional path to store the dataset after tiling.
@@ -154,7 +154,7 @@ def main(
         else:
             raise ValueError(
                 "The dataset was not downloaded in normal or debug mode,"
-                "please run the download script beforehand"
+                " please run the download script beforehand"
             )
 
     if debug:
@@ -187,7 +187,7 @@ def main(
         tissue_percent=60,
     )
 
-    if not use_phikon:
+    if not use_ssl_features:
         feature_dim = 2048
         # syntax with pretrained=True is now deprecated
         # https://pytorch.org/vision/stable/models.html#initializing-pre-trained-models
@@ -220,7 +220,7 @@ def main(
 
     path_to_coords_file = os.path.join(
         Path(os.path.realpath(__file__)).parent.resolve(),
-        "tiling_coordinates_camelyon16_histolab_60_bin1.csv",
+        "tiling_coordinates_camelyon16.csv",
     )
     if not (os.path.exists(path_to_coords_file)):
         df = dict_to_df({"slide_name": [], "coords_x": [], "coords_y": []})
@@ -279,7 +279,7 @@ def main(
                 if torch.cuda.is_available():
                     batch_images = batch_images.cuda()
 
-                if use_phikon:
+                if use_ssl_features:
                     inputs = image_processor(
                         batch_images, return_tensors="pt", do_rescale=False
                     )
@@ -363,9 +363,14 @@ if __name__ == "__main__":
         ),
     )
     parser.add_argument(
-        "--use-phikon",
+        "--use-ssl-features",
         action="store_true",
-        help="Whether to use the phikon feature extractor",
+        help=(
+            "Whether to use the much more performant phikon feature extractor trained"
+            " with self-supervised learning on histology datasets from"
+            " https://www.medrxiv.org/content/10.1101/2023.07.21.23292757v2 instead of"
+            " imagenet-trained resnet."
+        ),
     )
     parser.add_argument(
         "--output-path", type=str, help="The path where to store the tiles"
@@ -377,6 +382,6 @@ if __name__ == "__main__":
         args.num_workers_torch,
         args.tile_from_scratch,
         args.remove_big_tiff,
-        args.use_phikon,
+        args.use_ssl_features,
         args.output_path,
     )
