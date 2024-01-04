@@ -4,7 +4,7 @@ from flamby.datasets.fed_camelyon16.dataset import FedCamelyon16
 
 NUM_CLIENTS = 2
 BATCH_SIZE = 16
-NUM_EPOCHS_POOLED = 45
+NUM_EPOCHS_POOLED = 55
 LR = 0.001
 
 Optimizer = torch.optim.Adam
