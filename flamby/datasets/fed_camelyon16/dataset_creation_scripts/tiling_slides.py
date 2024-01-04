@@ -48,7 +48,7 @@ def add_borders(slide: Slide, width: int = 10):
 class SlideDataset(IterableDataset):
     def __init__(self, grid_tiles_extractor, slide, transform=None):
         self.transform = transform
-        # add uniform color borders to the slide to prevent artifact detection
+        # add uniform color borders to the slide to prevent artifact detection on the borders
         add_borders(slide)
         # tissue mask is needed to segment all regions
         # This custom tissue mask has proved to be much more robust on this dataset
