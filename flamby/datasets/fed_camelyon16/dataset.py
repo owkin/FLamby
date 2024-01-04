@@ -151,16 +151,16 @@ class Camelyon16Raw(Dataset):
         if len(self.features_paths) < len(self.labels.index):
             if not (self.debug):
                 logging.warning(
-                    f"You have {len(self.features_paths)} features found in \
-                    {str(self.tiles_dir)} instead of {len(self.labels.index)} \
-                (full Camelyon16 dataset), please go back to the installation \
-                        instructions."
+                    f"You have {len(self.features_paths)} features found in"
+                    f" {str(self.tiles_dir)} instead of {len(self.labels.index)} (full"
+                    " Camelyon16 dataset), please go back to the installation"
+                    " instructions."
                 )
             else:
                 print(
-                    f"Warning you are operating on a reduced dataset in \
-                    DEBUG mode with in total \
-                {len(self.features_paths)}/{len(self.labels.index)} features."
+                    "Warning you are operating on a reduced dataset in  DEBUG mode with"
+                    " in total {len(self.features_paths)}/{len(self.labels.index)}"
+                    " features."
                 )
 
     def __len__(self):
@@ -251,7 +251,7 @@ class FedCamelyon16(Camelyon16Raw):
         ]
 
 
-def collate_fn(dataset_elements_list, max_tiles=1000):
+def collate_fn(dataset_elements_list, max_tiles=10000):
     """Helper function to correctly batch samples from
     a Camelyon16Dataset accomodating for the uneven number of tiles per slide.
 

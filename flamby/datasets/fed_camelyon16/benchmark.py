@@ -14,6 +14,7 @@ from flamby.datasets.fed_camelyon16 import (
     Baseline,
     BaselineLoss,
     FedCamelyon16,
+    Optimizer,
     collate_fn,
     metric,
 )
@@ -73,7 +74,7 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
         if use_gpu:
             m = m.cuda()
         loss = BaselineLoss()
-        optimizer = optim.Adam(m.parameters(), lr=LR)
+        optimizer = Optimizer(m.parameters(), lr=LR)
         if log:
             # We create one summarywriter for each seed in order to overlay the plots
             writer = SummaryWriter(log_dir=f"./runs/seed{seed}")
