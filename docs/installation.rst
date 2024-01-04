@@ -1,7 +1,7 @@
 Installation
 ------------
 
-We recommend using anaconda and pip. You can install anaconda by downloading and executing appropriate installers from the `Anaconda website <https://www.anaconda.com/products/distribution>`_\ , pip often comes included with python otherwise check `the following instructions <https://pip.pypa.io/en/stable/installation/>`_. We support all Python version starting from **3.7**.
+We recommend using anaconda and pip. You can install anaconda by downloading and executing appropriate installers from the `Anaconda website <https://www.anaconda.com/products/distribution>`_\ , pip often comes included with python otherwise check `the following instructions <https://pip.pypa.io/en/stable/installation/>`_. We support all Python version starting from **3.8**.
 
 You may need ``make`` for simplification. The following command will install all packages used by all datasets within FLamby. If you already know you will only need a fraction of the datasets inside the suite you can do a partial installation and update it along the way using the options described below.
 Create and launch the environment using:
