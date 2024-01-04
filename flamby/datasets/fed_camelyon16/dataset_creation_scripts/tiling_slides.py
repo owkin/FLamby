@@ -25,20 +25,17 @@ from flamby.utils import read_config, write_value_in_config
 def add_borders(slide: Slide, width: int = 10):
     """Add borders to a slide thumbnail of the mean slide color.
 
-    This helps removing artefacts on the borders and prevents histolab TissuMask to
+    This helps removing artifacts on the borders and prevents histolab TissuMask to
     make incorrect detections.
     """
     pixels = slide.thumbnail.load()
-    pixel_values = np.zeros((slide.thumbnail.size[0], slide.thumbnail.size[1], 3))
-    for i in range(slide.thumbnail.size[0]):
-        for j in range(slide.thumbnail.size[1]):
-            pixel_values[i, j, :] = list(pixels[i, j])
-    mean_value = tuple(int(np.mean(pixel_values[:, :, i])) for i in range(3))
+    pixel_values = np.array(slide.thumbnail)
+    mean_value = tuple(map(int, np.mean(pixel_values, axis=(0, 1))))
+    # in place modification of slide.thumbnail object
     for i in range(width):
         for j in range(slide.thumbnail.size[1]):
             pixels[i, j] = mean_value
             pixels[-i, j] = mean_value
-
     for j in range(width):
         for i in range(slide.thumbnail.size[0]):
             pixels[i, j] = mean_value
