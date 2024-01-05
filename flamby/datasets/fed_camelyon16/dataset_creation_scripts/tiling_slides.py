@@ -17,6 +17,7 @@ from openslide import open_slide
 from torch.nn import Identity
 from torch.utils.data import DataLoader, Dataset, IterableDataset
 from torchvision.transforms import Compose, ToTensor
+from transformers import AutoImageProcessor, ViTModel
 from tqdm import tqdm
 
 from flamby.utils import read_config, write_value_in_config
@@ -102,7 +103,12 @@ def save_dict_to_csv(dict_arg, file_name):
 
 
 def main(
-    batch_size, num_workers_torch, tile_from_scratch, remove_big_tiff, output_path
+    batch_size,
+    num_workers_torch,
+    tile_from_scratch,
+    remove_big_tiff,
+    use_ssl_features,
+    output_path,
 ):
     """Function tiling slides that have been downloaded using download.py.
 
@@ -121,8 +127,11 @@ def main(
     remove_big_tiff: bool
         Whether or not to get rid of all original slides after tiling.
 
+    use_ssl_features: bool
+        Whether or not to use the SSL features from the phikon feature extractor.
+
     output_path: str
-        An optional path to store the dataset after tiling
+        An optional path to store the dataset after tiling.
 
     Raises
     ------
@@ -178,15 +187,21 @@ def main(
         tissue_percent=60,
     )
 
-    # syntax with pretrained=True is now deprecated
-    # https://pytorch.org/vision/stable/models.html#initializing-pre-trained-models
-    resnet_weights = models.ResNet50_Weights.IMAGENET1K_V1
-    net = models.resnet50(weights=resnet_weights)
-    net.fc = Identity()
-
-    # IMAGENET preprocessing of images scaled between 0. and 1. with ToTensor
-    resnet_transform = lambda img: resnet_weights.transforms(antialias=True)(img)
-    transform = Compose([ToTensor(), resnet_transform])
+    if not use_ssl_features:
+        feature_dim = 2048
+        # syntax with pretrained=True is now deprecated
+        # https://pytorch.org/vision/stable/models.html#initializing-pre-trained-models
+        resnet_weights = models.ResNet50_Weights.IMAGENET1K_V1
+        net = models.resnet50(weights=resnet_weights)
+        net.fc = Identity()
+        # IMAGENET preprocessing of images scaled between 0. and 1. with ToTensor
+        resnet_transform = lambda img: resnet_weights.transforms(antialias=True)(img)
+        transform = Compose([ToTensor(), resnet_transform])
+    else:
+        feature_dim = 768
+        image_processor = AutoImageProcessor.from_pretrained("owkin/phikon")
+        net = ViTModel.from_pretrained("owkin/phikon", add_pooling_layer=False)
+        transform = ToTensor()
 
     # Probably unnecessary still it feels safer and might speed up computations
     for param in net.parameters():
@@ -258,14 +273,29 @@ def main(
 
         t1 = time.time()
         with torch.inference_mode():
-            features = np.zeros((0, 2048)).astype("float32")
+            features = np.zeros((0, feature_dim)).astype("float32")
             coords = np.zeros((0, 2)).astype("int64")
             for i, (batch_images, batch_coords) in enumerate(iter(dataloader)):
                 if torch.cuda.is_available():
                     batch_images = batch_images.cuda()
-                features = np.concatenate(
-                    (features, net(batch_images).detach().cpu().numpy()), axis=0
-                )
+
+                if use_ssl_features:
+                    inputs = image_processor(
+                        batch_images, return_tensors="pt", do_rescale=False
+                    )
+                    inputs = {key: val.cuda() for (key, val) in inputs.items()}
+                    outputs = net(**inputs)
+                    features = np.concatenate(
+                        (
+                            features,
+                            outputs.last_hidden_state[:, 0, :].detach().cpu().numpy(),
+                        ),
+                        axis=0,
+                    )
+                else:
+                    features = np.concatenate(
+                        (features, net(batch_images).detach().cpu().numpy()), axis=0
+                    )
                 coords = np.concatenate((coords, batch_coords.numpy()))
         t2 = time.time()
         num_workers_displayed = (
@@ -333,6 +363,16 @@ if __name__ == "__main__":
         ),
     )
     parser.add_argument(
+        "--use-ssl-features",
+        action="store_true",
+        help=(
+            "Whether to use the much more performant phikon feature extractor trained"
+            " with self-supervised learning on histology datasets from"
+            " https://www.medrxiv.org/content/10.1101/2023.07.21.23292757v2 instead of"
+            " imagenet-trained resnet."
+        ),
+    )
+    parser.add_argument(
         "--output-path", type=str, help="The path where to store the tiles"
     )
 
@@ -342,5 +382,6 @@ if __name__ == "__main__":
         args.num_workers_torch,
         args.tile_from_scratch,
         args.remove_big_tiff,
+        args.use_ssl_features,
         args.output_path,
     )
