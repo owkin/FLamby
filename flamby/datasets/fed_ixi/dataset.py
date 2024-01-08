@@ -130,7 +130,7 @@ class IXITinyRaw(Dataset):
         centers = list(self.CENTER_LABELS.keys()) + list(self.CENTER_LABELS.values())
         assert self.centers[0] in centers, (
             f"Center {self.centers[0]} "
-            f"is not compatible with this dataset. "
+            "is not compatible with this dataset. "
             f"Existing centers can be named as follow: {centers} "
         )
 
