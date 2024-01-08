@@ -1,6 +1,5 @@
 import argparse
 import copy
-import traceback
 
 import numpy as np
 import pandas as pd
@@ -113,9 +112,10 @@ def main(args_cli):
         NUM_EPOCHS_POOLED = 0
 
     # We can now instantiate the dataset specific model on CPU
-    global_init = Baseline()
     if args_cli.use_ssl_features and dataset_name == "fed_camelyon16":
         global_init = Baseline(768)
+    else:
+        global_init = Baseline()
 
     # We parse the hyperparams from the config or from the CLI if strategy is given
     strategy_specific_hp_dicts = get_strategies(
@@ -214,29 +214,20 @@ def main(args_cli):
             df.drop(index_of_interest, inplace=True)
         m = copy.deepcopy(global_init)
         set_seed(args_cli.seed)
-        try:
-            m = train_single_centric(
-                m,
-                train_pooled,
-                use_gpu,
-                "Pooled",
-                pooled_hyperparameters["optimizer_class"],
-                pooled_hyperparameters["learning_rate"],
-                BaselineLoss,
-                NUM_EPOCHS_POOLED,
-                dp_target_epsilon=pooled_hyperparameters["dp_target_epsilon"],
-                dp_target_delta=pooled_hyperparameters["dp_target_delta"],
-                dp_max_grad_norm=pooled_hyperparameters["dp_max_grad_norm"],
-                seed=args_cli.seed,
-            )
-        except RuntimeError:
-            traceback.print_exc()
-            raise RuntimeError(
-                "The previous error might be linked to the use of phikon features. If"
-                " you want to use them make sure to have the parameter"
-                " --use-ssl-features enabled as well as the correct path in the"
-                " dataset_location.yaml file."
-            )
+        m = train_single_centric(
+            m,
+            train_pooled,
+            use_gpu,
+            "Pooled",
+            pooled_hyperparameters["optimizer_class"],
+            pooled_hyperparameters["learning_rate"],
+            BaselineLoss,
+            NUM_EPOCHS_POOLED,
+            dp_target_epsilon=pooled_hyperparameters["dp_target_epsilon"],
+            dp_target_delta=pooled_hyperparameters["dp_target_delta"],
+            dp_max_grad_norm=pooled_hyperparameters["dp_max_grad_norm"],
+            seed=args_cli.seed,
+        )
         (
             perf_dict,
             pooled_perf_dict,
