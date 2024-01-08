@@ -47,10 +47,15 @@ def evaluate_model_on_tests(
     model.eval()
     with torch.no_grad():
         for i in tqdm(range(len(test_dataloaders))):
+            rng_state = torch.get_rng_state()
             test_dataloader_iterator = iter(test_dataloaders[i])
+            # since iterating over the dataloader changes torch random state
+            # we set it again to its previous value
+            # https://discuss.pytorch.org/t/does-iterating-over-unshuffled-dataloader-change-random-state/173137
+            torch.set_rng_state(rng_state)
             y_pred_final = []
             y_true_final = []
-            for (X, y) in test_dataloader_iterator:
+            for X, y in test_dataloader_iterator:
                 if torch.cuda.is_available() and use_gpu:
                     X = X.cuda()
                     y = y.cuda()
@@ -65,6 +70,7 @@ def evaluate_model_on_tests(
             if return_pred:
                 y_true_dict[f"client_test_{i}"] = y_true_final
                 y_pred_dict[f"client_test_{i}"] = y_pred_final
+    model.train()
     if return_pred:
         return results_dict, y_true_dict, y_pred_dict
     else:
@@ -184,8 +190,8 @@ def write_value_in_config(config_file, key, value):
     """
     if not (os.path.exists(config_file)):
         raise FileNotFoundError(
-            "The config file doesn't exist. \
-            Please create the config file before updating it."
+            "The config file doesn't exist. Please create the config file before"
+            " updating it."
         )
     dict = read_config(config_file)
     dict[key] = value
@@ -216,7 +222,7 @@ def check_dataset_from_config(dataset_name, debug):
     except FileNotFoundError:
         if debug:
             raise ValueError(
-                f"The dataset was not downloaded, config file "
+                "The dataset was not downloaded, config file "
                 "not found for debug mode. Please refer to "
                 "the download instructions inside "
                 f"FLamby/flamby/datasets/{dataset_name}/README.md"
