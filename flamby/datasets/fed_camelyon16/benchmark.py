@@ -39,8 +39,11 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
     """
     metrics_dict = {"AUC": metric}
     use_gpu = torch.cuda.is_available() and not (cpu_only)
+    training_set = FedCamelyon16(train=True, pooled=True, debug=debug)
+    # extract feature dimension used
+    features_dimension = training_set[0][0].size(1)
     training_dl = dl(
-        FedCamelyon16(train=True, pooled=True, debug=debug),
+        training_set,
         num_workers=num_workers_torch,
         batch_size=BATCH_SIZE,
         collate_fn=collate_fn,
@@ -69,7 +72,7 @@ def main(num_workers_torch, log=False, log_period=10, debug=False, cpu_only=Fals
         # At each new seed we re-initialize the model
         # and training_dl is shuffled as well
         torch.manual_seed(seed)
-        m = Baseline()
+        m = Baseline(features_dimension)
         # We put the model on GPU whenever it is possible
         if use_gpu:
             m = m.cuda()

@@ -19,6 +19,7 @@ from torch.utils.data import DataLoader, Dataset, IterableDataset
 from torchvision.transforms import Compose, ToTensor
 from transformers import AutoImageProcessor, ViTModel
 from tqdm import tqdm
+from transformers import AutoImageProcessor, ViTModel
 
 from flamby.utils import read_config, write_value_in_config
 

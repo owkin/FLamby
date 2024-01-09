@@ -7,10 +7,10 @@ import torch.nn.functional as F
 
 
 class Baseline(nn.Module):
-    def __init__(self):
+    def __init__(self, original_dimension: int = 2048):
         super(Baseline, self).__init__()
         # As per the article
-        self.Od = 2048  # Original dimension of the input embeddings
+        self.Od = original_dimension  # Original dimension of the input embeddings
         self.M = 128  # New dimension of the input embedding
 
         self.L = 128  # Dimension of the new features after query and value projections
