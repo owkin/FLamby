@@ -1,6 +1,6 @@
 # FLamby
 
-:warning: Please checkout [FLamby's 0.1.0 recent release](https://github.com/owkin/FLamby/releases/tag/0.1.0), which introduces changes to the Fed-Camelyon16 benchmark as well as fixes some reproducibility issue across datasets:warning:
+:warning: Please checkout [FLamby's 0.1.0 recent release](https://github.com/owkin/FLamby/releases/tag/0.1.0), which introduces changes to the Fed-Camelyon16 benchmark as well as fixes some reproducibility issue across datasets :warning:
 
 <img src="/docs/logo.png" width="600">
 
