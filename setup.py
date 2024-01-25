@@ -77,8 +77,8 @@ docs = [
     "pydicom",
     "requests",
     "scipy",
-    "sphinx==4.5.0",
-    "sphinx-rtd-theme==1.0.0",
+    "sphinx",
+    "sphinx-rtd-theme",
 ]
 tests = ["albumentations", "pytest"]
 all_extra = camelyon16 + heart + isic2019 + ixi + kits19 + lidc + tcga + docs + tests

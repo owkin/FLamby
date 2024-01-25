@@ -270,7 +270,9 @@ class _Model:
             _loss = _prox_loss.detach()
 
             if mu > 0.0:
-                squared_norm = compute_model_diff_squared_norm(model_initial, self.model)
+                squared_norm = compute_model_diff_squared_norm(
+                    model_initial, self.model
+                )
                 _prox_loss += mu / 2 * squared_norm
 
             # Backpropagation
@@ -451,12 +453,9 @@ def check_exchange_compliance(tensors_list, max_bytes, units="bytes"):
     """
     assert units in ["bytes", "bits", "megabytes", "gigabytes"]
     assert isinstance(tensors_list, list), "You should provide a list of tensors."
-    assert all(
-        [
-            (isinstance(t, np.ndarray) or isinstance(t, torch.Tensor))
-            for t in tensors_list
-        ]
-    )
+    assert all([
+        (isinstance(t, np.ndarray) or isinstance(t, torch.Tensor)) for t in tensors_list
+    ])
     bytes_count = 0
     for t in tensors_list:
         if isinstance(t, np.ndarray):
