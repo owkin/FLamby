@@ -198,22 +198,32 @@ def init_data_loaders(
     batch_size_test = batch_size if batch_size_test is None else batch_size_test
     if not pooled:
         training_dls = [
-            dl(
-                dataset(center=i, train=True, pooled=False),
-                batch_size=batch_size,
-                shuffle=True,
-                num_workers=num_workers,
-                collate_fn=collate_fn,
+            (
+                dl(
+                    center_dataset,
+                    batch_size=batch_size,
+                    shuffle=True,
+                    num_workers=num_workers,
+                    collate_fn=collate_fn,
+                )
+                if len(center_dataset := dataset(center=i, train=True, pooled=False))
+                > 0
+                else None
             )
             for i in range(num_clients)
         ]
         test_dls = [
-            dl(
-                dataset(center=i, train=False, pooled=False),
-                batch_size=batch_size_test,
-                shuffle=False,
-                num_workers=num_workers,
-                collate_fn=collate_fn,
+            (
+                dl(
+                    center_dataset,
+                    batch_size=batch_size_test,
+                    shuffle=False,
+                    num_workers=num_workers,
+                    collate_fn=collate_fn,
+                )
+                if len(center_dataset := dataset(center=i, train=False, pooled=False))
+                > 0
+                else None
             )
             for i in range(num_clients)
         ]
@@ -569,7 +579,9 @@ def ensemble_perf_from_predictions(
     return ensemble_perf
 
 
-def set_dataset_specific_config(dataset_name, compute_ensemble_perf=False, use_gpu=True):
+def set_dataset_specific_config(
+    dataset_name, compute_ensemble_perf=False, use_gpu=True
+):
     """_summary_
 
     Parameters
