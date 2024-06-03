@@ -72,7 +72,7 @@ docs = [
     "histolab",
     "lifelines",
     "matplotlib",
-    "monai",
+    "monai==1.2.0",
     "nnunet==1.7.0",
     "pydicom",
     "requests",
