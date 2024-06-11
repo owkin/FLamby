@@ -134,7 +134,7 @@ if __name__ == "__main__":
         action="store_false",
         help="Generate a regression dataset. (Default)",
     )
-    parser.set_defaults(classification=False)
+    parser.set_defaults(classification=True)
 
     parser.add_argument(
         "--output-folder",
