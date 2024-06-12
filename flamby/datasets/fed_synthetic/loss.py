@@ -8,4 +8,4 @@ class BaselineLoss(_Loss):
         self.ce = torch.nn.CrossEntropyLoss()
 
     def forward(self, input: torch.Tensor, target: torch.Tensor):
-        return self.ce(input, target)
+        return self.ce(input, target.squeeze().long())
