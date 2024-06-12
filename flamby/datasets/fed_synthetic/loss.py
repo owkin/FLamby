@@ -5,7 +5,7 @@ from torch.nn.modules.loss import _Loss
 class BaselineLoss(_Loss):
     def __init__(self):
         super(BaselineLoss, self).__init__()
-        self.bce = torch.nn.BCELoss()
+        self.ce = torch.nn.CrossEntropyLoss()
 
     def forward(self, input: torch.Tensor, target: torch.Tensor):
-        return self.bce(input, target)
+        return self.ce(input, target.squeeze().long())
