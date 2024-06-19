@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fed-TCGA-BRCA &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Fed-Heart Disease" href="fed_heart.html" />
+    <link rel="prev" title="Quickstart" href="quickstart.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Fed-TCGA-BRCA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#terms-of-use">Terms of use</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ethics">Ethics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dataset-description">Dataset description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#downloading-and-preprocessing">Downloading and preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-dataset">Using the dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#baseline-training-and-evaluation-in-a-pooled-setting">Baseline training and evaluation in a pooled setting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Fed-TCGA-BRCA</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/fed_tcga_brca.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fed-tcga-brca">
+<h1>Fed-TCGA-BRCA<a class="headerlink" href="#fed-tcga-brca" title="Link to this heading"></a></h1>
+<p>The dataset used in this repo comes from <a class="reference external" href="https://www.cancer.gov/about-nci/organization/ccg/research/structural-genomics/tcga">The Cancer Genome Atlas
+(TCGA)</a>
+from <a class="reference external" href="https://portal.gdc.cancer.gov/">the GDC data portal</a>.</p>
+<p>We selected one single cancer type: Breast Invasive Carcinoma (BRCA) and
+only use clinical tabular data. We replicate the preprocessing used by
+<a class="reference external" href="https://arxiv.org/pdf/2006.08997.pdf">Andreux et al.</a> from data
+originally computed from TCGA by <a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/29625055/">Liu et
+al.</a>:</p>
+<p>Liu J, Lichtenberg T, Hoadley KA, Poisson LM, Lazar AJ, Cherniack AD,
+Kovatich AJ, Benz CC, Levine DA, Lee AV, Omberg L, Wolf DM, Shriver CD,
+Thorsson V; Cancer Genome Atlas Research Network, Hu H. An Integrated
+TCGA Pan-Cancer Clinical Data Resource to Drive High-Quality Survival
+Outcome Analytics. Cell. 2018 Apr 5;173(2):400-416.e11. doi:
+10.1016/j.cell.2018.02.052. PMID: 29625055; PMCID: PMC6066282.</p>
+<p>Andreux, M., Manoel, A., Menuet, R., Saillard, C., and Simpson, C.,
+“Federated Survival Analysis with Discrete-Time Cox Models”, arXiv
+e-prints, 2020.</p>
+<p>i.e. a subset of the features in the raw TCGA-BRCA dataset (categorical
+variables are one-hot encoded).</p>
+<section id="terms-of-use">
+<h2>Terms of use<a class="headerlink" href="#terms-of-use" title="Link to this heading"></a></h2>
+<p>The data terms can be found
+<a class="reference external" href="https://gdc.cancer.gov/access-data/data-access-processes-and-tools">here</a>.
+Note that we only use unrestricted data. We do not guarantee that the
+use of this data can be done freely by the user. As such it is mandatory
+that one should check the applicability of the licence associated with
+this data before using it.</p>
+<p>In particular, as per the <a class="reference external" href="https://gdc.cancer.gov/about-gdc/gdc-policies">GDC data access
+policy</a>, users should
+&gt; not attempt to identify individual human research participants from
+whom the data were obtained.</p>
+</section>
+<section id="ethics">
+<h2>Ethics<a class="headerlink" href="#ethics" title="Link to this heading"></a></h2>
+<p>As per the <a class="reference external" href="https://www.cancer.gov/about-nci/organization/ccg/research/structural-genomics/tcga/history/policies">TCGA
+policies</a>,
+special care was devoted to ensure privacy protection of research
+subjects, including but not limited to HIPAA compliance. Note that we do
+not use the genetic part of TCGA whose access is restricted due to its
+sensitivity.</p>
+<p>In particular, as per the <a class="reference external" href="https://gdc.cancer.gov/about-gdc/gdc-policies">GDC data access
+policy</a>, the terms
+bind users as to “not attempt to identify individual human research
+participants from whom the data were obtained.”</p>
+</section>
+<section id="dataset-description">
+<h2>Dataset description<a class="headerlink" href="#dataset-description" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>Dataset description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Description</p></td>
+<td><p>Clinical data from the TCGA-BRCA study with 1,088 patients.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Dataset size</p></td>
+<td><p>117,5 KB (stored in this repository).</p></td>
+</tr>
+<tr class="row-even"><td><p>Centers</p></td>
+<td><p>6 regions - Northeast, South, West, Midwest, Europe,
+Canada.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Records per
+center</p></td>
+<td><p>Train/Test: 248/63, 156/40, 164/42, 129/33, 129/33, 40/11.</p></td>
+</tr>
+<tr class="row-even"><td><p>Inputs shape</p></td>
+<td><p>39 features (tabular data).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Targets
+shape</p></td>
+<td><p>(E,T). E: relative risk, continuous variable. T: T: event
+observed (1) or censorship (0)</p></td>
+</tr>
+<tr class="row-even"><td><p>Total nb of
+points</p></td>
+<td><ol class="arabic simple" start="1088">
+<li></li>
+</ol>
+</td>
+</tr>
+<tr class="row-odd"><td><p>Task</p></td>
+<td><p>Survival analysis.</p></td>
+</tr>
+</tbody>
+</table>
+<p>For a more thorough presentation of data, raw TCGA-BRCA data can be
+viewed, investigated, and downloaded
+<a class="reference external" href="https://portal.gdc.cancer.gov/projects/TCGA-BRCA">here</a>.</p>
+</section>
+<section id="data">
+<h2>Data<a class="headerlink" href="#data" title="Link to this heading"></a></h2>
+<p>Preprocessed data is stored in this repo in the file <code class="docutils literal notranslate"><span class="pre">brca.csv</span></code>, so
+the dataset does not need to be downloaded. The medical centers (with
+their geographic regions) are stored in the file <code class="docutils literal notranslate"><span class="pre">centers.csv</span></code>. From
+this file and the patients’ TCGA barcodes, we can extract the region of
+origin of each patient’s tissue sort site (TSS). The numbers of sites
+being too large (64) we regroup them in 6 different regions (Northeast,
+South, West, Midwest, Europe, Canada). The patients’ stratified split by
+region is static and stored in the train_test_split.csv file.</p>
+</section>
+<section id="downloading-and-preprocessing">
+<h2>Downloading and preprocessing<a class="headerlink" href="#downloading-and-preprocessing" title="Link to this heading"></a></h2>
+<p>This dataset is the only one that doesn’t need to be downloaded as it is
+already included in FLamby.</p>
+</section>
+<section id="using-the-dataset">
+<h2>Using the dataset<a class="headerlink" href="#using-the-dataset" title="Link to this heading"></a></h2>
+<p>Now that the dataset is ready for use you can load it using the low or
+high-level API by doing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flamby.datasets.fed_tcga_brca</span> <span class="kn">import</span> <span class="n">FedTcgaBrca</span>
+
+<span class="c1"># To load the first center as a pytorch dataset</span>
+<span class="n">center0</span> <span class="o">=</span> <span class="n">FedTcgaBrca</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># To load the second center as a pytorch dataset</span>
+<span class="n">center1</span> <span class="o">=</span> <span class="n">FedTcgaBrca</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># To sample batches from each of the local datasets use the traditional pytorch API</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span> <span class="k">as</span> <span class="n">dl</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">dl</span><span class="p">(</span><span class="n">center0</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>More informations on how to train model and handle flamby datasets in
+general are available in the <a class="reference internal" href="quickstart.html"><span class="doc">Quickstart</span></a></p>
+</section>
+<section id="baseline-training-and-evaluation-in-a-pooled-setting">
+<h2>Baseline training and evaluation in a pooled setting<a class="headerlink" href="#baseline-training-and-evaluation-in-a-pooled-setting" title="Link to this heading"></a></h2>
+<p>To train and evaluate a model for the pooled dataset, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">GPU</span> <span class="mi">0</span> <span class="o">--</span><span class="n">workers</span> <span class="mi">4</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="quickstart.html" class="btn btn-neutral float-left" title="Quickstart" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fed_heart.html" class="btn btn-neutral float-right" title="Fed-Heart Disease" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

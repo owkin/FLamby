@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using FLamby with FedML &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Containerized execution" href="docker.html" />
+    <link rel="prev" title="Using FLamby with Fed-BioMed" href="fedbiomed.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using FLamby with FedML</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fedml-installation">FedML installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#launching-fedml-in-ram">Launching FedML in RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fedml-fl-communications-outside-of-ram-thanks-to-the-mpi-backend">FedML: FL communications outside of RAM thanks to the MPI backend</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#start-the-simulation">Start the simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#citation">Citation:</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Using FLamby with FedML</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/fedml.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="using-flamby-with-fedml">
+<h1>Using FLamby with FedML<a class="headerlink" href="#using-flamby-with-fedml" title="Link to this heading"></a></h1>
+<p>This document highlights how to interface FLamby with
+<a class="reference external" href="https://github.com/FedML-AI/FedML">FedML</a>.</p>
+<section id="fedml-installation">
+<h2>FedML installation<a class="headerlink" href="#fedml-installation" title="Link to this heading"></a></h2>
+<p>The first step is to install FedML in the FLamby environment.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>flamby
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">fedml</span><span class="o">==</span><span class="m">0</span>.7.290
+<span class="c1"># necessary for the tutorial</span>
+pip<span class="w"> </span>install<span class="w"> </span>easydict
+pip<span class="w"> </span>install<span class="w"> </span>jupyter
+</pre></div>
+</div>
+</section>
+<section id="launching-fedml-in-ram">
+<h2>Launching FedML in RAM<a class="headerlink" href="#launching-fedml-in-ram" title="Link to this heading"></a></h2>
+<p>The important thing to know is that the procedure to launch FedML
+trainings with all FLamby datasets is similar. Regardless of the
+dataset, the same components will have to be setup each time. We will
+take the example of the Fed-heart disease dataset, we assume it is
+already downloaded. The easiest way is to copy-paste the code blocks one
+after another in a jupyter notebook with flamby.</p>
+<p>FedML has three important arguments: the dataset, the trainer and the
+args namespace. Let’s instantiate the dataset first, the dataset is
+simply a list with handles towards dict containing either links directly
+to the dataloaders or to the size of the dataset from which they
+originate. There are also handles towards the total size of the train
+and test. We will create it using straightforward FLamby code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># We import lots of FLamby specific quantities that we will use either now or subsequently</span>
+<span class="kn">from</span> <span class="nn">flamby.datasets.fed_heart_disease</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BATCH_SIZE</span><span class="p">,</span>
+    <span class="n">LR</span><span class="p">,</span>
+    <span class="n">NUM_EPOCHS_POOLED</span><span class="p">,</span>
+    <span class="n">Baseline</span><span class="p">,</span>
+    <span class="n">BaselineLoss</span><span class="p">,</span>
+    <span class="n">FedHeartDisease</span><span class="p">,</span>
+    <span class="n">metric</span><span class="p">,</span>
+    <span class="n">get_nb_max_rounds</span><span class="p">,</span>
+    <span class="n">NUM_CLIENTS</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span> <span class="k">as</span> <span class="n">dl</span>
+
+<span class="n">train_data_local_dict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">test_data_local_dict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">train_data_local_num_dict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">test_data_local_num_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">for</span> <span class="n">client_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_CLIENTS</span><span class="p">):</span>
+    <span class="c1"># We create the traditional FLamby datasets</span>
+    <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">FedHeartDisease</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">client_idx</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">dl</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">test_dataset</span> <span class="o">=</span> <span class="n">FedHeartDisease</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">client_idx</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">test_dataloader</span> <span class="o">=</span> <span class="n">dl</span><span class="p">(</span><span class="n">test_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">train_data_local_num_dict</span><span class="p">[</span><span class="n">client_idx</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">)</span>
+    <span class="n">train_data_local_dict</span><span class="p">[</span><span class="n">client_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">train_dataloader</span>
+    <span class="n">test_data_local_dict</span><span class="p">[</span><span class="n">client_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_dataloader</span>
+
+<span class="n">train_data_num</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">({</span><span class="n">v</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">train_data_local_num_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+<span class="n">test_data_num</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">({</span><span class="n">v</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">test_data_local_num_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+<span class="n">train_data_global</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">test_data_global</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">class_num</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1"># We instantiate the dataset FedML object, the order is very important</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span><span class="n">train_data_num</span><span class="p">,</span>
+            <span class="n">test_data_num</span><span class="p">,</span>
+            <span class="n">train_data_global</span><span class="p">,</span>
+            <span class="n">test_data_global</span><span class="p">,</span>
+            <span class="n">train_data_local_num_dict</span><span class="p">,</span>
+            <span class="n">train_data_local_dict</span><span class="p">,</span>
+            <span class="n">test_data_local_dict</span><span class="p">,</span>
+            <span class="n">class_num</span><span class="p">,</span>
+        <span class="p">]</span>
+</pre></div>
+</div>
+<p>We will now instantiate the FedML trainer, which is simply a cllass with
+<code class="docutils literal notranslate"><span class="pre">get/set_model_params</span></code> methods and a <code class="docutils literal notranslate"><span class="pre">train</span></code> method doing the local
+updates, we’ll use FLamby’s abstraction: <code class="docutils literal notranslate"><span class="pre">DataLoaderWithMemory</span></code> in
+order to more closely follow FLamby’s specifications:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fedml.core.alg_frame.client_trainer</span> <span class="kn">import</span> <span class="n">ClientTrainer</span>
+<span class="kn">from</span> <span class="nn">flamby.strategies.utils</span> <span class="kn">import</span> <span class="n">DataLoaderWithMemory</span>
+<span class="kn">from</span> <span class="nn">torch.optim</span> <span class="kn">import</span> <span class="n">SGD</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="c1"># We will implement a class</span>
+<span class="k">class</span> <span class="nc">HeartDiseaseTrainer</span><span class="p">(</span><span class="n">ClientTrainer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">num_updates</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+        <span class="c1"># We have to count in epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epochs</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">LR</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loss</span> <span class="o">=</span> <span class="n">BaselineLoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_updates</span> <span class="o">=</span> <span class="n">num_updates</span>
+
+    <span class="k">def</span> <span class="nf">get_model_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">set_model_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_parameters</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;set_model_params&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">model_parameters</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_data</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Start training on Trainer </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;dl_with_memory&quot;</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dl_with_memory</span> <span class="o">=</span> <span class="n">DataLoaderWithMemory</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>
+        <span class="c1"># We almost copy-paste verbatim FLamby&#39;s code but one could modify</span>
+        <span class="c1"># it to use a different optimizer or do epochs instead of updates</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">_batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_updates</span><span class="p">)):</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dl_with_memory</span><span class="o">.</span><span class="n">get_samples</span><span class="p">()</span>
+            <span class="c1"># Compute prediction and loss</span>
+            <span class="n">_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            <span class="n">_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss</span><span class="p">(</span><span class="n">_pred</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+            <span class="c1"># Backpropagation</span>
+            <span class="n">_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The last object to create is the args namespace:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">easydict</span> <span class="kn">import</span> <span class="n">EasyDict</span> <span class="k">as</span> <span class="n">edict</span>
+
+<span class="c1"># client_num_per_rounds is relative to client subsampling,</span>
+<span class="c1"># we compute the number of rounds to do 100 updates</span>
+<span class="n">NB_ROUNDS</span> <span class="o">=</span> <span class="n">get_nb_max_rounds</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">edict</span><span class="p">({</span><span class="s2">&quot;client_num_per_round&quot;</span><span class="p">:</span> <span class="n">NUM_CLIENTS</span> <span class="p">,</span> <span class="s2">&quot;comm_round&quot;</span><span class="p">:</span> <span class="n">NB_ROUNDS</span><span class="p">,</span> <span class="s2">&quot;frequency_of_the_test&quot;</span><span class="p">:</span> <span class="n">NB_ROUNDS</span> <span class="o">//</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;client_num_in_total&quot;</span><span class="p">:</span> <span class="n">NUM_CLIENTS</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Now we can put everything together: we first instantiate a trainer and
+we’ll use the args and datasets alongside the <code class="docutils literal notranslate"><span class="pre">FedAvgAPI</span></code> abstraction:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fedml.simulation.sp.fedavg.fedavg_api</span> <span class="kn">import</span> <span class="n">FedAvgAPI</span>
+<span class="kn">from</span> <span class="nn">flamby.utils</span> <span class="kn">import</span> <span class="n">evaluate_model_on_tests</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">Baseline</span><span class="p">()</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">HeartDiseaseTrainer</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">num_updates</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
+<span class="c1"># We instantiate a FedML FedAvg API</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">FedAvgAPI</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+<span class="c1"># As we cannot control the trainer used, we&#39;ll set it ourselves</span>
+<span class="n">s</span><span class="o">.</span><span class="n">model_trainer</span> <span class="o">=</span> <span class="n">trainer</span>
+<span class="c1"># WE reinitialize the client list with the new trainer manually</span>
+<span class="n">s</span><span class="o">.</span><span class="n">client_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">s</span><span class="o">.</span><span class="n">_setup_clients</span><span class="p">(</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">train_data_local_num_dict</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">train_data_local_dict</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">test_data_local_dict</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">model_trainer</span><span class="p">,</span>
+        <span class="p">)</span>
+<span class="c1"># We will kill the validation as it is buggy</span>
+<span class="n">s</span><span class="o">.</span><span class="n">_local_test_on_all_clients</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">s</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+<span class="c1"># we retrieve the final global model</span>
+<span class="n">final_model</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">model_trainer</span><span class="o">.</span><span class="n">model</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">evaluate_model_on_tests</span><span class="p">(</span><span class="n">final_model</span><span class="p">,</span> <span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_CLIENTS</span><span class="p">)],</span> <span class="n">metric</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="fedml-fl-communications-outside-of-ram-thanks-to-the-mpi-backend">
+<h2>FedML: FL communications outside of RAM thanks to the MPI backend<a class="headerlink" href="#fedml-fl-communications-outside-of-ram-thanks-to-the-mpi-backend" title="Link to this heading"></a></h2>
+<p><strong>WARNING: This part is not functional yet and is a Work In Progress !</strong>
+### Setup the MPI backend</p>
+<p>Install MPI by following instructions
+<a class="reference external" href="https://www.open-mpi.org/faq/?category=building#easy-build">here</a>.
+This is quite a long process, for which we provide detailed Mac
+instructions below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>wget https://download.open-mpi.org/release/open-mpi/v2.0/openmpi-2.0.4.tar.gz
+tar -xf openmpi-2.0.4.tar.gz
+cd openmpi-2.0.4/
+./configure --prefix=$HOME/opt/usr/local
+make all
+make install
+# add to your bashrc/zshrc
+alias mpirun=$HOME/opt/usr/local/bin/mpirun
+mpirun --version
+</pre></div>
+</div>
+<p>Then we install <a class="reference external" href="https://mpi4py.readthedocs.io/en/stable/">mpi4py</a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="n">mpi4py</span>
+</pre></div>
+</div>
+<section id="start-the-simulation">
+<h3>Start the simulation<a class="headerlink" href="#start-the-simulation" title="Link to this heading"></a></h3>
+<p>We launch the <code class="docutils literal notranslate"><span class="pre">launch_client.py</span></code> script for the first time launching
+<code class="docutils literal notranslate"><span class="pre">num_workers</span> <span class="pre">+</span> <span class="pre">1</span></code> processes with MPI.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hostname<span class="w"> </span>&gt;<span class="w"> </span>mpi_host_file
+<span class="o">(</span>which<span class="w"> </span>mpirun<span class="o">)</span><span class="w"> </span>-np<span class="w"> </span><span class="m">5</span><span class="w"> </span>python<span class="w"> </span>launch_client.py<span class="w"> </span>--cf<span class="w"> </span>config/fedml_config.yaml
+</pre></div>
+</div>
+<p>Then we up the server and the clients using the same script:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>launch_client.py<span class="w"> </span>--cf<span class="w"> </span>config/fedml_config.yaml<span class="w"> </span>--run_id<span class="w"> </span>heart_disease<span class="w"> </span>--rank<span class="w"> </span><span class="m">0</span><span class="w"> </span>--role<span class="w"> </span>server
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># in a new terminal window</span>
+<span class="n">python</span> <span class="n">launch_client</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">cf</span> <span class="n">config</span><span class="o">/</span><span class="n">fedml_config</span><span class="o">.</span><span class="n">yaml</span> <span class="o">--</span><span class="n">run_id</span> <span class="n">heart_disease</span> <span class="o">--</span><span class="n">rank</span> <span class="mi">1</span> <span class="o">--</span><span class="n">role</span> <span class="n">client</span>
+<span class="c1"># in a new terminal window</span>
+<span class="n">python</span> <span class="n">launch_client</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">cf</span> <span class="n">config</span><span class="o">/</span><span class="n">fedml_config</span><span class="o">.</span><span class="n">yaml</span> <span class="o">--</span><span class="n">run_id</span> <span class="n">heart_disease</span> <span class="o">--</span><span class="n">rank</span> <span class="mi">2</span> <span class="o">--</span><span class="n">role</span> <span class="n">client</span>
+<span class="c1"># in a new terminal window</span>
+<span class="n">python</span> <span class="n">launch_client</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">cf</span> <span class="n">config</span><span class="o">/</span><span class="n">fedml_config</span><span class="o">.</span><span class="n">yaml</span> <span class="o">--</span><span class="n">run_id</span> <span class="n">heart_disease</span> <span class="o">--</span><span class="n">rank</span> <span class="mi">3</span> <span class="o">--</span><span class="n">role</span> <span class="n">client</span>
+<span class="c1"># in a new terminal window</span>
+<span class="n">python</span> <span class="n">launch_client</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">cf</span> <span class="n">config</span><span class="o">/</span><span class="n">fedml_config</span><span class="o">.</span><span class="n">yaml</span> <span class="o">--</span><span class="n">run_id</span> <span class="n">heart_disease</span> <span class="o">--</span><span class="n">rank</span> <span class="mi">4</span> <span class="o">--</span><span class="n">role</span> <span class="n">client</span>
+</pre></div>
+</div>
+<p>Then the training will occur.</p>
+</section>
+</section>
+<section id="citation">
+<h2>Citation:<a class="headerlink" href="#citation" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>@article<span class="o">{</span>he2021fedcv,
+<span class="w">  </span><span class="nv">title</span><span class="o">={</span>Fedcv:<span class="w"> </span>a<span class="w"> </span>federated<span class="w"> </span>learning<span class="w"> </span>framework<span class="w"> </span><span class="k">for</span><span class="w"> </span>diverse<span class="w"> </span>computer<span class="w"> </span>vision<span class="w"> </span>tasks<span class="o">}</span>,
+<span class="w">  </span><span class="nv">author</span><span class="o">={</span>He,<span class="w"> </span>Chaoyang<span class="w"> </span>and<span class="w"> </span>Shah,<span class="w"> </span>Alay<span class="w"> </span>Dilipbhai<span class="w"> </span>and<span class="w"> </span>Tang,<span class="w"> </span>Zhenheng<span class="w"> </span>and<span class="w"> </span>Sivashunmugam,<span class="w"> </span>Di<span class="w"> </span>Fan1Adarshan<span class="w"> </span>Naiynar<span class="w"> </span>and<span class="w"> </span>Bhogaraju,<span class="w"> </span>Keerti<span class="w"> </span>and<span class="w"> </span>Shimpi,<span class="w"> </span>Mita<span class="w"> </span>and<span class="w"> </span>Shen,<span class="w"> </span>Li<span class="w"> </span>and<span class="w"> </span>Chu,<span class="w"> </span>Xiaowen<span class="w"> </span>and<span class="w"> </span>Soltanolkotabi,<span class="w"> </span>Mahdi<span class="w"> </span>and<span class="w"> </span>Avestimehr,<span class="w"> </span>Salman<span class="o">}</span>,
+<span class="w">  </span><span class="nv">journal</span><span class="o">={</span>arXiv<span class="w"> </span>preprint<span class="w"> </span>arXiv:2111.11066<span class="o">}</span>,
+<span class="w">  </span><span class="nv">year</span><span class="o">={</span><span class="m">2021</span><span class="o">}</span>
+<span class="o">}</span>
+@misc<span class="o">{</span>he2020fedml,
+<span class="w">      </span><span class="nv">title</span><span class="o">={</span>FedML:<span class="w"> </span>A<span class="w"> </span>Research<span class="w"> </span>Library<span class="w"> </span>and<span class="w"> </span>Benchmark<span class="w"> </span><span class="k">for</span><span class="w"> </span>Federated<span class="w"> </span>Machine<span class="w"> </span>Learning<span class="o">}</span>,
+<span class="w">      </span><span class="nv">author</span><span class="o">={</span>Chaoyang<span class="w"> </span>He<span class="w"> </span>and<span class="w"> </span>Songze<span class="w"> </span>Li<span class="w"> </span>and<span class="w"> </span>Jinhyun<span class="w"> </span>So<span class="w"> </span>and<span class="w"> </span>Xiao<span class="w"> </span>Zeng<span class="w"> </span>and<span class="w"> </span>Mi<span class="w"> </span>Zhang<span class="w"> </span>and<span class="w"> </span>Hongyi<span class="w"> </span>Wang<span class="w"> </span>and<span class="w"> </span>Xiaoyang<span class="w"> </span>Wang<span class="w"> </span>and<span class="w"> </span>Praneeth<span class="w"> </span>Vepakomma<span class="w"> </span>and<span class="w"> </span>Abhishek<span class="w"> </span>Singh<span class="w"> </span>and<span class="w"> </span>Hang<span class="w"> </span>Qiu<span class="w"> </span>and<span class="w"> </span>Xinghua<span class="w"> </span>Zhu<span class="w"> </span>and<span class="w"> </span>Jianzong<span class="w"> </span>Wang<span class="w"> </span>and<span class="w"> </span>Li<span class="w"> </span>Shen<span class="w"> </span>and<span class="w"> </span>Peilin<span class="w"> </span>Zhao<span class="w"> </span>and<span class="w"> </span>Yan<span class="w"> </span>Kang<span class="w"> </span>and<span class="w"> </span>Yang<span class="w"> </span>Liu<span class="w"> </span>and<span class="w"> </span>Ramesh<span class="w"> </span>Raskar<span class="w"> </span>and<span class="w"> </span>Qiang<span class="w"> </span>Yang<span class="w"> </span>and<span class="w"> </span>Murali<span class="w"> </span>Annavaram<span class="w"> </span>and<span class="w"> </span>Salman<span class="w"> </span>Avestimehr<span class="o">}</span>,
+<span class="w">      </span><span class="nv">year</span><span class="o">={</span><span class="m">2020</span><span class="o">}</span>,
+<span class="w">      </span><span class="nv">eprint</span><span class="o">={</span><span class="m">2007</span>.13518<span class="o">}</span>,
+<span class="w">      </span><span class="nv">archivePrefix</span><span class="o">={</span>arXiv<span class="o">}</span>,
+<span class="w">      </span><span class="nv">primaryClass</span><span class="o">={</span>cs.LG<span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fedbiomed.html" class="btn btn-neutral float-left" title="Using FLamby with Fed-BioMed" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="docker.html" class="btn btn-neutral float-right" title="Containerized execution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

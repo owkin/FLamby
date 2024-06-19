@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using FLamby with Substra &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Using FLamby with Fed-BioMed" href="fedbiomed.html" />
+    <link rel="prev" title="Fed-KiTS19" href="fed_kits19.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using FLamby with Substra</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#objective">Objective</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-and-metrics">Data and metrics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dataset-registration">Dataset registration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#metrics-registration">Metrics registration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#specifying-the-machine-learning-components">Specifying the machine learning components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#specifying-on-how-much-data-to-train">Specifying on how much data to train</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#torch-dataset-definition">Torch Dataset definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#substrafl-algo-definition">SubstraFL algo definition</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#federated-learning-strategies">Federated Learning strategies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#where-to-train-and-where-to-aggregate">Where to train and where to aggregate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#where-and-when-to-test">Where and when to test</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-experiment">Running the experiment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#plotting-results">Plotting results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#downloading-a-model">Downloading a model</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Using FLamby with Substra</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/substra.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="using-flamby-with-substra">
+<h1>Using FLamby with Substra<a class="headerlink" href="#using-flamby-with-substra" title="Link to this heading"></a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p><a class="reference external" href="https://docs.substra.org/en/0.23.1/">Substra</a> is an <strong>open
+source</strong> federated learning framework. It provides a flexible <strong>Python
+interface</strong> and a <strong>web app</strong> to run federated learning training at
+scale.</p>
+<p>Substra main usage is a <strong>production one</strong>. It has already been deployed
+and used by hospitals and biotech companies (see the
+<a class="reference external" href="https://www.melloddy.eu/">MELLODDY</a> project for instance).</p>
+<p>Yet <a class="reference external" href="https://docs.substra.org/en/0.23.1/">Substra</a> can also be
+used on a single machine on a virtually splitted dataset for two use
+cases:</p>
+<ul class="simple">
+<li><p>debugging code before launching experiments on a real network</p></li>
+<li><p>performing FL simulations</p></li>
+</ul>
+<p>Substra was created by <a class="reference external" href="https://owkin.com/">Owkin</a> and is now
+hosted by the <a class="reference external" href="https://lfaidata.foundation/">Linux Foundation for AI and
+Data</a>.</p>
+<p>This example illustrate the basic usage of SubstraFL, and propose a
+model training by Federated Learning using the Federated Averaging
+strategy on the TCGA BRCA dataset.</p>
+<p>The objective of this example is to launch a <em>federated learning</em>
+experiment on the six centers provided on Flamby (called organization on
+Substra), using the <strong>FedAvg strategy</strong> on the <strong>baseline model</strong>.</p>
+<p>This example does not use the deployed platform of Substra and will run
+in local mode.</p>
+</section>
+<section id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Link to this heading"></a></h2>
+<p>To run this example locally, please make sure to download and unzip in
+the same directory as this example the assets needed to run it:</p>
+<p>Please ensure to have all the libraries installed, a
+<code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> file is included in the example.</p>
+<p>You can run the command: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code> to install
+them.</p>
+</section>
+<section id="objective">
+<h2>Objective<a class="headerlink" href="#objective" title="Link to this heading"></a></h2>
+<p>This example will run a federated training on all 6 centers of the TCGA
+BRCA <a class="reference external" href="https://github.com/owkin/FLamby">FLamby</a> dataset.</p>
+<p>This example shows how to interface
+<a class="reference external" href="https://docs.substra.org/en/0.23.1/">Substra</a> with
+<a class="reference external" href="https://github.com/owkin/FLamby">FLamby</a>.</p>
+<p>This example runs in local mode, simulating a <strong>federated learning</strong>
+experiment.</p>
+</section>
+<section id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Link to this heading"></a></h2>
+<p>We work with seven different organizations, defined by their IDs. Six
+organizations provide a FLamby dataset configuration. The last one
+provide the algorithm and will register the machine learning tasks.</p>
+<p>Once these variables defined, we can create our different <a class="reference external" href="https://docs.substra.org/en/0.23.1/documentation/references/sdk.html#client">Substra
+Clients</a>
+(one for each organization/center).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">substra</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">flamby.datasets</span> <span class="kn">import</span> <span class="n">fed_tcga_brca</span>
+
+<span class="n">MODE</span> <span class="o">=</span> <span class="s2">&quot;subprocess&quot;</span>
+
+<span class="c1"># Create the substra clients</span>
+<span class="n">data_provider_clients</span> <span class="o">=</span> <span class="p">[</span><span class="n">Client</span><span class="p">(</span><span class="n">backend_type</span><span class="o">=</span><span class="n">MODE</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">fed_tcga_brca</span><span class="o">.</span><span class="n">NUM_CLIENTS</span><span class="p">)]</span>
+<span class="n">data_provider_clients</span> <span class="o">=</span> <span class="p">{</span><span class="n">client</span><span class="o">.</span><span class="n">organization_info</span><span class="p">()</span><span class="o">.</span><span class="n">organization_id</span><span class="p">:</span> <span class="n">client</span> <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="n">data_provider_clients</span><span class="p">}</span>
+
+<span class="n">algo_provider_client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">backend_type</span><span class="o">=</span><span class="n">MODE</span><span class="p">)</span>
+
+<span class="c1"># Store their IDs</span>
+<span class="n">DATA_PROVIDER_ORGS_ID</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data_provider_clients</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+<span class="c1"># The org id on which your computation tasks are registered</span>
+<span class="n">ALGO_ORG_ID</span> <span class="o">=</span> <span class="n">algo_provider_client</span><span class="o">.</span><span class="n">organization_info</span><span class="p">()</span><span class="o">.</span><span class="n">organization_id</span>
+</pre></div>
+</div>
+</section>
+<section id="data-and-metrics">
+<h2>Data and metrics<a class="headerlink" href="#data-and-metrics" title="Link to this heading"></a></h2>
+<section id="dataset-registration">
+<h3>Dataset registration<a class="headerlink" href="#dataset-registration" title="Link to this heading"></a></h3>
+<p>A
+<a class="reference external" href="https://docs.substra.org/en/0.23.1/documentation/concepts.html#dataset">Dataset</a>
+is composed of an <strong>opener</strong>, which is a Python script with the
+instruction of <em>how to load the data</em> from the files in memory, and a
+<strong>description markdown</strong> file.</p>
+<p>The
+<a class="reference external" href="https://docs.substra.org/en/0.23.1/documentation/concepts.html#dataset">Dataset</a>
+object itself does not contain the data. The proper asset to access them
+is the <strong>datasample asset</strong>.</p>
+<p>A <strong>datasample</strong> contains a local path to the data, and the key
+identifying the
+<a class="reference external" href="https://docs.substra.org/en/0.23.1/documentation/concepts.html#dataset">Dataset</a>
+in order to have access to the proper <code class="docutils literal notranslate"><span class="pre">opener.py</span></code> file.</p>
+<p>To interface with <a class="reference external" href="https://github.com/owkin/FLamby">FLamby</a>, in
+the simple case of a single machine and a single runtime where clients
+are simple Python objects, the utilization of the opener and associated
+datasample method is implemented as a simple lookup table to indicate
+which center lives in which client.
+<a class="reference external" href="https://docs.substra.org/en/0.23.1/">Substra</a> is a library built
+to be deployed on a real federated network, where the path to the data
+is to the opener in order to load and read the data in a personalized
+way on the premises of the organization that owns the data.</p>
+<p>As we directly load a torch dataset from Flamby, the <code class="docutils literal notranslate"><span class="pre">folders</span></code>
+parameters is unused and the path usually leading to the data will point
+out to an empty folder in this example.</p>
+<p>As data can not be seen once it is registered on the platform, we set a
+<a class="reference external" href="https://docs.substra.org/en/0.23.1/documentation/references/sdk_schemas.html#permissions">Permissions</a>
+object for each
+<a class="reference external" href="https://docs.substra.org/en/0.23.1/documentation/concepts.html#assets">Assets</a>,
+defining their access rights to the different data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pathlib</span>
+
+<span class="kn">from</span> <span class="nn">substra.sdk.schemas</span> <span class="kn">import</span> <span class="n">DatasetSpec</span>
+<span class="kn">from</span> <span class="nn">substra.sdk.schemas</span> <span class="kn">import</span> <span class="n">DataSampleSpec</span>
+<span class="kn">from</span> <span class="nn">substra.sdk.schemas</span> <span class="kn">import</span> <span class="n">Permissions</span>
+
+<span class="n">assets_directory</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;assets&quot;</span>
+<span class="n">empty_path</span> <span class="o">=</span> <span class="n">assets_directory</span> <span class="o">/</span> <span class="s2">&quot;empty_datasamples&quot;</span>
+
+<span class="n">permissions_dataset</span> <span class="o">=</span> <span class="n">Permissions</span><span class="p">(</span><span class="n">public</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">authorized_ids</span><span class="o">=</span><span class="p">[</span><span class="n">ALGO_ORG_ID</span><span class="p">])</span>
+
+<span class="n">train_dataset_keys</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">test_dataset_keys</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">train_datasample_keys</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">test_datasample_keys</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">org_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">DATA_PROVIDER_ORGS_ID</span><span class="p">):</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">data_provider_clients</span><span class="p">[</span><span class="n">org_id</span><span class="p">]</span>
+
+
+    <span class="c1"># DatasetSpec is the specification of a dataset. It makes sure every field</span>
+    <span class="c1"># is well defined, and that our dataset is ready to be registered.</span>
+    <span class="c1"># The real dataset object is created in the add_dataset method.</span>
+
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">DatasetSpec</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;FLamby&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;torchDataset&quot;</span><span class="p">,</span>
+        <span class="n">data_opener</span><span class="o">=</span><span class="n">assets_directory</span> <span class="o">/</span> <span class="s2">&quot;dataset&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;opener_train_</span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">.py&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">assets_directory</span> <span class="o">/</span> <span class="s2">&quot;dataset&quot;</span> <span class="o">/</span> <span class="s2">&quot;description.md&quot;</span><span class="p">,</span>
+        <span class="n">permissions</span><span class="o">=</span><span class="n">permissions_dataset</span><span class="p">,</span>
+        <span class="n">logs_permission</span><span class="o">=</span><span class="n">permissions_dataset</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Add the dataset to the client to provide access to the opener in each organization.</span>
+    <span class="n">train_dataset_key</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">train_dataset_key</span><span class="p">,</span> <span class="s2">&quot;Missing data manager key&quot;</span>
+
+    <span class="n">train_dataset_keys</span><span class="p">[</span><span class="n">org_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">train_dataset_key</span>
+
+    <span class="c1"># Add the training data on each organization.</span>
+    <span class="n">data_sample</span> <span class="o">=</span> <span class="n">DataSampleSpec</span><span class="p">(</span>
+        <span class="n">data_manager_keys</span><span class="o">=</span><span class="p">[</span><span class="n">train_dataset_key</span><span class="p">],</span>
+        <span class="n">test_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">path</span><span class="o">=</span><span class="n">empty_path</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">train_datasample_key</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_data_sample</span><span class="p">(</span>
+        <span class="n">data_sample</span><span class="p">,</span>
+        <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">train_datasample_keys</span><span class="p">[</span><span class="n">org_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">train_datasample_key</span>
+
+    <span class="c1"># Add the testing data.</span>
+
+    <span class="n">test_dataset_key</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_dataset</span><span class="p">(</span>
+        <span class="n">DatasetSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;FLamby&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;torchDataset&quot;</span><span class="p">,</span>
+            <span class="n">data_opener</span><span class="o">=</span><span class="n">assets_directory</span> <span class="o">/</span> <span class="s2">&quot;dataset&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;opener_test_</span><span class="si">{</span><span class="n">org_id</span><span class="si">}</span><span class="s2">.py&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="n">assets_directory</span> <span class="o">/</span> <span class="s2">&quot;dataset&quot;</span> <span class="o">/</span> <span class="s2">&quot;description.md&quot;</span><span class="p">,</span>
+            <span class="n">permissions</span><span class="o">=</span><span class="n">permissions_dataset</span><span class="p">,</span>
+            <span class="n">logs_permission</span><span class="o">=</span><span class="n">permissions_dataset</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">test_dataset_key</span><span class="p">,</span> <span class="s2">&quot;Missing data manager key&quot;</span>
+    <span class="n">test_dataset_keys</span><span class="p">[</span><span class="n">org_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_dataset_key</span>
+
+    <span class="n">data_sample</span> <span class="o">=</span> <span class="n">DataSampleSpec</span><span class="p">(</span>
+        <span class="n">data_manager_keys</span><span class="o">=</span><span class="p">[</span><span class="n">test_dataset_key</span><span class="p">],</span>
+        <span class="n">test_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">path</span><span class="o">=</span><span class="n">empty_path</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">test_datasample_key</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_data_sample</span><span class="p">(</span>
+        <span class="n">data_sample</span><span class="p">,</span>
+        <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">test_datasample_keys</span><span class="p">[</span><span class="n">org_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_datasample_key</span>
+</pre></div>
+</div>
+</section>
+<section id="metrics-registration">
+<h3>Metrics registration<a class="headerlink" href="#metrics-registration" title="Link to this heading"></a></h3>
+<p>A metric is a function used to compute the score of predictions on one
+or several <strong>datasamples</strong>.</p>
+<p>To add a metric, you need to define a function that computes and return
+a performance from the datasamples (as returned by the opener) and the
+predictions_path (to be loaded within the function).</p>
+<p>When using a Torch SubstraFL algorithm, the predictions are saved in the
+predict function under the numpy format so that you can simply load them
+using <code class="docutils literal notranslate"><span class="pre">numpy.load</span></code>.</p>
+<p>After defining the metrics dependencies and permissions, we use the
+add_metric function to register the metric. This metric will be used on
+the test datasamples to evaluate the model performances.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">torch.utils</span> <span class="kn">import</span> <span class="n">data</span>
+
+<span class="kn">from</span> <span class="nn">substrafl.dependency</span> <span class="kn">import</span> <span class="n">Dependency</span>
+<span class="kn">from</span> <span class="nn">substrafl.remote.register</span> <span class="kn">import</span> <span class="n">add_metric</span>
+
+
+<span class="k">def</span> <span class="nf">tgca_brca_metric</span><span class="p">(</span><span class="n">datasamples</span><span class="p">,</span> <span class="n">predictions_path</span><span class="p">):</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">datasamples</span>
+
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">fed_tcga_brca</span><span class="o">.</span><span class="n">FedTcgaBrca</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">dataloader</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">))</span>
+
+    <span class="n">y_true</span> <span class="o">=</span>  <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataloader</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">predictions_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">fed_tcga_brca</span><span class="o">.</span><span class="n">metric</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+
+<span class="c1"># The Dependency object is instantiated in order to install the right libraries in</span>
+<span class="c1"># the Python environment of each organization.</span>
+<span class="c1"># The local dependencies are local packages to be installed using the command `pip install -e .`.</span>
+<span class="c1"># Flamby is a local dependency. We put as argument the path to the `setup.py` file.</span>
+<span class="n">metric_deps</span> <span class="o">=</span> <span class="n">Dependency</span><span class="p">(</span><span class="n">pypi_dependencies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;torch==1.11.0&quot;</span><span class="p">,</span><span class="s2">&quot;numpy==1.23.1&quot;</span><span class="p">],</span>
+                         <span class="n">local_dependencies</span><span class="o">=</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="p">],</span> <span class="c1"># Flamby dependency</span>
+                        <span class="p">)</span>
+<span class="n">permissions_metric</span> <span class="o">=</span> <span class="n">Permissions</span><span class="p">(</span><span class="n">public</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">authorized_ids</span> <span class="o">=</span> <span class="n">DATA_PROVIDER_ORGS_ID</span> <span class="o">+</span> <span class="p">[</span><span class="n">ALGO_ORG_ID</span><span class="p">])</span>
+
+<span class="n">metric_key</span> <span class="o">=</span> <span class="n">add_metric</span><span class="p">(</span>
+    <span class="n">client</span><span class="o">=</span><span class="n">algo_provider_client</span><span class="p">,</span>
+    <span class="n">metric_function</span><span class="o">=</span><span class="n">tgca_brca_metric</span><span class="p">,</span>
+    <span class="n">permissions</span><span class="o">=</span><span class="n">permissions_metric</span><span class="p">,</span>
+    <span class="n">dependencies</span><span class="o">=</span><span class="n">metric_deps</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="specifying-the-machine-learning-components">
+<h2>Specifying the machine learning components<a class="headerlink" href="#specifying-the-machine-learning-components" title="Link to this heading"></a></h2>
+<p>This section uses the PyTorch based <strong>SubstraFL</strong> API to simplify the
+machine learning components definition.</p>
+<p>However, <strong>SubstraFL</strong> is compatible with any machine learning
+framework.</p>
+<section id="specifying-on-how-much-data-to-train">
+<h3>Specifying on how much data to train<a class="headerlink" href="#specifying-on-how-much-data-to-train" title="Link to this heading"></a></h3>
+<p>To specify on how much data to train at each round, we use the <a class="reference external" href="https://docs.substra.org/en/latest/substrafl_doc/substrafl_overview.html#index-generator">Index
+Generator</a>
+object.</p>
+<p>We specify the batch size and the number of batches to consider for each
+round (called <code class="docutils literal notranslate"><span class="pre">num_updates</span></code>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">substrafl.index_generator</span> <span class="kn">import</span> <span class="n">NpIndexGenerator</span>
+
+<span class="n">NUM_UPDATES</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="n">SEED</span> <span class="o">=</span> <span class="mi">42</span>
+
+<span class="n">index_generator</span> <span class="o">=</span> <span class="n">NpIndexGenerator</span><span class="p">(</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="n">fed_tcga_brca</span><span class="o">.</span><span class="n">BATCH_SIZE</span><span class="p">,</span>
+    <span class="n">num_updates</span><span class="o">=</span><span class="n">NUM_UPDATES</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="torch-dataset-definition">
+<h3>Torch Dataset definition<a class="headerlink" href="#torch-dataset-definition" title="Link to this heading"></a></h3>
+<p>To instantiate a Substrafl <a class="reference external" href="https://docs.substra.org/en/0.23.1/substrafl_doc/api/algorithms.html#torch-algorithms">Torch
+Algorithm</a>,
+you need to define a torch Dataset with a specific <code class="docutils literal notranslate"><span class="pre">__init__</span></code>
+signature, that must contain (self, datasamples, is_inference).</p>
+<p>This torch Dataset is normally useful to preprocess your data on the
+<code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">TorchDataset</span><span class="p">(</span><span class="n">fed_tcga_brca</span><span class="o">.</span><span class="n">FedTcgaBrca</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datasamples</span><span class="p">,</span> <span class="n">is_inference</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">datasamples</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="substrafl-algo-definition">
+<h3>SubstraFL algo definition<a class="headerlink" href="#substrafl-algo-definition" title="Link to this heading"></a></h3>
+<p>A SubstraFL Algo gathers all the elements that we defined that run
+locally in each organization. This is the only SubstraFL object that is
+framework specific (here PyTorch specific).</p>
+<p>The torch dataset is passed <strong>as a class</strong> to the <a class="reference external" href="https://docs.substra.org/en/0.23.1/substrafl_doc/api/algorithms.html#torch-algorithms">Torch
+Algorithms</a>.
+Indeed, this torch Dataset will be instantiated within the algorithm,
+using the opener functions as <strong>datasamples</strong> parameters.</p>
+<p>Concerning the
+<a class="reference external" href="https://docs.substra.org/en/0.23.1/substrafl_doc/api/algorithms.html#torchfedavgalgo">TorchFedAvgAlgo</a>
+interaction with <a class="reference external" href="https://github.com/owkin/FLamby">**FLamby**</a>, we
+need to overwrite the <code class="docutils literal notranslate"><span class="pre">_local_predict</span></code> function, used to compute the
+predictions of the model. In the default <code class="docutils literal notranslate"><span class="pre">_local_predict</span></code>provided by
+<strong>Substrafl</strong>, we assume that the <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> method of the dataset
+has a keyword argument <code class="docutils literal notranslate"><span class="pre">is_inference</span></code> used to only return X (and not
+the tuple X, y).</p>
+<p>But as the <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> function is provided by
+<a class="reference external" href="https://github.com/owkin/FLamby">FLamby</a>, the <code class="docutils literal notranslate"><span class="pre">is_inference</span></code>
+argument is ignored. We need to overwrite the <code class="docutils literal notranslate"><span class="pre">_local_predict</span></code> to
+change the behavior of the function, and can use this opportunity to
+optimize the computation time of the function using knowledge of the
+ouput dimension of the TGCA-BRCA dataset.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">from</span> <span class="nn">substrafl.algorithms.pytorch</span> <span class="kn">import</span> <span class="n">TorchFedAvgAlgo</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">fed_tcga_brca</span><span class="o">.</span><span class="n">Baseline</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">MyAlgo</span><span class="p">(</span><span class="n">TorchFedAvgAlgo</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">criterion</span><span class="o">=</span><span class="n">fed_tcga_brca</span><span class="o">.</span><span class="n">BaselineLoss</span><span class="p">(),</span>
+            <span class="n">optimizer</span><span class="o">=</span><span class="n">fed_tcga_brca</span><span class="o">.</span><span class="n">Optimizer</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">fed_tcga_brca</span><span class="o">.</span><span class="n">LR</span><span class="p">),</span>
+            <span class="n">index_generator</span><span class="o">=</span><span class="n">index_generator</span><span class="p">,</span>
+            <span class="n">dataset</span><span class="o">=</span><span class="n">TorchDataset</span><span class="p">,</span>
+            <span class="n">seed</span><span class="o">=</span><span class="n">SEED</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_local_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predict_dataset</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">predictions_path</span><span class="p">):</span>
+
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index_generator</span><span class="o">.</span><span class="n">batch_size</span>
+        <span class="n">predict_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">predict_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+        <span class="c1"># The output dimension of the model is of size (1,)</span>
+        <span class="n">predictions</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">predict_dataset</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">inference_mode</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">predict_loader</span><span class="p">):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
+                <span class="n">predictions</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">:</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_predictions</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">predictions_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="federated-learning-strategies">
+<h2>Federated Learning strategies<a class="headerlink" href="#federated-learning-strategies" title="Link to this heading"></a></h2>
+<p>A FL strategy specifies how to train a model on distributed data. The
+most well known strategy is the Federated Averaging strategy: train
+locally a model on every organization, then aggregate the weight updates
+from every organization, and then apply locally at each organization the
+averaged updates.</p>
+<p>For this example, we choose to use the <a class="reference external" href="https://docs.substra.org/en/0.23.1/substrafl_doc/api/strategies.html">Federated averaging
+Strategy</a>,
+based on the <a class="reference external" href="https://arxiv.org/abs/1602.05629">FedAvg paper by McMahan et al.,
+2017</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">substrafl.strategies</span> <span class="kn">import</span> <span class="n">FedAvg</span>
+
+<span class="n">strategy</span> <span class="o">=</span> <span class="n">FedAvg</span><span class="p">()</span>
+</pre></div>
+</div>
+<section id="where-to-train-and-where-to-aggregate">
+<h3>Where to train and where to aggregate<a class="headerlink" href="#where-to-train-and-where-to-aggregate" title="Link to this heading"></a></h3>
+<p>We specify on which data we want to train our model, using the
+<a class="reference external" href="https://docs.substra.org/en/0.23.1/substrafl_doc/api/nodes.html#traindatanode">TrainDataNodes</a>
+objets. Here we train on the two datasets that we have registered
+earlier.</p>
+<p>The
+<a class="reference external" href="https://docs.substra.org/en/0.23.1/substrafl_doc/api/nodes.html#aggregationnode">AggregationNode</a>
+specifies the organization on which the aggregation operation will be
+computed.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">substrafl.nodes</span> <span class="kn">import</span> <span class="n">TrainDataNode</span>
+<span class="kn">from</span> <span class="nn">substrafl.nodes</span> <span class="kn">import</span> <span class="n">AggregationNode</span>
+
+
+<span class="n">aggregation_node</span> <span class="o">=</span> <span class="n">AggregationNode</span><span class="p">(</span><span class="n">ALGO_ORG_ID</span><span class="p">)</span>
+
+<span class="n">train_data_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">org_id</span> <span class="ow">in</span> <span class="n">DATA_PROVIDER_ORGS_ID</span><span class="p">:</span>
+
+    <span class="c1"># Create the Train Data Node (or training task) and save it in a list</span>
+    <span class="n">train_data_node</span> <span class="o">=</span> <span class="n">TrainDataNode</span><span class="p">(</span>
+        <span class="n">organization_id</span><span class="o">=</span><span class="n">org_id</span><span class="p">,</span>
+        <span class="n">data_manager_key</span><span class="o">=</span><span class="n">train_dataset_keys</span><span class="p">[</span><span class="n">org_id</span><span class="p">],</span>
+        <span class="n">data_sample_keys</span><span class="o">=</span><span class="p">[</span><span class="n">train_datasample_keys</span><span class="p">[</span><span class="n">org_id</span><span class="p">]],</span>
+    <span class="p">)</span>
+    <span class="n">train_data_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">train_data_node</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="where-and-when-to-test">
+<h3>Where and when to test<a class="headerlink" href="#where-and-when-to-test" title="Link to this heading"></a></h3>
+<p>With the same logic as the train nodes, we create
+<a class="reference external" href="https://docs.substra.org/en/0.23.1/substrafl_doc/api/nodes.html#testdatanode">TestDataNodes</a>
+to specify on which data we want to test our model.</p>
+<p>The <a class="reference external" href="https://docs.substra.org/en/0.23.1/substrafl_doc/api/evaluation_strategy.html">Evaluation
+Strategy</a>
+defines where and at which frequency we evaluate the model, using the
+given metric(s) that you registered in a previous section.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">substrafl.nodes</span> <span class="kn">import</span> <span class="n">TestDataNode</span>
+<span class="kn">from</span> <span class="nn">substrafl.evaluation_strategy</span> <span class="kn">import</span> <span class="n">EvaluationStrategy</span>
+
+
+<span class="n">test_data_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">org_id</span> <span class="ow">in</span> <span class="n">DATA_PROVIDER_ORGS_ID</span><span class="p">:</span>
+
+    <span class="c1"># Create the Test Data Node (or testing task) and save it in a list</span>
+    <span class="n">test_data_node</span> <span class="o">=</span> <span class="n">TestDataNode</span><span class="p">(</span>
+        <span class="n">organization_id</span><span class="o">=</span><span class="n">org_id</span><span class="p">,</span>
+        <span class="n">data_manager_key</span><span class="o">=</span><span class="n">test_dataset_keys</span><span class="p">[</span><span class="n">org_id</span><span class="p">],</span>
+        <span class="n">test_data_sample_keys</span><span class="o">=</span><span class="p">[</span><span class="n">test_datasample_keys</span><span class="p">[</span><span class="n">org_id</span><span class="p">]],</span>
+        <span class="n">metric_keys</span><span class="o">=</span><span class="p">[</span><span class="n">metric_key</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">test_data_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_data_node</span><span class="p">)</span>
+
+<span class="c1"># Test at the end of every round</span>
+<span class="n">my_eval_strategy</span> <span class="o">=</span> <span class="n">EvaluationStrategy</span><span class="p">(</span><span class="n">test_data_nodes</span><span class="o">=</span><span class="n">test_data_nodes</span><span class="p">,</span> <span class="n">rounds</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="running-the-experiment">
+<h2>Running the experiment<a class="headerlink" href="#running-the-experiment" title="Link to this heading"></a></h2>
+<p>We now have all the necessary objects to launch our experiment. Below a
+summary of all the objects we created so far:</p>
+<ul class="simple">
+<li><p>A
+<a class="reference external" href="https://docs.substra.org/en/0.23.1/documentation/references/sdk.html#client">Client</a>
+to orchestrate all the assets of our project, using their keys to
+identify them</p></li>
+<li><p>An <a class="reference external" href="https://docs.substra.org/en/0.23.1/substrafl_doc/api/algorithms.html#torch-algorithms">Torch
+Algorithms</a>,
+to define the training parameters <em>(optimizer, train function,
+predict function, etc…)</em></p></li>
+<li><p>A
+<a class="reference external" href="https://docs.substra.org/en/0.23.1/substrafl_doc/api/strategies.html">Strategies</a>,
+to specify the federated learning aggregation operation</p></li>
+<li><p><a class="reference external" href="https://docs.substra.org/en/0.23.1/substrafl_doc/api/nodes.html#traindatanode">TrainDataNode</a>,
+to indicate where we can process training task, on which data and
+using which <em>opener</em></p></li>
+<li><p>An <a class="reference external" href="https://docs.substra.org/en/0.23.1/substrafl_doc/api/evaluation_strategy.html">Evaluation
+Strategy</a>,
+to define where and at which frequency we evaluate the model</p></li>
+<li><p>An
+<a class="reference external" href="https://docs.substra.org/en/0.23.1/substrafl_doc/api/nodes.html#aggregationnode">AggregationNode</a>,
+to specify the node on which the aggregation operation will be
+computed</p></li>
+<li><p>The <strong>number of round</strong>, a round being defined by a local training
+step followed by an aggregation operation</p></li>
+<li><p>An <strong>experiment folder</strong> to save a summary of the operation made</p></li>
+<li><p>The
+<a class="reference external" href="https://docs.substra.org/en/0.23.1/substrafl_doc/api/dependency.html">Dependency</a>
+to define the libraries the experiment needs to run.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">substrafl.experiment</span> <span class="kn">import</span> <span class="n">execute_experiment</span>
+
+<span class="c1"># Number of time to apply the compute plan.</span>
+<span class="n">NUM_ROUNDS</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="c1"># The Dependency object is instantiated in order to install the right libraries in</span>
+<span class="c1"># the Python environment of each organization.</span>
+<span class="c1"># The local dependencies are local packages to be installed using the command `pip install -e .`.</span>
+<span class="c1"># Flamby is a local dependency. We put as argument the path to the `setup.py` file.</span>
+<span class="n">algo_deps</span> <span class="o">=</span> <span class="n">Dependency</span><span class="p">(</span><span class="n">pypi_dependencies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;torch==1.11.0&quot;</span><span class="p">],</span> <span class="n">local_dependencies</span><span class="o">=</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="p">])</span>
+
+<span class="n">compute_plan</span> <span class="o">=</span> <span class="n">execute_experiment</span><span class="p">(</span>
+    <span class="n">client</span><span class="o">=</span><span class="n">algo_provider_client</span><span class="p">,</span>
+    <span class="n">algo</span><span class="o">=</span><span class="n">MyAlgo</span><span class="p">(),</span>
+    <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">,</span>
+    <span class="n">train_data_nodes</span><span class="o">=</span><span class="n">train_data_nodes</span><span class="p">,</span>
+    <span class="n">evaluation_strategy</span><span class="o">=</span><span class="n">my_eval_strategy</span><span class="p">,</span>
+    <span class="n">aggregation_node</span><span class="o">=</span><span class="n">aggregation_node</span><span class="p">,</span>
+    <span class="n">num_rounds</span><span class="o">=</span><span class="n">NUM_ROUNDS</span><span class="p">,</span>
+    <span class="n">experiment_folder</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;experiment_summaries&quot;</span><span class="p">),</span>
+    <span class="n">dependencies</span><span class="o">=</span><span class="n">algo_deps</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>2022-11-23 16:27:22,920 - INFO - Building the compute plan.
+2022-11-23 16:27:22,937 - INFO - Registering the algorithm to Substra.
+2022-11-23 16:27:22,965 - INFO - Registering the compute plan to Substra.
+2022-11-23 16:27:22,966 - INFO - Experiment summary saved.
+
+Compute plan progress:   0%|          | 0/75 [00:00&lt;?, ?it/s]
+</pre></div>
+</div>
+<section id="plotting-results">
+<h3>Plotting results<a class="headerlink" href="#plotting-results" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Performance evolution on each center of the baseline on Fed-TCGA-BRCA with Federated Averaging training&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Rounds&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Metric&quot;</span><span class="p">)</span>
+
+<span class="n">performance_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">get_performances</span><span class="p">(</span><span class="n">compute_plan</span><span class="o">.</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">DATA_PROVIDER_ORGS_ID</span><span class="p">):</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">performance_df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;worker == &#39;</span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;round_idx&quot;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;performance&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Client </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="p">(</span><span class="mf">1.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Test set&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="png" src="_images/output_27_0.png" />
+</figure>
+</section>
+<section id="downloading-a-model">
+<h3>Downloading a model<a class="headerlink" href="#downloading-a-model" title="Link to this heading"></a></h3>
+<p>After the experiment, you might be interested in getting your trained
+model. To do so, you will need the source code in order to reload in
+memory your code architecture.</p>
+<p>You have the option to choose the client and the round you are
+interested in.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">round_idx</span></code> is set to <code class="docutils literal notranslate"><span class="pre">None</span></code>, the last round will be selected by
+default.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">substrafl.model_loading</span> <span class="kn">import</span> <span class="n">download_algo_files</span>
+<span class="kn">from</span> <span class="nn">substrafl.model_loading</span> <span class="kn">import</span> <span class="n">load_algo</span>
+
+<span class="n">client_to_dowload_from</span> <span class="o">=</span> <span class="n">DATA_PROVIDER_ORGS_ID</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">round_idx</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">folder</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;experiment_summaries&quot;</span> <span class="o">/</span> <span class="n">compute_plan</span><span class="o">.</span><span class="n">key</span> <span class="o">/</span> <span class="n">ALGO_ORG_ID</span> <span class="o">/</span> <span class="p">(</span><span class="n">round_idx</span> <span class="ow">or</span> <span class="s2">&quot;last&quot;</span><span class="p">))</span>
+
+<span class="n">download_algo_files</span><span class="p">(</span>
+    <span class="n">client</span><span class="o">=</span><span class="n">data_provider_clients</span><span class="p">[</span><span class="n">client_to_dowload_from</span><span class="p">],</span>
+    <span class="n">compute_plan_key</span><span class="o">=</span><span class="n">compute_plan</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
+    <span class="n">round_idx</span><span class="o">=</span><span class="n">round_idx</span><span class="p">,</span>
+    <span class="n">dest_folder</span><span class="o">=</span><span class="n">folder</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">load_algo</span><span class="p">(</span><span class="n">input_folder</span><span class="o">=</span><span class="n">folder</span><span class="p">)</span><span class="o">.</span><span class="n">_model</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Baseline</span><span class="p">(</span>
+  <span class="p">(</span><span class="n">fc</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">39</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="p">[</span><span class="n">Parameter</span> <span class="n">containing</span><span class="p">:</span>
+<span class="n">tensor</span><span class="p">([[</span> <span class="mf">0.0398</span><span class="p">,</span>  <span class="mf">0.6503</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2928</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1939</span><span class="p">,</span>  <span class="mf">0.0650</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1311</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0354</span><span class="p">,</span>  <span class="mf">0.0586</span><span class="p">,</span>
+         <span class="o">-</span><span class="mf">0.4715</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1761</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3675</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2748</span><span class="p">,</span>  <span class="mf">0.0926</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5276</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1857</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3742</span><span class="p">,</span>
+          <span class="mf">0.0829</span><span class="p">,</span>  <span class="mf">0.2343</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.8615</span><span class="p">,</span>  <span class="mf">0.0280</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0237</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1865</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5507</span><span class="p">,</span>  <span class="mf">0.4314</span><span class="p">,</span>
+         <span class="o">-</span><span class="mf">0.3690</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2061</span><span class="p">,</span>  <span class="mf">0.0499</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2285</span><span class="p">,</span>  <span class="mf">0.1102</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0276</span><span class="p">,</span>  <span class="mf">0.2751</span><span class="p">,</span>  <span class="mf">0.5251</span><span class="p">,</span>
+         <span class="o">-</span><span class="mf">0.5587</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.6355</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.6012</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1639</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3266</span><span class="p">,</span>  <span class="mf">0.0889</span><span class="p">,</span>  <span class="mf">0.2282</span><span class="p">]],</span>
+       <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">Parameter</span> <span class="n">containing</span><span class="p">:</span>
+<span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">0.3652</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fed_kits19.html" class="btn btn-neutral float-left" title="Fed-KiTS19" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fedbiomed.html" class="btn btn-neutral float-right" title="Using FLamby with Fed-BioMed" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

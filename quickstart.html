@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quickstart &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Fed-TCGA-BRCA" href="fed_tcga_brca.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dataset-example">Dataset example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#local-training-example">Local training example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#federated-learning-training-example">Federated Learning training example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-other-flamby-s-datasets">Using other FLamby’s datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#training-and-evaluation-in-a-pooled-setting">Training and evaluation in a pooled setting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#benchmarking-fl-strategies">Benchmarking FL strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fl-training-and-evaluation">FL training and evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#going-further">Going further</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Quickstart</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/quickstart.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="quickstart">
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading"></a></h1>
+<p>We will start with the <a class="reference internal" href="fed_tcga_brca.html"><span class="doc">Fed-TCGA-BRCA</span></a> dataset because it requires no downloading or preprocessing and is very lightweight.
+Therefore it provides a good introduction to navigating Flamby.
+This tutorial does not require the use of a GPU.</p>
+<section id="dataset-example">
+<h2>Dataset example<a class="headerlink" href="#dataset-example" title="Link to this heading"></a></h2>
+<p>We do provide users with two dataset abstractions: <code class="docutils literal notranslate"><span class="pre">RawDataset</span></code> and <code class="docutils literal notranslate"><span class="pre">FedDataset</span></code>.
+The recommended one is <code class="docutils literal notranslate"><span class="pre">FedDataset</span></code> as it is compatible with the rest of the repository’s code.
+This class allows to instantiate either the single-centric version of the dataset using the argument <code class="docutils literal notranslate"><span class="pre">pooled</span> <span class="pre">=</span> <span class="pre">True</span></code>, or the different local datasets belonging to each client by providing the client index in the arguments (e.g. <code class="docutils literal notranslate"><span class="pre">center</span> <span class="pre">=</span> <span class="pre">2,</span> <span class="pre">pooled</span> <span class="pre">=</span> <span class="pre">False</span></code>).
+The arguments <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">=</span> <span class="pre">True</span></code> and <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">=</span> <span class="pre">False</span></code> allow to instantiate train or test sets (in both pooled or local cases).
+It is important to understand that <code class="docutils literal notranslate"><span class="pre">FedDataset</span></code> is simply a wrapper around a <a class="reference external" href="https://pytorch.org/docs/stable/data.html#map-style-datasets">a map-style pytorch’s dataset</a> and thus data can be accessed
+the usual way by doing <code class="docutils literal notranslate"><span class="pre">fed_dataset[i]</span></code> where <code class="docutils literal notranslate"><span class="pre">i</span></code> belongs to <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">len(fed_dataset)</span> <span class="pre">-</span> <span class="pre">1]</span></code>.
+We also provide <code class="docutils literal notranslate"><span class="pre">RawDataset</span></code> objects which are less easy to work with but that should provide all metadata required for power users that find the <code class="docutils literal notranslate"><span class="pre">FedDataset</span></code> abstraction not flexible enough for their specific use-cases.</p>
+<p>To instantiate the raw TCGA-BRCA or the Fed-TCGA-BRCA dataset, install FLamby (see <a class="reference internal" href="installation.html"><span class="doc">Installation</span></a>) and execute the following lines either in the python console, a notebook or a python script:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flamby.datasets.fed_tcga_brca</span> <span class="kn">import</span> <span class="n">TcgaBrcaRaw</span><span class="p">,</span> <span class="n">FedTcgaBrca</span>
+
+<span class="c1"># Raw dataset</span>
+<span class="n">mydataset_raw</span> <span class="o">=</span> <span class="n">TcgaBrcaRaw</span><span class="p">()</span>
+
+<span class="c1"># Pooled test dataset</span>
+<span class="n">mydataset_pooled</span> <span class="o">=</span> <span class="n">FedTcgaBrca</span><span class="p">(</span><span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pooled</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Center 2 train dataset</span>
+<span class="n">mydataset_local2</span><span class="o">=</span> <span class="n">FedTcgaBrca</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pooled</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Computing the length of mydataset_local2</span>
+<span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">my_dataset_local2</span><span class="p">)</span>
+
+<span class="c1"># Accessing individual samples</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">mydataset_local2</span><span class="p">[</span><span class="n">N</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="local-training-example">
+<h2>Local training example<a class="headerlink" href="#local-training-example" title="Link to this heading"></a></h2>
+<p>Below is an example of how to train the chosen baseline model with default settings on one local train set and evaluate it on all the local test sets.
+The code is identical to the ones would use on any pytorch dataset.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">flamby.utils</span> <span class="kn">import</span> <span class="n">evaluate_model_on_tests</span>
+
+<span class="c1"># 2 lines of code to change to switch to another dataset</span>
+<span class="kn">from</span> <span class="nn">flamby.datasets.fed_tcga_brca</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BATCH_SIZE</span><span class="p">,</span>
+    <span class="n">LR</span><span class="p">,</span>
+    <span class="n">NUM_EPOCHS_POOLED</span><span class="p">,</span>
+    <span class="n">Baseline</span><span class="p">,</span>
+    <span class="n">BaselineLoss</span><span class="p">,</span>
+    <span class="n">metric</span><span class="p">,</span>
+    <span class="n">NUM_CLIENTS</span><span class="p">,</span>
+    <span class="n">Optimizer</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">flamby.datasets.fed_tcga_brca</span> <span class="kn">import</span> <span class="n">FedTcgaBrca</span> <span class="k">as</span> <span class="n">FedDataset</span>
+
+<span class="c1"># Instantiation of local train set (and data loader)), baseline loss function, baseline model, default optimizer</span>
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">FedDataset</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pooled</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># This is the dataset&#39;s loss implementing in torch.nn&#39;s style (https://pytorch.org/docs/stable/_modules/torch/nn/modules/loss.html#BCELoss)</span>
+<span class="c1"># therefore it needs to be instantiated</span>
+<span class="n">lossfunc</span> <span class="o">=</span> <span class="n">BaselineLoss</span><span class="p">()</span>
+<span class="c1"># This is simply a pytorch model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Baseline</span><span class="p">()</span>
+<span class="c1"># This is simply a pytorch optimizer</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">Optimizer</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">LR</span><span class="p">)</span>
+
+<span class="c1"># Traditional pytorch training loop</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">NUM_EPOCHS_POOLED</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_dataloader</span><span class="p">):</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">lossfunc</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+<span class="c1"># Evaluation</span>
+<span class="c1"># Instantiation of a list of the local test sets</span>
+<span class="n">test_dataloaders</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+                <span class="n">FedDataset</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pooled</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span>
+                <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_CLIENTS</span><span class="p">)</span>
+        <span class="p">]</span>
+<span class="c1"># Helper function performing the evaluation on a list of dataloaders</span>
+<span class="c1"># it can also be done manually</span>
+<span class="n">dict_cindex</span> <span class="o">=</span> <span class="n">evaluate_model_on_tests</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">test_dataloaders</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dict_cindex</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="federated-learning-training-example">
+<h2>Federated Learning training example<a class="headerlink" href="#federated-learning-training-example" title="Link to this heading"></a></h2>
+<p>See below an example of how to train a baseline model on the Fed-TCGA-BRCA dataset in a federated way using the FedAvg strategy and evaluate it on the pooled test set:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">flamby.utils</span> <span class="kn">import</span> <span class="n">evaluate_model_on_tests</span>
+
+<span class="c1"># 2 lines of code to change to switch to another dataset</span>
+<span class="kn">from</span> <span class="nn">flamby.datasets.fed_tcga_brca</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BATCH_SIZE</span><span class="p">,</span>
+    <span class="n">LR</span><span class="p">,</span>
+    <span class="n">NUM_EPOCHS_POOLED</span><span class="p">,</span>
+    <span class="n">Baseline</span><span class="p">,</span>
+    <span class="n">BaselineLoss</span><span class="p">,</span>
+    <span class="n">metric</span><span class="p">,</span>
+    <span class="n">NUM_CLIENTS</span><span class="p">,</span>
+    <span class="n">get_nb_max_rounds</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">flamby.datasets.fed_tcga_brca</span> <span class="kn">import</span> <span class="n">FedTcgaBrca</span> <span class="k">as</span> <span class="n">FedDataset</span>
+
+<span class="c1"># 1st line of code to change to switch to another strategy</span>
+<span class="kn">from</span> <span class="nn">flamby.strategies.fed_avg</span> <span class="kn">import</span> <span class="n">FedAvg</span> <span class="k">as</span> <span class="n">strat</span>
+
+<span class="c1"># We loop on all the clients of the distributed dataset and instantiate associated data loaders</span>
+<span class="n">train_dataloaders</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+                <span class="n">FedDataset</span><span class="p">(</span><span class="n">center</span> <span class="o">=</span> <span class="n">i</span><span class="p">,</span> <span class="n">train</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">pooled</span> <span class="o">=</span> <span class="kc">False</span><span class="p">),</span>
+                <span class="n">batch_size</span> <span class="o">=</span> <span class="n">BATCH_SIZE</span><span class="p">,</span>
+                <span class="n">shuffle</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="n">num_workers</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_CLIENTS</span><span class="p">)</span>
+        <span class="p">]</span>
+
+<span class="n">lossfunc</span> <span class="o">=</span> <span class="n">BaselineLoss</span><span class="p">()</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Baseline</span><span class="p">()</span>
+
+<span class="c1"># Federated Learning loop</span>
+<span class="c1"># 2nd line of code to change to switch to another strategy (feed the FL strategy the right HPs)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;training_dataloaders&quot;</span><span class="p">:</span> <span class="n">train_dataloaders</span><span class="p">,</span>
+            <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="n">m</span><span class="p">,</span>
+            <span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="n">lossfunc</span><span class="p">,</span>
+            <span class="s2">&quot;optimizer_class&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="n">LR</span> <span class="o">/</span> <span class="mf">10.0</span><span class="p">,</span>
+            <span class="s2">&quot;num_updates&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+<span class="c1"># This helper function returns the number of rounds necessary to perform approximately as many</span>
+<span class="c1"># epochs on each local dataset as with the pooled training</span>
+            <span class="s2">&quot;nrounds&quot;</span><span class="p">:</span> <span class="n">get_nb_max_rounds</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+        <span class="p">}</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">strat</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Evaluation</span>
+<span class="c1"># We only instantiate one test set in this particular case: the pooled one</span>
+<span class="n">test_dataloaders</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
+                <span class="n">FedDataset</span><span class="p">(</span><span class="n">train</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">pooled</span> <span class="o">=</span> <span class="kc">True</span><span class="p">),</span>
+                <span class="n">batch_size</span> <span class="o">=</span> <span class="n">BATCH_SIZE</span><span class="p">,</span>
+                <span class="n">shuffle</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="n">num_workers</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+<span class="n">dict_cindex</span> <span class="o">=</span> <span class="n">evaluate_model_on_tests</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">test_dataloaders</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dict_cindex</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that other models and loss functions compatible with the dataset can be used as long as they inherit from torch.nn.Module.</p>
+</section>
+<section id="using-other-flamby-s-datasets">
+<h2>Using other FLamby’s datasets<a class="headerlink" href="#using-other-flamby-s-datasets" title="Link to this heading"></a></h2>
+<p>We will follow up on how to download datasets that are not hosted on this repository.
+We will use the example of <a class="reference internal" href="fed_heart.html"><span class="doc">Fed-Heart Disease</span></a> as its download process is simple and it requires no preprocessing.
+Note that to use each new dataset if you had chosen the lightweight install you might need to install additional requirements
+by rerunning <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span></code> using different options (<code class="docutils literal notranslate"><span class="pre">[cam16,</span> <span class="pre">heart,</span> <span class="pre">isic2019,</span> <span class="pre">ixi,</span> <span class="pre">kits19,</span> <span class="pre">lidc,</span> <span class="pre">tcga]</span></code>).
+In this case if you had done <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.[tcga]</span></code> then run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.[heart]</span></code>
+Then please run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">flamby</span><span class="o">/</span><span class="n">datasets</span><span class="o">/</span><span class="n">fed_heart_disease</span><span class="o">/</span><span class="n">dataset_creation_scripts</span>
+<span class="n">python</span> <span class="n">download</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">output</span><span class="o">-</span><span class="n">folder</span> <span class="o">./</span><span class="n">heart_disease_dataset</span>
+</pre></div>
+</div>
+<p>You can instantiate this dataset as you did <code class="docutils literal notranslate"><span class="pre">FedTcgaBrca</span></code> by executing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flamby.datasets.fed_heart_disease</span> <span class="kn">import</span> <span class="n">HeartDiseaseRaw</span><span class="p">,</span> <span class="n">FedHeartDisease</span>
+<span class="c1"># Raw dataset</span>
+<span class="n">mydataset_raw</span> <span class="o">=</span> <span class="n">HeartDiseaseRaw</span><span class="p">()</span>
+<span class="c1"># Pooled train dataset</span>
+<span class="n">mydataset_pooled</span> <span class="o">=</span> <span class="n">FedHeartDisease</span><span class="p">(</span><span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pooled</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Center 1 train dataset</span>
+<span class="n">mydataset_local1</span><span class="o">=</span> <span class="n">FedHeartDisease</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pooled</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Other datasets downloads and instantiations follow a similar pattern, please find instructions for each of the dataset in their corresponding sections.
+Note however that you certainly do not have to download them all as each takes some non negligible disk space.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="fed_ixi.html"><span class="doc">Fed-IXI</span></a>.</p></li>
+<li><p><a class="reference internal" href="fed_isic.html"><span class="doc">Fed-ISIC 2019</span></a>.</p></li>
+<li><p><a class="reference internal" href="fed_camelyon.html"><span class="doc">Fed-Camelyon16</span></a>.</p></li>
+<li><p><a class="reference internal" href="fed_lidc.html"><span class="doc">Fed-LIDC-IDRI</span></a>.</p></li>
+<li><p><a class="reference internal" href="fed_kits19.html"><span class="doc">Fed-KiTS19</span></a>.</p></li>
+</ul>
+</section>
+<section id="training-and-evaluation-in-a-pooled-setting">
+<h2>Training and evaluation in a pooled setting<a class="headerlink" href="#training-and-evaluation-in-a-pooled-setting" title="Link to this heading"></a></h2>
+<p>To train and evaluate the baseline model for the pooled Heart Disease dataset using a helper script, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">flamby</span><span class="o">/</span><span class="n">datasets</span><span class="o">/</span><span class="n">fed_heart_disease</span>
+<span class="n">python</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">num</span><span class="o">-</span><span class="n">workers</span><span class="o">-</span><span class="n">torch</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</section>
+<section id="benchmarking-fl-strategies">
+<h2>Benchmarking FL strategies<a class="headerlink" href="#benchmarking-fl-strategies" title="Link to this heading"></a></h2>
+<p>The command below allows to reproduce the article’s results for a given seed aka:</p>
+<ul class="simple">
+<li><p>train a model on the pooled dataset and evaluate it on all test sets (local and pooled).</p></li>
+<li><p>train models on all local datasets and evaluate them on all test sets (local and pooled).</p></li>
+<li><p>train models in a federated way for all FL strategies with associated hyperparameters in corresponding config files
+and evaluate them on all test sets (local and pooled).</p></li>
+</ul>
+<p>The config files given in the repository (<code class="docutils literal notranslate"><span class="pre">flamby/config_*.json</span></code>) hold the different HPs sets used in the companion
+article for the FL strategies on the different datasets.
+The results are stored in the csv file specified either in the config file or with the –results-file-path option.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">flamby</span><span class="o">/</span><span class="n">benchmarks</span>
+<span class="n">python</span> <span class="n">fed_benchmark</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="n">path</span> <span class="o">../</span><span class="n">config_heart_disease</span><span class="o">.</span><span class="n">json</span> <span class="o">--</span><span class="n">results</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="n">path</span> <span class="o">./</span><span class="n">test_res_0</span><span class="o">.</span><span class="n">csv</span> <span class="o">--</span><span class="n">seed</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>Note that 1. this script might take a long time for large datasets 2. the communication budget (the number of rounds used)
+might be insufficient for full convergence. For tighter control over the parameters return to subsection <a class="reference internal" href="#federated-learning-training-example">Federated Learning training example</a>.
+and follow instructions.</p>
+<p>For more details about how to reproduce results in the article go to <a class="reference internal" href="reproducing.html"><span class="doc">Reproduction instructions</span></a></p>
+</section>
+<section id="fl-training-and-evaluation">
+<h2>FL training and evaluation<a class="headerlink" href="#fl-training-and-evaluation" title="Link to this heading"></a></h2>
+<p>In order to train and evaluate the baseline model with a specific FL strategy and associated hyperparameters, one can run the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">fed_benchmark</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">strategy</span> <span class="n">FedProx</span> <span class="o">--</span><span class="n">mu</span> <span class="mf">1.0</span> <span class="o">--</span><span class="n">learning_rate</span> <span class="mf">0.05</span> <span class="o">--</span><span class="n">config</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="n">path</span> <span class="o">../</span><span class="n">config_heart_disease</span><span class="o">.</span><span class="n">json</span> \
+ <span class="o">--</span><span class="n">results</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="n">path</span> <span class="o">./</span><span class="n">test_res1</span><span class="o">.</span><span class="n">csv</span> <span class="o">--</span><span class="n">seed</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>In this case the strategy specific HPs in the config file are ignored and the HPs used are given by the user or take the default values given in this script.</p>
+</section>
+<section id="going-further">
+<h2>Going further<a class="headerlink" href="#going-further" title="Link to this heading"></a></h2>
+<p>If you made it here please consider contributing to FLamby by either opening <a class="reference external" href="https://github.com/owkin/FLamby/issues">issues</a>
+on pain-points you might have encountered or on things you do not understand after having consulted the <a class="reference internal" href="faq.html"><span class="doc">FAQ</span></a>.
+If you think you can fix the issue yourself or want to add new distributed datasets with natural splits follow the steps
+outlined in <a class="reference internal" href="contributing.html"><span class="doc">Extending FLamby</span></a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fed_tcga_brca.html" class="btn btn-neutral float-right" title="Fed-TCGA-BRCA" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

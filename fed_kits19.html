@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fed-KiTS19 &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Using FLamby with Substra" href="substra.html" />
+    <link rel="prev" title="Fed-LIDC-IDRI" href="fed_lidc.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Fed-KiTS19</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#license-and-dataset-terms-of-use">License and dataset terms of use</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ethics">Ethics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#acknowledgements">Acknowledgements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dataset-description">Dataset Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-download-instructions">Data Download instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-preprocessing">Data Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-dataset">Using the dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pooled-experiment">Pooled Experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#citation">Citation:</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Fed-KiTS19</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/fed_kits19.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fed-kits19">
+<h1>Fed-KiTS19<a class="headerlink" href="#fed-kits19" title="Link to this heading"></a></h1>
+<p>KiTS19 dataset is an open access Kidney Tumor Segmentation dataset that
+was made public in 2019 for a segmentation Challenge
+(<a class="reference external" href="https://kits19.grand-challenge.org/data/">https://kits19.grand-challenge.org/data/</a>). We use the official KiTS19
+repository (<a class="reference external" href="https://github.com/neheller/kits19">https://github.com/neheller/kits19</a>) to download the dataset.</p>
+<section id="license-and-dataset-terms-of-use">
+<h2>License and dataset terms of use<a class="headerlink" href="#license-and-dataset-terms-of-use" title="Link to this heading"></a></h2>
+<p>The dataset is provided under the <a class="reference external" href="https://data.donders.ru.nl/doc/dua/CC-BY-NC-SA-4.0.html?0">CC-BY-NC-SA-4.0
+license</a>.
+Please ensure you comply with this license and the <a class="reference external" href="https://kits19.grand-challenge.org/data/">dataset
+terms</a> before using this
+dataset.</p>
+</section>
+<section id="ethics">
+<h2>Ethics<a class="headerlink" href="#ethics" title="Link to this heading"></a></h2>
+<p>As stated in the <a class="reference external" href="https://arxiv.org/pdf/1904.00445.pdf">official
+manuscript</a>, the dataset
+collection was</p>
+<blockquote>
+<div><p>reviewed and approved by the Institutional Review Board at the
+University of Minnesoty as Study 1611M00821</p>
+</div></blockquote>
+</section>
+<section id="acknowledgements">
+<h2>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Link to this heading"></a></h2>
+<p>See below the full citations:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>@article<span class="o">{</span>heller2020state,
+<span class="w">  </span><span class="nv">title</span><span class="o">={</span>The<span class="w"> </span>state<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>art<span class="w"> </span><span class="k">in</span><span class="w"> </span>kidney<span class="w"> </span>and<span class="w"> </span>kidney<span class="w"> </span>tumor<span class="w"> </span>segmentation<span class="w"> </span><span class="k">in</span><span class="w"> </span>contrast-enhanced<span class="w"> </span>CT<span class="w"> </span>imaging:<span class="w"> </span>Results<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>KiTS19<span class="w"> </span>Challenge<span class="o">}</span>,
+<span class="w">  </span><span class="nv">author</span><span class="o">={</span>Heller,<span class="w"> </span>Nicholas<span class="w"> </span>and<span class="w"> </span>Isensee,<span class="w"> </span>Fabian<span class="w"> </span>and<span class="w"> </span>Maier-Hein,<span class="w"> </span>Klaus<span class="w"> </span>H<span class="w"> </span>and<span class="w"> </span>Hou,<span class="w"> </span>Xiaoshuai<span class="w"> </span>and<span class="w"> </span>Xie,<span class="w"> </span>Chunmei<span class="w"> </span>and<span class="w"> </span>Li,<span class="w"> </span>Fengyi<span class="w"> </span>and<span class="w"> </span>Nan,<span class="w"> </span>Yang<span class="w"> </span>and<span class="w"> </span>Mu,<span class="w"> </span>Guangrui<span class="w"> </span>and<span class="w"> </span>Lin,<span class="w"> </span>Zhiyong<span class="w"> </span>and<span class="w"> </span>Han,<span class="w"> </span>Miofei<span class="w"> </span>and<span class="w"> </span>others<span class="o">}</span>,
+<span class="w">  </span><span class="nv">journal</span><span class="o">={</span>Medical<span class="w"> </span>Image<span class="w"> </span>Analysis<span class="o">}</span>,
+<span class="w">  </span><span class="nv">pages</span><span class="o">={</span><span class="m">101821</span><span class="o">}</span>,
+<span class="w">  </span><span class="nv">year</span><span class="o">={</span><span class="m">2020</span><span class="o">}</span>,
+<span class="w">  </span><span class="nv">publisher</span><span class="o">={</span>Elsevier<span class="o">}</span>
+<span class="o">}</span>
+
+@article<span class="o">{</span>heller2019kits19,
+<span class="w">  </span><span class="nv">title</span><span class="o">={</span>The<span class="w"> </span>kits19<span class="w"> </span>challenge<span class="w"> </span>data:<span class="w"> </span><span class="m">300</span><span class="w"> </span>kidney<span class="w"> </span>tumor<span class="w"> </span>cases<span class="w"> </span>with<span class="w"> </span>clinical<span class="w"> </span>context,<span class="w"> </span>ct<span class="w"> </span>semantic<span class="w"> </span>segmentations,<span class="w"> </span>and<span class="w"> </span>surgical<span class="w"> </span>outcomes<span class="o">}</span>,
+<span class="w">  </span><span class="nv">author</span><span class="o">={</span>Heller,<span class="w"> </span>Nicholas<span class="w"> </span>and<span class="w"> </span>Sathianathen,<span class="w"> </span>Niranjan<span class="w"> </span>and<span class="w"> </span>Kalapara,<span class="w"> </span>Arveen<span class="w"> </span>and<span class="w"> </span>Walczak,<span class="w"> </span>Edward<span class="w"> </span>and<span class="w"> </span>Moore,<span class="w"> </span>Keenan<span class="w"> </span>and<span class="w"> </span>Kaluzniak,<span class="w"> </span>Heather<span class="w"> </span>and<span class="w"> </span>Rosenberg,<span class="w"> </span>Joel<span class="w"> </span>and<span class="w"> </span>Blake,<span class="w"> </span>Paul<span class="w"> </span>and<span class="w"> </span>Rengel,<span class="w"> </span>Zachary<span class="w"> </span>and<span class="w"> </span>Oestreich,<span class="w"> </span>Makinna<span class="w"> </span>and<span class="w"> </span>others<span class="o">}</span>,
+<span class="w">  </span><span class="nv">journal</span><span class="o">={</span>arXiv<span class="w"> </span>preprint<span class="w"> </span>arXiv:1904.00445<span class="o">}</span>,
+<span class="w">  </span><span class="nv">year</span><span class="o">={</span><span class="m">2019</span><span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</section>
+<section id="dataset-description">
+<h2>Dataset Description<a class="headerlink" href="#dataset-description" title="Link to this heading"></a></h2>
+<p>The table below provides summary information. Please refer to the <a class="reference external" href="https://arxiv.org/pdf/1904.00445.pdf">data
+manuscript</a> for a more in-depth
+data sheet.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>Dataset description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Description</p></td>
+<td><p>This is the dataset from KiTS19 Challenge.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Dataset</p></td>
+<td><p>210 CT scans with segmentation masks as Train
+Data and 90 CT scans with no segmentations as
+Test Data. Since Test data does not have ground
+truth segmentation masks, we cannot use it for
+training/testing. Therefore, we will use only
+210 CT scans in our exploration of this dataset.</p></td>
+</tr>
+<tr class="row-even"><td><p>Centers</p></td>
+<td><p>Data comes from 87 different centers. The sites
+information can be found in
+fed_kits19/dataset_creation_scripts/anony_si
+tes.csv
+file. We include only those silos (total of 6)
+that have greater than 10 data samples (images),
+which leaves us with 96 patients data samples.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Task</p></td>
+<td><p>Supervised Segmentation</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data-download-instructions">
+<h2>Data Download instructions<a class="headerlink" href="#data-download-instructions" title="Link to this heading"></a></h2>
+<p>The commands for data download (as given on the official kits19 git
+repository (<a class="reference external" href="https://github.com/neheller/kits19">https://github.com/neheller/kits19</a>)) are as follows,</p>
+<ol class="arabic">
+<li><p>Cd to a different directory with sufficient space to hold kits data
+(~30GB) and clone the kits19 git repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/neheller/kits19
+</pre></div>
+</div>
+</li>
+<li><p>Proceed to read and accept the license and data terms</p></li>
+<li><p>Run the following commands to download the dataset. Make sure you
+have ~30GB space available.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>kits19
+pip3<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+python3<span class="w"> </span>-m<span class="w"> </span>starter_code.get_imaging
+</pre></div>
+</div>
+<p>These commands will populate the data folder (given in the kits19
+repository) with the imaging data.</p>
+</li>
+<li><p>To configure the KiTS19 data path so that it can be accessed by the
+Flamby library, run the following command in the directory
+<code class="docutils literal notranslate"><span class="pre">flamby/datasets/fed_kits19/dataset_creation_scripts/</span></code>,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>create_config.py<span class="w"> </span>--output_folder<span class="w"> </span>/path/where/you/cloned_kits19/kits19
+</pre></div>
+</div>
+<p>You can add an option ‘–debug’, if you want to run the whole
+pipeline on only a part of the dataset. Note that
+“/path/where/you/cloned_kits19/kits19” should contain the path to the
+kits19 git repository, for example, ‘~/Desktop/kits19’ can be an
+example of the “/path/where/you/cloned_kits19/kits19” given you cloned
+the kits19 git repository in the Desktop folder and the data folder
+containing KiTS19 dataset resides in this kits19 git repository.</p>
+</li>
+</ol>
+</section>
+<section id="data-preprocessing">
+<h2>Data Preprocessing<a class="headerlink" href="#data-preprocessing" title="Link to this heading"></a></h2>
+<p>For preprocessing, we use
+<a class="reference external" href="https://github.com/MIC-DKFZ/nnUNet">nnunet</a> library and
+<a class="reference external" href="https://github.com/MIC-DKFZ/batchgenerators">batchgenerators</a>
+packages. We exploit nnunet preprocessing pipeline to apply intensity
+normalization, voxel and foreground resampling. In addition, we apply
+extensive transformations such as random crop, rotation, scaling, mirror
+etc from the batchgenerators package.</p>
+<ol class="arabic">
+<li><p>To run preprocessing, first step is dataset conversion. For this
+step, go to the following directory from the fed_kits19 directory</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>dataset_creation_scripts
+</pre></div>
+</div>
+<p>and run the following command to prepare the data for preprocessing.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>parsing_and_adding_metadata.py
+</pre></div>
+</div>
+<p>You should add the option ‘–debug’, if you already did so during the
+step 3 of the data download.</p>
+</li>
+<li><p>After data conversion, next step is to run the preprocessing which
+involves, data intensity normalization and voxel resampling. To run
+preprocessing, run the following command to go to the right directory
+from fed_kits19 directory</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>run_nnUnet_plan_and_preprocess.py<span class="w"> </span>--num_threads<span class="w"> </span><span class="m">1</span>
+</pre></div>
+</div>
+<p>Similarly, you should add the option ‘–debug’ if you used it on the
+previous steps.</p>
+</li>
+</ol>
+<p><strong>Warning:</strong> If you use more threads than your machine has available
+CPUs it, the preprocessing can halt indefinitely. With this
+preprocessing, running the experiments can be very time efficient as it
+saves the preprocessing time for every experiment run.</p>
+</section>
+<section id="using-the-dataset">
+<h2>Using the dataset<a class="headerlink" href="#using-the-dataset" title="Link to this heading"></a></h2>
+<p>Now that the dataset is ready for use you can load it using the low or
+high-level API by doing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flamby.datasets.fed_kits19</span> <span class="kn">import</span> <span class="n">FedKits19</span>
+
+<span class="c1"># To load the first center as a pytorch dataset</span>
+<span class="n">center0</span> <span class="o">=</span> <span class="n">FedKits19</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># To load the second center as a pytorch dataset</span>
+<span class="n">center1</span> <span class="o">=</span> <span class="n">FedKits19</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># To load the 3rd center ...</span>
+
+<span class="c1"># To sample batches from each of the local datasets use the traditional pytorch API</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span> <span class="k">as</span> <span class="n">dl</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">dl</span><span class="p">(</span><span class="n">center0</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>More informations on how to train model and handle flamby datasets in
+general are available in the <a class="reference internal" href="quickstart.html"><span class="doc">Quickstart</span></a></p>
+</section>
+<section id="pooled-experiment">
+<h2>Pooled Experiment<a class="headerlink" href="#pooled-experiment" title="Link to this heading"></a></h2>
+<p>To run a pooled strategy with GPUs, run the following command in the
+‘flamby/datasets/fed_kits19’ directory,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>benchmark.py<span class="w"> </span>--GPU<span class="w"> </span><span class="nv">$GPU_ID</span>
+</pre></div>
+</div>
+<p>$GPU_ID should contain the GPU number that will be used to perform
+training, for example, 3 can be an example of $GPU_ID if you want to
+run the pooled strategy on ‘cuda:3’. If you don’t have a GPU, then –GPU
+argument can be skipped and the following command can be used,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>benchmark.py
+</pre></div>
+</div>
+<p>Note that estimated memory requirement for this training is around 14.5
+GB.</p>
+</section>
+<section id="citation">
+<h2>Citation:<a class="headerlink" href="#citation" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>@article<span class="o">{</span>isensee2018nnu,
+<span class="w">  </span><span class="nv">title</span><span class="o">={</span>nnu-net:<span class="w"> </span>Self-adapting<span class="w"> </span>framework<span class="w"> </span><span class="k">for</span><span class="w"> </span>u-net-based<span class="w"> </span>medical<span class="w"> </span>image<span class="w"> </span>segmentation<span class="o">}</span>,
+<span class="w">  </span><span class="nv">author</span><span class="o">={</span>Isensee,<span class="w"> </span>Fabian<span class="w"> </span>and<span class="w"> </span>Petersen,<span class="w"> </span>Jens<span class="w"> </span>and<span class="w"> </span>Klein,<span class="w"> </span>Andre<span class="w"> </span>and<span class="w"> </span>Zimmerer,<span class="w"> </span>David<span class="w"> </span>and<span class="w"> </span>Jaeger,<span class="w"> </span>Paul<span class="w"> </span>F<span class="w"> </span>and<span class="w"> </span>Kohl,<span class="w"> </span>Simon<span class="w"> </span>and<span class="w"> </span>Wasserthal,<span class="w"> </span>Jakob<span class="w"> </span>and<span class="w"> </span>Koehler,<span class="w"> </span>Gregor<span class="w"> </span>and<span class="w"> </span>Norajitra,<span class="w"> </span>Tobias<span class="w"> </span>and<span class="w"> </span>Wirkert,<span class="w"> </span>Sebastian<span class="w"> </span>and<span class="w"> </span>others<span class="o">}</span>,
+<span class="w">  </span><span class="nv">journal</span><span class="o">={</span>arXiv<span class="w"> </span>preprint<span class="w"> </span>arXiv:1809.10486<span class="o">}</span>,
+<span class="w">  </span><span class="nv">year</span><span class="o">={</span><span class="m">2018</span><span class="o">}</span>
+<span class="o">}</span>
+
+@misc<span class="o">{</span>isensee2020batchgenerators,
+<span class="w">  </span><span class="nv">title</span><span class="o">={</span>batchgenerators—a<span class="w"> </span>python<span class="w"> </span>framework<span class="w"> </span><span class="k">for</span><span class="w"> </span>data<span class="w"> </span>augmentation.<span class="w"> </span><span class="m">2020</span><span class="o">}</span>,
+<span class="w">  </span><span class="nv">author</span><span class="o">={</span>Isensee,<span class="w"> </span>F<span class="w"> </span>and<span class="w"> </span>J<span class="o">{</span><span class="se">\&quot;</span>a<span class="o">}</span>ger,<span class="w"> </span>P<span class="w"> </span>and<span class="w"> </span>Wasserthal,<span class="w"> </span>J<span class="w"> </span>and<span class="w"> </span>Zimmerer,<span class="w"> </span>D<span class="w"> </span>and<span class="w"> </span>Petersen,<span class="w"> </span>J<span class="w"> </span>and<span class="w"> </span>Kohl,<span class="w"> </span>S<span class="w"> </span>and<span class="w"> </span>others<span class="o">}</span>,
+<span class="w">  </span><span class="nv">year</span><span class="o">={</span><span class="m">2020</span><span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fed_lidc.html" class="btn btn-neutral float-left" title="Fed-LIDC-IDRI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="substra.html" class="btn btn-neutral float-right" title="Using FLamby with Substra" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reproduction instructions &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="FAQ" href="faq.html" />
+    <link rel="prev" title="Containerized execution" href="docker.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Reproduction instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#heterogeneity-plots">Heterogeneity plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#results-plots">Results plots</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Reproduction instructions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/reproducing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="reproduction-instructions">
+<h1>Reproduction instructions<a class="headerlink" href="#reproduction-instructions" title="Link to this heading"></a></h1>
+<section id="heterogeneity-plots">
+<h2>Heterogeneity plots<a class="headerlink" href="#heterogeneity-plots" title="Link to this heading"></a></h2>
+<p>Most plots from the article can be reproduced using the following
+commands after having downloaded the corresponding datasets:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="fed_tcga_brca.html"><span class="doc">Fed-TCGA-BRCA</span></a></p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">flamby</span><span class="o">/</span><span class="n">datasets</span><span class="o">/</span><span class="n">fed_tcga_brca</span>
+<span class="n">python</span> <span class="n">plot_kms</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<ul>
+<li><p><a class="reference internal" href="fed_lidc.html"><span class="doc">Fed-LIDC-IDRI</span></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">flamby</span><span class="o">/</span><span class="n">datasets</span><span class="o">/</span><span class="n">fed_lidc_idri</span>
+<span class="n">python</span> <span class="n">lidc_heterogeneity_plot</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+<li><p><a class="reference internal" href="fed_isic.html"><span class="doc">Fed-ISIC 2019</span></a></p></li>
+</ul>
+<p><strong>In order to exactly reproduce the plot in the article</strong>, one needs to
+first deactivate color constancy normalization when preprocessing the
+dataset (change <code class="docutils literal notranslate"><span class="pre">cc</span></code> to <code class="docutils literal notranslate"><span class="pre">False</span></code> in <code class="docutils literal notranslate"><span class="pre">resize_images.py</span></code>) while
+following download and preprocessing instructions (in <a class="reference internal" href="fed_isic.html"><span class="doc">Fed-ISIC 2019</span></a>).
+Hence one might have to download the dataset a second time, if it was already
+downloaded, and therefore to potentially update
+<code class="docutils literal notranslate"><span class="pre">dataset_location.yaml</span></code> files accordingly.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">flamby</span><span class="o">/</span><span class="n">datasets</span><span class="o">/</span><span class="n">fed_isic2019</span>
+<span class="n">python</span> <span class="n">heterogeneity_pic</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<ul>
+<li><p><a class="reference internal" href="fed_ixi.html"><span class="doc">Fed-IXI</span></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">flamby</span><span class="o">/</span><span class="n">datasets</span><span class="o">/</span><span class="n">fed_ixi</span>
+<span class="n">python</span> <span class="n">ixi_plotting</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+<li><p><a class="reference internal" href="fed_kits19.html"><span class="doc">Fed-KiTS19</span></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">flamby</span><span class="o">/</span><span class="n">datasets</span><span class="o">/</span><span class="n">fed_kits19</span><span class="o">/</span><span class="n">dataset_creation_scripts</span>
+<span class="n">python</span> <span class="n">kits19_heterogenity_plot</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+<li><p><a class="reference internal" href="fed_heart.html"><span class="doc">Fed-Heart Disease</span></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">flamby</span><span class="o">/</span><span class="n">datasets</span><span class="o">/</span><span class="n">fed_heart_disease</span>
+<span class="n">python</span> <span class="n">heterogeneity_plot</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+<li><p><a class="reference internal" href="fed_camelyon.html"><span class="doc">Fed-Camelyon16</span></a></p></li>
+</ul>
+<p>First concatenate as many 224x224 image patches extracted from regions
+on the slides containing matter from Hospital 0 and Hospital 1 (see what
+is done in the <a class="reference external" href="https://github.com/owkin/FLamby/blob/main/flamby/datasets/fed_camelyon16/dataset_creation_scripts/tiling_slides.py">tiling
+script</a>
+to collect image patches) as can be fit in the RAM. Then compute both
+histograms <strong>per-color-channel</strong> using 256 equally sized bins with the
+<code class="docutils literal notranslate"><span class="pre">np.histogram</span></code> function with <code class="docutils literal notranslate"><span class="pre">density=True</span></code>. Then save the results
+respectively as: histogram_0.npy, histogram_1.npy and bins_0.npy.
+Once this is done run in the current directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cp</span> <span class="o">-</span><span class="n">t</span> <span class="n">flamby</span><span class="o">/</span><span class="n">datasets</span><span class="o">/</span><span class="n">fed_camelyon16</span> <span class="n">histograms_</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span><span class="o">.</span><span class="n">npy</span> <span class="n">bins_0</span><span class="o">.</span><span class="n">npy</span>
+<span class="n">cd</span> <span class="n">flamby</span><span class="o">/</span><span class="n">datasets</span><span class="o">/</span><span class="n">fed_camelyon16</span>
+<span class="n">python</span> <span class="n">plot_camelyon16_histogram</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</section>
+<section id="results-plots">
+<h2>Results plots<a class="headerlink" href="#results-plots" title="Link to this heading"></a></h2>
+<p>The results are stored in <code class="docutils literal notranslate"><span class="pre">flamby/results</span></code> in corresponding subfolders
+<code class="docutils literal notranslate"><span class="pre">results_benchmark_fed_dataset</span></code> for each dataset. These results can be
+plotted using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">plot_results</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>which produces the plot found at the end of the main article.</p>
+<p>In order to re-run each of the benchmark on your machine, first download
+the dataset you are interested in (be mindful that you might have to specify
+another option to <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span></code> to install additional requirements
+if you had chosen a lightweight installation).
+and then run the following command replacing <code class="docutils literal notranslate"><span class="pre">config_dataset.json</span></code> by one of the listed config files
+(<code class="docutils literal notranslate"><span class="pre">config_camelyon16.json</span></code>, <code class="docutils literal notranslate"><span class="pre">config_heart_disease.json</span></code>,
+<code class="docutils literal notranslate"><span class="pre">config_isic2019.json</span></code>, <code class="docutils literal notranslate"><span class="pre">config_ixi.json</span></code>, <code class="docutils literal notranslate"><span class="pre">config_kits19.json</span></code>,
+<code class="docutils literal notranslate"><span class="pre">config_lidc_idri.json</span></code>, <code class="docutils literal notranslate"><span class="pre">config_tcga_brca.json</span></code>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">flamby</span><span class="o">/</span><span class="n">benchmarks</span>
+<span class="n">python</span> <span class="n">fed_benchmark</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">seed</span> <span class="mi">42</span> <span class="o">-</span><span class="n">cfp</span> <span class="o">../</span><span class="n">config_dataset</span><span class="o">.</span><span class="n">json</span>
+<span class="n">python</span> <span class="n">fed_benchmark</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">seed</span> <span class="mi">43</span> <span class="o">-</span><span class="n">cfp</span> <span class="o">../</span><span class="n">config_dataset</span><span class="o">.</span><span class="n">json</span>
+<span class="n">python</span> <span class="n">fed_benchmark</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">seed</span> <span class="mi">44</span> <span class="o">-</span><span class="n">cfp</span> <span class="o">../</span><span class="n">config_dataset</span><span class="o">.</span><span class="n">json</span>
+<span class="n">python</span> <span class="n">fed_benchmark</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">seed</span> <span class="mi">45</span> <span class="o">-</span><span class="n">cfp</span> <span class="o">../</span><span class="n">config_dataset</span><span class="o">.</span><span class="n">json</span>
+<span class="n">python</span> <span class="n">fed_benchmark</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">seed</span> <span class="mi">46</span> <span class="o">-</span><span class="n">cfp</span> <span class="o">../</span><span class="n">config_dataset</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+</div>
+<p>The config lists all hyperparameters used for each FL strategy.
+Note that this can be excessively long for some datasets.</p>
+<p>We have observed that results vary from machine to machine and are
+sensitive to GPU randomness. However you should be able to reproduce the
+results up to some variance and results on the same machine should be
+perfecty reproducible. Please open an issue if it is not the case. The
+script <code class="docutils literal notranslate"><span class="pre">extract_config.py</span></code> allows to go from a results file to a
+<code class="docutils literal notranslate"><span class="pre">config.py</span></code>.
+To fo further into reproducibility you can try the <a class="reference internal" href="docker.html"><span class="doc">Containerized execution</span></a> section.</p>
+<p>Note that the communication budget in terms of rounds might be insufficient
+for full convergence of the model. A quick fix would be simply to use more rounds,
+(see the <a class="reference internal" href="quickstart.html"><span class="doc">Quickstart</span></a> section to learn how to change parameters).
+Otherwise try different parameters such as learning rates !
+All strategy-specific HP can be found in the <a class="reference internal" href="strategies.html"><span class="doc">FL Strategies</span></a> API doc.</p>
+<p>More involved modifications such as using learning rate schedulers might be needed to
+obtain optimal results but it would require to slightly modify the strategy code.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="docker.html" class="btn btn-neutral float-left" title="Containerized execution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="faq.html" class="btn btn-neutral float-right" title="FAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

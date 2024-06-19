@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using FLamby with Fed-BioMed &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Using FLamby with FedML" href="fedml.html" />
+    <link rel="prev" title="Using FLamby with Substra" href="substra.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using FLamby with Fed-BioMed</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fed-biomed-installation">Fed-BioMed installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#first-node">First node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rd-node">3rd node</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#notebook-researcher-side">Notebook (researcher side)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Using FLamby with Fed-BioMed</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/fedbiomed.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="using-flamby-with-fed-biomed">
+<h1>Using FLamby with Fed-BioMed<a class="headerlink" href="#using-flamby-with-fed-biomed" title="Link to this heading"></a></h1>
+<p>This document highlights how to interface FLamby with
+<a class="reference external" href="https://gitlab.inria.fr/fedbiomed/fedbiomed">Fed-BioMed</a>, the FL
+framework by Inria Sophia.</p>
+<section id="fed-biomed-installation">
+<h2>Fed-BioMed installation<a class="headerlink" href="#fed-biomed-installation" title="Link to this heading"></a></h2>
+<p>Before running the examples below, it is necessary to have Fed-BioMed
+installed on your machine. An easy-to-follow guide is available
+<a class="reference external" href="https://fedbiomed.gitlabpages.inria.fr/latest/tutorials/installation/0-basic-software-installation/">here</a>
+to help you with the process. Please use the branch <code class="docutils literal notranslate"><span class="pre">poc/flamby</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">poc</span><span class="o">/</span><span class="n">flamby</span>
+</pre></div>
+</div>
+<p>In addition, it is also necessary to have a local version of the FLamby
+package on your computer already installed in editable mode and to have
+downloaded the required dataset.s (see Getting started section).</p>
+<p>Once Fed-BioMed is installed alongside FLamby, we need to first update
+all fedbiomed’s conda environments’ yaml config files. Go to the
+fedbiomed directory and cd into the conda environments folder:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">where</span><span class="o">/</span><span class="ow">is</span><span class="o">/</span><span class="n">installed</span><span class="o">/</span><span class="n">fedbiomed</span><span class="o">/</span><span class="n">envs</span><span class="o">/</span><span class="n">development</span><span class="o">/</span><span class="n">conda</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>Open both fedbiomed-node(-macosx).yaml &amp;
+fedbiomed-researcher(-macosx).yaml into a text editor or IDE and add the
+following line under pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="o">-</span><span class="n">e</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">towards</span><span class="o">/</span><span class="n">your</span><span class="o">/</span><span class="n">editable</span><span class="o">/</span><span class="n">installation</span><span class="o">/</span><span class="n">of</span><span class="o">/</span><span class="n">FLamby</span>
+</pre></div>
+</div>
+<p>Then run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${FEDBIOMED_DIR}/scripts/fedbiomed_environment clean
+${FEDBIOMED_DIR}/scripts/configure_conda
+ ```
+ At the end you should have access to 3 new conda environments.
+ You can test your installation by doing:
+ ```
+conda activate fedbiomed-researcher
+ipython
+import flamby
+exit()
+</pre></div>
+</div>
+<p>If the import goes through the installation is working. ## Launching
+Fed-BioMed components (FLamby datasets configuration)</p>
+<p>An important thing to know is that the procedure to configure all FLamby
+datasets in Fed-BioMed is similar. Regardless of the dataset, the same
+components will be set up each time (the network, a certain number of
+nodes, and the researcher).</p>
+<p>Firstable, make sure you have downloaded and installed the FLamby
+dataset you want to use: there should be a <code class="docutils literal notranslate"><span class="pre">dataset_location.yaml</span></code>
+file inside the FLamby repository in the <code class="docutils literal notranslate"><span class="pre">dataset_creation_scripts</span></code>
+folder of the corresponding dataset.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cat</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">towards</span><span class="o">/</span><span class="n">flamby</span><span class="o">/</span><span class="k">as</span><span class="o">/</span><span class="n">given</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">conda</span><span class="o">/</span><span class="n">FLamby</span><span class="o">/</span><span class="n">flamby</span><span class="o">/</span><span class="n">datasets</span><span class="o">/</span><span class="n">fed_ixi</span><span class="o">/</span><span class="n">dataset_creation_scripts</span>
+</pre></div>
+</div>
+<p>Should display:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_path</span><span class="p">:</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">towards</span><span class="o">/</span><span class="n">downloaded</span><span class="o">/</span><span class="n">ixi</span>
+<span class="n">download_complete</span><span class="p">:</span> <span class="n">true</span>
+<span class="n">preprocessing_complete</span><span class="p">:</span> <span class="n">true</span>
+</pre></div>
+</div>
+<p>The first step is to launch the network, by entering the following
+command on your terminal:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${FEDBIOMED_DIR}/scripts/fedbiomed_run network
+</pre></div>
+</div>
+<p>Once the network is deployed, you will have to create as many nodes as
+there are centers in the FLamby dataset you want to use. In this example
+we’ll use IXI that has <strong>3</strong> centers, meaning that <strong>3</strong> nodes have to
+be created.</p>
+<section id="first-node">
+<h3>First node<a class="headerlink" href="#first-node" title="Link to this heading"></a></h3>
+<p>Enter this command to create the <strong>1st</strong> node :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${FEDBIOMED_DIR}/scripts/fedbiomed_run node add
+</pre></div>
+</div>
+<p>Select FLamby option (6) and the IXI dataset (5) through the CLI menu.
+Then enter a name and a description. You are free to write anything that
+goes through your mind except for the <strong>tag</strong>. <strong>All nodes need to share
+the same tag</strong> and this tag needs to be passed to the experiment. In
+this example we will choose <code class="docutils literal notranslate"><span class="pre">ixi</span></code> for the tag, so write ixi in the CLI
+and enter. The last step is to input the center id of the center
+corresponding to the node, as this is the first node we’ll write 0 as
+FLamby uses python indexing. So write 0 and enter. Once everything is
+validated you can now launch this node with the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${FEDBIOMED_DIR}/scripts/fedbiomed_run node start
+</pre></div>
+</div>
+<p>We will now do the same for the second and 3rd node, however it is of
+the utmost importance to <strong>use different shells for each node</strong>. ###
+Second node</p>
+<p>Open a new terminal and run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config2.ini add
+</pre></div>
+</div>
+<p>As with the first node select FLamby and IXI dataset, enter a name and a
+description. Enter <code class="docutils literal notranslate"><span class="pre">ixi</span></code> for the tag and select 1 for the center id to
+deploy the second node. Then similarly run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config2.ini start
+</pre></div>
+</div>
+</section>
+<section id="rd-node">
+<h3>3rd node<a class="headerlink" href="#rd-node" title="Link to this heading"></a></h3>
+<p>Open a new terminal and run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config3.ini add
+</pre></div>
+</div>
+<p>As with the first node select FLamby and IXI dataset, enter a name and a
+description. Enter <code class="docutils literal notranslate"><span class="pre">ixi</span></code> for the tag and select 2 for the center id to
+deploy the third and final node. Then similarly run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${FEDBIOMED_DIR}/scripts/fedbiomed_run node config config3.ini start
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">Congratulations, the IXI example in the researcher notebook can now be
+run!</div>
+<div class="line">Feel free to follow the same steps to configure other FLamby datasets.</div>
+</div>
+</section>
+</section>
+<section id="notebook-researcher-side">
+<h2>Notebook (researcher side)<a class="headerlink" href="#notebook-researcher-side" title="Link to this heading"></a></h2>
+<p>We need to send commands to the nodes that are already up we will use
+the researcher environment. You can now activate the conda environment
+of the researcher by running:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">activate</span> <span class="n">fedbiomed</span><span class="o">-</span><span class="n">researcher</span>
+</pre></div>
+</div>
+<p>Then the simplest way is to use ipython or jupyter to copy-paste the
+commands below:</p>
+<p>The first step is to create a class inheriting from Fed-BioMed’s
+<code class="docutils literal notranslate"><span class="pre">TorchTrainingPlan</span></code>. This class should have different attributes: -
+model - loss - optimizer</p>
+<p>This is very similar in spirit to FLamby’s strategies. We, then, should
+implement the forward of the model in the method <code class="docutils literal notranslate"><span class="pre">training_step</span></code>. For
+this, we just have to write the class using one of FLamby’s dataset’s
+set of arguments. The only difficulty is to also take care of the
+serialization process (what happens when you pickle a class, send it to
+a distant computer and reload it into a different runtime). In order to
+do that we just have to copy the FLamby’s import and to give it to the
+<code class="docutils literal notranslate"><span class="pre">add_dependency</span></code> method from the parent class.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># We import the TorchTrainingPlan class from fedbiomed</span>
+<span class="kn">from</span> <span class="nn">fedbiomed.common.training_plans</span> <span class="kn">import</span> <span class="n">TorchTrainingPlan</span>
+<span class="c1"># We import all flamby utilities, the model, loss, batch_size and optimizer details</span>
+<span class="kn">from</span> <span class="nn">flamby.datasets.fed_ixi</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Baseline</span><span class="p">,</span> <span class="n">BaselineLoss</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">LR</span><span class="p">,</span> <span class="n">get_nb_max_rounds</span><span class="p">)</span>
+<span class="c1"># We create a class inheriting from TorchTrainingPlan reimplementing</span>
+<span class="c1"># the training step method and filling the necessary class attributes from FLamby</span>
+<span class="c1"># information</span>
+<span class="k">class</span> <span class="nc">FLambyTrainingPlan</span><span class="p">(</span><span class="n">TorchTrainingPlan</span><span class="p">):</span>
+    <span class="c1"># Init of UNetTrainingPlan</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_args</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">Baseline</span><span class="p">()</span> <span class="c1"># UNet model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="n">BaselineLoss</span><span class="p">()</span> <span class="c1"># Dice loss</span>
+        <span class="c1"># As we will be serializing the instance, we need the distant machine</span>
+        <span class="c1"># to have made the same imports as we did in order to deserialize the</span>
+        <span class="c1"># object without error.</span>
+        <span class="c1"># This will be the case for TorchTrainingPlan but not for FLamby</span>
+        <span class="c1"># so we add it below</span>
+        <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;from flamby.datasets.fed_ixi import (Baseline,</span><span class="se">\</span>
+<span class="s1">                BaselineLoss,</span><span class="se">\</span>
+<span class="s1">                Optimizer)&#39;</span><span class="p">,]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">deps</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">Optimizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="c1"># We implement the forward and return the loss</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span>
+</pre></div>
+</div>
+<p>You can go and copy-paste the code above in ipython.</p>
+<p>Fed-BioMed requires to pass the <code class="docutils literal notranslate"><span class="pre">batch_size</span></code>, <code class="docutils literal notranslate"><span class="pre">learning</span> <span class="pre">rate</span></code> and
+number of local <code class="docutils literal notranslate"><span class="pre">epochs</span></code> directly into the experiment abstraction. In
+FLamby the strategies abstraction fuse the TrainingPlan and the
+experiment. Copy-paste the code below in your notebook or interactive
+shell:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># We create a dictionary of FedBioMed kwargs with the: batch_size, learning-rate and epochs.</span>
+<span class="c1"># Fed-BioMed also counts local training steps in batch-updates (change currently made in the following branch of Fed-BioMed):</span>
+<span class="c1"># https://gitlab.inria.fr/fedbiomed/fedbiomed/-/tree/poc/flamby (will be integrated to master very soon)</span>
+<span class="c1"># In this example we set this parameter to 100, as in the FLamby benchmarks</span>
+<span class="n">training_args</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="n">BATCH_SIZE</span><span class="p">,</span>
+    <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="n">LR</span><span class="p">,</span>
+    <span class="s1">&#39;num_updates&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>We are now ready to launch an experiment doing 5 rounds of
+FederatedAveraging. We will instantiate the experiment abstraction and
+give it: the class from above, the <code class="docutils literal notranslate"><span class="pre">training_args</span></code> and the
+<code class="docutils literal notranslate"><span class="pre">FedAverage</span></code> aggregator. Copy-paste and execute the code below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fedbiomed.researcher.experiment</span> <span class="kn">import</span> <span class="n">Experiment</span>
+<span class="kn">from</span> <span class="nn">fedbiomed.researcher.aggregators.fedavg</span> <span class="kn">import</span> <span class="n">FedAverage</span>
+<span class="c1"># This is just a handle to access the available nodes that we tagged with ixi</span>
+<span class="n">tags</span> <span class="o">=</span>  <span class="p">[</span><span class="s1">&#39;ixi&#39;</span><span class="p">]</span>
+<span class="n">num_rounds</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">exp</span> <span class="o">=</span> <span class="n">Experiment</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
+                 <span class="n">model_class</span><span class="o">=</span><span class="n">FLambyTrainingPlan</span><span class="p">,</span>
+                 <span class="n">training_args</span><span class="o">=</span><span class="n">training_args</span><span class="p">,</span>
+                 <span class="n">round_limit</span><span class="o">=</span><span class="n">num_rounds</span><span class="p">,</span>
+                 <span class="n">aggregator</span><span class="o">=</span><span class="n">FedAverage</span><span class="p">(),</span>
+                <span class="p">)</span>
+</pre></div>
+</div>
+<p>Now the last step to launch the simulated Federated Learning between the
+different nodes is to run the experiment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">exp</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Once the nodes have finished training the model, we can load it in the
+researcher runtime and evaluate its performances:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># We retrieve the model architecture from the experiment:</span>
+<span class="n">fed_model_ixi</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">model_instance</span><span class="p">()</span>
+<span class="c1"># We load the weights corresponding to the last round</span>
+<span class="n">fed_model_ixi</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">aggregated_params</span><span class="p">()[</span><span class="n">num_rounds</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="s1">&#39;params&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>We can then evaluate it using traditional FLamby’s evaluation scripts:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">flamby.utils</span> <span class="kn">import</span> <span class="n">evaluate_model_on_tests</span>
+<span class="kn">from</span> <span class="nn">flamby.datasets.fed_ixi</span> <span class="kn">import</span> <span class="n">metric</span><span class="p">,</span> <span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">FedIXITiny</span>
+
+<span class="c1"># We load the test datasets</span>
+<span class="n">test_dataloader_ixi_client0</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">FedIXITiny</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span><span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">)</span>
+<span class="n">test_dataloader_ixi_client1</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">FedIXITiny</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span><span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">)</span>
+<span class="n">test_dataloader_ixi_client2</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">FedIXITiny</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span><span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">)</span>
+
+<span class="c1"># We evaluate the model on them</span>
+<span class="n">evaluate_model_on_tests</span><span class="p">(</span><span class="n">fed_model_ixi</span><span class="p">,</span>
+                        <span class="p">[</span><span class="n">test_dataloader_ixi_client0</span><span class="p">,</span>
+                         <span class="n">test_dataloader_ixi_client1</span><span class="p">,</span>
+                         <span class="n">test_dataloader_ixi_client2</span><span class="p">],</span>
+                        <span class="n">metric</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>One can change the number of round or the number of updates and continue
+launching jobs. One can also use clean the environment and get ready to
+use other datasets.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="substra.html" class="btn btn-neutral float-left" title="Using FLamby with Substra" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fedml.html" class="btn btn-neutral float-right" title="Using FLamby with FedML" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

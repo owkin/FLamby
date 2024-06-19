@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fed-ISIC 2019 &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Fed-Camelyon16" href="fed_camelyon.html" />
+    <link rel="prev" title="Fed-IXI" href="fed_ixi.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Fed-ISIC 2019</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dataset-description">Dataset description</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#license">License</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ethics">Ethics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#data">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#image-preprocessing">Image preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-dataset">Using the dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#baseline-training-and-evaluation-in-a-pooled-setting">Baseline training and evaluation in a pooled setting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Fed-ISIC 2019</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/fed_isic.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fed-isic-2019">
+<h1>Fed-ISIC 2019<a class="headerlink" href="#fed-isic-2019" title="Link to this heading"></a></h1>
+<p>The dataset used in this repo comes from the <a class="reference external" href="https://challenge.isic-archive.com/landing/2019/">ISIC2019
+challenge</a> and the
+<a class="reference external" href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T">HAM1000
+database</a>.
+We do not own the copyright of the data, everyone using those datasets
+should abide by their licences (see below) and give proper attribution
+to the original authors.</p>
+<section id="dataset-description">
+<h2>Dataset description<a class="headerlink" href="#dataset-description" title="Link to this heading"></a></h2>
+<p>The following table provides a data sheet:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>Dataset description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Description</p></td>
+<td><p>Dataset from the ISIC 2019 challenge, we keep images for
+which the datacenter can be extracted.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Dataset</p></td>
+<td><p>23,247 images of skin lesions ((9930/2483), (3163/791),
+(2691/672), (1807/452), (655/164), (351/88))</p></td>
+</tr>
+<tr class="row-even"><td><p>Centers</p></td>
+<td><p>6 centers (BCN, HAM_vidir_molemax, HAM_vidir_modern,
+HAM_rosendahl, MSK, HAM_vienna_dias)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Task</p></td>
+<td><p>Multiclass image classification</p></td>
+</tr>
+</tbody>
+</table>
+<section id="license">
+<h3>License<a class="headerlink" href="#license" title="Link to this heading"></a></h3>
+<p>The <a class="reference external" href="https://challenge.isic-archive.com/data/">full licence</a> for
+ISIC2019 is CC-BY-NC 4.0.</p>
+<p>In order to extract the origins of the images in the HAM10000 Dataset
+(cited above), we store in this repository a copy of <a class="reference external" href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T">the original
+HAM10000 metadata
+file</a>.
+Please find attached the link to the <a class="reference external" href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T&amp;version=3.0&amp;selectTab=termsTab">full licence and dataset
+terms</a>
+for the HAM10000 Dataset.</p>
+<p>Please first accept the licences on the HAM10000 and ISIC2019 dataset
+pages before going through the following steps.</p>
+</section>
+<section id="ethics">
+<h3>Ethics<a class="headerlink" href="#ethics" title="Link to this heading"></a></h3>
+<p>As per the <a class="reference external" href="https://challenge.isic-archive.com/terms-of-use/">Terms of
+Use</a> of the
+<a class="reference external" href="https://challenge.isic-archive.com/">website</a> hosting the dataset,
+one of the requirements for this datasets to have been hosted is that it
+is properly de-identified in accordance with the applicable requirements
+and legislations.</p>
+</section>
+</section>
+<section id="data">
+<h2>Data<a class="headerlink" href="#data" title="Link to this heading"></a></h2>
+<p>To download the ISIC 2019 training data and extract the original
+datacenter information for each image, First cd into the
+<code class="docutils literal notranslate"><span class="pre">dataset_creation_scripts</span></code> folder:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>flamby/datasets/fed_isic2019/dataset_creation_scripts
+</pre></div>
+</div>
+<p>then run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">download_isic</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">output</span><span class="o">-</span><span class="n">folder</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">folder</span>
+</pre></div>
+</div>
+<p>The file train_test_split contains the train/test split of the images
+(stratified by center).</p>
+</section>
+<section id="image-preprocessing">
+<h2>Image preprocessing<a class="headerlink" href="#image-preprocessing" title="Link to this heading"></a></h2>
+<p>To preprocess and resize images, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">resize_images</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>This script will resize all images so that the shorter edge of the
+resized image is 224px and the aspect ratio of the input image is
+maintained. <a class="reference external" href="https://en.wikipedia.org/wiki/Color_constancy">Color
+constancy</a> is added in
+the preprocessing.</p>
+<p><strong>Be careful: in order to allow for augmentations, images aspect ratios
+are conserved in the preprocessing so images are rectangular with a
+fixed width so they all have different heights. As a result they cannot
+be batched without cropping them to a square. An example of such a
+cropping strategy can be found in the benchmark found below.</strong></p>
+</section>
+<section id="using-the-dataset">
+<h2>Using the dataset<a class="headerlink" href="#using-the-dataset" title="Link to this heading"></a></h2>
+<p>Now that the dataset is ready for use you can load it using the low or
+high-level API by running in a python shell:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flamby.datasets.fed_isic2019</span> <span class="kn">import</span> <span class="n">FedIsic2019</span>
+
+<span class="c1"># To load the first center as a pytorch dataset</span>
+<span class="n">center0</span> <span class="o">=</span> <span class="n">FedIsic2019</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># To load the second center as a pytorch dataset</span>
+<span class="n">center1</span> <span class="o">=</span> <span class="n">FedIsic2019</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># To load the 3rd center ...</span>
+
+<span class="c1"># To sample batches from each of the local datasets use the traditional pytorch API</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span> <span class="k">as</span> <span class="n">dl</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">dl</span><span class="p">(</span><span class="n">center0</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>More informations on how to train model and handle flamby datasets in
+general are available in the <a class="reference internal" href="quickstart.html"><span class="doc">Quickstart</span></a></p>
+</section>
+<section id="baseline-training-and-evaluation-in-a-pooled-setting">
+<h2>Baseline training and evaluation in a pooled setting<a class="headerlink" href="#baseline-training-and-evaluation-in-a-pooled-setting" title="Link to this heading"></a></h2>
+<p>To train and evaluate a classification model for the pooled dataset,
+run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">GPU</span> <span class="mi">0</span> <span class="o">--</span><span class="n">workers</span> <span class="mi">4</span>
+</pre></div>
+</div>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<p>The “ISIC 2019: Training” is the aggregate of the following datasets:</p>
+<p>BCN_20000 Dataset: (c) Department of Dermatology, Hospital Clínic de
+Barcelona</p>
+<p>HAM10000 Dataset: (c) by ViDIR Group, Department of Dermatology, Medical
+University of Vienna; <a class="reference external" href="https://doi.org/10.1038/sdata.2018.161">HAM10000
+dataset</a></p>
+<p>MSK Dataset: (c) Anonymous; <a class="reference external" href="https://arxiv.org/abs/1710.05006">challenge
+2017</a>; <a class="reference external" href="https://arxiv.org/abs/1902.03368">challenge
+2018</a></p>
+<p>See below the full citations:</p>
+<p>[1] Tschandl P., Rosendahl C. &amp; Kittler H. The HAM10000 dataset, a large
+collection of multi-source dermatoscopic images of common pigmented skin
+lesions. Sci. Data 5, 180161 doi.10.1038/sdata.2018.161 (2018).</p>
+<p>[2] Noel C. F. Codella, David Gutman, M. Emre Celebi, Brian Helba,
+Michael A. Marchetti, Stephen W. Dusza, Aadi Kalloo, Konstantinos
+Liopyris, Nabin Mishra, Harald Kittler, Allan Halpern: “Skin Lesion
+Analysis Toward Melanoma Detection: A Challenge at the 2017
+International Symposium on Biomedical Imaging (ISBI), Hosted by the
+International Skin Imaging Collaboration (ISIC)”, 2017;
+arXiv:1710.05006.</p>
+<p>[3] Marc Combalia, Noel C. F. Codella, Veronica Rotemberg, Brian Helba,
+Veronica Vilaplana, Ofer Reiter, Allan C. Halpern, Susana Puig, Josep
+Malvehy: “BCN20000: Dermoscopic Lesions in the Wild”, 2019;
+arXiv:1908.02288. ## Acknowledgement</p>
+<p>We thank <a class="reference external" href="https://github.com/amaarora">Aman Arora</a> for his
+<a class="reference external" href="https://github.com/amaarora/melonama">implementation</a> and
+<a class="reference external" href="https://amaarora.github.io/2020/08/23/siimisic.html">blog</a> that we
+used as a base for our own code.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fed_ixi.html" class="btn btn-neutral float-left" title="Fed-IXI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fed_camelyon.html" class="btn btn-neutral float-right" title="Fed-Camelyon16" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

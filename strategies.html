@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FL Strategies &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Datasets" href="datasets.html" />
+    <link rel="prev" title="Extending FLamby" href="contributing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">FL Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#federated-averaging">Federated Averaging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flamby.strategies.FedAvg"><code class="docutils literal notranslate"><span class="pre">FedAvg</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.FedAvg.perform_round"><code class="docutils literal notranslate"><span class="pre">FedAvg.perform_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.FedAvg.run"><code class="docutils literal notranslate"><span class="pre">FedAvg.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fedadam">FedAdam</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flamby.strategies.FedAdam"><code class="docutils literal notranslate"><span class="pre">FedAdam</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.FedAdam.calc_aggregated_delta_weights"><code class="docutils literal notranslate"><span class="pre">FedAdam.calc_aggregated_delta_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.FedAdam.perform_round"><code class="docutils literal notranslate"><span class="pre">FedAdam.perform_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.FedAdam.run"><code class="docutils literal notranslate"><span class="pre">FedAdam.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fedyogi">FedYogi</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flamby.strategies.FedYogi"><code class="docutils literal notranslate"><span class="pre">FedYogi</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.FedYogi.calc_aggregated_delta_weights"><code class="docutils literal notranslate"><span class="pre">FedYogi.calc_aggregated_delta_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.FedYogi.perform_round"><code class="docutils literal notranslate"><span class="pre">FedYogi.perform_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.FedYogi.run"><code class="docutils literal notranslate"><span class="pre">FedYogi.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fedadagrad">FedAdagrad</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flamby.strategies.FedAdagrad"><code class="docutils literal notranslate"><span class="pre">FedAdagrad</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.FedAdagrad.calc_aggregated_delta_weights"><code class="docutils literal notranslate"><span class="pre">FedAdagrad.calc_aggregated_delta_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.FedAdagrad.perform_round"><code class="docutils literal notranslate"><span class="pre">FedAdagrad.perform_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.FedAdagrad.run"><code class="docutils literal notranslate"><span class="pre">FedAdagrad.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#cyclic-randomwalk">Cyclic &amp; RandomWalk</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flamby.strategies.Cyclic"><code class="docutils literal notranslate"><span class="pre">Cyclic</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.Cyclic.perform_round"><code class="docutils literal notranslate"><span class="pre">Cyclic.perform_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.Cyclic.run"><code class="docutils literal notranslate"><span class="pre">Cyclic.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fedprox">FedProx</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flamby.strategies.FedProx"><code class="docutils literal notranslate"><span class="pre">FedProx</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.FedProx.perform_round"><code class="docutils literal notranslate"><span class="pre">FedProx.perform_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.FedProx.run"><code class="docutils literal notranslate"><span class="pre">FedProx.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#scaffold">Scaffold</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flamby.strategies.Scaffold"><code class="docutils literal notranslate"><span class="pre">Scaffold</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.Scaffold.perform_round"><code class="docutils literal notranslate"><span class="pre">Scaffold.perform_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flamby.strategies.Scaffold.run"><code class="docutils literal notranslate"><span class="pre">Scaffold.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">FL Strategies</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/strategies.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fl-strategies">
+<h1>FL Strategies<a class="headerlink" href="#fl-strategies" title="Link to this heading"></a></h1>
+<section id="federated-averaging">
+<h2>Federated Averaging<a class="headerlink" href="#federated-averaging" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flamby.strategies.FedAvg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flamby.strategies.</span></span><span class="sig-name descname"><span class="pre">FedAvg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">training_dataloaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_updates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_target_epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_target_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_max_grad_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bits_counting_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./runs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_basename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fed_avg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/strategies/fed_avg.html#FedAvg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.strategies.FedAvg" title="Link to this definition"></a></dt>
+<dd><p>Federated Averaging Strategy class.</p>
+<p>The Federated Averaging strategy is the most simple centralized FL strategy.
+Each client first trains his version of a global model locally on its data,
+the states of the model of each client are then weighted-averaged and returned
+to each client for further training.</p>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://arxiv.org/abs/1602.05629">https://arxiv.org/abs/1602.05629</a></p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>training_dataloaders</strong> (<em>List</em>) – The list of training dataloaders from multiple training centers.</p></li>
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – An initialized torch model.</p></li>
+<li><p><strong>loss</strong> (<em>torch.nn.modules.loss._Loss</em>) – The loss to minimize between the predictions of the model and the
+ground truth.</p></li>
+<li><p><strong>optimizer_class</strong> (<em>torch.optim.Optimizer</em>) – The class of the torch model optimizer to use at each step.</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em>) – The learning rate to be given to the optimizer_class.</p></li>
+<li><p><strong>num_updates</strong> (<em>int</em>) – The number of updates to do on each client at each round.</p></li>
+<li><p><strong>nrounds</strong> (<em>int</em>) – The number of communication rounds to do.</p></li>
+<li><p><strong>dp_target_epsilon</strong> (<em>float</em>) – The target epsilon for (epsilon, delta)-differential
+private guarantee. Defaults to None.</p></li>
+<li><p><strong>dp_target_delta</strong> (<em>float</em>) – The target delta for (epsilon, delta)-differential private
+guarantee. Defaults to None.</p></li>
+<li><p><strong>dp_max_grad_norm</strong> (<em>float</em>) – The maximum L2 norm of per-sample gradients; used to enforce
+differential privacy. Defaults to None.</p></li>
+<li><p><strong>log</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not to store logs in tensorboard. Defaults to False.</p></li>
+<li><p><strong>log_period</strong> (<em>int</em><em>, </em><em>optional</em>) – If log is True then log the loss every log_period batch updates.
+Defauts to 100.</p></li>
+<li><p><strong>bits_counting_function</strong> (<em>Union</em><em>[</em><em>callable</em><em>, </em><em>None</em><em>]</em><em>, </em><em>optional</em>) – A function making sure exchanges respect the rules, this function
+can be obtained by decorating check_exchange_compliance in
+flamby.utils. Should have the signature List[Tensor] -&gt; int.
+Defaults to None.</p></li>
+<li><p><strong>logdir</strong> (<em>str</em><em>, </em><em>optional</em>) – Where logs are stored. Defaults to ./runs.</p></li>
+<li><p><strong>log_basename</strong> (<em>str</em><em>, </em><em>optional</em>) – The basename of the created log_file. Defaults to fed_avg.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.FedAvg.perform_round">
+<span class="sig-name descname"><span class="pre">perform_round</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/strategies/fed_avg.html#FedAvg.perform_round"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.strategies.FedAvg.perform_round" title="Link to this definition"></a></dt>
+<dd><p>Does a single federated averaging round. The following steps will be
+performed:</p>
+<ul class="simple">
+<li><p>each model will be trained locally for num_updates batches.</p></li>
+<li><p>the parameter updates will be collected and averaged. Averages will be
+weighted by the number of samples in each client</p></li>
+<li><p>the averaged updates willl be used to update the local model</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.FedAvg.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/strategies/fed_avg.html#FedAvg.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.strategies.FedAvg.run" title="Link to this definition"></a></dt>
+<dd><p>This method performs self.nrounds rounds of averaging
+and returns the list of models.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="fedadam">
+<h2>FedAdam<a class="headerlink" href="#fedadam" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flamby.strategies.FedAdam">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flamby.strategies.</span></span><span class="sig-name descname"><span class="pre">FedAdam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">training_dataloaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_updates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_target_epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_target_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_max_grad_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bits_counting_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server_learning_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./runs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_basename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fed_adam'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/strategies/fed_opt.html#FedAdam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.strategies.FedAdam" title="Link to this definition"></a></dt>
+<dd><p>FedAdam Strategy class</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://arxiv.org/abs/2003.00295">https://arxiv.org/abs/2003.00295</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>training_dataloaders</strong> (<em>List</em>) – The list of training dataloaders from multiple training centers.</p></li>
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – An initialized torch model.</p></li>
+<li><p><strong>loss</strong> (<em>torch.nn.modules.loss._Loss</em>) – The loss to minimize between the predictions of the model and the
+ground truth.</p></li>
+<li><p><strong>optimizer_class</strong> (<em>torch.optim.Optimizer</em>) – This is the client optimizer, it has to be SGD is FedAdam is chosen
+for the server optimizer. The adaptive logic sits with the server
+optimizer and is coded below with the aggregation.</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em>) – The learning rate to be given to the client optimizer_class.</p></li>
+<li><p><strong>num_updates</strong> (<em>int</em>) – The number of updates to do on each client at each round.</p></li>
+<li><p><strong>nrounds</strong> (<em>int</em>) – The number of communication rounds to do.</p></li>
+<li><p><strong>dp_target_epsilon</strong> (<em>float</em>) – <dl class="simple">
+<dt>The target epsilon for (epsilon, delta)-differential</dt><dd><p>private guarantee. Defaults to None.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>dp_target_delta</strong> (<em>float</em>) – The target delta for (epsilon, delta)-differential
+private guarantee. Defaults to None.</p></li>
+<li><p><strong>dp_max_grad_norm</strong> (<em>float</em>) – The maximum L2 norm of per-sample gradients; used to enforce
+differential privacy. Defaults to None.</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – Seed to use for differential privacy. Defaults to None</p></li>
+<li><p><strong>log</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not to store logs in tensorboard. Defaults to False.</p></li>
+<li><p><strong>log_period</strong> (<em>int</em><em>, </em><em>optional</em>) – If log is True then log the loss every log_period batch updates.
+Defauts to 100.</p></li>
+<li><p><strong>bits_counting_function</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function making sure exchanges respect the rules, this function
+can be obtained by decorating check_exchange_compliance in
+flamby.utils. Should have the signature List[Tensor] -&gt; int.
+Defaults to None.</p></li>
+<li><p><strong>tau</strong> (<em>float</em><em>, </em><em>optional</em>) – adaptivity hyperparameter for the Adam optimizer. Defaults to 1e-3.</p></li>
+<li><p><strong>server_learning_rate</strong> (<em>float</em><em>, </em><em>optional</em>) – The learning rate used by the server optimizer. Defaults to 1e-2.</p></li>
+<li><p><strong>beta1</strong> (<em>float</em><em>, </em><em>optional</em>) – between 0 and 1, momentum parameter. Defaults to 0.9.</p></li>
+<li><p><strong>beta2</strong> (<em>float</em><em>, </em><em>optional</em>) – between 0 and 1, second moment parameter. Defaults to 0.999.</p></li>
+<li><p><strong>logdir</strong> (<em>str</em><em>, </em><em>optional</em>) – The path where to store the logs. Defaults to ./runs.</p></li>
+<li><p><strong>log_basename</strong> (<em>str</em><em>, </em><em>optional</em>) – The basename of the logs that are created. Defaults to fed_adam.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.FedAdam.calc_aggregated_delta_weights">
+<span class="sig-name descname"><span class="pre">calc_aggregated_delta_weights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flamby.strategies.FedAdam.calc_aggregated_delta_weights" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.FedAdam.perform_round">
+<span class="sig-name descname"><span class="pre">perform_round</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/strategies/fed_opt.html#FedAdam.perform_round"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.strategies.FedAdam.perform_round" title="Link to this definition"></a></dt>
+<dd><p>Does a single federated round. The following steps will be
+performed:</p>
+<ul class="simple">
+<li><p>each model will be trained locally for num_updates batches.</p></li>
+<li><p>the parameter updates will be collected and averaged. Averages will be
+weighted by the number of samples in each client.</p></li>
+<li><p>the averaged updates will be processed the same way as Adam or Yogi
+algorithms do in a non-federated setting.</p></li>
+<li><p>the averaged updates will be used to update the local models.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.FedAdam.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flamby.strategies.FedAdam.run" title="Link to this definition"></a></dt>
+<dd><p>This method performs self.nrounds rounds of averaging
+and returns the list of models.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="fedyogi">
+<h2>FedYogi<a class="headerlink" href="#fedyogi" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flamby.strategies.FedYogi">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flamby.strategies.</span></span><span class="sig-name descname"><span class="pre">FedYogi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">training_dataloaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_updates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_target_epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_target_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_max_grad_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bits_counting_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server_learning_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./runs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_basename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fed_yogi'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/strategies/fed_opt.html#FedYogi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.strategies.FedYogi" title="Link to this definition"></a></dt>
+<dd><p>FedYogi Strategy class</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://arxiv.org/abs/2003.00295">https://arxiv.org/abs/2003.00295</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>training_dataloaders</strong> (<em>List</em>) – The list of training dataloaders from multiple training centers.</p></li>
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – An initialized torch model.</p></li>
+<li><p><strong>loss</strong> (<em>torch.nn.modules.loss._Loss</em>) – The loss to minimize between the predictions of the model and the
+ground truth.</p></li>
+<li><p><strong>optimizer_class</strong> (<em>torch.optim.Optimizer</em>) – This is the client optimizer, it has to be SGD is FedAdam is chosen
+for the server optimizer. The adaptive logic sits with the server
+optimizer and is coded below with the aggregation.</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em>) – The learning rate to be given to the client optimizer_class.</p></li>
+<li><p><strong>num_updates</strong> (<em>int</em>) – The number of updates to do on each client at each round.</p></li>
+<li><p><strong>nrounds</strong> (<em>int</em>) – The number of communication rounds to do.</p></li>
+<li><p><strong>dp_target_epsilon</strong> (<em>float</em>) – The target epsilon for (epsilon, delta)-differential
+private guarantee. Defaults to None.</p></li>
+<li><p><strong>dp_target_delta</strong> (<em>float</em>) – The target delta for (epsilon, delta)-differential
+private guarantee. Defaults to None.</p></li>
+<li><p><strong>dp_max_grad_norm</strong> (<em>float</em>) – The maximum L2 norm of per-sample gradients;
+used to enforce differential privacy. Defaults to None.</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – Seed to use for differential privacy. Defaults to None</p></li>
+<li><p><strong>log</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not to store logs in tensorboard. Defaults to False.</p></li>
+<li><p><strong>log_period</strong> (<em>int</em><em>, </em><em>optional</em>) – If log is True then log the loss every log_period batch updates.
+Defauts to 100.</p></li>
+<li><p><strong>bits_counting_function</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function making sure exchanges respect the rules, this function
+can be obtained by decorating check_exchange_compliance in
+flamby.utils. Should have the signature List[Tensor] -&gt; int.
+Defaults to None.</p></li>
+<li><p><strong>tau</strong> (<em>float</em><em>, </em><em>optional</em>) – adaptivity hyperparameter for the Adam optimizer. Defaults to 1e-3.</p></li>
+<li><p><strong>server_learning_rate</strong> (<em>float</em><em>, </em><em>optional</em>) – The learning rate used by the server optimizer. Defaults to 1e-2.</p></li>
+<li><p><strong>beta1</strong> (<em>float</em><em>, </em><em>optional</em>) – between 0 and 1, momentum parameter. Defaults to 0.9.</p></li>
+<li><p><strong>beta2</strong> (<em>float</em><em>, </em><em>optional</em>) – between 0 and 1, second moment parameter. Defaults to 0.999.</p></li>
+<li><p><strong>logdir</strong> (<em>str</em><em>, </em><em>optional</em>) – The path where to store the logs. Defaults to ./runs.</p></li>
+<li><p><strong>log_basename</strong> (<em>str</em><em>, </em><em>optional</em>) – The basename of the logs that are created. Defaults to fed_yogi.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.FedYogi.calc_aggregated_delta_weights">
+<span class="sig-name descname"><span class="pre">calc_aggregated_delta_weights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flamby.strategies.FedYogi.calc_aggregated_delta_weights" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.FedYogi.perform_round">
+<span class="sig-name descname"><span class="pre">perform_round</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/strategies/fed_opt.html#FedYogi.perform_round"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.strategies.FedYogi.perform_round" title="Link to this definition"></a></dt>
+<dd><p>Does a single federated round. The following steps will be
+performed:</p>
+<ul class="simple">
+<li><p>each model will be trained locally for num_updates batches.</p></li>
+<li><p>the parameter updates will be collected and averaged. Averages will be
+weighted by the number of samples in each client.</p></li>
+<li><p>the averaged updates will be processed the same way as Adam or Yogi
+algorithms do in a non-federated setting.</p></li>
+<li><p>the averaged updates will be used to update the local models.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.FedYogi.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flamby.strategies.FedYogi.run" title="Link to this definition"></a></dt>
+<dd><p>This method performs self.nrounds rounds of averaging
+and returns the list of models.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="fedadagrad">
+<h2>FedAdagrad<a class="headerlink" href="#fedadagrad" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flamby.strategies.FedAdagrad">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flamby.strategies.</span></span><span class="sig-name descname"><span class="pre">FedAdagrad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">training_dataloaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_updates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_target_epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_target_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_max_grad_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bits_counting_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server_learning_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./runs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_basename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fed_adagrad'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/strategies/fed_opt.html#FedAdagrad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.strategies.FedAdagrad" title="Link to this definition"></a></dt>
+<dd><p>FedYogi Strategy class</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://arxiv.org/abs/2003.00295">https://arxiv.org/abs/2003.00295</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>training_dataloaders</strong> (<em>List</em>) – The list of training dataloaders from multiple training centers.</p></li>
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – An initialized torch model.</p></li>
+<li><p><strong>loss</strong> (<em>torch.nn.modules.loss._Loss</em>) – The loss to minimize between the predictions of the model and the
+ground truth.</p></li>
+<li><p><strong>optimizer_class</strong> (<em>torch.optim.Optimizer</em>) – This is the client optimizer, it has to be SGD is FedAdam is chosen
+for the server optimizer. The adaptive logic sits with the server
+optimizer and is coded below with the aggregation.</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em>) – The learning rate to be given to the client optimizer_class.</p></li>
+<li><p><strong>num_updates</strong> (<em>int</em>) – The number of updates to do on each client at each round.</p></li>
+<li><p><strong>nrounds</strong> (<em>int</em>) – The number of communication rounds to do.</p></li>
+<li><p><strong>dp_target_epsilon</strong> (<em>float</em>) – <dl class="simple">
+<dt>The target epsilon for (epsilon, delta)-differential</dt><dd><p>private guarantee. Defaults to None.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>dp_target_delta</strong> (<em>float</em>) – The target delta for (epsilon, delta)-differential
+private guarantee. Defaults to None.</p></li>
+<li><p><strong>dp_max_grad_norm</strong> (<em>float</em>) – The maximum L2 norm of per-sample gradients;
+used to enforce differential privacy. Defaults to None.</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – Seed to use for differential privacy. Defaults to None</p></li>
+<li><p><strong>log</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not to store logs in tensorboard. Defaults to False.</p></li>
+<li><p><strong>log_period</strong> (<em>int</em><em>, </em><em>optional</em>) – If log is True then log the loss every log_period batch updates.
+Defauts to 100.</p></li>
+<li><p><strong>bits_counting_function</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function making sure exchanges respect the rules, this function
+can be obtained by decorating check_exchange_compliance in
+flamby.utils. Should have the signature List[Tensor] -&gt; int.
+Defaults to None.</p></li>
+<li><p><strong>tau</strong> (<em>float</em><em>, </em><em>optional</em>) – adaptivity hyperparameter for the Adam optimizer. Defaults to 1e-3.</p></li>
+<li><p><strong>server_learning_rate</strong> (<em>float</em><em>, </em><em>optional</em>) – The learning rate used by the server optimizer. Defaults to 1e-2.</p></li>
+<li><p><strong>beta1</strong> (<em>float</em><em>, </em><em>optional</em>) – between 0 and 1, momentum parameter. Defaults to 0.9.</p></li>
+<li><p><strong>beta2</strong> (<em>float</em><em>, </em><em>optional</em>) – between 0 and 1, second moment parameter. Defaults to 0.999.</p></li>
+<li><p><strong>logdir</strong> (<em>str</em><em>, </em><em>optional</em>) – The path where to store the logs. Defaults to ./runs.</p></li>
+<li><p><strong>log_basename</strong> (<em>str</em><em>, </em><em>optional</em>) – The basename of the logs that are created. Defaults to fed_adagrad.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.FedAdagrad.calc_aggregated_delta_weights">
+<span class="sig-name descname"><span class="pre">calc_aggregated_delta_weights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flamby.strategies.FedAdagrad.calc_aggregated_delta_weights" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.FedAdagrad.perform_round">
+<span class="sig-name descname"><span class="pre">perform_round</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/strategies/fed_opt.html#FedAdagrad.perform_round"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.strategies.FedAdagrad.perform_round" title="Link to this definition"></a></dt>
+<dd><p>Does a single federated round. The following steps will be
+performed:</p>
+<ul class="simple">
+<li><p>each model will be trained locally for num_updates batches.</p></li>
+<li><p>the parameter updates will be collected and averaged. Averages will be
+weighted by the number of samples in each client.</p></li>
+<li><p>the averaged updates will be processed the same way as Adam or Yogi
+algorithms do in a non-federated setting.</p></li>
+<li><p>the averaged updates will be used to update the local models.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.FedAdagrad.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flamby.strategies.FedAdagrad.run" title="Link to this definition"></a></dt>
+<dd><p>This method performs self.nrounds rounds of averaging
+and returns the list of models.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="cyclic-randomwalk">
+<h2>Cyclic &amp; RandomWalk<a class="headerlink" href="#cyclic-randomwalk" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flamby.strategies.Cyclic">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flamby.strategies.</span></span><span class="sig-name descname"><span class="pre">Cyclic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">training_dataloaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_updates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_target_epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_target_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_max_grad_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bits_counting_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic_cycle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_basename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cyclic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./runs'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/strategies/cyclic.html#Cyclic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.strategies.Cyclic" title="Link to this definition"></a></dt>
+<dd><p>Cyclic Weight Transfer Strategy Class.</p>
+<p>Under  the  cyclical weight transfer training strategy,
+the model is transferred, in a cyclic manner, to each client more than once.</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/29617797/">https://pubmed.ncbi.nlm.nih.gov/29617797/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>training_dataloaders</strong> (<em>List</em><em>[</em><em>torch.utils.data.DataLoader</em><em>]</em>) – The list of training dataloaders from multiple training centers.</p></li>
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – An initialized torch model.</p></li>
+<li><p><strong>loss</strong> (<em>torch.nn.modules.loss._Loss</em>) – The loss to minimize between the predictions of the model and the
+ground truth.</p></li>
+<li><p><strong>optimizer_class</strong> (<em>callable torch.optim.Optimizer</em>) – The class of the torch model optimizer to use at each step.</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em>) – The learning rate to be given to the optimizer_class.</p></li>
+<li><p><strong>num_updates</strong> (<em>int</em>) – The number of epochs to do on each client at each round.</p></li>
+<li><p><strong>nrounds</strong> (<em>int</em>) – The number of communication rounds to do.</p></li>
+<li><p><strong>dp_target_epsilon</strong> (<em>float</em>) – <dl class="simple">
+<dt>The target epsilon for (epsilon, delta)-differential</dt><dd><p>private guarantee. Defaults to None.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>dp_target_delta</strong> (<em>float</em>) – <dl class="simple">
+<dt>The target delta for (epsilon, delta)-differential</dt><dd><p>private guarantee. Defaults to None.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>dp_max_grad_norm</strong> (<em>float</em>) – <dl class="simple">
+<dt>The maximum L2 norm of per-sample gradients;</dt><dd><p>used to enforce differential privacy. Defaults to None.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>log</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not to store logs in tensorboard.</p></li>
+<li><p><strong>log_period</strong> (<em>int</em><em>, </em><em>optional</em>)</p></li>
+<li><p><strong>bits_counting_function</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function making sure exchanges respect the rules, this function
+can be obtained by decorating check_exchange_compliance in
+flamby.utils. Should have the signature List[Tensor] -&gt; int</p></li>
+<li><p><strong>deterministic_cycle</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, we cycle through clients in their original order,
+otherwise, the clients are reshuffled at the beginning of every cycle.</p></li>
+<li><p><strong>rng</strong> (<em>np.random._generator.Generator</em><em>, </em><em>optional</em>) – used to reshuffle the clients. Defaults to None.</p></li>
+<li><p><strong>logdir</strong> (<em>str</em><em>, </em><em>optional</em>) – The path where to store the logs if there are some. Defaults to ./runs.</p></li>
+<li><p><strong>log_basename</strong> (<em>str</em>) – The basename of the created log file. Defaults to cyclic.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.Cyclic.perform_round">
+<span class="sig-name descname"><span class="pre">perform_round</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/strategies/cyclic.html#Cyclic.perform_round"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.strategies.Cyclic.perform_round" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.Cyclic.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/strategies/cyclic.html#Cyclic.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.strategies.Cyclic.run" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="fedprox">
+<h2>FedProx<a class="headerlink" href="#fedprox" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flamby.strategies.FedProx">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flamby.strategies.</span></span><span class="sig-name descname"><span class="pre">FedProx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">training_dataloaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_updates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_target_epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_target_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_max_grad_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bits_counting_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_basename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fed_prox'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./runs'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/strategies/fed_prox.html#FedProx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.strategies.FedProx" title="Link to this definition"></a></dt>
+<dd><p>FedProx Strategy class.</p>
+<p>The FedProx strategy is a generalization and re-parametrization of FedAvg that adds
+a proximal term. Each client first trains his version of a global model locally using
+a proximal term, the states of the model of each client are then weighted-averaged
+and returned to each client for further training.</p>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://arxiv.org/abs/1812.06127">https://arxiv.org/abs/1812.06127</a></p></li>
+<li><p><a class="reference external" href="https://github.com/litian96/FedProx">https://github.com/litian96/FedProx</a></p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>training_dataloaders</strong> (<em>List</em>) – The list of training dataloaders from multiple training centers.</p></li>
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – An initialized torch model.</p></li>
+<li><p><strong>loss</strong> (<em>torch.nn.modules.loss._Loss</em>) – The loss to minimize between the predictions of the model and the
+ground truth.</p></li>
+<li><p><strong>optimizer_class</strong> (<em>torch.optim.Optimizer</em>) – The class of the torch model optimizer to use at each step.</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em>) – The learning rate to be given to the optimizer_class.</p></li>
+<li><p><strong>num_updates</strong> (<em>int</em>) – The number of updates to do on each client at each round.</p></li>
+<li><p><strong>nrounds</strong> (<em>int</em>) – The number of communication rounds to do.</p></li>
+<li><p><strong>dp_target_epsilon</strong> (<em>float</em>) – <dl class="simple">
+<dt>The target epsilon for (epsilon, delta)-differential</dt><dd><p>private guarantee. Defaults to None.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>dp_target_delta</strong> (<em>float</em>) – <dl class="simple">
+<dt>The target delta for (epsilon, delta)-differential</dt><dd><p>private guarantee. Defaults to None.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>dp_max_grad_norm</strong> (<em>float</em>) – The maximum L2 norm of per-sample gradients;
+used to enforce differential privacy. Defaults to None.</p></li>
+<li><p><strong>mu</strong> (<em>float</em>) – The mu parameter involved in the proximal term. If mu = 0, then FedProx
+is reduced to FedAvg. Need to be tuned, there are no default mu values
+that would work for all settings.</p></li>
+<li><p><strong>log</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not to store logs in tensorboard. Defaults to False.</p></li>
+<li><p><strong>log_period</strong> (<em>int</em><em>, </em><em>optional</em>) – If log is True then log the loss every log_period batch updates.
+Defauts to 100.</p></li>
+<li><p><strong>bits_counting_function</strong> (<em>Union</em><em>[</em><em>callable</em><em>, </em><em>None</em><em>]</em><em>, </em><em>optional</em>) – A function making sure exchanges respect the rules, this function
+can be obtained by decorating check_exchange_compliance in
+flamby.utils. Should have the signature List[Tensor] -&gt; int.
+Defaults to None.</p></li>
+<li><p><strong>log_basename</strong> (<em>str</em><em>, </em><em>optional</em>) – The basename of the created log file. Defaults to fed_prox.</p></li>
+<li><p><strong>logdir</strong> (<em>str</em><em>, </em><em>optional</em>) – The directory where to store the logs. Defaults to ./runs.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.FedProx.perform_round">
+<span class="sig-name descname"><span class="pre">perform_round</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flamby.strategies.FedProx.perform_round" title="Link to this definition"></a></dt>
+<dd><p>Does a single federated averaging round. The following steps will be
+performed:</p>
+<ul class="simple">
+<li><p>each model will be trained locally for num_updates batches.</p></li>
+<li><p>the parameter updates will be collected and averaged. Averages will be
+weighted by the number of samples in each client</p></li>
+<li><p>the averaged updates willl be used to update the local model</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.FedProx.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flamby.strategies.FedProx.run" title="Link to this definition"></a></dt>
+<dd><p>This method performs self.nrounds rounds of averaging
+and returns the list of models.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="scaffold">
+<h2>Scaffold<a class="headerlink" href="#scaffold" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flamby.strategies.Scaffold">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flamby.strategies.</span></span><span class="sig-name descname"><span class="pre">Scaffold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">training_dataloaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_updates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_target_epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_target_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_max_grad_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server_learning_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bits_counting_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./runs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_basename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scaffold'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/strategies/scaffold.html#Scaffold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.strategies.Scaffold" title="Link to this definition"></a></dt>
+<dd><p>SCAFFOLD Strategy class</p>
+<p>SCAFFOLD is a stateful algorithm which modifies the local update steps of FedAvg
+in order to provably correct for data heterogeneity across clients. If the data
+on each client is very different, their local updates via FedAvg will move in
+different directions. Each client maintains a ‘correction’ which estimates
+this difference between client updates and global average update. This correction
+is added to every local update on the client.
+This is a more efficient implementation of Scaffold whose communication and
+computation requirement exactly matches that of FedAvg.
+The current implementation assumes that SGD is the local optimizer, and that all
+clients participate every round.</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://arxiv.org/abs/1910.06378">https://arxiv.org/abs/1910.06378</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>training_dataloaders</strong> (<em>List</em>) – The list of training dataloaders from multiple training centers.</p></li>
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – An initialized torch model.</p></li>
+<li><p><strong>loss</strong> (<em>torch.nn.modules.loss._Loss</em>) – The loss to minimize between the predictions of the model and the
+ground truth.</p></li>
+<li><p><strong>optimizer_class</strong> (<em>torch.optim.Optimizer</em>) – The class of the torch model optimizer to use at each step.
+It has to be SGD.</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em>) – The learning rate to be given to the clients optimizer_class.</p></li>
+<li><p><strong>num_updates</strong> (<em>int</em>) – The number of updates to do on each client at each round.</p></li>
+<li><p><strong>nrounds</strong> (<em>int</em>) – The number of communication rounds to do.</p></li>
+<li><p><strong>dp_target_epsilon</strong> (<em>float</em>) – The target epsilon for (epsilon, delta)-differential
+private guarantee. Defaults to None.</p></li>
+<li><p><strong>dp_target_delta</strong> (<em>float</em>) – <dl class="simple">
+<dt>The target delta for (epsilon, delta)-differential</dt><dd><p>private guarantee. Defaults to None.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>dp_max_grad_norm</strong> (<em>float</em>) – <dl class="simple">
+<dt>The maximum L2 norm of per-sample gradients;</dt><dd><p>used to enforce differential privacy. Defaults to None.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>server_learning_rate</strong> (<em>float</em>) – The learning rate with which the server’s updates are aggregated.
+Defaults to 1.</p></li>
+<li><p><strong>log</strong> (<em>bool</em>) – Whether or not to store logs in tensorboard. Defaults to False.</p></li>
+<li><p><strong>log_period</strong> (<em>int</em>) – If log is True then log the loss every log_period batch updates.
+Defauts to 100.</p></li>
+<li><p><strong>bits_counting_function</strong> (<em>Union</em><em>[</em><em>callable</em><em>, </em><em>None</em><em>]</em>) – A function making sure exchanges respect the rules, this function
+can be obtained by decorating check_exchange_compliance in
+flamby.utils. Should have the signature List[Tensor] -&gt; int.
+Defaults to None.</p></li>
+<li><p><strong>logdir</strong> (<em>str</em>) – Where to store the logs. Defaulst to ./runs.</p></li>
+<li><p><strong>log_basename</strong> (<em>str</em>) – The basename of the created logfile. Defaulst to scaffold.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.Scaffold.perform_round">
+<span class="sig-name descname"><span class="pre">perform_round</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/strategies/scaffold.html#Scaffold.perform_round"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.strategies.Scaffold.perform_round" title="Link to this definition"></a></dt>
+<dd><p>Does a single federated averaging round. The following steps will be
+performed:</p>
+<ul class="simple">
+<li><p>each model will be trained locally for num_updates batches.</p></li>
+<li><p>the parameter updates will be collected and averaged. Averages will be
+weighted by the number of samples in each client</p></li>
+<li><p>the averaged updates willl be used to update the local model</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flamby.strategies.Scaffold.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flamby.strategies.Scaffold.run" title="Link to this definition"></a></dt>
+<dd><p>This method performs self.nrounds rounds of averaging
+and returns the list of models.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="contributing.html" class="btn btn-neutral float-left" title="Extending FLamby" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="datasets.html" class="btn btn-neutral float-right" title="Datasets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

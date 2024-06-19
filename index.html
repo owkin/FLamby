@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to FLamby’s documentation! &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to FLamby’s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-flamby-s-documentation">
+<h1>Welcome to FLamby’s documentation!<a class="headerlink" href="#welcome-to-flamby-s-documentation" title="Link to this heading"></a></h1>
+<section id="flamby">
+<h2>FLamby<a class="headerlink" href="#flamby" title="Link to this heading"></a></h2>
+<a class="reference internal image-reference" href="_images/logo.png"><img alt="_images/logo.png" class="align-center" src="_images/logo.png" style="width: 512.0px; height: 212.5px;" /></a>
+<p><a class="reference external" href="https://github.com/owkin/FLamby">FLamby</a> <a class="footnote-reference brackets" href="#flamby-meaning" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> is a repository regrouping several distributed datasets
+with natural splits whose aim is to facilitate benchmarking new cross-silo FL strategies on realistic problems.</p>
+<p>You can find a link to the companion paper published at NeurIPS 2022 in the
+Dataset and Benchmark track <a class="reference external" href="https://arxiv.org/abs/2210.04620">here</a></p>
+<p>If you use FLamby please consider citing it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@inproceedings</span><span class="p">{</span><span class="n">NEURIPS2022_232eee8e</span><span class="p">,</span>
+ <span class="n">author</span> <span class="o">=</span> <span class="p">{</span><span class="n">Ogier</span> <span class="n">du</span> <span class="n">Terrail</span><span class="p">,</span> <span class="n">Jean</span> <span class="ow">and</span> <span class="n">Ayed</span><span class="p">,</span> <span class="n">Samy</span><span class="o">-</span><span class="n">Safwan</span> <span class="ow">and</span> <span class="n">Cyffers</span><span class="p">,</span> <span class="n">Edwige</span> <span class="ow">and</span> <span class="n">Grimberg</span><span class="p">,</span> <span class="n">Felix</span> <span class="ow">and</span> <span class="n">He</span><span class="p">,</span> <span class="n">Chaoyang</span> <span class="ow">and</span> <span class="n">Loeb</span><span class="p">,</span> <span class="n">Regis</span> <span class="ow">and</span> <span class="n">Mangold</span><span class="p">,</span> <span class="n">Paul</span> <span class="ow">and</span> <span class="n">Marchand</span><span class="p">,</span> <span class="n">Tanguy</span> <span class="ow">and</span> <span class="n">Marfoq</span><span class="p">,</span> <span class="n">Othmane</span> <span class="ow">and</span> <span class="n">Mushtaq</span><span class="p">,</span> <span class="n">Erum</span> <span class="ow">and</span> <span class="n">Muzellec</span><span class="p">,</span> <span class="n">Boris</span> <span class="ow">and</span> <span class="n">Philippenko</span><span class="p">,</span> <span class="n">Constantin</span> <span class="ow">and</span> <span class="n">Silva</span><span class="p">,</span> <span class="n">Santiago</span> <span class="ow">and</span> <span class="n">Tele</span>\<span class="s1">&#39;</span><span class="si">{n}</span><span class="s1">czuk, Maria and Albarqouni, Shadi and Avestimehr, Salman and Bellet, Aur</span><span class="se">\&#39;</span><span class="si">{e}</span><span class="s1">lien and Dieuleveut, Aymeric and Jaggi, Martin and Karimireddy, Sai Praneeth and Lorenzi, Marco and Neglia, Giovanni and Tommasi, Marc and Andreux, Mathieu},</span>
+ <span class="n">booktitle</span> <span class="o">=</span> <span class="p">{</span><span class="n">Advances</span> <span class="ow">in</span> <span class="n">Neural</span> <span class="n">Information</span> <span class="n">Processing</span> <span class="n">Systems</span><span class="p">},</span>
+ <span class="n">editor</span> <span class="o">=</span> <span class="p">{</span><span class="n">S</span><span class="o">.</span> <span class="n">Koyejo</span> <span class="ow">and</span> <span class="n">S</span><span class="o">.</span> <span class="n">Mohamed</span> <span class="ow">and</span> <span class="n">A</span><span class="o">.</span> <span class="n">Agarwal</span> <span class="ow">and</span> <span class="n">D</span><span class="o">.</span> <span class="n">Belgrave</span> <span class="ow">and</span> <span class="n">K</span><span class="o">.</span> <span class="n">Cho</span> <span class="ow">and</span> <span class="n">A</span><span class="o">.</span> <span class="n">Oh</span><span class="p">},</span>
+ <span class="n">pages</span> <span class="o">=</span> <span class="p">{</span><span class="mi">5315</span><span class="o">--</span><span class="mi">5334</span><span class="p">},</span>
+ <span class="n">publisher</span> <span class="o">=</span> <span class="p">{</span><span class="n">Curran</span> <span class="n">Associates</span><span class="p">,</span> <span class="n">Inc</span><span class="o">.</span><span class="p">},</span>
+ <span class="n">title</span> <span class="o">=</span> <span class="p">{</span><span class="n">FLamby</span><span class="p">:</span> <span class="n">Datasets</span> <span class="ow">and</span> <span class="n">Benchmarks</span> <span class="k">for</span> <span class="n">Cross</span><span class="o">-</span><span class="n">Silo</span> <span class="n">Federated</span> <span class="n">Learning</span> <span class="ow">in</span> <span class="n">Realistic</span> <span class="n">Healthcare</span> <span class="n">Settings</span><span class="p">},</span>
+ <span class="n">url</span> <span class="o">=</span> <span class="p">{</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">proceedings</span><span class="o">.</span><span class="n">neurips</span><span class="o">.</span><span class="n">cc</span><span class="o">/</span><span class="n">paper_files</span><span class="o">/</span><span class="n">paper</span><span class="o">/</span><span class="mi">2022</span><span class="o">/</span><span class="n">file</span><span class="o">/</span><span class="mi">232</span><span class="n">eee8ef411a0a316efa298d7be3c2b</span><span class="o">-</span><span class="n">Paper</span><span class="o">-</span><span class="n">Datasets_and_Benchmarks</span><span class="o">.</span><span class="n">pdf</span><span class="p">},</span>
+ <span class="n">volume</span> <span class="o">=</span> <span class="p">{</span><span class="mi">35</span><span class="p">},</span>
+ <span class="n">year</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2022</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>FLamby is more a dataset suite than a pure code repository. Mainly we provide code to easily access datasets stored in other
+repositories and make them FL-ready. In particular, we do not distribute datasets in this repository, and we do not own
+copyrights on any of the datasets.</p>
+<p>The use of any of the datasets included in FLamby requires accepting its corresponding license on the original website.
+We refer to each corresponding dataset’s sections for more informations on its terms of use.</p>
+<p>For any problem or question with respect to any license related matters, please open <a class="reference external" href="https://github.com/owkin/FLamby/issues">a github issue</a>
+on this repository.</p>
+<p>Before jumping to the <a class="reference internal" href="quickstart.html"><span class="doc">Quickstart</span></a> , make sure FLamby is properly installed following the steps highlighted in
+<a class="reference internal" href="installation.html"><span class="doc">Installation</span></a></p>
+<section id="team">
+<h3>Team<a class="headerlink" href="#team" title="Link to this heading"></a></h3>
+<p>This repository was created thanks to the contributions of many researchers and engineers.
+We list them in the order of the companion article, following the <a class="reference external" href="https://credit.niso.org/">CREDIT
+framework</a>: <a class="reference external" href="https://github.com/jeandut">Jean Ogier du
+Terrail</a>, <a class="reference external" href="https://github.com/AyedSamy">Samy-Safwan
+Ayed</a>, <a class="reference external" href="https://github.com/totilas">Edwige
+Cyffers</a>, <a class="reference external" href="https://github.com/Grim-bot">Felix
+Grimberg</a>, <a class="reference external" href="https://github.com/chaoyanghe">Chaoyang
+He</a>, <a class="reference external" href="https://github.com/regloeb">Régis
+Loeb</a>, <a class="reference external" href="https://github.com/pmangold">Paul
+Mangold</a>, <a class="reference external" href="https://github.com/tanguy-marchand">Tanguy
+Marchand</a>, <a class="reference external" href="https://github.com/omarfoq/">Othmane
+Marfoq</a>, <a class="reference external" href="https://github.com/ErumMushtaq">Erum
+Mushtaq</a>, <a class="reference external" href="https://github.com/BorisMuzellec">Boris
+Muzellec</a>, <a class="reference external" href="https://github.com/philipco">Constantin
+Philippenko</a>, <a class="reference external" href="https://github.com/sssilvar">Santiago
+Silva</a>, <a class="reference external" href="https://github.com/maikia">Maria
+Telenczuk</a>, <a class="reference external" href="https://albarqouni.github.io/">Shadi
+Albarqouni</a>, <a class="reference external" href="https://www.avestimehr.com/">Salman
+Avestimehr</a>, <a class="reference external" href="http://researchers.lille.inria.fr/abellet/">Aurélien
+Bellet</a>, <a class="reference external" href="http://www.cmap.polytechnique.fr/~aymeric.dieuleveut/">Aymeric
+Dieuleveut</a>,
+<a class="reference external" href="https://people.epfl.ch/martin.jaggi">Martin Jaggi</a>, <a class="reference external" href="https://github.com/Saipraneet">Sai Praneeth
+Karimireddy</a>, <a class="reference external" href="https://marcolorenzi.github.io/publications.html">Marco
+Lorenzi</a>, <a class="reference external" href="http://www-sop.inria.fr/members/Giovanni.Neglia/publications.htm">Giovanni
+Neglia</a>,
+<a class="reference external" href="http://researchers.lille.inria.fr/tommasi/#publications">Marc
+Tommasi</a>,
+<a class="reference external" href="https://github.com/mandreux-owkin">Mathieu Andreux</a>.</p>
+</section>
+<section id="acknowledgements">
+<h3>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Link to this heading"></a></h3>
+<p>FLamby’s initiative was made possible thanks to the support of the following
+institutions: - <a class="reference external" href="https://www.owkin.com">Owkin</a> -
+<a class="reference external" href="https://www.inria.fr">Inria</a> - <a class="reference external" href="https://www.polytechnique.edu">Ecole
+polytechnique</a> - <a class="reference external" href="https://www.berkeley.edu/">University of
+California - Berkeley</a> - <a class="reference external" href="https://www.usc.edu/">University of
+Southern California (USC)</a> -
+<a class="reference external" href="https://www.epfl.ch">EPFL</a> - <a class="reference external" href="https://www.ukbonn.de/patient_innen/international/english/">Universitätsklinikum
+Bonn</a></p>
+<p class="rubric">Footnotes</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="flamby-meaning" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
+<p><cite>Federated Learning AMple Benchmark of Your cross-silo strategies</cite></p>
+</aside>
+</aside>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#update-environment">Update environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#in-case-you-don-t-have-the-make-command-e-g-windows-users">In case you don’t have the <code class="docutils literal notranslate"><span class="pre">make</span></code> command (e.g. Windows users)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#datasets">Datasets</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#dataset-example">Dataset example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#local-training-example">Local training example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#federated-learning-training-example">Federated Learning training example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#using-other-flamby-s-datasets">Using other FLamby’s datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#training-and-evaluation-in-a-pooled-setting">Training and evaluation in a pooled setting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#benchmarking-fl-strategies">Benchmarking FL strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#fl-training-and-evaluation">FL training and evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#going-further">Going further</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fed_tcga_brca.html#terms-of-use">Terms of use</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_tcga_brca.html#ethics">Ethics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_tcga_brca.html#dataset-description">Dataset description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_tcga_brca.html#data">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_tcga_brca.html#downloading-and-preprocessing">Downloading and preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_tcga_brca.html#using-the-dataset">Using the dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_tcga_brca.html#baseline-training-and-evaluation-in-a-pooled-setting">Baseline training and evaluation in a pooled setting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fed_heart.html#dataset-description">Dataset description</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fed_heart.html#license-and-data-usage-terms">License and data usage terms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fed_heart.html#ethics">Ethics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fed_heart.html#download-and-preprocessing-instructions">Download and preprocessing instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_heart.html#using-the-dataset">Using the dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_heart.html#benchmarking-the-baseline-on-a-pooled-setting">Benchmarking the baseline on a pooled setting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_heart.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fed_ixi.html#data-citation-and-license">Data Citation and License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_ixi.html#ethics">Ethics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_ixi.html#publication-citation">Publication Citation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_ixi.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_ixi.html#standard-ixi-dataset">Standard IXI Dataset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fed_ixi.html#overview">Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fed_ixi.html#ixi-tiny-dataset">IXI Tiny Dataset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fed_ixi.html#dataset-description">Dataset description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fed_ixi.html#id1">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fed_ixi.html#download">Download</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fed_ixi.html#utilization">Utilization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fed_ixi.html#benchmarking-the-baseline-on-a-pooled-setting">Benchmarking the baseline on a pooled setting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fed_ixi.html#prediction-task">Prediction task</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fed_isic.html#dataset-description">Dataset description</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fed_isic.html#license">License</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fed_isic.html#ethics">Ethics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fed_isic.html#data">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_isic.html#image-preprocessing">Image preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_isic.html#using-the-dataset">Using the dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_isic.html#baseline-training-and-evaluation-in-a-pooled-setting">Baseline training and evaluation in a pooled setting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_isic.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fed_camelyon.html#dataset-description">Dataset description</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fed_camelyon.html#license-and-terms-of-use">License and terms of use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fed_camelyon.html#ethical-approval">Ethical approval</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fed_camelyon.html#download-instructions">Download instructions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fed_camelyon.html#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fed_camelyon.html#method-a-automatic-download-with-the-google-drive-api">Method A: Automatic download with the Google Drive API</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fed_camelyon.html#step-1-setting-up-google-app-and-associated-secret">Step 1: Setting up Google App and associated secret</a></li>
+<li class="toctree-l4"><a class="reference internal" href="fed_camelyon.html#step-2-downloading-the-dataset">Step 2: Downloading the dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fed_camelyon.html#method-b-manual-download-from-the-official-mirrors">Method B: Manual download from the official mirrors</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fed_camelyon.html#using-the-dataset">Using the dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_camelyon.html#benchmarking-the-baseline-in-a-pooled-setting">Benchmarking the baseline in a pooled setting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fed_lidc.html#terms-of-use">Terms of use</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fed_lidc.html#license">License</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fed_lidc.html#publication-citation">Publication Citation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fed_lidc.html#tcia-citation">TCIA Citation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fed_lidc.html#ethics">Ethics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fed_lidc.html#dataset-description">Dataset description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_lidc.html#downloading-and-preprocessing">Downloading and preprocessing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fed_lidc.html#folder-arborescence">Folder arborescence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fed_lidc.html#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fed_lidc.html#using-the-dataset">Using the dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_lidc.html#baseline-model">Baseline model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fed_kits19.html#license-and-dataset-terms-of-use">License and dataset terms of use</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_kits19.html#ethics">Ethics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_kits19.html#acknowledgements">Acknowledgements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_kits19.html#dataset-description">Dataset Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_kits19.html#data-download-instructions">Data Download instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_kits19.html#data-preprocessing">Data Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_kits19.html#using-the-dataset">Using the dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_kits19.html#pooled-experiment">Pooled Experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fed_kits19.html#citation">Citation:</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="substra.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="substra.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="substra.html#objective">Objective</a></li>
+<li class="toctree-l2"><a class="reference internal" href="substra.html#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="substra.html#data-and-metrics">Data and metrics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="substra.html#dataset-registration">Dataset registration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="substra.html#metrics-registration">Metrics registration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="substra.html#specifying-the-machine-learning-components">Specifying the machine learning components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="substra.html#specifying-on-how-much-data-to-train">Specifying on how much data to train</a></li>
+<li class="toctree-l3"><a class="reference internal" href="substra.html#torch-dataset-definition">Torch Dataset definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="substra.html#substrafl-algo-definition">SubstraFL algo definition</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="substra.html#federated-learning-strategies">Federated Learning strategies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="substra.html#where-to-train-and-where-to-aggregate">Where to train and where to aggregate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="substra.html#where-and-when-to-test">Where and when to test</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="substra.html#running-the-experiment">Running the experiment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="substra.html#plotting-results">Plotting results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="substra.html#downloading-a-model">Downloading a model</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fedbiomed.html#fed-biomed-installation">Fed-BioMed installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fedbiomed.html#first-node">First node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fedbiomed.html#rd-node">3rd node</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fedbiomed.html#notebook-researcher-side">Notebook (researcher side)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fedml.html#fedml-installation">FedML installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fedml.html#launching-fedml-in-ram">Launching FedML in RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fedml.html#fedml-fl-communications-outside-of-ram-thanks-to-the-mpi-backend">FedML: FL communications outside of RAM thanks to the MPI backend</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fedml.html#start-the-simulation">Start the simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fedml.html#citation">Citation:</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reproducing.html#heterogeneity-plots">Heterogeneity plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproducing.html#results-plots">Results plots</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#how-can-i-do-a-clean-slate">How can I do a clean slate?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#i-get-an-error-when-installing-flamby">I get an error when installing Flamby</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#error-errno-2-no-such-file-or-directory-pip">error: [Errno 2] No such file or directory: ‘pip’</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#i-am-installing-flamby-on-a-machine-equipped-with-macos-and-an-intel-processor">I am installing Flamby on a machine equipped with macOS and an intel processor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#i-or-someone-else-already-downloaded-a-dataset-using-another-copy-of-the-flamby-repository-my-copy-of-flamby-cannot-find-it-and-i-don-t-want-to-download-it-again-what-can-i-do">I or someone else already downloaded a dataset using another copy of the flamby repository, my copy of flamby cannot find it and I don’t want to download it again, what can I do ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#collaborative-work-on-flamby-i-am-working-with-flamby-on-a-server-with-other-users-how-can-we-share-the-datasets-efficiently">Collaborative work on FLamby: I am working with FLamby on a server with other users, how can we share the datasets efficiently ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#can-i-run-clients-in-different-threads-with-flamby-how-does-it-run-under-the-hood">Can I run clients in different threads with FLamby? How does it run under the hood?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#does-flamby-support-gpu-acceleration">Does FLamby support GPU acceleration?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="strategies.html#federated-averaging">Federated Averaging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="strategies.html#flamby.strategies.FedAvg"><code class="docutils literal notranslate"><span class="pre">FedAvg</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.FedAvg.perform_round"><code class="docutils literal notranslate"><span class="pre">FedAvg.perform_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.FedAvg.run"><code class="docutils literal notranslate"><span class="pre">FedAvg.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="strategies.html#fedadam">FedAdam</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="strategies.html#flamby.strategies.FedAdam"><code class="docutils literal notranslate"><span class="pre">FedAdam</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.FedAdam.calc_aggregated_delta_weights"><code class="docutils literal notranslate"><span class="pre">FedAdam.calc_aggregated_delta_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.FedAdam.perform_round"><code class="docutils literal notranslate"><span class="pre">FedAdam.perform_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.FedAdam.run"><code class="docutils literal notranslate"><span class="pre">FedAdam.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="strategies.html#fedyogi">FedYogi</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="strategies.html#flamby.strategies.FedYogi"><code class="docutils literal notranslate"><span class="pre">FedYogi</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.FedYogi.calc_aggregated_delta_weights"><code class="docutils literal notranslate"><span class="pre">FedYogi.calc_aggregated_delta_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.FedYogi.perform_round"><code class="docutils literal notranslate"><span class="pre">FedYogi.perform_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.FedYogi.run"><code class="docutils literal notranslate"><span class="pre">FedYogi.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="strategies.html#fedadagrad">FedAdagrad</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="strategies.html#flamby.strategies.FedAdagrad"><code class="docutils literal notranslate"><span class="pre">FedAdagrad</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.FedAdagrad.calc_aggregated_delta_weights"><code class="docutils literal notranslate"><span class="pre">FedAdagrad.calc_aggregated_delta_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.FedAdagrad.perform_round"><code class="docutils literal notranslate"><span class="pre">FedAdagrad.perform_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.FedAdagrad.run"><code class="docutils literal notranslate"><span class="pre">FedAdagrad.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="strategies.html#cyclic-randomwalk">Cyclic &amp; RandomWalk</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="strategies.html#flamby.strategies.Cyclic"><code class="docutils literal notranslate"><span class="pre">Cyclic</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.Cyclic.perform_round"><code class="docutils literal notranslate"><span class="pre">Cyclic.perform_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.Cyclic.run"><code class="docutils literal notranslate"><span class="pre">Cyclic.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="strategies.html#fedprox">FedProx</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="strategies.html#flamby.strategies.FedProx"><code class="docutils literal notranslate"><span class="pre">FedProx</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.FedProx.perform_round"><code class="docutils literal notranslate"><span class="pre">FedProx.perform_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.FedProx.run"><code class="docutils literal notranslate"><span class="pre">FedProx.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="strategies.html#scaffold">Scaffold</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="strategies.html#flamby.strategies.Scaffold"><code class="docutils literal notranslate"><span class="pre">Scaffold</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.Scaffold.perform_round"><code class="docutils literal notranslate"><span class="pre">Scaffold.perform_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="strategies.html#flamby.strategies.Scaffold.run"><code class="docutils literal notranslate"><span class="pre">Scaffold.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#fed-isic2019">Fed-ISIC2019</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datasets.html#flamby.datasets.fed_isic2019.FedIsic2019"><code class="docutils literal notranslate"><span class="pre">FedIsic2019</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#fed-camelyon16">Fed-Camelyon16</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datasets.html#flamby.datasets.fed_camelyon16.FedCamelyon16"><code class="docutils literal notranslate"><span class="pre">FedCamelyon16</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#fed-lidc-idri">Fed-LIDC-IDRI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datasets.html#flamby.datasets.fed_lidc_idri.FedLidcIdri"><code class="docutils literal notranslate"><span class="pre">FedLidcIdri</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#fed-tcga-brca">Fed-TCGA_BRCA</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datasets.html#flamby.datasets.fed_tcga_brca.FedTcgaBrca"><code class="docutils literal notranslate"><span class="pre">FedTcgaBrca</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#fed-heart-disease">Fed-Heart-Disease</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datasets.html#flamby.datasets.fed_heart_disease.FedHeartDisease"><code class="docutils literal notranslate"><span class="pre">FedHeartDisease</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#fed-ixitiny">Fed-IXITiny</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datasets.html#flamby.datasets.fed_ixi.FedIXITiny"><code class="docutils literal notranslate"><span class="pre">FedIXITiny</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#fed-kits19">Fed-Kits19</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datasets.html#flamby.datasets.fed_kits19.FedKits19"><code class="docutils literal notranslate"><span class="pre">FedKits19</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

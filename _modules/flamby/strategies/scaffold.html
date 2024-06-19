@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>flamby.strategies.scaffold &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">flamby.strategies.scaffold</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for flamby.strategies.scaffold</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">from</span> <span class="nn">flamby.strategies.fed_avg</span> <span class="kn">import</span> <span class="n">FedAvg</span>
+<span class="kn">from</span> <span class="nn">flamby.strategies.utils</span> <span class="kn">import</span> <span class="n">_Model</span>
+
+
+<div class="viewcode-block" id="Scaffold">
+<a class="viewcode-back" href="../../../strategies.html#flamby.strategies.Scaffold">[docs]</a>
+<span class="k">class</span> <span class="nc">Scaffold</span><span class="p">(</span><span class="n">FedAvg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;SCAFFOLD Strategy class</span>
+
+<span class="sd">    SCAFFOLD is a stateful algorithm which modifies the local update steps of FedAvg</span>
+<span class="sd">    in order to provably correct for data heterogeneity across clients. If the data</span>
+<span class="sd">    on each client is very different, their local updates via FedAvg will move in</span>
+<span class="sd">    different directions. Each client maintains a &#39;correction&#39; which estimates</span>
+<span class="sd">    this difference between client updates and global average update. This correction</span>
+<span class="sd">    is added to every local update on the client.</span>
+<span class="sd">    This is a more efficient implementation of Scaffold whose communication and</span>
+<span class="sd">    computation requirement exactly matches that of FedAvg.</span>
+<span class="sd">    The current implementation assumes that SGD is the local optimizer, and that all</span>
+<span class="sd">    clients participate every round.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    https://arxiv.org/abs/1910.06378</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    training_dataloaders : List</span>
+<span class="sd">        The list of training dataloaders from multiple training centers.</span>
+<span class="sd">    model : torch.nn.Module</span>
+<span class="sd">        An initialized torch model.</span>
+<span class="sd">    loss : torch.nn.modules.loss._Loss</span>
+<span class="sd">        The loss to minimize between the predictions of the model and the</span>
+<span class="sd">        ground truth.</span>
+<span class="sd">    optimizer_class : torch.optim.Optimizer</span>
+<span class="sd">        The class of the torch model optimizer to use at each step.</span>
+<span class="sd">        It has to be SGD.</span>
+<span class="sd">    learning_rate : float</span>
+<span class="sd">        The learning rate to be given to the clients optimizer_class.</span>
+<span class="sd">    num_updates : int</span>
+<span class="sd">        The number of updates to do on each client at each round.</span>
+<span class="sd">    nrounds : int</span>
+<span class="sd">        The number of communication rounds to do.</span>
+<span class="sd">    dp_target_epsilon: float</span>
+<span class="sd">        The target epsilon for (epsilon, delta)-differential</span>
+<span class="sd">        private guarantee. Defaults to None.</span>
+<span class="sd">    dp_target_delta: float</span>
+<span class="sd">        The target delta for (epsilon, delta)-differential</span>
+<span class="sd">         private guarantee. Defaults to None.</span>
+<span class="sd">    dp_max_grad_norm: float</span>
+<span class="sd">        The maximum L2 norm of per-sample gradients;</span>
+<span class="sd">         used to enforce differential privacy. Defaults to None.</span>
+<span class="sd">    server_learning_rate : float</span>
+<span class="sd">        The learning rate with which the server&#39;s updates are aggregated.</span>
+<span class="sd">        Defaults to 1.</span>
+<span class="sd">    log: bool</span>
+<span class="sd">        Whether or not to store logs in tensorboard. Defaults to False.</span>
+<span class="sd">    log_period: int</span>
+<span class="sd">        If log is True then log the loss every log_period batch updates.</span>
+<span class="sd">        Defauts to 100.</span>
+<span class="sd">    bits_counting_function : Union[callable, None]</span>
+<span class="sd">        A function making sure exchanges respect the rules, this function</span>
+<span class="sd">        can be obtained by decorating check_exchange_compliance in</span>
+<span class="sd">        flamby.utils. Should have the signature List[Tensor] -&gt; int.</span>
+<span class="sd">        Defaults to None.</span>
+<span class="sd">    logdir: str</span>
+<span class="sd">        Where to store the logs. Defaulst to ./runs.</span>
+<span class="sd">    log_basename: str</span>
+<span class="sd">        The basename of the created logfile. Defaulst to scaffold.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">training_dataloaders</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
+        <span class="n">loss</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">_Loss</span><span class="p">,</span>
+        <span class="n">optimizer_class</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Optimizer</span><span class="p">,</span>
+        <span class="n">learning_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">num_updates</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">nrounds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">dp_target_epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dp_target_delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dp_max_grad_norm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">server_learning_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">log_period</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">bits_counting_function</span><span class="p">:</span> <span class="nb">callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./runs&quot;</span><span class="p">,</span>
+        <span class="n">log_basename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;scaffold&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cf class docstring&quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">optimizer_class</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span>
+        <span class="p">),</span> <span class="s2">&quot;Only SGD for client optimizer with Scaffold&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">training_dataloaders</span><span class="p">,</span>
+            <span class="n">model</span><span class="p">,</span>
+            <span class="n">loss</span><span class="p">,</span>
+            <span class="n">optimizer_class</span><span class="p">,</span>
+            <span class="n">learning_rate</span><span class="p">,</span>
+            <span class="n">num_updates</span><span class="p">,</span>
+            <span class="n">nrounds</span><span class="p">,</span>
+            <span class="n">dp_target_epsilon</span><span class="p">,</span>
+            <span class="n">dp_target_delta</span><span class="p">,</span>
+            <span class="n">dp_max_grad_norm</span><span class="p">,</span>
+            <span class="n">log</span><span class="p">,</span>
+            <span class="n">log_period</span><span class="p">,</span>
+            <span class="n">bits_counting_function</span><span class="p">,</span>
+            <span class="n">log_basename</span><span class="o">=</span><span class="n">log_basename</span><span class="p">,</span>
+            <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Add a warning if user wants to make DP</span>
+        <span class="k">if</span> <span class="n">dp_target_epsilon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Warning, the DP bounds passed are not valid for Scaffold.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># initialize the previous state of each client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_client_state_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">_model</span><span class="o">.</span><span class="n">_get_current_params</span><span class="p">()</span> <span class="k">for</span> <span class="n">_model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">models_list</span>
+        <span class="p">]</span>
+        <span class="c1"># initialize the corrections used by each client to 0s.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client_corrections_state_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">p</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">_model</span><span class="o">.</span><span class="n">_get_current_params</span><span class="p">()]</span>
+            <span class="k">for</span> <span class="n">_model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">models_list</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client_lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server_lr</span> <span class="o">=</span> <span class="n">server_learning_rate</span>
+
+    <span class="k">def</span> <span class="nf">_local_optimization</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">_model</span><span class="p">:</span> <span class="n">_Model</span><span class="p">,</span> <span class="n">dataloader_with_memory</span><span class="p">,</span> <span class="n">correction_state</span><span class="p">:</span> <span class="n">List</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Carry out the local optimization step.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        _model: _Model</span>
+<span class="sd">            The model on the local device used by the optimization step.</span>
+<span class="sd">        dataloader_with_memory : dataloaderwithmemory</span>
+<span class="sd">            A dataloader that can be called infinitely using its get_samples()</span>
+<span class="sd">            method.</span>
+<span class="sd">        correction_state: List</span>
+<span class="sd">            Correction to be applied to the model state during every local update.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_model</span><span class="o">.</span><span class="n">_local_train_with_correction</span><span class="p">(</span>
+            <span class="n">dataloader_with_memory</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_updates</span><span class="p">,</span> <span class="n">correction_state</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Scaffold.perform_round">
+<a class="viewcode-back" href="../../../strategies.html#flamby.strategies.Scaffold.perform_round">[docs]</a>
+    <span class="k">def</span> <span class="nf">perform_round</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Does a single federated averaging round. The following steps will be</span>
+<span class="sd">        performed:</span>
+
+<span class="sd">        - each model will be trained locally for num_updates batches.</span>
+<span class="sd">        - the parameter updates will be collected and averaged. Averages will be</span>
+<span class="sd">          weighted by the number of samples in each client</span>
+<span class="sd">        - the averaged updates willl be used to update the local model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">local_updates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">new_client_state_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">new_correction_state_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="p">(</span>
+            <span class="n">_model</span><span class="p">,</span>
+            <span class="n">dataloader_with_memory</span><span class="p">,</span>
+            <span class="n">size</span><span class="p">,</span>
+            <span class="n">_previous_client_state</span><span class="p">,</span>
+            <span class="n">_prev_correction_state</span><span class="p">,</span>
+        <span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">models_list</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">training_dataloaders_with_memory</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">training_sizes</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">previous_client_state_list</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client_corrections_state_list</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="c1"># Update as correction += (server_state - previous_state) / lr*num_updates.</span>
+            <span class="n">_server_state</span> <span class="o">=</span> <span class="n">_model</span><span class="o">.</span><span class="n">_get_current_params</span><span class="p">()</span>
+            <span class="n">_new_correction_state</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">c</span>
+                <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="n">q</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server_lr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_lr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_updates</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                    <span class="n">_prev_correction_state</span><span class="p">,</span> <span class="n">_server_state</span><span class="p">,</span> <span class="n">_previous_client_state</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">new_correction_state_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_new_correction_state</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">_previous_client_state</span>
+            <span class="k">del</span> <span class="n">_prev_correction_state</span>
+
+            <span class="c1"># Local Optimization</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_local_optimization</span><span class="p">(</span>
+                <span class="n">_model</span><span class="p">,</span> <span class="n">dataloader_with_memory</span><span class="p">,</span> <span class="n">_new_correction_state</span>
+            <span class="p">)</span>
+            <span class="n">_local_next_state</span> <span class="o">=</span> <span class="n">_model</span><span class="o">.</span><span class="n">_get_current_params</span><span class="p">()</span>
+
+            <span class="c1"># Scale local parameters by server_lr</span>
+            <span class="n">_local_next_state</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">server_lr</span> <span class="o">*</span> <span class="n">new</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_lr</span><span class="p">)</span> <span class="o">*</span> <span class="n">old</span>
+                <span class="k">for</span> <span class="n">new</span><span class="p">,</span> <span class="n">old</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">_local_next_state</span><span class="p">,</span> <span class="n">_server_state</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">new_client_state_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_local_next_state</span><span class="p">)</span>
+
+            <span class="c1"># Recovering updates</span>
+            <span class="n">updates</span> <span class="o">=</span> <span class="p">[</span><span class="n">new</span> <span class="o">-</span> <span class="n">old</span> <span class="k">for</span> <span class="n">new</span><span class="p">,</span> <span class="n">old</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">_local_next_state</span><span class="p">,</span> <span class="n">_server_state</span><span class="p">)]</span>
+            <span class="k">del</span> <span class="n">_local_next_state</span>
+
+            <span class="c1"># Reset local model</span>
+            <span class="k">for</span> <span class="n">p_new</span><span class="p">,</span> <span class="n">p_old</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">_server_state</span><span class="p">):</span>
+                <span class="n">p_new</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">p_old</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">p_new</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">_server_state</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bits_counting_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bits_counting_function</span><span class="p">(</span><span class="n">updates</span><span class="p">)</span>
+
+            <span class="n">local_updates</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;updates&quot;</span><span class="p">:</span> <span class="n">updates</span><span class="p">,</span> <span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="n">size</span><span class="p">})</span>
+
+        <span class="c1"># update previous client states</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_client_state_list</span> <span class="o">=</span> <span class="n">new_client_state_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client_corrections_state_list</span> <span class="o">=</span> <span class="n">new_correction_state_list</span>
+
+        <span class="c1"># Aggregation step</span>
+        <span class="n">aggregated_delta_weights</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">local_updates</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;updates&quot;</span><span class="p">]))</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">idx_weight</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">local_updates</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;updates&quot;</span><span class="p">])):</span>
+            <span class="n">aggregated_delta_weights</span><span class="p">[</span><span class="n">idx_weight</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">local_updates</span><span class="p">[</span><span class="n">idx_client</span><span class="p">][</span><span class="s2">&quot;updates&quot;</span><span class="p">][</span><span class="n">idx_weight</span><span class="p">]</span>
+                    <span class="o">*</span> <span class="n">local_updates</span><span class="p">[</span><span class="n">idx_client</span><span class="p">][</span><span class="s2">&quot;n_samples&quot;</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">idx_client</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_clients</span><span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">aggregated_delta_weights</span><span class="p">[</span><span class="n">idx_weight</span><span class="p">]</span> <span class="o">/=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_number_of_samples</span><span class="p">)</span>
+
+        <span class="c1"># Update models</span>
+        <span class="k">for</span> <span class="n">_model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">models_list</span><span class="p">:</span>
+            <span class="n">_model</span><span class="o">.</span><span class="n">_update_params</span><span class="p">(</span><span class="n">aggregated_delta_weights</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

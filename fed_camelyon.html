@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fed-Camelyon16 &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Fed-LIDC-IDRI" href="fed_lidc.html" />
+    <link rel="prev" title="Fed-ISIC 2019" href="fed_isic.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Fed-Camelyon16</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dataset-description">Dataset description</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#license-and-terms-of-use">License and terms of use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ethical-approval">Ethical approval</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#download-instructions">Download instructions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#method-a-automatic-download-with-the-google-drive-api">Method A: Automatic download with the Google Drive API</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#step-1-setting-up-google-app-and-associated-secret">Step 1: Setting up Google App and associated secret</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#step-2-downloading-the-dataset">Step 2: Downloading the dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#method-b-manual-download-from-the-official-mirrors">Method B: Manual download from the official mirrors</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-dataset">Using the dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#benchmarking-the-baseline-in-a-pooled-setting">Benchmarking the baseline in a pooled setting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Fed-Camelyon16</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/fed_camelyon.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fed-camelyon16">
+<h1>Fed-Camelyon16<a class="headerlink" href="#fed-camelyon16" title="Link to this heading"></a></h1>
+<p>Camelyon16 as Camelyon17 are open access (CC0), the original dataset is
+accessible <a class="reference external" href="https://camelyon17.grand-challenge.org/Data/">here</a>. We
+will first fetch the slides from the public Google Drive, and will then
+tile the matter using a feature extractor, producing a bag of features
+for each slide.</p>
+<section id="dataset-description">
+<h2>Dataset description<a class="headerlink" href="#dataset-description" title="Link to this heading"></a></h2>
+<p>Please refer to the <a class="reference external" href="https://camelyon17.grand-challenge.org/Data/">dataset
+website</a> for an
+exhaustive data sheet (<code class="docutils literal notranslate"><span class="pre">https://academic.oup.com/gigascience/article/7/6/giy065/5026175#117856577</span></code>).
+The table below provides a high-level description of the dataset.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>Dataset description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Description</p></td>
+<td><p>Dataset from Camelyon16</p></td>
+</tr>
+<tr class="row-odd"><td><p>Dataset size</p></td>
+<td><p>900 GB (and 50 GB after features extraction).</p></td>
+</tr>
+<tr class="row-even"><td><p>Centers</p></td>
+<td><p>2 centers - RUMC and UMCU.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Records per
+center</p></td>
+<td><p>RUMC: 169 (Train) + 74 (Test), UMCU: 101 (Train) + 55
+(Test)</p></td>
+</tr>
+<tr class="row-even"><td><p>Inputs shape</p></td>
+<td><p>Tensor of shape (10000, 2048) (after feature extraction).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Total nb of
+points</p></td>
+<td><p>399 slides.</p></td>
+</tr>
+<tr class="row-even"><td><p>Task</p></td>
+<td><p>Weakly Supervised (Binary) Classification.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="license-and-terms-of-use">
+<h3>License and terms of use<a class="headerlink" href="#license-and-terms-of-use" title="Link to this heading"></a></h3>
+<p>This dataset is licensed under an open access Creative Commons 1.0
+Universal (<strong>CC0 1.0</strong>) license by its authors. <em>Anyone using this
+dataset should abide by its licence and</em> <em>give proper attribution to the
+original authors.</em></p>
+</section>
+<section id="ethical-approval">
+<h3>Ethical approval<a class="headerlink" href="#ethical-approval" title="Link to this heading"></a></h3>
+<p>As indicated by the dataset authors (<code class="docutils literal notranslate"><span class="pre">https://academic.oup.com/gigascience/article/7/6/giy065/5026175#117856619</span></code>),
+&gt; The collection of the data was approved by the local ethics committee
+&gt; (Commissie Mensgebonden Onderzoek regio Arnhem - Nijmegen) under
+2016-2761, &gt; and the need for informed consent was waived.</p>
+</section>
+</section>
+<section id="download-instructions">
+<h2>Download instructions<a class="headerlink" href="#download-instructions" title="Link to this heading"></a></h2>
+<section id="introduction">
+<h3>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h3>
+<p>The dataset is hosted on a <a class="reference external" href="https://camelyon17.grand-challenge.org/Data/">several
+mirrors</a> (GigaScience,
+Google Drive, Baidu Pan). We provide below some scripts to automatically
+download the dataset based on the Google Drive API, which requires a
+Google Account. If you do not have a Google account, you can
+alternatively download manually the dataset through one of the mirrors.
+You will find below detailed instructions for each method. In both
+cases, make sure you have enough space to store the raw dataset
+(~900GB).</p>
+</section>
+<section id="method-a-automatic-download-with-the-google-drive-api">
+<h3>Method A: Automatic download with the Google Drive API<a class="headerlink" href="#method-a-automatic-download-with-the-google-drive-api" title="Link to this heading"></a></h3>
+<p>In order to use the Google Drive API you need to have a google account
+and to access the <a class="reference external" href="https://console.cloud.google.com/apis/credentials/consent?authuser=1">google developpers
+console</a>
+in order to get a json containing an OAuth2.0 secret.</p>
+<p>All steps necessary to obtain the JSON are described in numerous places
+in the internet such as in pydrive’s
+<a class="reference external" href="https://pythonhosted.org/PyDrive/quickstart.html">quickstart</a>, or in
+this <a class="reference external" href="https://www.youtube.com/watch?v=1y0-IfRW114">very nice tutorial’s first 5
+minutes</a> on Youtube. It
+should not take more than 5 minutes. The important steps are listed
+below.</p>
+<section id="step-1-setting-up-google-app-and-associated-secret">
+<h4>Step 1: Setting up Google App and associated secret<a class="headerlink" href="#step-1-setting-up-google-app-and-associated-secret" title="Link to this heading"></a></h4>
+<ol class="arabic simple">
+<li><p>Create a project in <a class="reference external" href="https://console.cloud.google.com/apis/credentials/consent?authuser=1">Google
+console</a>.
+For instance, you can call it <code class="docutils literal notranslate"><span class="pre">flamby</span></code>.</p></li>
+<li><p>Go to Oauth2 consent screen (on the left of the webpage), choose a
+name for your app and publish it for external use.</p></li>
+<li><p>Go to Credentials, create an id, then client oauth id</p></li>
+<li><p>Choose Web app, go through the steps and <strong>allow URI redirect</strong>
+towards <code class="docutils literal notranslate"><span class="pre">http://localhost:6006</span></code> and <code class="docutils literal notranslate"><span class="pre">http://localhost:6006/</span></code> (notice the
+last backslash)</p></li>
+<li><p>Retrieve the secrets in JSON by clicking on Download icon at the end
+of the process.</p></li>
+<li><p>Enable Google Drive API for this project, by clicking on “API and
+services” on the left panel</p></li>
+</ol>
+<p>Then copy-paste your secrets to the directory you want:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>~/Downloads/code_secret_client_bignumber.apps.googleusercontent.com.json<span class="w"> </span>client_secrets.json
+</pre></div>
+</div>
+</section>
+<section id="step-2-downloading-the-dataset">
+<h4>Step 2: Downloading the dataset<a class="headerlink" href="#step-2-downloading-the-dataset" title="Link to this heading"></a></h4>
+<ul>
+<li><p><strong>Remark 1: If you are downloading on a remote server</strong>, make sure
+you do ssh forwarding of the port 6006 onto the port 6006 of your
+laptop.</p></li>
+<li><p>Remark 2 : Make sure you have enough space to hold the dataset
+(900GB).</p></li>
+<li><p>First cd into the <code class="docutils literal notranslate"><span class="pre">dataset_creation_scripts</span></code> folder:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>flamby/datasets/fed_camelyon16/dataset_creation_scripts
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Then run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>download.py<span class="w"> </span>--output-folder<span class="w"> </span>./camelyon16_dataset<span class="w"> </span>--path-to-secret<span class="w"> </span>/path/towards/client_secrets.json<span class="w"> </span>--port<span class="w"> </span><span class="m">6006</span>
+</pre></div>
+</div>
+<p>The first time this script is launched, the user will be asked to
+explicitly allow the app to operate by logging into his/her Google
+account (hence the need for the port 6006 forwarding in the case of a
+remote machine without browser).</p>
+<p>This script will download all of Camelyon’s slides in the output folder.
+As there are multiple slides that are quite big, this script can take a
+few hours to complete. It can be stopped and resumed anytime however if
+you are ssh into a server better use detached mode (screenrc/tmux/etc.).</p>
+<p><strong>IMPORTANT :</strong> If you choose to relocate the dataset after downloading
+it, it is imperative that you run the following script otherwise all
+subsequent scripts will not find it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">update_config</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">new</span><span class="o">-</span><span class="n">path</span> <span class="o">/</span><span class="n">new</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">towards</span><span class="o">/</span><span class="n">dataset</span> <span class="c1">#adding --debug if you are in debug mode</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="method-b-manual-download-from-the-official-mirrors">
+<h3>Method B: Manual download from the official mirrors<a class="headerlink" href="#method-b-manual-download-from-the-official-mirrors" title="Link to this heading"></a></h3>
+<p>We are interested in the Camelyon16 portion of the <a class="reference external" href="https://camelyon17.grand-challenge.org/Data/">Camelyon
+dataset</a>. In the
+following, we will detail the steps to manually download the dataset
+from the Google Drive repository. You can easily adapt the steps to the
+other mirrors.</p>
+<p>Camelyon16 is stored on a public <a class="reference external" href="https://drive.google.com/drive/folders/0BzsdkU4jWx9Bb19WNndQTlUwb2M?resourcekey=0-FREBAxB4QK4bt9Zch_g5Mg">Google
+Drive</a>.
+The dataset is pre-split into training and testing slides. The training
+slides are further divided into 2 folders: normal and tumor. Download
+all the <code class="docutils literal notranslate"><span class="pre">.tif</span></code> files in the
+<a class="reference external" href="https://drive.google.com/drive/folders/0BzsdkU4jWx9BNUFqRE81QS04eDg?resourcekey=0-p6LFOzRfCTfyi_JpshhoTQ">normal</a>,
+<a class="reference external" href="https://drive.google.com/drive/folders/0BzsdkU4jWx9BUzVXeUg0dUNOR1U?resourcekey=0-dODmENBQPCw06DITRJfnfg">tumor</a>
+and <a class="reference external" href="https://drive.google.com/drive/folders/0BzsdkU4jWx9BWk11WEtZZUNFY0U?resourcekey=0-U0E7SyHPJeQd77VAi3z15Q">testing
+images</a>
+folders. Put all the resulting files into a single folder. You should
+end up with 399 <code class="docutils literal notranslate"><span class="pre">.tif</span></code> files in a given folder <code class="docutils literal notranslate"><span class="pre">PATH-TO-FOLDER</span></code>.</p>
+<p>The last step consists in creating a metadata file that will be used by
+the preprocessing step. Create a file name <code class="docutils literal notranslate"><span class="pre">dataset_location.yaml</span></code>
+under <code class="docutils literal notranslate"><span class="pre">flamby/datasets/fed_camelyon16/dataset_creation_scripts/</span></code> with
+the following content:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">dataset_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PATH-TO-FOLDER</span>
+<span class="nt">download_complete</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+<p>The download is now complete. ## Dataset preprocessing (tile extraction)</p>
+<p>The next step is to tile the matter on each slide with a feature
+extractor pretrained on IMAGENET.</p>
+<p>We will use the <a class="reference external" href="https://github.com/histolab/histolab">histolab
+package</a> to segment the matter
+on each slide and torchvision to download a pretrained ResNet50 that
+will be applied on each tile to convert each slide to a bag of numpy
+features. This package requires the installation of
+<a class="reference external" href="https://openslide.org/download/">Openslide</a>. The associated webpage
+contains instructions to install it on every major distributions. On
+Linux simply run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">openslide</span><span class="o">-</span><span class="n">tools</span>
+</pre></div>
+</div>
+<p>One can choose to remove or not the original slides that take up quite
+some space to keep only the features (therefore using only
+approximatively 50GB instead of 800GB).</p>
+<p>As extracting the matter on all the slides is a lengthy process this
+script might take a few hours (and a few days if the tiling is done from
+scratch). It can also be stopped and resumed anytime and should be
+preferably run in detached mode. This process should be run on an
+environment with GPU, otherwise it might be prohibitively slow.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>tiling_slides.py<span class="w"> </span>--batch-size<span class="w"> </span><span class="m">64</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>tiling_slides.py<span class="w"> </span>--batch-size<span class="w"> </span><span class="m">64</span><span class="w"> </span>--remove-big-tiff
+</pre></div>
+</div>
+</section>
+</section>
+<section id="using-the-dataset">
+<h2>Using the dataset<a class="headerlink" href="#using-the-dataset" title="Link to this heading"></a></h2>
+<p>Now that the dataset is ready for use you can load it using the low or
+high-level API by running in a python shell:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flamby.datasets.fed_camelyon16</span> <span class="kn">import</span> <span class="n">FedCamelyon16</span><span class="p">,</span> <span class="n">Camelyon16Raw</span>
+
+<span class="c1"># To load the first center as a pytorch dataset</span>
+<span class="n">center0</span> <span class="o">=</span> <span class="n">FedCamelyon16</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># To load the second center as a pytorch dataset</span>
+<span class="n">center1</span> <span class="o">=</span> <span class="n">FedCamelyon16</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># To sample batches from each of the local datasets use the traditional pytorch API</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span> <span class="k">as</span> <span class="n">dl</span>
+<span class="c1"># For this specific dataset samples do not have the same size and therefore batching requires padding implemented in collate_fn</span>
+<span class="kn">from</span> <span class="nn">flamby.datasets.fed_camelyon16</span> <span class="kn">import</span> <span class="n">collate_fn</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">dl</span><span class="p">(</span><span class="n">center0</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_fn</span><span class="p">))</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>More informations on how to train model and handle flamby datasets in
+general are available in the <a class="reference internal" href="quickstart.html"><span class="doc">Quickstart</span></a>.</p>
+</section>
+<section id="benchmarking-the-baseline-in-a-pooled-setting">
+<h2>Benchmarking the baseline in a pooled setting<a class="headerlink" href="#benchmarking-the-baseline-in-a-pooled-setting" title="Link to this heading"></a></h2>
+<p>In order to benchmark the baseline on the pooled dataset one needs to
+download and preprocess the dataset and launch the following script:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>benchmark.py<span class="w"> </span>--log<span class="w"> </span>--num-workers-torch<span class="w"> </span><span class="m">10</span>
+</pre></div>
+</div>
+<p>This will launch 5 single-centric runs and store log results for
+training in ./runs/seed42-47 and testing in ./runs/tests-seed42-47. The
+command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tensorboard<span class="w"> </span>--logdir<span class="o">=</span>./runs
+</pre></div>
+</div>
+<p>can then be used to visualize results (use <a class="reference external" href="https://stackoverflow.com/questions/37987839/how-can-i-run-tensorboard-on-a-remote-server">port forwarding if
+necessary</a>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fed_isic.html" class="btn btn-neutral float-left" title="Fed-ISIC 2019" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fed_lidc.html" class="btn btn-neutral float-right" title="Fed-LIDC-IDRI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

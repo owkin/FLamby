@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fed-IXI &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Fed-ISIC 2019" href="fed_isic.html" />
+    <link rel="prev" title="Fed-Heart Disease" href="fed_heart.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Fed-IXI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#data-citation-and-license">Data Citation and License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ethics">Ethics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#publication-citation">Publication Citation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#standard-ixi-dataset">Standard IXI Dataset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ixi-tiny-dataset">IXI Tiny Dataset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dataset-description">Dataset description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#download">Download</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utilization">Utilization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#benchmarking-the-baseline-on-a-pooled-setting">Benchmarking the baseline on a pooled setting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prediction-task">Prediction task</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Fed-IXI</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/fed_ixi.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fed-ixi">
+<h1>Fed-IXI<a class="headerlink" href="#fed-ixi" title="Link to this heading"></a></h1>
+<section id="data-citation-and-license">
+<h2>Data Citation and License<a class="headerlink" href="#data-citation-and-license" title="Link to this heading"></a></h2>
+<p>The IXI dataset is made available under the Creative Commons <a class="reference external" href="https://creativecommons.org/licenses/by-sa/3.0/legalcode">CC BY-SA
+3.0
+license</a>.
+If you use the IXI data please acknowledge the source of the IXI data,
+e.g. the following website: <a class="reference external" href="https://brain-development.org/ixi-dataset/">https://brain-development.org/ixi-dataset/</a></p>
+<p>IXI Tiny is derived from the same source. Acknowledge the following
+reference on TorchIO :
+<a class="reference external" href="https://torchio.readthedocs.io/datasets.html#ixitiny">https://torchio.readthedocs.io/datasets.html#ixitiny</a></p>
+</section>
+<section id="ethics">
+<h2>Ethics<a class="headerlink" href="#ethics" title="Link to this heading"></a></h2>
+<p>The dataset website does not provide any information regarding data
+collection ethics. However, the original dataset was collected as part
+of the IXI - Information eXtraction from Images (EPSRC GR/S21533/02)
+project, and thus funded by <a class="reference external" href="https://www.ukri.org/">UK Research and Innovation
+(UKRI)</a>. As part of its <a class="reference external" href="https://www.ukri.org/apply-for-funding/before-you-apply/your-responsibilities-if-you-get-funding/previous-terms-and-conditions-for-research-and-training-grants/">terms and
+conditions</a>,
+the UKRI demands that all funded projects are “carried out in accordance
+with all applicable ethical, legal and regulatory requirements” (RGC
+2.2).</p>
+</section>
+<section id="publication-citation">
+<h2>Publication Citation<a class="headerlink" href="#publication-citation" title="Link to this heading"></a></h2>
+<p>Pérez-García F, Sparks R, Ourselin S. TorchIO: a Python library for
+efficient loading, preprocessing, augmentation and patch-based sampling
+of medical images in deep learning. arXiv:2003.04696 [cs, eess, stat].
+2020. https://doi.org/10.48550/arXiv.2003.04696</p>
+</section>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>This repository highlights <strong>IXI</strong> (<em>Information eXtraction from
+Images</em>), a medical dataset focusing on brain images through Structural
+magnetic resonance imaging (MRI), a non-invasive technique for examining
+the anatomy and pathology of the brain.</p>
+<p>In the same register, we highlight a particular dataset called <strong>IXI
+Tiny</strong>, which is composed of preprocessed images from the standard
+<strong>IXI</strong> dataset. The idea behind the use of this dataset is to take
+advantage of its lightness, as well as the labels it directly provides
+so it allows us to handle an interesting segmentation task.</p>
+<p>We have chosen to give some insight about the standard dataset, although
+we will focus on the lighter one, <strong>IXI Tiny</strong>, as a starting point.
+Note that the requirements for the standard IXI dataloader have been
+implemented, but for a matter of clarity, we will limit ourselves to the
+code of IXI tiny on this part of the repository. Of course, standard IXI
+could be added in the near future on a separate place.</p>
+</section>
+<section id="standard-ixi-dataset">
+<h2>Standard IXI Dataset<a class="headerlink" href="#standard-ixi-dataset" title="Link to this heading"></a></h2>
+<section id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h3>
+<p>The <strong>IXI</strong> dataset contains “nearly 600 MR images from normal, healthy
+subjects”, including “T1, T2 and PD-weighted images, MRA images and
+Diffusion-weighted images (15 directions)”.</p>
+<p>The dataset contains data from three different hospitals in London : -
+Hammersmith Hospital using a Philips 3T system (<a class="reference external" href="http://wp.doc.ic.ac.uk/brain-development/scanner-philips-medical-systems-intera-3t/">details of scanner
+parameters</a>).
+- Guy’s Hospital using a Philips 1.5T system (<a class="reference external" href="http://wp.doc.ic.ac.uk/brain-development/scanner-philips-medical-systems-gyroscan-intera-1-5t/">details of scanner
+parameters</a>).
+- Institute of Psychiatry using a GE 1.5T system (details of the scan
+parameters not available at the moment).</p>
+<p>For information, here is the respective size of the different archives:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Modality</p></th>
+<th class="head"><p>Size</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>T1</p></td>
+<td><p>4.51G</p></td>
+</tr>
+<tr class="row-odd"><td><p>T2</p></td>
+<td><p>3.59G</p></td>
+</tr>
+<tr class="row-even"><td><p>PD</p></td>
+<td><p>3.79G</p></td>
+</tr>
+<tr class="row-odd"><td><p>MRA</p></td>
+<td><p>11.5G</p></td>
+</tr>
+<tr class="row-even"><td><p>DTI</p></td>
+<td><p>3.98G</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total size</strong>: 27.37G</p>
+<p>Datapoints inside the different archives (our 5 modalities) follow this
+naming convention:</p>
+<p><strong>IXI</strong>[<em>patient id</em>]<strong>-</strong>[<em>hospital
+name</em>]<strong>-</strong>[<em>id</em>]<strong>-</strong>[<em>modality</em>]<strong>.nii.gz</strong></p>
+<p>These files contain images in <strong>NIFTI</strong> format.</p>
+</section>
+</section>
+<section id="ixi-tiny-dataset">
+<h2>IXI Tiny Dataset<a class="headerlink" href="#ixi-tiny-dataset" title="Link to this heading"></a></h2>
+<section id="dataset-description">
+<h3>Dataset description<a class="headerlink" href="#dataset-description" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>Dataset description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Description</p></td>
+<td><p>Dataset contains data from three different hospitals in
+London focusing on brain images through MRI.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Dataset size</p></td>
+<td><p>444 MB</p></td>
+</tr>
+<tr class="row-even"><td><p>Centers</p></td>
+<td><p>3 centers - Guys (Guy’s Hospital), HH (Hammersmith
+Hospital), IOP (Institute of Psychiatry).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Records per
+center</p></td>
+<td><p>Guys: 249/62, HH: 145/36, IOP: 59/15 (train/test).</p></td>
+</tr>
+<tr class="row-even"><td><p>Inputs shape</p></td>
+<td><p>Image of shape (1, 48, 60, 48).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Targets
+shape</p></td>
+<td><p>Image of shape (2, 48, 60, 48).</p></td>
+</tr>
+<tr class="row-even"><td><p>Total nb of
+points</p></td>
+<td><ol class="arabic simple" start="566">
+<li></li>
+</ol>
+</td>
+</tr>
+<tr class="row-odd"><td><p>Task</p></td>
+<td><p>Segmentation.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id1">
+<h3>Overview<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p><strong>IXI Tiny</strong> relies on <strong>IXI</strong>, a publicly available dataset of almost
+600 subjects. This lighter version made by
+<a class="reference external" href="https://torchio.readthedocs.io/datasets.html#ixitiny">TorchIO</a> is
+focusing on 566 T1-weighted brain MR images and comes with a set of
+corresponding labels (brain segmentations).</p>
+<p>To produce the labels, ROBEX, an automatic whole-brain extraction tool
+for T1-weighted MRI data has been used. Affine registration, which is a
+necessary prerequisite for many image processing tasks, has been
+performed using <a class="reference external" href="https://github.com/KCL-BMEIS/niftyreg">NiftyReg</a>
+putting all the brain images onto a common reference space (MNI
+template). An orientation tweak has finally been made with
+<a class="reference external" href="https://itk.org/">ITK</a>.</p>
+<p>Volumes have a dimension of 83 x 44 x 55 voxels (compared to 256 x 256 x
+140 in the standard dataset).</p>
+<p>The total size of this tiny dataset is 444 MB.</p>
+<p>The structure of the archive containing the dataset has been modified,
+making it adapted for particular cases of use where each subject is
+represented by a directory containing all the modalities associated with
+them.</p>
+<p>E.g.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>IXI_sample
+│
+└───IXI002-Guys-0828
+│   │
+│   └───label
+│   │   │   IXI002-Guys-0828_label.nii.gz
+│   │
+│   └───T1
+│   │   │   IXI002-Guys-0828_image.nii.gz
+│   │
+│   └───T2
+│   │   │   IXI002-Guys-0828_image.nii.gz
+│   │
+│   └───...
+│
+└───IXI012-HH-1211
+│   │
+│   └───label
+│   │   │   IXI012-HH-1211_label.nii.gz
+│   │
+│   └───T1
+│   │   │   IXI012-HH-1211_image.nii.gz
+│   │
+│   └───T2
+│   │   │   IXI012-HH-1211_image.nii.gz
+│   │
+│   └───...
+│
+│
+└───...
+</pre></div>
+</div>
+</section>
+<section id="download">
+<h3>Download<a class="headerlink" href="#download" title="Link to this heading"></a></h3>
+<p>To download the data, simply run the following commands:</p>
+<ol class="arabic simple">
+<li><p>cd into <code class="docutils literal notranslate"><span class="pre">dataset_creation_scripts</span></code> folder:
+<code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">dataset_creation_scripts</span></code></p></li>
+<li><p>run the download script: <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">download.py</span> <span class="pre">-o</span> <span class="pre">IXI-Dataset</span></code></p></li>
+</ol>
+</section>
+<section id="utilization">
+<h3>Utilization<a class="headerlink" href="#utilization" title="Link to this heading"></a></h3>
+<p>Once the dataset is ready for use, you can load it the following way:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flamby.datasets.fed_ixi</span> <span class="kn">import</span> <span class="n">FedIXITiny</span>
+
+<span class="c1"># To load the first center as a pytorch dataset</span>
+<span class="n">center0</span> <span class="o">=</span> <span class="n">FedIXITiny</span><span class="p">(</span><span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pooled</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># To load the second center as a pytorch dataset</span>
+<span class="n">center1</span> <span class="o">=</span> <span class="n">FedIXITiny</span><span class="p">(</span><span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pooled</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span>
+
+<span class="c1"># To sample batches from each of the local datasets use the traditional pytorch API</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span> <span class="k">as</span> <span class="n">dl</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">dl</span><span class="p">(</span><span class="n">center0</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The following arguments can be passed to FedIXITiny: - ‘transform’
+allows to perform a specific transformation on the brain images (e. g.
+with the MONAI library). - ‘center’ allows center indexation, must be in
+<code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2]</span></code> or in <code class="docutils literal notranslate"><span class="pre">['Guys',</span> <span class="pre">'HH',</span> <span class="pre">'IOP']</span></code>. - ‘train’, whether we
+want to load the train or test set - ‘pooled’ loads data from all the
+centers (overwriting previous center argument)</p>
+<p>More informations on how to train model and handle flamby datasets in
+general are available in the <a class="reference internal" href="quickstart.html"><span class="doc">Quickstart</span></a></p>
+</section>
+<section id="benchmarking-the-baseline-on-a-pooled-setting">
+<h3>Benchmarking the baseline on a pooled setting<a class="headerlink" href="#benchmarking-the-baseline-on-a-pooled-setting" title="Link to this heading"></a></h3>
+<p>Once the download is completed and the federated classes are set up, we
+can benchmark the baseline regarding our prediction task on the pooled
+dataset: <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">benchmark.py</span></code></p>
+<p>This will train and test a UNet model (see Prediction task section).</p>
+</section>
+<section id="prediction-task">
+<h3>Prediction task<a class="headerlink" href="#prediction-task" title="Link to this heading"></a></h3>
+<p>As a first approach, what we can do with the <strong>IXI Tiny</strong> dataset is to
+set up a segmentation task using the T1 images: Create a model which
+take T1 image as input and predict the binary mask of the brain (label).
+This process allows us to isolate the brain from the other head
+components, such as the eyes, skin, and fat.</p>
+<p>We will use a UNet model (a kind of convolution neural network
+architecture with few changes), very popular in biomedical segmentation.
+UNet is specifically used to perform semantic segmentation, meaning that
+each voxel of our volume will be classified. We can also refer this task
+as a dense prediction.</p>
+<p>Here are some information to give an insight into how the prediction is
+set up:</p>
+<p><strong>Loss and metric formulas</strong> : We use the DICE loss calculated the
+following way :
+<code class="docutils literal notranslate"><span class="pre">DICE_loss</span> <span class="pre">=</span> <span class="pre">1</span> <span class="pre">-</span> <span class="pre">DICE_score</span> <span class="pre">=</span> <span class="pre">1</span> <span class="pre">-</span> <span class="pre">(2</span> <span class="pre">*</span> <span class="pre">TP</span> <span class="pre">/</span> <span class="pre">(2</span> <span class="pre">*</span> <span class="pre">TP</span> <span class="pre">+</span> <span class="pre">FP</span> <span class="pre">+</span> <span class="pre">FN</span> <span class="pre">+</span> <span class="pre">epsilon))</span></code>
+and take the DICE score for the performance metric.</p>
+<p><strong>UNet final hyperparameters</strong> :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="n">out_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+<span class="n">dimensions</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+<span class="n">num_encoding_blocks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+<span class="n">out_channels_first_layer</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+<span class="n">normalization</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;batch&quot;</span><span class="p">,</span>
+<span class="n">pooling_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span>
+<span class="n">upsampling_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+<span class="n">preactivation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="n">residual</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="n">padding</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="n">padding_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;zeros&quot;</span><span class="p">,</span>
+<span class="n">activation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;PReLU&quot;</span><span class="p">,</span>
+<span class="n">initial_dilation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="n">monte_carlo_dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p><strong>Batch size</strong> : 2</p>
+<p><strong>Learning rate</strong> : 0.001 (AdamW optimizer)</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fed_heart.html" class="btn btn-neutral float-left" title="Fed-Heart Disease" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fed_isic.html" class="btn btn-neutral float-right" title="Fed-ISIC 2019" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

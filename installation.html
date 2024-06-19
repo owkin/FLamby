@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Quickstart" href="quickstart.html" />
+    <link rel="prev" title="Welcome to FLamby’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#update-environment">Update environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#in-case-you-don-t-have-the-make-command-e-g-windows-users">In case you don’t have the <code class="docutils literal notranslate"><span class="pre">make</span></code> command (e.g. Windows users)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#datasets">Datasets</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<p>We recommend using anaconda and pip. You can install anaconda by downloading and executing appropriate installers from the <a class="reference external" href="https://www.anaconda.com/products/distribution">Anaconda website</a>, pip often comes included with python otherwise check <a class="reference external" href="https://pip.pypa.io/en/stable/installation/">the following instructions</a>. We support all Python version starting from <strong>3.8</strong>.</p>
+<p>You may need <code class="docutils literal notranslate"><span class="pre">make</span></code> for simplification. The following command will install all packages used by all datasets within FLamby. If you already know you will only need a fraction of the datasets inside the suite you can do a partial installation and update it along the way using the options described below.
+Create and launch the environment using:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/owkin/FLamby.git
+<span class="nb">cd</span><span class="w"> </span>FLamby
+make<span class="w"> </span>install
+conda<span class="w"> </span>activate<span class="w"> </span>flamby
+</pre></div>
+</div>
+<p>To limit the number of installed packages you can use the <code class="docutils literal notranslate"><span class="pre">enable</span></code> argument to specify which dataset(s)
+you want to build required dependencies for and if you will need to execute the tests (tests) and build the documentation (docs):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/owkin/FLamby.git
+<span class="nb">cd</span><span class="w"> </span>FLamby
+make<span class="w"> </span><span class="nv">enable</span><span class="o">=</span>option_name<span class="w"> </span>install
+conda<span class="w"> </span>activate<span class="w"> </span>flamby
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">option_name</span></code> can be one of the following:
+cam16, heart, isic2019, ixi, kits19, lidc, tcga, docs, tests</p>
+<p>if you want to use more than one option you can do it using comma
+(<strong>WARNING:</strong> there should be no space after <code class="docutils literal notranslate"><span class="pre">,</span></code>), eg:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/owkin/FLamby.git
+<span class="nb">cd</span><span class="w"> </span>FLamby
+make<span class="w"> </span><span class="nv">enable</span><span class="o">=</span>cam16,kits19,tests<span class="w"> </span>install
+conda<span class="w"> </span>activate<span class="w"> </span>flamby
+</pre></div>
+</div>
+<p>Be careful, each command tries to create a conda environment named flamby therefore make install will fail if executed
+numerous times as the flamby environment will already exist. Use make update as explained in the next section if you decide to
+use more datasets than intended originally.</p>
+<section id="update-environment">
+<h2>Update environment<a class="headerlink" href="#update-environment" title="Link to this heading"></a></h2>
+<p>Use the following command if new dependencies have been added, and you want to update the environment for additional datasets:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>update
+</pre></div>
+</div>
+<p>or you can use <code class="docutils literal notranslate"><span class="pre">enable</span></code> option:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span><span class="nv">enable</span><span class="o">=</span>cam16<span class="w"> </span>update
+</pre></div>
+</div>
+</section>
+<section id="in-case-you-don-t-have-the-make-command-e-g-windows-users">
+<h2>In case you don’t have the <code class="docutils literal notranslate"><span class="pre">make</span></code> command (e.g. Windows users)<a class="headerlink" href="#in-case-you-don-t-have-the-make-command-e-g-windows-users" title="Link to this heading"></a></h2>
+<p>You can install the environment by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/owkin/FLamby.git
+<span class="nb">cd</span><span class="w"> </span>FLamby
+conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>environment.yml
+conda<span class="w"> </span>activate<span class="w"> </span>flamby
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>all_extra<span class="o">]</span>
+</pre></div>
+</div>
+<p>or if you wish to install the environment for only one or more datasets, tests or documentation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/owkin/FLamby.git
+<span class="nb">cd</span><span class="w"> </span>FLamby
+conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>environment.yml
+conda<span class="w"> </span>activate<span class="w"> </span>flamby
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>option_name<span class="o">]</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">option_name</span></code> can be one of the following:
+cam16, heart, isic2019, ixi, kits19, lidc, tcga, docs, tests. If you want to use more than one option you can do it
+using comma (‘,’) (no space), eg:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>cam16,ixi<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="datasets">
+<h2>Datasets<a class="headerlink" href="#datasets" title="Link to this heading"></a></h2>
+<p>All datasets but one have to be downloaded and preprocessed to be accessible. Refer either to the <a class="reference internal" href="quickstart.html"><span class="doc">Quickstart</span></a> or
+directly to the datasets’ sections:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="fed_heart.html"><span class="doc">Fed-Heart Disease</span></a>.</p></li>
+<li><p><a class="reference internal" href="fed_ixi.html"><span class="doc">Fed-IXI</span></a>.</p></li>
+<li><p><a class="reference internal" href="fed_isic.html"><span class="doc">Fed-ISIC 2019</span></a>.</p></li>
+<li><p><a class="reference internal" href="fed_camelyon.html"><span class="doc">Fed-Camelyon16</span></a>.</p></li>
+<li><p><a class="reference internal" href="fed_lidc.html"><span class="doc">Fed-LIDC-IDRI</span></a>.</p></li>
+<li><p><a class="reference internal" href="fed_kits19.html"><span class="doc">Fed-KiTS19</span></a>.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to FLamby’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="quickstart.html" class="btn btn-neutral float-right" title="Quickstart" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

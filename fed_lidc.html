@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fed-LIDC-IDRI &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Fed-KiTS19" href="fed_kits19.html" />
+    <link rel="prev" title="Fed-Camelyon16" href="fed_camelyon.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Fed-LIDC-IDRI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#terms-of-use">Terms of use</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#license">License</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#publication-citation">Publication Citation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tcia-citation">TCIA Citation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ethics">Ethics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#dataset-description">Dataset description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#downloading-and-preprocessing">Downloading and preprocessing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#folder-arborescence">Folder arborescence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-dataset">Using the dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#baseline-model">Baseline model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Fed-LIDC-IDRI</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/fed_lidc.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fed-lidc-idri">
+<h1>Fed-LIDC-IDRI<a class="headerlink" href="#fed-lidc-idri" title="Link to this heading"></a></h1>
+<p>This dataset comes from the <a class="reference external" href="https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=1966254">TCIA GDC data
+portal</a>.</p>
+<section id="terms-of-use">
+<h2>Terms of use<a class="headerlink" href="#terms-of-use" title="Link to this heading"></a></h2>
+<section id="license">
+<h3>License<a class="headerlink" href="#license" title="Link to this heading"></a></h3>
+<p>We do not own the copyright of the data. As indicated on the <a class="reference external" href="https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=1966254">dataset’s
+data usage
+policy</a>,
+users of this data must abide by the <a class="reference external" href="https://wiki.cancerimagingarchive.net/x/c4hF">TCIA Data Usage
+Policy</a> and the
+<a class="reference external" href="https://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported
+License</a>, and give
+proper attribution to the original authors (see the next sections). ###
+Data Citation</p>
+<p>Armato III, S. G., McLennan, G., Bidaut, L., McNitt-Gray, M. F., Meyer,
+C. R., Reeves, A. P., Zhao, B., Aberle, D. R., Henschke, C. I., Hoffman,
+E. A., Kazerooni, E. A., MacMahon, H., Van Beek, E. J. R., Yankelevitz,
+D., Biancardi, A. M., Bland, P. H., Brown, M. S., Engelmann, R. M.,
+Laderach, G. E., Max, D., Pais, R. C. , Qing, D. P. Y. , Roberts, R. Y.,
+Smith, A. R., Starkey, A., Batra, P., Caligiuri, P., Farooqi, A.,
+Gladish, G. W., Jude, C. M., Munden, R. F., Petkovska, I., Quint, L. E.,
+Schwartz, L. H., Sundaram, B., Dodd, L. E., Fenimore, C., Gur, D.,
+Petrick, N., Freymann, J., Kirby, J., Hughes, B., Casteele, A. V.,
+Gupte, S., Sallam, M., Heath, M. D., Kuhn, M. H., Dharaiya, E., Burns,
+R., Fryd, D. S., Salganicoff, M., Anand, V., Shreter, U., Vastagh, S.,
+Croft, B. Y., Clarke, L. P. (2015). Data From LIDC-IDRI [Data set]. The
+Cancer Imaging Archive. <a class="reference external" href="https://doi.org/10.7937/K9/TCIA.2015.LO9QL9SX">https://doi.org/10.7937/K9/TCIA.2015.LO9QL9SX</a></p>
+</section>
+<section id="publication-citation">
+<h3>Publication Citation<a class="headerlink" href="#publication-citation" title="Link to this heading"></a></h3>
+<p>Armato SG 3rd, McLennan G, Bidaut L, McNitt-Gray MF, Meyer CR, Reeves
+AP, Zhao B, Aberle DR, Henschke CI, Hoffman EA, Kazerooni EA, MacMahon
+H, Van Beeke EJ, Yankelevitz D, Biancardi AM, Bland PH, Brown MS,
+Engelmann RM, Laderach GE, Max D, Pais RC, Qing DP, Roberts RY, Smith
+AR, Starkey A, Batrah P, Caligiuri P, Farooqi A, Gladish GW, Jude CM,
+Munden RF, Petkovska I, Quint LE, Schwartz LH, Sundaram B, Dodd LE,
+Fenimore C, Gur D, Petrick N, Freymann J, Kirby J, Hughes B, Casteele
+AV, Gupte S, Sallamm M, Heath MD, Kuhn MH, Dharaiya E, Burns R, Fryd DS,
+Salganicoff M, Anand V, Shreter U, Vastagh S, Croft BY. The Lung Image
+Database Consortium (LIDC) and Image Database Resource Initiative
+(IDRI): A completed reference database of lung nodules on CT scans.
+Medical Physics, 38: 915–931, 2011. DOI:
+<a class="reference external" href="https://doi.org/10.1118/1.3528204">https://doi.org/10.1118/1.3528204</a></p>
+</section>
+<section id="tcia-citation">
+<h3>TCIA Citation<a class="headerlink" href="#tcia-citation" title="Link to this heading"></a></h3>
+<p>Clark, K., Vendt, B., Smith, K., Freymann, J., Kirby, J., Koppel, P.,
+Moore, S., Phillips, S., Maffitt, D., Pringle, M., Tarbox, L., &amp; Prior,
+F. (2013). The Cancer Imaging Archive (TCIA): Maintaining and Operating
+a Public Information Repository. Journal of Digital Imaging, 26(6),
+1045–1057. <a class="reference external" href="https://doi.org/10.1007/s10278-013-9622-7">https://doi.org/10.1007/s10278-013-9622-7</a></p>
+</section>
+<section id="ethics">
+<h3>Ethics<a class="headerlink" href="#ethics" title="Link to this heading"></a></h3>
+<p>As per the <a class="reference external" href="https://wiki.cancerimagingarchive.net/display/Public/Data+Usage+Policies+and+Restrictions">terms of use of
+TCIA</a>,
+data was anonymized prior to being submitted and &gt;users must agree not
+to generate and use information in a manner that could allow the
+&gt;identities of research participants to be readily ascertained.</p>
+<p>In particular, as stated in the dataset publication, data was anonymized
+in each local center before being uploaded to the central repository.</p>
+</section>
+</section>
+<section id="dataset-description">
+<h2>Dataset description<a class="headerlink" href="#dataset-description" title="Link to this heading"></a></h2>
+<p>The table below provides summary information on the dataset. Please
+refer to the <a class="reference external" href="https://doi.org/10.1118/1.3528204">original article</a>
+for a more in-depth presentation of the dataset.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>Dataset description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Description</p></td>
+<td><p>This is the dataset from LIDC-IDRI study</p></td>
+</tr>
+<tr class="row-odd"><td><p>Dataset</p></td>
+<td><p>1009 CT-scans with masks (GE MEDICAL SYSTEMS 661
+(530 / 131), SIEMENS 205 (164, 41), TOSHIBA 69
+(55 / 14), Philips 74 (59 / 15)</p></td>
+</tr>
+<tr class="row-even"><td><p>Centers</p></td>
+<td><p>Manufacturer of the CT-scans (GE MEDICAL
+SYSTEMS, SIEMENS, TOSHIBA, Philips)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Permission</p></td>
+<td><p>Public</p></td>
+</tr>
+<tr class="row-even"><td><p>Task</p></td>
+<td><p>Segmentation</p></td>
+</tr>
+<tr class="row-odd"><td><p>Format</p></td>
+<td><p>CT-scans and masks in the <code class="docutils literal notranslate"><span class="pre">nifti</span></code> format</p></td>
+</tr>
+</tbody>
+</table>
+<p>This dataset was used in the <a class="reference external" href="https://luna16.grand-challenge.org/Home/">Luna16
+challenge</a>. Note that
+contrary to the challenge, in which slides with thickness larger than 3
+mm were removed, the present dataset contains 1009 scans (almost all
+scans from
+<a class="reference external" href="https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=1966254">LIDC-IDRI</a>,
+and 9 scans are removed due to missing slices).</p>
+<p>The data is split in a training and testing sets containing 80% and 20%
+of the available scans respectively. This split is stratified according
+to the centers (the manufacturers of the CT-scan apparatus), in order to
+preserve the distribution of centers of origin within each split.</p>
+<p>Centers (i.e., manufacturers) are encoded using a unique index, as
+follows: GE MEDICAL SYSTEMS: 0, Philips: 1, SIEMENS: 2, TOSHIBA: 3.</p>
+</section>
+<section id="downloading-and-preprocessing">
+<h2>Downloading and preprocessing<a class="headerlink" href="#downloading-and-preprocessing" title="Link to this heading"></a></h2>
+<p>To download the data we will use the <a class="reference external" href="https://github.com/nadirsaghar/TCIA-REST-API-Client/blob/master/tcia-rest-client-python/src/tciaclient.py">official TCIA python
+client</a>.</p>
+<p>Create a directory for the dataset(<code class="docutils literal notranslate"><span class="pre">MyDirectory</span></code>). Make sure you
+have enough space (150G), <code class="docutils literal notranslate"><span class="pre">cd</span></code> to <code class="docutils literal notranslate"><span class="pre">dataset_creation_scipts</span></code> and run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">download_ct_scans</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">o</span> <span class="n">MyDirectory</span>
+</pre></div>
+</div>
+<p>This may take a few hours, depending on your download bandwidth and your
+machine.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">download_ct_scans.py</span></code> script will download DICOM files
+corresponding to the CT-scans as well as XML files containing
+annotations and segmentations from radiologists.</p>
+<p>DICOM files will then be converted to the <code class="docutils literal notranslate"><span class="pre">nifti</span></code> format. Each
+<code class="docutils literal notranslate"><span class="pre">nifti</span></code> file contains a 3D image of variable size (roughly (380 x 380
+x 380 on average)).</p>
+<p>Nifti (.nii.gz) files can be conveniently handled using the
+<a class="reference external" href="https://nipy.org/nibabel/">nibabel</a> package.</p>
+<section id="folder-arborescence">
+<h3>Folder arborescence<a class="headerlink" href="#folder-arborescence" title="Link to this heading"></a></h3>
+<p>The data is stored in the following way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>MyDirectory
+│
+└───LIDC-XML-only
+│   │
+│   └───tcia-lidc-xml
+│       │
+│       └─── ...
+│       │     │ 158.xml
+│       │     │ ...
+│       │
+│       └─── ...
+│
+└───1.1.3.6.1.4.1.14519.5.2.1.6279.6001.[SeriesInstanceUID]
+│   │   mask_consensus.nii.gz
+│   │   mask.nii.gz
+│   │   patient.nii.gz
+│
+│
+└───...
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">LIDC-XML-only</span></code>: folder with xml files containing radiologist
+annotations/segmentations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1.1.3.6.1.4.1.14519.5.2.1.6279.6001.[SeriesInstanceUID]</span></code>: one
+folder per ct scan. Contains:</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">patient.nii.gz</span></code>: nifti file containing the ct scan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mask.nii.gz</span></code>: nifti file containing all annotations from
+radiologists.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mask_consensus.nii.gz</span></code>: nifti file containing the average
+annotation for radiologists. Used as ground truth for segmentation.</p></li>
+</ul>
+</section>
+<section id="troubleshooting">
+<h3>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h3>
+<p>While running <code class="docutils literal notranslate"><span class="pre">download_ct_scans.py</span></code>, it may happen that the TCIA
+client stalls and that files stop being downloaded. In that case, you
+should kill the python process and run <code class="docutils literal notranslate"><span class="pre">download_ct_scans.py</span></code> again,
+with the same arguments. Files that were correctly downloaded will not
+be downloaded again.</p>
+</section>
+</section>
+<section id="using-the-dataset">
+<h2>Using the dataset<a class="headerlink" href="#using-the-dataset" title="Link to this heading"></a></h2>
+<p>Now that the dataset is ready for use you can load it using the low or
+high-level API by doing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flamby.datasets.fed_lidc_idri</span> <span class="kn">import</span> <span class="n">FedLidcIdri</span>
+
+<span class="c1"># To load the first center as a pytorch dataset</span>
+<span class="n">center0</span> <span class="o">=</span> <span class="n">FedLidcIdri</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># To load the second center as a pytorch dataset</span>
+<span class="n">center1</span> <span class="o">=</span> <span class="n">FedLidcIdri</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># To sample batches from each of the local datasets use the traditional pytorch API</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span> <span class="k">as</span> <span class="n">dl</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">dl</span><span class="p">(</span><span class="n">center0</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>More informations on how to train model and handle flamby datasets in
+general are available in the <a class="reference internal" href="quickstart.html"><span class="doc">Quickstart</span></a></p>
+</section>
+<section id="baseline-model">
+<h2>Baseline model<a class="headerlink" href="#baseline-model" title="Link to this heading"></a></h2>
+<p>The baseline model is a V-Net (see <a class="reference external" href="https://arxiv.org/abs/1606.04797">V-Net: Fully Convolutional Neural
+Networks for Volumetric Medical Image
+Segmentation</a>). It is trained by
+minimizing the DICE loss. Since lung scans are too large to fit in
+memory, patches containing positive voxels are randomly sampled and fed
+to the network during training. At test time, however, the whole image
+is processed. The current implementation assumes access to a GPU able to
+process 2 (128 x 128 x 128) patches at a time. The code was tested on a
+Titan X (Pascal) GPU.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fed_camelyon.html" class="btn btn-neutral float-left" title="Fed-Camelyon16" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fed_kits19.html" class="btn btn-neutral float-right" title="Fed-KiTS19" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

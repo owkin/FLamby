@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>flamby.datasets.fed_kits19.dataset &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">flamby.datasets.fed_kits19.dataset</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for flamby.datasets.fed_kits19.dataset</h1><div class="highlight"><pre>
+<span></span><span class="c1">#    Copyright 2020 Division of Medical Image Computing, German Cancer Research Center</span>
+<span class="c1">#    (DKFZ), Heidelberg, Germany</span>
+<span class="c1">#</span>
+<span class="c1">#    Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1">#    you may not use this file except in compliance with the License.</span>
+<span class="c1">#    You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#        http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1">#    Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1">#    distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1">#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1">#    See the License for the specific language governing permissions and</span>
+<span class="c1">#    limitations under the License.</span>
+
+<span class="c1"># Part of this file comes from https://github.com/MIC-DKFZ/nnUNet/tree/master/nnunet</span>
+<span class="c1"># See flamby/datasets/fed_kits19/dataset_creation_scripts/LICENSE/README.md for more</span>
+<span class="c1"># information</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">batchgenerators.utilities.file_and_folder_operations</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">isfile</span><span class="p">,</span>
+    <span class="n">join</span><span class="p">,</span>
+    <span class="n">load_pickle</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">nnunet.training.data_augmentation.default_data_augmentation</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">default_3D_augmentation_params</span><span class="p">,</span>
+    <span class="n">get_patch_size</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="kn">import</span> <span class="nn">flamby.datasets.fed_kits19</span>
+<span class="kn">from</span> <span class="nn">flamby.datasets.fed_kits19.dataset_creation_scripts.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">set_environment_variables</span><span class="p">,</span>
+    <span class="n">transformations</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">flamby.utils</span> <span class="kn">import</span> <span class="n">check_dataset_from_config</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot;&quot;</span><span class="p">)))</span>
+
+
+<span class="k">class</span> <span class="nc">Kits19Raw</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pytorch dataset containing all the images, and segmentations for KiTS19</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X_dtype : torch.dtype, optional</span>
+<span class="sd">        Dtype for inputs `X`. Defaults to `torch.float32`.</span>
+<span class="sd">    y_dtype : torch.dtype, optional</span>
+<span class="sd">        Dtype for labels `y`. Defaults to `torch.int64`.</span>
+<span class="sd">    debug : bool, optional,</span>
+<span class="sd">        Whether or not to use only the part of the dataset downloaded in</span>
+<span class="sd">        debug mode. Defaults to False.</span>
+<span class="sd">    data_path: str</span>
+<span class="sd">        If data_path is given it will ignore the config file and look for the</span>
+<span class="sd">        dataset directly in data_path. Defaults to None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">X_dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+        <span class="n">y_dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+        <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;See description above&quot;&quot;&quot;</span>
+        <span class="c1"># set_environment_variables should be called before importing nnunet</span>
+        <span class="k">if</span> <span class="n">data_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_path</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The string </span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s2"> is not a valid path.&quot;</span><span class="p">)</span>
+        <span class="n">set_environment_variables</span><span class="p">(</span><span class="n">debug</span><span class="p">,</span> <span class="n">data_path</span><span class="o">=</span><span class="n">data_path</span><span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">nnunet.paths</span> <span class="kn">import</span> <span class="n">preprocessing_output_dir</span>
+
+        <span class="k">if</span> <span class="n">data_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">check_dataset_from_config</span><span class="p">(</span><span class="s2">&quot;fed_kits19&quot;</span><span class="p">,</span> <span class="n">debug</span><span class="p">)</span>
+
+        <span class="n">plans_file</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">preprocessing_output_dir</span>
+            <span class="o">+</span> <span class="s2">&quot;/Task064_KiTS_labelsFixed/nnUNetPlansv2.1_plans_3D.pkl&quot;</span>
+        <span class="p">)</span>
+        <span class="n">plans</span> <span class="o">=</span> <span class="n">load_pickle</span><span class="p">(</span><span class="n">plans_file</span><span class="p">)</span>
+        <span class="n">stage_plans</span> <span class="o">=</span> <span class="n">plans</span><span class="p">[</span><span class="s2">&quot;plans_per_stage&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">stage_plans</span><span class="p">[</span><span class="s2">&quot;patch_size&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">data_aug_params</span> <span class="o">=</span> <span class="n">default_3D_augmentation_params</span>
+        <span class="n">data_aug_params</span><span class="p">[</span><span class="s2">&quot;patch_size_for_spatialtransform&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span>
+        <span class="n">basic_generator_patch_size</span> <span class="o">=</span> <span class="n">get_patch_size</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span><span class="p">,</span>
+            <span class="n">data_aug_params</span><span class="p">[</span><span class="s2">&quot;rotation_x&quot;</span><span class="p">],</span>
+            <span class="n">data_aug_params</span><span class="p">[</span><span class="s2">&quot;rotation_y&quot;</span><span class="p">],</span>
+            <span class="n">data_aug_params</span><span class="p">[</span><span class="s2">&quot;rotation_z&quot;</span><span class="p">],</span>
+            <span class="n">data_aug_params</span><span class="p">[</span><span class="s2">&quot;scale_range&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pad_kwargs_data</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pad_mode</span> <span class="o">=</span> <span class="s2">&quot;constant&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">need_to_pad</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">basic_generator_patch_size</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tr_transform</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_transform</span> <span class="o">=</span> <span class="n">transformations</span><span class="p">(</span>
+            <span class="n">data_aug_params</span><span class="p">[</span><span class="s2">&quot;patch_size_for_spatialtransform&quot;</span><span class="p">],</span> <span class="n">data_aug_params</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset_directory</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">preprocessing_output_dir</span>
+            <span class="o">+</span> <span class="s2">&quot;/Task064_KiTS_labelsFixed/nnUNetData_plans_v2.1_stage0&quot;</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_dtype</span> <span class="o">=</span> <span class="n">X_dtype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_dtype</span> <span class="o">=</span> <span class="n">y_dtype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">debug</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_test</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span> <span class="k">if</span> <span class="n">train</span> <span class="k">else</span> <span class="s2">&quot;test&quot;</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+            <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">flamby</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">fed_kits19</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
+            <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">)</span>
+            <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;thresholded_sites.csv&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;train_test_split == &#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_test</span> <span class="o">+</span> <span class="s2">&quot;&#39; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span>
+            <span class="n">drop</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">images</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">case_ids</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="c1"># Load image paths and properties files</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Case</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">images_path</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">images_path</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">images_path</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="s2">&quot;data_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_directory</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.npz&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">images_path</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="s2">&quot;properties_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dataset_directory</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.pkl&quot;</span> <span class="o">%</span> <span class="n">i</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">images_path</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_pickle</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">images_path</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="s2">&quot;properties_file&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oversample_next_sample</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">centers</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">site_ids</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images_path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images_path</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;data_file&quot;</span><span class="p">][:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span><span class="p">):</span>
+            <span class="n">case_all_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">images_path</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;data_file&quot;</span><span class="p">][:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span><span class="p">,</span> <span class="n">memmap_mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">case_all_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images_path</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;data_file&quot;</span><span class="p">])[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+
+        <span class="n">properties</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">images_path</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span>
+        <span class="c1"># randomly oversample the foreground classes</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">oversample_next_sample</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">oversample_next_sample</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">oversample_foreground_class</span><span class="p">(</span><span class="n">case_all_data</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">properties</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">oversample_next_sample</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">oversample_foreground_class</span><span class="p">(</span><span class="n">case_all_data</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">properties</span><span class="p">)</span>
+
+        <span class="c1"># apply data augmentations</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_test</span> <span class="o">==</span> <span class="s2">&quot;train&quot;</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_transform</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_test</span> <span class="o">==</span> <span class="s2">&quot;test&quot;</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_transform</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">oversample_foreground_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_all_data</span><span class="p">,</span> <span class="n">force_fg</span><span class="p">,</span> <span class="n">properties</span><span class="p">):</span>
+        <span class="c1"># taken from nnunet</span>
+        <span class="n">data_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span><span class="p">)</span>
+        <span class="n">seg_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">data_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>  <span class="c1"># shapes?</span>
+        <span class="n">seg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">seg_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">need_to_pad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">need_to_pad</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="c1"># if case_all_data.shape + need_to_pad is still &lt; patch size we need to</span>
+            <span class="c1"># pad more! We pad on both sides</span>
+            <span class="c1"># always</span>
+            <span class="k">if</span> <span class="n">need_to_pad</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">+</span> <span class="n">case_all_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span><span class="p">[</span><span class="n">d</span><span class="p">]:</span>
+                <span class="n">need_to_pad</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">-</span> <span class="n">case_all_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># we can now choose the bbox from -need_to_pad // 2 to shape - patch_size +</span>
+        <span class="c1"># need_to_pad // 2. Here we</span>
+        <span class="c1"># define what the upper and lower bound can be to then sample form them with</span>
+        <span class="c1"># np.random.randint</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">case_all_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">lb_x</span> <span class="o">=</span> <span class="o">-</span><span class="n">need_to_pad</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">ub_x</span> <span class="o">=</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">need_to_pad</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">need_to_pad</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">lb_y</span> <span class="o">=</span> <span class="o">-</span><span class="n">need_to_pad</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">ub_y</span> <span class="o">=</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">need_to_pad</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">need_to_pad</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">lb_z</span> <span class="o">=</span> <span class="o">-</span><span class="n">need_to_pad</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">ub_z</span> <span class="o">=</span> <span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">need_to_pad</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">need_to_pad</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="c1"># if not force_fg then we can just sample the bbox randomly from lb and ub.</span>
+        <span class="c1"># Else we need to make sure we get</span>
+        <span class="c1"># at least one of the foreground classes in the patch</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">force_fg</span><span class="p">:</span>
+            <span class="n">bbox_x_lb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">lb_x</span><span class="p">,</span> <span class="n">ub_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">bbox_y_lb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">lb_y</span><span class="p">,</span> <span class="n">ub_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">bbox_z_lb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">lb_z</span><span class="p">,</span> <span class="n">ub_z</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># these values should have been precomputed</span>
+            <span class="k">if</span> <span class="s2">&quot;class_locations&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">properties</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;Please rerun the preprocessing with the newest version of nnU-Net!&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Foreground Classes = [0, 1]</span>
+            <span class="c1"># this saves us a np.unique. Preprocessing already did that for all cases.</span>
+            <span class="c1"># Neat.</span>
+            <span class="n">foreground_classes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">i</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">properties</span><span class="p">[</span><span class="s2">&quot;class_locations&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;class_locations&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">0</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">foreground_classes</span> <span class="o">=</span> <span class="n">foreground_classes</span><span class="p">[</span><span class="n">foreground_classes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">foreground_classes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># this only happens if some image does not contain foreground voxels at</span>
+                <span class="c1"># all</span>
+                <span class="n">selected_class</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">voxels_of_that_class</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;case does not contain any foreground classes&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">selected_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">foreground_classes</span><span class="p">)</span>
+
+                <span class="n">voxels_of_that_class</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="s2">&quot;class_locations&quot;</span><span class="p">][</span><span class="n">selected_class</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">voxels_of_that_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">selected_voxel</span> <span class="o">=</span> <span class="n">voxels_of_that_class</span><span class="p">[</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">voxels_of_that_class</span><span class="p">))</span>
+                <span class="p">]</span>
+                <span class="c1"># selected voxel is center voxel. Subtract half the patch size to get</span>
+                <span class="c1"># lower bbox voxel.</span>
+                <span class="c1"># Make sure it is within the bounds of lb and ub</span>
+                <span class="n">bbox_x_lb</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lb_x</span><span class="p">,</span> <span class="n">selected_voxel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">bbox_y_lb</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lb_y</span><span class="p">,</span> <span class="n">selected_voxel</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">bbox_z_lb</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lb_z</span><span class="p">,</span> <span class="n">selected_voxel</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># If the image does not contain any foreground classes, we fall back to</span>
+                <span class="c1"># random cropping</span>
+                <span class="n">bbox_x_lb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">lb_x</span><span class="p">,</span> <span class="n">ub_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">bbox_y_lb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">lb_y</span><span class="p">,</span> <span class="n">ub_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">bbox_z_lb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">lb_z</span><span class="p">,</span> <span class="n">ub_z</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">bbox_x_ub</span> <span class="o">=</span> <span class="n">bbox_x_lb</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">bbox_y_ub</span> <span class="o">=</span> <span class="n">bbox_y_lb</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">bbox_z_ub</span> <span class="o">=</span> <span class="n">bbox_z_lb</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch_size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="c1"># whoever wrote this knew what he was doing (hint: it was me). We first crop</span>
+        <span class="c1"># the data to the region of the bbox that actually lies within the data. This</span>
+        <span class="c1"># will result in a smaller array which is then faster to pad. valid_bbox is</span>
+        <span class="c1"># just the coord that lied within the data cube. It will be padded to match the</span>
+        <span class="c1"># patch size later</span>
+        <span class="n">valid_bbox_x_lb</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bbox_x_lb</span><span class="p">)</span>
+        <span class="n">valid_bbox_x_ub</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bbox_x_ub</span><span class="p">)</span>
+        <span class="n">valid_bbox_y_lb</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bbox_y_lb</span><span class="p">)</span>
+        <span class="n">valid_bbox_y_ub</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">bbox_y_ub</span><span class="p">)</span>
+        <span class="n">valid_bbox_z_lb</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bbox_z_lb</span><span class="p">)</span>
+        <span class="n">valid_bbox_z_ub</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">bbox_z_ub</span><span class="p">)</span>
+
+        <span class="c1"># At this point you might ask yourself why we would treat seg differently from</span>
+        <span class="c1"># seg_from_previous_stage. Why not just concatenate them here and forget about</span>
+        <span class="c1"># the if statements? Well that&#39;s because segneeds to be padded with -1 constant</span>
+        <span class="c1"># whereas seg_from_previous_stage needs to be padded with 0s (we could also</span>
+        <span class="c1"># remove label -1 in the data augmentation but this way it is less error prone)</span>
+        <span class="n">case_all_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
+            <span class="n">case_all_data</span><span class="p">[</span>
+                <span class="p">:,</span>
+                <span class="n">valid_bbox_x_lb</span><span class="p">:</span><span class="n">valid_bbox_x_ub</span><span class="p">,</span>
+                <span class="n">valid_bbox_y_lb</span><span class="p">:</span><span class="n">valid_bbox_y_ub</span><span class="p">,</span>
+                <span class="n">valid_bbox_z_lb</span><span class="p">:</span><span class="n">valid_bbox_z_ub</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span>
+            <span class="n">case_all_data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="p">(</span>
+                <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="p">(</span><span class="o">-</span><span class="nb">min</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bbox_x_lb</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">bbox_x_ub</span> <span class="o">-</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)),</span>
+                <span class="p">(</span><span class="o">-</span><span class="nb">min</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bbox_y_lb</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">bbox_y_ub</span> <span class="o">-</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">)),</span>
+                <span class="p">(</span><span class="o">-</span><span class="nb">min</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bbox_z_lb</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">bbox_z_ub</span> <span class="o">-</span> <span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">0</span><span class="p">)),</span>
+            <span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pad_mode</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">pad_kwargs_data</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">seg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span>
+            <span class="n">case_all_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:],</span>
+            <span class="p">(</span>
+                <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="p">(</span><span class="o">-</span><span class="nb">min</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bbox_x_lb</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">bbox_x_ub</span> <span class="o">-</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)),</span>
+                <span class="p">(</span><span class="o">-</span><span class="nb">min</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bbox_y_lb</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">bbox_y_ub</span> <span class="o">-</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">)),</span>
+                <span class="p">(</span><span class="o">-</span><span class="nb">min</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bbox_z_lb</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">bbox_z_ub</span> <span class="o">-</span> <span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">0</span><span class="p">)),</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;constant&quot;</span><span class="p">,</span>
+            <span class="o">**</span><span class="p">{</span><span class="s2">&quot;constant_values&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;seg&quot;</span><span class="p">:</span> <span class="n">seg</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="FedKits19">
+<a class="viewcode-back" href="../../../../datasets.html#flamby.datasets.fed_kits19.FedKits19">[docs]</a>
+<span class="k">class</span> <span class="nc">FedKits19</span><span class="p">(</span><span class="n">Kits19Raw</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pytorch dataset containing for each center the features and associated labels</span>
+<span class="sd">    for Camelyon16 federated classification.</span>
+<span class="sd">    One can instantiate this dataset with train or test data coming from either</span>
+<span class="sd">    of the 2 centers it was created from or all data pooled.</span>
+<span class="sd">    The train/test split corresponds to the one from the Challenge.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    center : int, optional</span>
+<span class="sd">        Center id between 0 and 5. Default to 0</span>
+<span class="sd">    train : bool, optional</span>
+<span class="sd">        Default to True</span>
+<span class="sd">    pooled : bool, optional</span>
+<span class="sd">        Default to False</span>
+<span class="sd">    X_dtype : torch.dtype, optional</span>
+<span class="sd">        Default to torch.float32</span>
+<span class="sd">    y_dtype : torch.dtype, optional</span>
+<span class="sd">        Default to torch.float32</span>
+<span class="sd">    debug : bool, optional</span>
+<span class="sd">        Whether or not to use only the part of the dataset downloaded in debug mode.</span>
+<span class="sd">        Default to False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">center</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">train</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">pooled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">X_dtype</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+        <span class="n">y_dtype</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+        <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cf class docstring&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">X_dtype</span><span class="o">=</span><span class="n">X_dtype</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="n">train</span><span class="p">,</span> <span class="n">y_dtype</span><span class="o">=</span><span class="n">y_dtype</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">)</span>
+
+        <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_test</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">center</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pooled</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">center</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+                <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">flamby</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">fed_kits19</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
+                <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">)</span>
+                <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;thresholded_sites.csv&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;train_test_split_silo == &#39;&quot;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;&#39; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span>
+                <span class="n">drop</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">images</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">case_ids</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">images_path</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">images_path</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">images_path</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="s2">&quot;data_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dataset_directory</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.npz&quot;</span> <span class="o">%</span> <span class="n">i</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">images_path</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="s2">&quot;properties_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dataset_directory</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.pkl&quot;</span> <span class="o">%</span> <span class="n">i</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">images_path</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_pickle</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">images_path</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="s2">&quot;properties_file&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">centers</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">site_ids</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

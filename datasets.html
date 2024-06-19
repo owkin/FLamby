@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Datasets &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="FL Strategies" href="strategies.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fed-isic2019">Fed-ISIC2019</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flamby.datasets.fed_isic2019.FedIsic2019"><code class="docutils literal notranslate"><span class="pre">FedIsic2019</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fed-camelyon16">Fed-Camelyon16</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flamby.datasets.fed_camelyon16.FedCamelyon16"><code class="docutils literal notranslate"><span class="pre">FedCamelyon16</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fed-lidc-idri">Fed-LIDC-IDRI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flamby.datasets.fed_lidc_idri.FedLidcIdri"><code class="docutils literal notranslate"><span class="pre">FedLidcIdri</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fed-tcga-brca">Fed-TCGA_BRCA</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flamby.datasets.fed_tcga_brca.FedTcgaBrca"><code class="docutils literal notranslate"><span class="pre">FedTcgaBrca</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fed-heart-disease">Fed-Heart-Disease</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flamby.datasets.fed_heart_disease.FedHeartDisease"><code class="docutils literal notranslate"><span class="pre">FedHeartDisease</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fed-ixitiny">Fed-IXITiny</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flamby.datasets.fed_ixi.FedIXITiny"><code class="docutils literal notranslate"><span class="pre">FedIXITiny</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fed-kits19">Fed-Kits19</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flamby.datasets.fed_kits19.FedKits19"><code class="docutils literal notranslate"><span class="pre">FedKits19</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Datasets</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/datasets.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="datasets">
+<h1>Datasets<a class="headerlink" href="#datasets" title="Link to this heading"></a></h1>
+<section id="fed-isic2019">
+<h2>Fed-ISIC2019<a class="headerlink" href="#fed-isic2019" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flamby.datasets.fed_isic2019.FedIsic2019">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flamby.datasets.fed_isic2019.</span></span><span class="sig-name descname"><span class="pre">FedIsic2019</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/datasets/fed_isic2019/dataset.html#FedIsic2019"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.datasets.fed_isic2019.FedIsic2019" title="Link to this definition"></a></dt>
+<dd><p>Pytorch dataset containing for each center the features and associated labels
+for the Isic2019 federated classification.
+One can instantiate this dataset with train or test data coming from either of
+the 6 centers it was created from or all data pooled.
+The train/test split is fixed and given in the train_test_split file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>center</strong> (<em>int</em><em>, </em><em>optional</em>) – Default to 0</p></li>
+<li><p><strong>train</strong> (<em>bool</em><em>, </em><em>optional</em>) – Default to True</p></li>
+<li><p><strong>pooled</strong> (<em>bool</em><em>, </em><em>optional</em>) – Default to False</p></li>
+<li><p><strong>debug</strong> (<em>bool</em><em>, </em><em>optional</em>) – Default to False</p></li>
+<li><p><strong>X_dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – Default to torch.float32</p></li>
+<li><p><strong>y_dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – Default to torch.int64</p></li>
+<li><p><strong>data_path</strong> (<em>str</em>) – If data_path is given it will ignore the config file and look for the
+dataset directly in data_path. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="fed-camelyon16">
+<h2>Fed-Camelyon16<a class="headerlink" href="#fed-camelyon16" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flamby.datasets.fed_camelyon16.FedCamelyon16">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flamby.datasets.fed_camelyon16.</span></span><span class="sig-name descname"><span class="pre">FedCamelyon16</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pooled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/datasets/fed_camelyon16/dataset.html#FedCamelyon16"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.datasets.fed_camelyon16.FedCamelyon16" title="Link to this definition"></a></dt>
+<dd><p>Pytorch dataset containing for each center the features and associated labels
+for Camelyon16 federated classification.
+One can instantiate this dataset with train or test data coming from either
+of the 2 centers it was created from or all data pooled.
+The train/test split corresponds to the one from the Challenge.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>center</strong> (<em>int</em><em>, </em><em>optional</em>) – Default to 0.</p></li>
+<li><p><strong>train</strong> (<em>bool</em><em>, </em><em>optional</em>) – Default to True</p></li>
+<li><p><strong>pooled</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to take all data from the 2 centers into one dataset, by
+default False</p></li>
+<li><p><strong>X_dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – Dtype for inputs <cite>X</cite>. Defaults to <cite>torch.float32</cite>.</p></li>
+<li><p><strong>y_dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – Dtype for labels <cite>y</cite>. Defaults to <cite>torch.int64</cite>.</p></li>
+<li><p><strong>debug</strong> (<em>bool</em><em>, </em><em>optional</em><em>,</em>) – Whether or not to use only the part of the dataset downloaded in
+debug mode. Defaults to False.</p></li>
+<li><p><strong>data_path</strong> (<em>str</em>) – If data_path is given it will ignore the config file and look for the
+dataset directly in data_path. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="fed-lidc-idri">
+<h2>Fed-LIDC-IDRI<a class="headerlink" href="#fed-lidc-idri" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flamby.datasets.fed_lidc_idri.FedLidcIdri">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flamby.datasets.fed_lidc_idri.</span></span><span class="sig-name descname"><span class="pre">FedLidcIdri</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_dtype=torch.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_dtype=torch.int64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_shape=(384</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">384</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">384)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler=&lt;flamby.datasets.fed_lidc_idri.data_utils.Sampler</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform=&lt;flamby.datasets.fed_lidc_idri.data_utils.ClipNorm</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center=0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pooled=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/datasets/fed_lidc_idri/dataset.html#FedLidcIdri"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.datasets.fed_lidc_idri.FedLidcIdri" title="Link to this definition"></a></dt>
+<dd><p>Pytorch dataset containing for each center the features and associated labels
+for LIDC-IDRI federated classification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – Dtype for inputs <cite>X</cite>. Defaults to <cite>torch.float32</cite>.</p></li>
+<li><p><strong>y_dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – Dtype for labels <cite>y</cite>. Defaults to <cite>torch.int64</cite>.</p></li>
+<li><p><strong>out_shape</strong> (<em>Tuple</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – The desired output shape. If None, no padding or cropping is performed.
+Default is (384, 384, 384).</p></li>
+<li><p><strong>sampler</strong> (<em>flamby.datasets.fed_lidc_idri.data_utils.Sampler</em>) – Patch sampling method.</p></li>
+<li><p><strong>transform</strong> (<em>torch.torchvision.Transform</em><em> or </em><em>None</em><em>, </em><em>optional.</em>) – Transformation to perform on each data point.</p></li>
+<li><p><strong>center</strong> (<em>int</em><em>, </em><em>optional</em>) – Id of the center from which to gather data. Defaults to 0.</p></li>
+<li><p><strong>train</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to take the train or test split. Defaults to True (train).</p></li>
+<li><p><strong>pooled</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to take all data from the 2 centers into one dataset.
+If True, supersedes center argument. Defaults to False.</p></li>
+<li><p><strong>debug</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether the dataset was downloaded in debug mode. Defaults to false.</p></li>
+<li><p><strong>data_path</strong> (<em>str</em>) – If data_path is given it will ignore the config file and look for the
+dataset directly in data_path. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="fed-tcga-brca">
+<h2>Fed-TCGA_BRCA<a class="headerlink" href="#fed-tcga-brca" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flamby.datasets.fed_tcga_brca.FedTcgaBrca">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flamby.datasets.fed_tcga_brca.</span></span><span class="sig-name descname"><span class="pre">FedTcgaBrca</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pooled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/datasets/fed_tcga_brca/dataset.html#FedTcgaBrca"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.datasets.fed_tcga_brca.FedTcgaBrca" title="Link to this definition"></a></dt>
+<dd><p>Pytorch dataset containing all the clinical features and (event, time)
+information for TCGA-BRCA survival analysis.
+One can instantiate this dataset with train or test data coming from either of
+the 6 regions or all regions pooled.
+The train/test split is static and given in the train_test_split file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>center</strong> (<em>int</em><em>, </em><em>optional</em>) – Between 0 and 5, designates the region in the case of pooled==False. Default to
+0</p></li>
+<li><p><strong>train</strong> (<em>bool</em><em>, </em><em>optional</em>) – Characterizes if the dataset is used for training or for testing. Default to True</p></li>
+<li><p><strong>pooled</strong> (<em>bool</em><em>, </em><em>optional</em>) – Characterizes if the dataset is pooled or not. Default to False</p></li>
+<li><p><strong>X_dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – Default to torch.float32</p></li>
+<li><p><strong>y_dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – Default to torch.float32</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="fed-heart-disease">
+<h2>Fed-Heart-Disease<a class="headerlink" href="#fed-heart-disease" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flamby.datasets.fed_heart_disease.FedHeartDisease">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flamby.datasets.fed_heart_disease.</span></span><span class="sig-name descname"><span class="pre">FedHeartDisease</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pooled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/datasets/fed_heart_disease/dataset.html#FedHeartDisease"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.datasets.fed_heart_disease.FedHeartDisease" title="Link to this definition"></a></dt>
+<dd><p>Pytorch dataset containing for each center the features and associated labels
+for Heart Disease federated classification.
+One can instantiate this dataset with train or test data coming from either
+of the 4 centers it was created from or all data pooled.
+The train/test split are arbitrarily fixed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>center</strong> (<em>int</em><em>, </em><em>optional</em>) – Default to 0</p></li>
+<li><p><strong>train</strong> (<em>bool</em><em>, </em><em>optional</em>) – Default to True</p></li>
+<li><p><strong>pooled</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to take all data from the 2 centers into one dataset, by
+default False</p></li>
+<li><p><strong>X_dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – Dtype for inputs <cite>X</cite>. Defaults to <cite>torch.float32</cite>.</p></li>
+<li><p><strong>y_dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – Dtype for labels <cite>y</cite>. Defaults to <cite>torch.int64</cite>.</p></li>
+<li><p><strong>debug</strong> (<em>bool</em><em>, </em><em>optional</em><em>,</em>) – Whether or not to use only the part of the dataset downloaded in
+debug mode. Defaults to False.</p></li>
+<li><p><strong>data_path</strong> (<em>str</em>) – If data_path is given it will ignore the config file and look for the
+dataset directly in data_path. Defaults to None.</p></li>
+<li><p><strong>normalize</strong> (<em>bool</em>) – Whether or not to normalize the features. We use the corresponding
+training client to compute the mean and std per feature used to
+normalize. When using pooled=True, we use the training part of the full
+dataset to compute the statistics, in order to reflect the differences
+between available informations in FL and pooled mode. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="fed-ixitiny">
+<h2>Fed-IXITiny<a class="headerlink" href="#fed-ixitiny" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flamby.datasets.fed_ixi.FedIXITiny">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flamby.datasets.fed_ixi.</span></span><span class="sig-name descname"><span class="pre">FedIXITiny</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pooled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/datasets/fed_ixi/dataset.html#FedIXITiny"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.datasets.fed_ixi.FedIXITiny" title="Link to this definition"></a></dt>
+<dd><p>Federated class for T1 images in IXI Tiny Dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transform</strong> – PyTorch Transform to process the data or augment it.</p></li>
+<li><p><strong>center</strong> (<em>int</em><em>, </em><em>optional</em>) – Id of the center (hospital) from which to gather data. Defaults to 0.</p></li>
+<li><p><strong>train</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to take the train or test split. Defaults to True (train).</p></li>
+<li><p><strong>pooled</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to take all data from the 3 centers into one dataset.
+If True, supersedes center argument. Defaults to False.</p></li>
+<li><p><strong>debug</strong> (<em>bool</em><em>, </em><em>optional</em>) – Default to False.</p></li>
+<li><p><strong>data_path</strong> (<em>str</em>) – If data_path is given it will ignore the config file and look for the
+dataset directly in data_path. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="fed-kits19">
+<h2>Fed-Kits19<a class="headerlink" href="#fed-kits19" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flamby.datasets.fed_kits19.FedKits19">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flamby.datasets.fed_kits19.</span></span><span class="sig-name descname"><span class="pre">FedKits19</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pooled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flamby/datasets/fed_kits19/dataset.html#FedKits19"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flamby.datasets.fed_kits19.FedKits19" title="Link to this definition"></a></dt>
+<dd><p>Pytorch dataset containing for each center the features and associated labels
+for Camelyon16 federated classification.
+One can instantiate this dataset with train or test data coming from either
+of the 2 centers it was created from or all data pooled.
+The train/test split corresponds to the one from the Challenge.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>center</strong> (<em>int</em><em>, </em><em>optional</em>) – Center id between 0 and 5. Default to 0</p></li>
+<li><p><strong>train</strong> (<em>bool</em><em>, </em><em>optional</em>) – Default to True</p></li>
+<li><p><strong>pooled</strong> (<em>bool</em><em>, </em><em>optional</em>) – Default to False</p></li>
+<li><p><strong>X_dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – Default to torch.float32</p></li>
+<li><p><strong>y_dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – Default to torch.float32</p></li>
+<li><p><strong>debug</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not to use only the part of the dataset downloaded in debug mode.
+Default to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="strategies.html" class="btn btn-neutral float-left" title="FL Strategies" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAQ &mdash; FLamby 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Extending FLamby" href="contributing.html" />
+    <link rel="prev" title="Reproduction instructions" href="reproducing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLamby
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started Instructions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets informations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fed_tcga_brca.html">Fed-TCGA-BRCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_heart.html">Fed-Heart Disease</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_ixi.html">Fed-IXI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_isic.html">Fed-ISIC 2019</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_camelyon.html">Fed-Camelyon16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_lidc.html">Fed-LIDC-IDRI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fed_kits19.html">Fed-KiTS19</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integration with FL-frameworks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="substra.html">Using FLamby with Substra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedbiomed.html">Using FLamby with Fed-BioMed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedml.html">Using FLamby with FedML</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducible results with docker</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Containerized execution</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reproducing results</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reproducing.html">Reproduction instructions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FAQ</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#how-can-i-do-a-clean-slate">How can I do a clean slate?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i-get-an-error-when-installing-flamby">I get an error when installing Flamby</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#error-errno-2-no-such-file-or-directory-pip">error: [Errno 2] No such file or directory: ‘pip’</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#i-am-installing-flamby-on-a-machine-equipped-with-macos-and-an-intel-processor">I am installing Flamby on a machine equipped with macOS and an intel processor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i-or-someone-else-already-downloaded-a-dataset-using-another-copy-of-the-flamby-repository-my-copy-of-flamby-cannot-find-it-and-i-don-t-want-to-download-it-again-what-can-i-do">I or someone else already downloaded a dataset using another copy of the flamby repository, my copy of flamby cannot find it and I don’t want to download it again, what can I do ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#collaborative-work-on-flamby-i-am-working-with-flamby-on-a-server-with-other-users-how-can-we-share-the-datasets-efficiently">Collaborative work on FLamby: I am working with FLamby on a server with other users, how can we share the datasets efficiently ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#can-i-run-clients-in-different-threads-with-flamby-how-does-it-run-under-the-hood">Can I run clients in different threads with FLamby? How does it run under the hood?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#does-flamby-support-gpu-acceleration">Does FLamby support GPU acceleration?</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Extending FLamby</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Extending FLamby</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribution-guidelines">Contribution Guidelines</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="strategies.html">FL Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLamby</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">FAQ</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/faq.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="faq">
+<h1>FAQ<a class="headerlink" href="#faq" title="Link to this heading"></a></h1>
+<section id="how-can-i-do-a-clean-slate">
+<h2>How can I do a clean slate?<a class="headerlink" href="#how-can-i-do-a-clean-slate" title="Link to this heading"></a></h2>
+<p>To clean the environment you must execute (after being inside the FLamby
+folder <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">FLamby/</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>deactivate
+make<span class="w"> </span>clean
+</pre></div>
+</div>
+</section>
+<section id="i-get-an-error-when-installing-flamby">
+<h2>I get an error when installing Flamby<a class="headerlink" href="#i-get-an-error-when-installing-flamby" title="Link to this heading"></a></h2>
+<section id="error-errno-2-no-such-file-or-directory-pip">
+<h3>error: [Errno 2] No such file or directory: ‘pip’<a class="headerlink" href="#error-errno-2-no-such-file-or-directory-pip" title="Link to this heading"></a></h3>
+<p>Try running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>deactivate
+make<span class="w"> </span>clean
+pip3<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip
+</pre></div>
+</div>
+<p>and try running your make installation option again.</p>
+</section>
+</section>
+<section id="i-am-installing-flamby-on-a-machine-equipped-with-macos-and-an-intel-processor">
+<h2>I am installing Flamby on a machine equipped with macOS and an intel processor<a class="headerlink" href="#i-am-installing-flamby-on-a-machine-equipped-with-macos-and-an-intel-processor" title="Link to this heading"></a></h2>
+<p>In that case, you should use</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>install-mac
+</pre></div>
+</div>
+<p>instead of the standard installation. If you have already installed the
+flamby environment, just run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>deactivate
+make<span class="w"> </span>clean
+</pre></div>
+</div>
+<p>before running the install-mac installation again. This is to avoid the
+following error, which will appear when running scripts. #### error :
+OMP: Error #15</p>
+</section>
+<section id="i-or-someone-else-already-downloaded-a-dataset-using-another-copy-of-the-flamby-repository-my-copy-of-flamby-cannot-find-it-and-i-don-t-want-to-download-it-again-what-can-i-do">
+<h2>I or someone else already downloaded a dataset using another copy of the flamby repository, my copy of flamby cannot find it and I don’t want to download it again, what can I do ?<a class="headerlink" href="#i-or-someone-else-already-downloaded-a-dataset-using-another-copy-of-the-flamby-repository-my-copy-of-flamby-cannot-find-it-and-i-don-t-want-to-download-it-again-what-can-i-do" title="Link to this heading"></a></h2>
+<p>There are two options. The safest one is to cd to the flamby directory
+and run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">create_dataset_config</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">dataset</span><span class="o">-</span><span class="n">name</span> <span class="n">fed_camelyon16</span> <span class="n">OR</span> <span class="n">fed_heart_disease</span> <span class="n">OR</span> <span class="o">...</span> <span class="o">--</span><span class="n">path</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">where</span><span class="o">/</span><span class="n">the</span><span class="o">/</span><span class="n">dataset</span><span class="o">/</span><span class="ow">is</span><span class="o">/</span><span class="n">located</span>
+</pre></div>
+</div>
+<p>This will create the required <code class="docutils literal notranslate"><span class="pre">dataset_location.yaml</span></code> file in your
+copy of the repository allowing FLamby to find it.</p>
+<p>One can also directly pass the <code class="docutils literal notranslate"><span class="pre">data_path</span></code> argument when instantiating
+the dataset but this is not recommended.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flamby.datasets.fed_heart_disease</span> <span class="kn">import</span> <span class="n">FedHeartDisease</span>
+<span class="n">center0</span> <span class="o">=</span> <span class="n">FedHeartDisease</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">data_path</span><span class="o">=</span><span class="s2">&quot;/path/where/the/dataset/is/located&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="collaborative-work-on-flamby-i-am-working-with-flamby-on-a-server-with-other-users-how-can-we-share-the-datasets-efficiently">
+<h2>Collaborative work on FLamby: I am working with FLamby on a server with other users, how can we share the datasets efficiently ?<a class="headerlink" href="#collaborative-work-on-flamby-i-am-working-with-flamby-on-a-server-with-other-users-how-can-we-share-the-datasets-efficiently" title="Link to this heading"></a></h2>
+<p>The basic answer is to use the answer just above to recreate the config
+file in every copy of the repository.</p>
+<p>It can possibly become more seamless in the future if we introduce
+checks for environment variables in FLamby, which would allow to setup a
+general server-wise config so that all users of the server have access
+to all needed paths. In the meantime one can fill/comment the following
+bash script after downloading the dataset and share it with all users of
+the server:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>create_dataset_config.py<span class="w"> </span>--dataset-name<span class="w"> </span>fed_camelyon16<span class="w"> </span>--path<span class="w"> </span>TOFILL
+python<span class="w"> </span>create_dataset_config.py<span class="w"> </span>--dataset-name<span class="w"> </span>fed_heart_disease<span class="w"> </span>--path<span class="w"> </span>TOFILL
+python<span class="w"> </span>create_dataset_config.py<span class="w"> </span>--dataset-name<span class="w"> </span>fed_lidc_idri<span class="w"> </span>--path<span class="w"> </span>TOFILL
+python<span class="w"> </span>create_dataset_config.py<span class="w"> </span>--dataset-name<span class="w"> </span>fed_kits19<span class="w"> </span>--path<span class="w"> </span>TOFILL
+python<span class="w"> </span>create_dataset_config.py<span class="w"> </span>--dataset-name<span class="w"> </span>fed_isic2019<span class="w"> </span>--path<span class="w"> </span>TOFILL
+python<span class="w"> </span>create_dataset_config.py<span class="w"> </span>--dataset-name<span class="w"> </span>fed_ixi<span class="w"> </span>--path<span class="w"> </span>TOFILL
+</pre></div>
+</div>
+<p>Which allows users to set all necessary paths in their local copies.</p>
+</section>
+<section id="can-i-run-clients-in-different-threads-with-flamby-how-does-it-run-under-the-hood">
+<h2>Can I run clients in different threads with FLamby? How does it run under the hood?<a class="headerlink" href="#can-i-run-clients-in-different-threads-with-flamby-how-does-it-run-under-the-hood" title="Link to this heading"></a></h2>
+<p>FLamby is a lightweight and simple solution, designed to allow
+researchers to quickly use cleaned datasets with a standard API. As a
+consequence, the benchmark code performing the FL simulation is
+minimalistic. All clients run sequentially in the same python
+environment, without multithreading. Datasets are assigned to clients as
+different python objects.</p>
+</section>
+<section id="does-flamby-support-gpu-acceleration">
+<h2>Does FLamby support GPU acceleration?<a class="headerlink" href="#does-flamby-support-gpu-acceleration" title="Link to this heading"></a></h2>
+<p>FLamby supports GPU acceleration thanks to the underlying deep learning
+backend (pytorch for now).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reproducing.html" class="btn btn-neutral float-left" title="Reproduction instructions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Extending FLamby" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
