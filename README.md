@@ -1,6 +1,11 @@
 # FLamby
+## Updates
+- (January 2024) :warning: Please checkout [FLamby's 0.1.0 recent release](https://github.com/owkin/FLamby/releases/tag/0.1.0), which introduces changes to the Fed-Camelyon16 benchmark as well as fixes some reproducibility issue across datasets :warning:
 
-:warning: Please checkout [FLamby's 0.1.0 recent release](https://github.com/owkin/FLamby/releases/tag/0.1.0), which introduces changes to the Fed-Camelyon16 benchmark as well as fixes some reproducibility issue across datasets :warning:
+- (May 2024) :blue_heart: Checkout this [super cool tutorial in Fed-BioMed](https://fedbiomed.org/latest/tutorials/concrete-ml/concrete-ml/) done with Zama's [concrete-ML](https://github.com/zama-ai/concrete-ml) to add another layer of privacy to FL. :blue_heart:
+
+- (June 2024) :fire: :fire: :fire: Now FLamby has [a proof of concept integration](https://benchopt.github.io/results/) with [BenchOpt](https://benchopt.github.io/). This should allow easier benchmarking of new federated strategies on FLamby's datasets. Come and fork the [benchopt code](https://github.com/owkin/benchmark_flamby) ! :fire: :fire: :fire:
+
 
 <img src="/docs/logo.png" width="600">
 
