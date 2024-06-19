@@ -2,6 +2,8 @@
 
 :warning: Please checkout [FLamby's 0.1.0 recent release](https://github.com/owkin/FLamby/releases/tag/0.1.0), which introduces changes to the Fed-Camelyon16 benchmark as well as fixes some reproducibility issue across datasets :warning:
 
+:fire: :fire: :fire: Now FLamby has [a proof of concept integration](https://benchopt.github.io/results/) with [BenchOpt](https://benchopt.github.io/). This should allow easier benchmarking of new federated strategies on FLamby's datasets. Come and fork the [code](https://github.com/owkin/benchmark_flamby) ! :fire: :fire: :fire:
+
 <img src="/docs/logo.png" width="600">
 
 
