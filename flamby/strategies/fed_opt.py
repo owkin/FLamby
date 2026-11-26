@@ -4,10 +4,11 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
+from flamby.strategies.fed_avg import FedAvg
 from flamby.strategies.utils import DataLoaderWithMemory, _Model
 
 
-class FedOpt:
+class FedOpt(FedAvg):
     """FedOpt Strategy class
 
     References
@@ -164,46 +165,6 @@ class FedOpt:
         for _ in tqdm(range(self.nrounds)):
             self.perform_round()
         return [m.model for m in self.models_list]
-
-    def calc_aggregated_delta_weights(self):
-        local_updates = list()
-        for _model, dataloader_with_memory, size in zip(
-            self.models_list, self.training_dataloaders_with_memory, self.training_sizes
-        ):
-            # Local Optimization
-            _local_previous_state = _model._get_current_params()
-            _model._local_train(dataloader_with_memory, self.num_updates)
-            _local_next_state = _model._get_current_params()
-            # Recovering updates
-            updates = [
-                new - old for new, old in zip(_local_next_state, _local_previous_state)
-            ]
-            del _local_next_state
-            # Reset local model
-            for p_new, p_old in zip(_model.model.parameters(), _local_previous_state):
-                p_new.data = torch.from_numpy(p_old).to(p_new.device)
-            del _local_previous_state
-
-            if self.bits_counting_function is not None:
-                self.bits_counting_function(updates)
-
-            local_updates.append({"updates": updates, "n_samples": size})
-
-        # Aggregation step
-        aggregated_delta_weights = [
-            None for _ in range(len(local_updates[0]["updates"]))
-        ]
-        for idx_weight in range(len(local_updates[0]["updates"])):
-            aggregated_delta_weights[idx_weight] = sum(
-                [
-                    local_updates[idx_client]["updates"][idx_weight]
-                    * local_updates[idx_client]["n_samples"]
-                    for idx_client in range(self.num_clients)
-                ]
-            )
-            aggregated_delta_weights[idx_weight] /= float(self.total_number_of_samples)
-
-        return aggregated_delta_weights
 
 
 class FedAdam(FedOpt):
