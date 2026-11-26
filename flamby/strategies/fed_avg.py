@@ -139,14 +139,18 @@ class FedAvg:
         """
         _model._local_train(dataloader_with_memory, self.num_updates)
 
-    def perform_round(self):
-        """Does a single federated averaging round. The following steps will be
-        performed:
+    def calc_aggregated_delta_weights(self):
+        """Compute the weighted average of the local updates.
 
-        - each model will be trained locally for num_updates batches.
-        - the parameter updates will be collected and averaged. Averages will be
-          weighted by the number of samples in each client
-        - the averaged updates willl be used to update the local model
+        Each client trains its local copy of the model for ``num_updates``
+        batches. The resulting parameter updates are then averaged, weighted
+        by the number of samples held by each client.
+
+        Returns
+        -------
+        List[np.ndarray]
+            The aggregated parameter updates, in the same order as the
+            parameters of the model.
         """
         local_updates = list()
         for _model, dataloader_with_memory, size in zip(
@@ -178,12 +182,25 @@ class FedAvg:
             None for _ in range(len(local_updates[0]["updates"]))
         ]
         for idx_weight in range(len(local_updates[0]["updates"])):
-            aggregated_delta_weights[idx_weight] = sum([
+            aggregated_delta_weights[idx_weight] = sum(
                 local_updates[idx_client]["updates"][idx_weight]
                 * local_updates[idx_client]["n_samples"]
                 for idx_client in range(self.num_clients)
-            ])
+            )
             aggregated_delta_weights[idx_weight] /= float(self.total_number_of_samples)
+
+        return aggregated_delta_weights
+
+    def perform_round(self):
+        """Does a single federated averaging round. The following steps will be
+        performed:
+
+        - each model will be trained locally for num_updates batches.
+        - the parameter updates will be collected and averaged. Averages will be
+          weighted by the number of samples in each client
+        - the averaged updates willl be used to update the local model
+        """
+        aggregated_delta_weights = self.calc_aggregated_delta_weights()
 
         # Update models
         for _model in self.models_list:
